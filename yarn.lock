@@ -11215,10 +11215,10 @@ react-dom@^17.0.2:
     object-assign "^4.1.1"
     scheduler "^0.20.2"
 
-react-dual-listbox@^4.0.0:
-  version "4.0.0"
-  resolved "https://registry.yarnpkg.com/react-dual-listbox/-/react-dual-listbox-4.0.0.tgz#8955ced5da4e39f5c4d14fceadf875e53dad295d"
-  integrity sha512-2SaJdRmQMtU95BYxoHQDKTsuOVQBJkvsP1iiY3Q33Td+OGg1Fq3JcMGSfGY77OypAmE5uhTfmCqBMnhoNy1pMw==
+react-dual-listbox@^5.0.1:
+  version "5.0.1"
+  resolved "https://registry.yarnpkg.com/react-dual-listbox/-/react-dual-listbox-5.0.1.tgz#d676b2d24d267a8d4eb0459228a1e76ca9ff53b9"
+  integrity sha512-3f8LCDRSTovUCAAVtMW++dZWZLZtgDiDG/K+TR2Dj7FPTvVeT6eCWB6Qzh5xO/F+CDGi1MkU3nB8iYZpq4sNVA==
   dependencies:
     classnames "^2.2.5"
     lodash "^4.17.21"
