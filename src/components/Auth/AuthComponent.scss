@@ -13,6 +13,13 @@
   background-color: $pd-white;
 }
 
+body.dark-mode #pd-login-form {
+  border: 1px solid $pd-dark;
+  box-shadow: 0px 0px 10px 1px $pd-dark;
+  background-color: $pd-gray;
+  color: $pd-white;
+}
+
 #pd-login-logo {
   display: block;
   text-indent: -9999px;

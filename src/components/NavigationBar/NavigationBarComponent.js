@@ -38,13 +38,17 @@ const NavigationBarComponent = ({
   userAcceptDisclaimer,
   userUnauthorize,
   stopMonitoring,
+  settings,
 }) => {
   const {
     t,
   } = useTranslation();
+  const {
+    darkMode,
+  } = settings;
   return (
     <div className="navbar-ctr">
-      <Navbar bg="light" variant="light">
+      <Navbar bg={darkMode ? 'dark' : 'light'} variant={darkMode ? 'dark' : 'light'}>
         <Navbar.Brand className="nav-bar-logo-ctr">
           <div className="nav-bar-logo-black" href="/" alt="PagerDuty home page">
             PagerDuty
@@ -111,6 +115,7 @@ const NavigationBarComponent = ({
 };
 const mapStateToProps = (state) => ({
   displayQuerySettings: state.querySettings.displayQuerySettings,
+  settings: state.settings,
 });
 
 const mapDispatchToProps = (dispatch) => ({

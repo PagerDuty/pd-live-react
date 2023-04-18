@@ -86,6 +86,7 @@ const AddResponderModalComponent = ({
               <Form.Label>{t('Responders')}</Form.Label>
               <Select
                 id="add-responders-select"
+                classNamePrefix="react-select"
                 onChange={(selectedTargets) => {
                   setResponderRequestTargets(selectedTargets);
                 }}

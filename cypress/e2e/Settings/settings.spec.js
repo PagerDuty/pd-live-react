@@ -14,6 +14,7 @@ import {
   updateMaxRateLimit,
   updateAutoAcceptIncidentQuery,
   updateAutoRefreshInterval,
+  updateDarkMode,
   manageIncidentTableColumns,
   manageCustomAlertColumnDefinitions,
   activateButton,
@@ -192,5 +193,17 @@ describe('Manage Settings', { failFast: { enabled: false } }, () => {
     cy.get('.nav-item').contains('Local Cache').click();
     cy.get('.btn').contains('Clear Local Cache').click();
     cy.get('.modal-title').contains('Disclaimer & License').should('be.visible');
+  });
+  
+  it('Update dark mode', () => {
+    [true, false].forEach((darkMode) => {
+      updateDarkMode(darkMode);
+      cy.window()
+        .its('store')
+        .invoke('getState')
+        .then((state) => expect(
+          state.settings.darkMode,
+        ).to.equal(darkMode));
+    });
   });
 });

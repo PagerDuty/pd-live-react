@@ -100,6 +100,7 @@ const IncidentActionsComponent = ({
   runCustomIncidentAction,
   runResponsePlayAsync,
   syncWithExternalSystem,
+  settings,
 }) => {
   const {
     t,
@@ -112,6 +113,9 @@ const IncidentActionsComponent = ({
     ACKNOWLEDGED,
   ]);
   const highUrgencyIncidents = filterIncidentsByField(selectedRows, 'urgency', [HIGH]);
+  const {
+    darkMode,
+  } = settings;
 
   // Determine ability of each button based on selected items
   const selectedIncident = selectedCount === 1 ? selectedRows[0] : null;
@@ -216,6 +220,9 @@ const IncidentActionsComponent = ({
     setExternalSystems(tempExternalSystems);
   }, [displayRunActions, selectedIncident]);
 
+  // Const for theme based on dark mode
+  const theme = darkMode ? 'dark' : 'light';
+
   return (
     <div>
       <Container className="incident-actions-ctr" id="incident-actions-ctr" fluid>
@@ -227,7 +234,7 @@ const IncidentActionsComponent = ({
             <Button
               id="incident-action-acknowledge-button"
               className="action-button"
-              variant={enableActions ? 'outline-secondary' : 'light'}
+              variant={enableActions ? 'outline-secondary' : theme}
               onClick={() => acknowledge(selectedRows)}
               disabled={enableActions}
             >
@@ -240,7 +247,7 @@ const IncidentActionsComponent = ({
               id="incident-action-escalate-button"
               as={ButtonGroup}
               className="action-button"
-              variant={enableEscalationAction ? 'outline-secondary' : 'light'}
+              variant={enableEscalationAction ? 'outline-secondary' : theme}
               drop="up"
               title={(
                 <>
@@ -272,7 +279,7 @@ const IncidentActionsComponent = ({
             <Button
               id="incident-action-reassign-button"
               className="action-button"
-              variant={enableActions ? 'outline-secondary' : 'light'}
+              variant={enableActions ? 'outline-secondary' : theme}
               onClick={() => toggleDisplayReassignModal()}
               disabled={enableActions}
             >
@@ -284,7 +291,7 @@ const IncidentActionsComponent = ({
             <Button
               id="incident-action-add-responders-button"
               className="action-button"
-              variant={enableActions ? 'outline-secondary' : 'light'}
+              variant={enableActions ? 'outline-secondary' : theme}
               onClick={() => toggleDisplayAddResponderModal()}
               disabled={enableActions}
             >
@@ -297,7 +304,7 @@ const IncidentActionsComponent = ({
               id="incident-action-snooze-button"
               as={ButtonGroup}
               className="action-button"
-              variant={enableActions ? 'outline-secondary' : 'light'}
+              variant={enableActions ? 'outline-secondary' : theme}
               drop="up"
               title={(
                 <>
@@ -331,7 +338,7 @@ const IncidentActionsComponent = ({
             <Button
               id="incident-action-merge-button"
               className="action-button"
-              variant={enableMergeAction ? 'outline-secondary' : 'light'}
+              variant={enableMergeAction ? 'outline-secondary' : theme}
               onClick={() => toggleDisplayMergeModal()}
               disabled={enableMergeAction}
             >
@@ -343,7 +350,7 @@ const IncidentActionsComponent = ({
             <Button
               id="incident-action-resolve-button"
               className="action-button"
-              variant={enableActions ? 'outline-secondary' : 'light'}
+              variant={enableActions ? 'outline-secondary' : theme}
               disabled={enableActions}
               onClick={() => resolve(selectedRows)}
             >
@@ -358,7 +365,7 @@ const IncidentActionsComponent = ({
               id="incident-action-update-priority-button"
               as={ButtonGroup}
               className="action-button"
-              variant={enablePriorityAction ? 'outline-secondary' : 'light'}
+              variant={enablePriorityAction ? 'outline-secondary' : theme}
               drop="up"
               title={(
                 <>
@@ -393,7 +400,7 @@ const IncidentActionsComponent = ({
             <Button
               id="incident-action-add-note-button"
               className="action-button"
-              variant={enablePostActions ? 'outline-secondary' : 'light'}
+              variant={enablePostActions ? 'outline-secondary' : theme}
               onClick={() => toggleDisplayAddNoteModal()}
               disabled={enablePostActions}
             >
@@ -406,7 +413,7 @@ const IncidentActionsComponent = ({
               id="incident-action-run-action-button"
               as={ButtonGroup}
               className="action-button"
-              variant={enablePostSingularAction ? 'outline-secondary' : 'light'}
+              variant={enablePostSingularAction ? 'outline-secondary' : theme}
               drop="up"
               title={(
                 <>
@@ -431,6 +438,7 @@ const IncidentActionsComponent = ({
                   <Dropdown.Item>
                     <Select
                       id="response-play-select"
+                      classNamePrefix="react-select"
                       className="response-play-dropdown"
                       menuPlacement="top"
                       components={animatedComponents}
@@ -502,6 +510,7 @@ const mapStateToProps = (state) => ({
   escalationPolicies: state.escalationPolicies.escalationPolicies,
   extensions: state.extensions,
   responsePlays: state.responsePlays.responsePlays,
+  settings: state.settings,
 });
 
 const mapDispatchToProps = (dispatch) => ({

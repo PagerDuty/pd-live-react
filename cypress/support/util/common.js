@@ -305,6 +305,22 @@ export const updateAutoAcceptIncidentQuery = (autoAcceptIncidentsQuery = false) 
   cy.get('.close').click();
 };
 
+export const updateDarkMode = (darkMode = false) => {
+  cy.get('.settings-panel-dropdown').click();
+  cy.get('.dropdown-item').contains('Settings').click();
+  cy.get('.nav-item').contains('User Profile').click();
+
+  if (darkMode) {
+    cy.get('#user-profile-dark-mode-checkbox').check({ force: true });
+  } else {
+    cy.get('#user-profile-dark-mode-checkbox').uncheck({ force: true });
+  }
+
+  cy.get('.btn').contains('Update User Profile').click();
+  checkActionAlertsModalContent('Updated user profile settings');
+  cy.get('.close').click();
+};
+
 export const priorityNames = ['--', 'P5', 'P4', 'P3', 'P2', 'P1'];
 
 /*

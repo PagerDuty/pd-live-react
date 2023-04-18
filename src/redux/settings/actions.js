@@ -24,6 +24,9 @@ export const SET_AUTO_REFRESH_INTERVAL_COMPLETED = 'SET_AUTO_REFRESH_INTERVAL_CO
 export const CLEAR_LOCAL_CACHE_REQUESTED = 'CLEAR_LOCAL_CACHE_REQUESTED';
 export const CLEAR_LOCAL_CACHE_COMPLETED = 'CLEAR_LOCAL_CACHE_COMPLETED';
 
+export const SET_DARK_MODE_REQUESTED = 'SET_DARK_MODE_REQUESTED';
+export const SET_DARK_MODE_COMPLETED = 'SET_DARK_MODE_COMPLETED';
+
 // Define Actions
 export const toggleSettingsModal = () => ({
   type: TOGGLE_SETTINGS_REQUESTED,
@@ -61,4 +64,9 @@ export const setAutoRefreshInterval = (autoRefreshInterval) => ({
 
 export const clearLocalCache = () => ({
   type: CLEAR_LOCAL_CACHE_REQUESTED,
+});
+
+export const setDarkMode = (darkMode) => ({
+  type: SET_DARK_MODE_REQUESTED,
+  darkMode,
 });

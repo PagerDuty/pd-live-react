@@ -7,6 +7,10 @@
   top: 5px;
 }
 
+body.dark-mode .querying-incidents {
+  color: $pd-brand-gray-light;
+}
+
 /* Empty Incidents */
 .empty-incidents {
   height: 500px;
@@ -15,6 +19,10 @@
 
 .empty-incidents-badge {
   padding-top: 20px;
+}
+
+body.dark-mode .empty-incidents-badge {
+  color: $pd-brand-gray-light;
 }
 
 /* Table Positioning */
@@ -142,12 +150,22 @@
   border-right: 1px $pd-brand-background-3 solid;
 }
 
+body.dark-mode .th {
+  background-color: $pd-gray;
+  color: $pd-white;
+}
+
 .th-sorted {
   padding: 10px !important;
   background-color: white;
   color: $pd-primary;
   font-weight: 1000;
   border-right: 1px $pd-brand-background-3 solid;
+}
+
+body.dark-mode .th-sorted {
+  background-color: $pd-brand-secondary-dark;
+  color: $pd-white;
 }
 
 .resizer {
@@ -175,14 +193,30 @@
   background-color: $pd-brand-background-2 !important;
 }
 
+body.dark-mode .tr {
+  background-color: $pd-gray !important;
+  color: $pd-white;
+}
+
 .tr-odd {
   font-size: 14px;
   background-color: $pd-brand-background-3 !important;
 }
 
+body.dark-mode .tr-odd {
+  background-color: $pd-gray-dark !important;
+  color: $pd-white;
+}
+
 .tr:hover,
 .tr-odd:hover {
   background-color: $pd-gray-medium !important;
+}
+
+body.dark-mode .tr:hover,
+body.dark-mode .tr-odd:hover {
+  background-color: $pd-brand-secondary-light !important;
+  color: $pd-white;
 }
 
 .td {
@@ -200,4 +234,10 @@
   -webkit-line-clamp: 2;
   line-clamp: 2;
   -webkit-box-orient: vertical;
+}
+
+.react-contextmenu {
+  z-index: 1000;
+  background-color: $pd-white;
+  box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.2);
 }

@@ -35,6 +35,10 @@ import {
   getReactTableColumnSchemas,
 } from 'config/incident-table-columns';
 
+import {
+  ContextMenu, MenuItem, ContextMenuTrigger,
+} from 'react-contextmenu';
+
 import CheckboxComponent from './subcomponents/CheckboxComponent';
 import EmptyIncidentsComponent from './subcomponents/EmptyIncidentsComponent';
 import QueryActiveComponent from './subcomponents/QueryActiveComponent';
@@ -69,6 +73,39 @@ const Delayed = ({
   }, [waitBeforeShow]);
 
   return isShown ? children : null;
+};
+
+const exportTableDataToCsv = (tableData) => {
+  // Create headers from table columns
+  const headers = tableData.columns.map((column) => column.Header);
+
+  const rowsToMap = tableData.selectedFlatRows.length > 0 ? tableData.selectedFlatRows : tableData.rows;
+  const exportRows = rowsToMap.map((row) => {
+    tableData.prepareRow(row);
+    const cells = row.cells.slice(1);
+    const cleanCells = cells.map((cell) => {
+      let cellStr = `${cell.value?.props?.children || cell.value}`;
+      if (cellStr.match(/[,"\r\n]/)) {
+        cellStr = `"${cellStr.replace(/"/g, '""')}"`;
+      }
+      return cellStr;
+    });
+    return cleanCells.join(',');
+  });
+
+  // Join headers and rows into CSV string
+  const csv = [headers.join(','), ...exportRows].join('\n');
+
+  // Download CSV file
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+  const link = document.createElement('a');
+  const url = URL.createObjectURL(blob);
+  link.setAttribute('href', url);
+  link.setAttribute('download', 'table-data.csv');
+  link.style.visibility = 'hidden';
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
 };
 
 const IncidentTableComponent = ({
@@ -138,19 +175,7 @@ const IncidentTableComponent = ({
   const getRowId = useCallback((row) => row.id, []);
 
   // Create instance of react-table with options and plugins
-  const {
-    state: {
-      selectedRowIds,
-    },
-    getTableProps,
-    getTableBodyProps,
-    headerGroups,
-    rows,
-    prepareRow,
-    selectedFlatRows,
-    toggleAllRowsSelected,
-    totalColumnsWidth,
-  } = useTable(
+  const tableHook = useTable(
     {
       columns: memoizedColumns,
       data: filteredIncidentsByQuery, // Potential issue with Memoization hook?
@@ -208,6 +233,20 @@ const IncidentTableComponent = ({
       ]);
     },
   );
+
+  const {
+    state: {
+      selectedRowIds,
+    },
+    getTableProps,
+    getTableBodyProps,
+    headerGroups,
+    rows,
+    prepareRow,
+    selectedFlatRows,
+    toggleAllRowsSelected,
+    totalColumnsWidth,
+  } = tableHook;
 
   // Custom component required for virtualized rows
   const RenderRow = useCallback(
@@ -283,28 +322,30 @@ const IncidentTableComponent = ({
             <table className="table">
               <thead className="thead">
                 {headerGroups.map((headerGroup) => (
-                  <tr {...headerGroup.getHeaderGroupProps()}>
-                    {headerGroup.headers.map((column) => (
-                      <th
-                        data-column-name={column.Header}
-                        className={column.isSorted ? 'th-sorted' : 'th'}
-                        {...column.getHeaderProps(column.getSortByToggleProps())}
-                      >
-                        {column.render('Header')}
-                        <span>{column.isSorted ? (column.isSortedDesc ? ' ▼' : ' ▲') : ''}</span>
-                        {column.canResize && (
-                          <div
-                            {...column.getResizerProps()}
-                            className={`resizer ${column.isResizing ? 'isResizing' : ''}`}
-                            onClick={(e) => {
-                              e.preventDefault();
-                              e.stopPropagation();
-                            }}
-                          />
-                        )}
-                      </th>
-                    ))}
-                  </tr>
+                  <ContextMenuTrigger id="header-contextmenu">
+                    <tr {...headerGroup.getHeaderGroupProps()}>
+                      {headerGroup.headers.map((column) => (
+                        <th
+                          data-column-name={column.Header}
+                          className={column.isSorted ? 'th-sorted' : 'th'}
+                          {...column.getHeaderProps(column.getSortByToggleProps())}
+                        >
+                          {column.render('Header')}
+                          <span>{column.isSorted ? (column.isSortedDesc ? ' ▼' : ' ▲') : ''}</span>
+                          {column.canResize && (
+                            <div
+                              {...column.getResizerProps()}
+                              className={`resizer ${column.isResizing ? 'isResizing' : ''}`}
+                              onClick={(e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                              }}
+                            />
+                          )}
+                        </th>
+                      ))}
+                    </tr>
+                  </ContextMenuTrigger>
                 ))}
               </thead>
               <tbody {...getTableBodyProps()} className="tbody">
@@ -320,6 +361,19 @@ const IncidentTableComponent = ({
               </tbody>
             </table>
           </BTable>
+          <ContextMenu id="header-contextmenu" style={{ zIndex: 2 }}>
+            <MenuItem
+              className="dropdown-item"
+              onClick={() => {
+                exportTableDataToCsv(tableHook);
+              }}
+            >
+              Export CSV
+              {tableHook.selectedFlatRows.length > 0
+                ? ` (${tableHook.selectedFlatRows.length} rows)`
+                : ` (${tableHook.rows.length} rows)`}
+            </MenuItem>
+          </ContextMenu>
         </div>
       </div>
     );

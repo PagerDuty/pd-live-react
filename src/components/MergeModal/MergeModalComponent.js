@@ -93,6 +93,7 @@ const MergeModalComponent = ({
               </Form.Label>
               <Select
                 id="merge-select"
+                classNamePrefix="react-select"
                 onChange={(selectedIncident) => {
                   if (selectedIncident) {
                     setTargetIncident(selectedIncident);

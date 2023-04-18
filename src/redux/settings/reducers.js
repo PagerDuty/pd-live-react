@@ -17,6 +17,8 @@ import {
   SET_AUTO_REFRESH_INTERVAL_COMPLETED,
   CLEAR_LOCAL_CACHE_REQUESTED,
   CLEAR_LOCAL_CACHE_COMPLETED,
+  SET_DARK_MODE_REQUESTED,
+  SET_DARK_MODE_COMPLETED,
 } from './actions';
 
 const settings = produce(
@@ -93,6 +95,15 @@ const settings = produce(
         draft.status = CLEAR_LOCAL_CACHE_COMPLETED;
         break;
 
+      case SET_DARK_MODE_REQUESTED:
+        draft.status = SET_DARK_MODE_REQUESTED;
+        break;
+
+      case SET_DARK_MODE_COMPLETED:
+        draft.darkMode = action.darkMode;
+        draft.status = SET_DARK_MODE_COMPLETED;
+        break;
+
       default:
         break;
     }
@@ -107,6 +118,7 @@ const settings = produce(
     alertCustomDetailFields: [
       { label: 'Environment:details.env', value: 'Environment:details.env', columnType: 'alert' },
     ],
+    darkMode: false,
     status: '',
   },
 );

@@ -1,10 +1,12 @@
+@import 'assets/styles/pagerduty.scss';
+
 /* Bootstrap */
 .modal-90w {
   width: 90% !important;
   max-width: none !important;
 }
 
-#user-profile-auto-accept-incident-query-checkbox {
+#user-profile-auto-accept-incident-query-checkbox, #user-profile-dark-mode-checkbox {
   position: relative !important;
   top: 3px;
   width: 20px;
@@ -14,11 +16,29 @@
   border: 2px solid #555;
 }
 
+body.dark-mode div.modal-content h4 {
+  color: $pd-white;
+}
+
 /* React Dual List Overrides */
 .rdl-control-label {
   font-size: 16pt;
 }
 
+body.dark-mode .rdl-control-label {
+  color: $pd-white;
+}
+
 .rdl-control-container {
   min-height: 300px !important;
+}
+
+body.dark-mode select.rdl-control {
+  background-color: $pd-brand-gray-dark !important;
+  color: $pd-white !important;
+}
+
+body.dark-mode input.rdl-filter {
+  background-color: $pd-brand-gray-dark !important;
+  color: $pd-white !important;
 }

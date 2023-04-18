@@ -114,6 +114,7 @@ import {
   setMaxRateLimit,
   setAutoAcceptIncidentsQuery,
   setAutoRefreshInterval,
+  setDarkMode,
   clearLocalCache,
 } from './settings/sagas';
 
@@ -231,6 +232,7 @@ export default function* rootSaga() {
     setMaxRateLimit(),
     setAutoAcceptIncidentsQuery(),
     setAutoRefreshInterval(),
+    setDarkMode(),
     clearLocalCache(),
 
     // Connection

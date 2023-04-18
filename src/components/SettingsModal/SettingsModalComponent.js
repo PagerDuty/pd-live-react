@@ -39,6 +39,7 @@ import {
   setAutoAcceptIncidentsQuery as setAutoAcceptIncidentsQueryConnected,
   setAutoRefreshInterval as setAutoRefreshIntervalConnected,
   clearLocalCache as clearLocalCacheConnected,
+  setDarkMode as setDarkModeConnected,
 } from 'redux/settings/actions';
 
 import {
@@ -100,6 +101,7 @@ const SettingsModalComponent = ({
   setMaxRateLimit,
   setAutoAcceptIncidentsQuery,
   setAutoRefreshInterval,
+  setDarkMode,
   clearLocalCache,
   updateActionAlertsModal,
   toggleDisplayActionAlertsModal,
@@ -115,6 +117,7 @@ const SettingsModalComponent = ({
     autoAcceptIncidentsQuery,
     autoRefreshInterval,
     alertCustomDetailFields,
+    darkMode,
   } = settings;
   const {
     incidentTableColumns,
@@ -172,6 +175,8 @@ const SettingsModalComponent = ({
   }, [tempMaxRateLimit]);
 
   const [tempAutoAcceptQuery, setTempAutoAcceptQuery] = useState(autoAcceptIncidentsQuery);
+
+  const [tempDarkMode, setTempDarkMode] = useState(darkMode);
 
   const [selectedColumns, setSelectedColumns] = useState(
     incidentTableColumns.map((column) => {
@@ -253,6 +258,7 @@ const SettingsModalComponent = ({
                   <Col xs={6}>
                     <Select
                       id="user-locale-select"
+                      classNamePrefix="react-select"
                       styles={reactSelectStyle}
                       options={selectLocales}
                       value={selectedLocale}
@@ -347,6 +353,19 @@ const SettingsModalComponent = ({
                     />
                   </Col>
                 </Form.Group>
+                <Form.Group as={Row}>
+                  <Form.Label id="user-profile-dark-mode-label" column sm={2}>
+                    {t('Dark Mode')}
+                  </Form.Label>
+                  <Col xs={6}>
+                    <Form.Check
+                      id="user-profile-dark-mode-checkbox"
+                      type="checkbox"
+                      checked={tempDarkMode}
+                      onChange={(e) => setTempDarkMode(e.target.checked)}
+                    />
+                  </Col>
+                </Form.Group>
               </Form>
               <br />
               <Button
@@ -369,6 +388,9 @@ const SettingsModalComponent = ({
                   setMaxRateLimit(tempMaxRateLimit);
                   setAutoAcceptIncidentsQuery(tempAutoAcceptQuery);
                   setAutoRefreshInterval(tempAutoRefreshInterval);
+                  setDarkMode(tempDarkMode);
+                  if (tempDarkMode) document.body.className = 'dark-mode';
+                  else document.body.className = '';
                   updateActionAlertsModal('success', t('Updated user profile settings'));
                   toggleDisplayActionAlertsModal();
                 }}
@@ -415,6 +437,7 @@ const SettingsModalComponent = ({
                 <h4>{t('Alert Custom Detail Column Definitions')}</h4>
                 <CreatableSelect
                   id="alert-column-definition-select"
+                  classNamePrefix="react-select"
                   isMulti
                   isClearable
                   placeholder={t('Alert Custom Detail Column Definitions Placeholder')}
@@ -491,6 +514,9 @@ const mapDispatchToProps = (dispatch) => ({
     dispatch(updateActionAlertsModalConnected(actionAlertsModalType, actionAlertsModalMessage));
   },
   toggleDisplayActionAlertsModal: () => dispatch(toggleDisplayActionAlertsModalConnected()),
+  setDarkMode: (darkMode) => {
+    dispatch(setDarkModeConnected(darkMode));
+  },
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(SettingsModalComponent);

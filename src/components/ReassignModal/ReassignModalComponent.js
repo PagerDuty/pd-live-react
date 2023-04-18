@@ -77,6 +77,7 @@ const ReassignModalComponent = ({
           <Form>
             <Select
               id="reassign-select"
+              classNamePrefix="react-select"
               onChange={(selectedAssignment) => {
                 setAssignment(selectedAssignment);
               }}

@@ -11,6 +11,11 @@
   background-color: $pd-white;
 }
 
+body.dark-mode .incident-actions-ctr {
+  background-color: $pd-brand-gray-dark;
+  color: $pd-brand-white;
+}
+
 .action-button {
   margin-right: 10px;
 }

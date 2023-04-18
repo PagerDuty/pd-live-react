@@ -44,6 +44,7 @@ describe('SettingsModalComponent', () => {
             columnType: 'alert',
           },
         ],
+        darkMode: false,
       },
       incidentTable: {
         incidentTableColumns: [
@@ -234,5 +235,19 @@ describe('SettingsModalComponent', () => {
     tabElement.simulate('click');
     expect(tabElement.contains('Local Cache')).toBeTruthy();
     expect(wrapper.find('#clear-local-cache-button').contains('Clear Local Cache')).toBeTruthy();
+  });
+
+  it('should set darkMode to true when checked', () => {
+    const darkMode = true;
+    store = mockStore(baseStore);
+    const wrapper = componentWrapper(store, SettingsModalComponent);
+    const tabSelector = 'a[data-rb-event-key="user-profile"]';
+    const tabElement = wrapper.find(tabSelector);
+    tabElement.simulate('click');
+
+    wrapper
+      .find('input#user-profile-dark-mode-checkbox')
+      .simulate('change', { target: { checked: darkMode } });
+    expect(wrapper.find('input#user-profile-dark-mode-checkbox').prop('checked')).toEqual(darkMode);
   });
 });

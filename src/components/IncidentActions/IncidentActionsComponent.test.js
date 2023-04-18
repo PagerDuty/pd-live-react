@@ -41,6 +41,9 @@ describe('IncidentActionsComponent', () => {
       serviceExtensionMap: {},
     },
     responsePlays: { responsePlays: [] },
+    settings: {
+      darkMode: false,
+    },
   };
 
   const tempStoreMap = { ...baseStoreMap };

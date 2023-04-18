@@ -116,7 +116,7 @@ const QuerySettingsComponent = ({
     currentUserLocale, users: userList,
   } = users;
   const {
-    defaultSinceDateTenor,
+    defaultSinceDateTenor, darkMode,
   } = settings;
   const eventKey = displayQuerySettings ? '0' : '1';
 
@@ -185,7 +185,14 @@ const QuerySettingsComponent = ({
     <div className="query-settings-ctr" id="query-settings-ctr">
       <Accordion defaultActiveKey="0">
         <Accordion.Collapse id="query-settings-accordion" eventKey={eventKey}>
-          <Container className="card bg-light query-settings-inner-ctr" fluid>
+          <Container
+            className={
+              darkMode
+                ? 'card bg-dark query-settings-inner-ctr'
+                : 'card bg-light query-settings-inner-ctr'
+            }
+            fluid
+          >
             <Row>
               <Col xs="auto">
                 {t('Since')}
@@ -311,6 +318,7 @@ const QuerySettingsComponent = ({
                 <Form.Group>
                   <Select
                     id="query-team-select"
+                    classNamePrefix="react-select"
                     styles={reactSelectStyle}
                     onChange={(selectedTeams) => {
                       const teamIdsInt = selectedTeams.map((team) => team.value);
@@ -333,6 +341,7 @@ const QuerySettingsComponent = ({
                 <Form.Group>
                   <Select
                     id="query-user-select"
+                    classNamePrefix="react-select"
                     styles={reactSelectStyle}
                     onChange={(selectedUsers) => {
                       const userIdsInt = selectedUsers.map((user) => user.value);
@@ -353,6 +362,7 @@ const QuerySettingsComponent = ({
                 <Form.Group>
                   <Select
                     id="query-escalation-policy-select"
+                    classNamePrefix="react-select"
                     styles={reactSelectStyle}
                     onChange={(selectedEscalationPolicies) => {
                       const escalationPolicyIdsInt = selectedEscalationPolicies.map(
@@ -375,6 +385,7 @@ const QuerySettingsComponent = ({
                 <Form.Group>
                   <Select
                     id="query-service-select"
+                    classNamePrefix="react-select"
                     styles={reactSelectStyle}
                     onChange={(selectedServices) => {
                       const serviceIdsInt = selectedServices.map((service) => service.value);

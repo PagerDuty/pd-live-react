@@ -97,6 +97,14 @@ const App = ({
 }) => {
   // Verify if session token is present
   const token = sessionStorage.getItem('pd_access_token');
+  const {
+    autoRefreshInterval, darkMode,
+  } = state.settings;
+
+  if (darkMode) {
+    document.body.classList.add('dark-mode');
+  }
+
   if (!token) {
     return (
       <div className="App">
@@ -109,9 +117,6 @@ const App = ({
   const {
     userAuthorized, userAcceptedDisclaimer, currentUserLocale,
   } = state.users;
-  const {
-    autoRefreshInterval,
-  } = state.settings;
   const {
     fetchingIncidents,
     fetchingIncidentNotes,

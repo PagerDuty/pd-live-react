@@ -6,6 +6,10 @@
   margin-top: 10px;
 }
 
+body.dark-mode .query-settings-inner-ctr {
+  color: $pd-white;
+}
+
 .date-picker {
   width: 120px;
   padding: 0.375rem 0.75rem;
@@ -19,6 +23,20 @@
   transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
 }
 
+body.dark-mode .date-picker {
+  background-color: $pd-brand-gray-dark !important;
+  color: $pd-white !important;
+}
+
 .react-datepicker-popper {
   z-index: 2 !important;
+}
+
+body.dark-mode .react-datepicker {
+  background-color: $pd-brand-gray-light !important;
+}
+
+body.dark-mode .react-datepicker__header {
+  background-color: $pd-brand-gray-light !important;
+  color: $pd-white !important;
 }

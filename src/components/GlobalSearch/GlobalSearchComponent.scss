@@ -1,5 +1,11 @@
+@import 'assets/styles/pagerduty.scss';
+
 .global-search-ctr {
   position: relative;
   padding-right: 10px;
   top: 6px;
+}
+
+body.dark-mode .global-search-ctr .input-group-text {
+  background-color: $pd-brand-secondary-light !important;
 }

@@ -24,6 +24,8 @@ import {
   SET_AUTO_REFRESH_INTERVAL_COMPLETED,
   CLEAR_LOCAL_CACHE_REQUESTED,
   CLEAR_LOCAL_CACHE_COMPLETED,
+  SET_DARK_MODE_REQUESTED,
+  SET_DARK_MODE_COMPLETED,
 } from './actions';
 
 import selectSettings from './selectors';
@@ -139,5 +141,19 @@ export function* clearLocalCacheImpl() {
   yield persistor.persist();
   yield put({
     type: CLEAR_LOCAL_CACHE_COMPLETED,
+  });
+}
+
+export function* setDarkMode() {
+  yield takeLatest(SET_DARK_MODE_REQUESTED, setDarkModeImpl);
+}
+
+export function* setDarkModeImpl(action) {
+  const {
+    darkMode,
+  } = action;
+  yield put({
+    type: SET_DARK_MODE_COMPLETED,
+    darkMode,
   });
 }

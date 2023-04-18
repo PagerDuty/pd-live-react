@@ -5,9 +5,19 @@ body {
   background-color: $pd-brand-background !important;
 }
 
+body.dark-mode {
+  background-color: $pd-brand-gray-dark !important;
+}
+
 .btn-outline-secondary {
   color: $pd-brand-black;
   background-color: $pd-brand-white;
+  border-color: $pd-brand-secondary-light;
+}
+
+body.dark-mode .btn-outline-secondary {
+  color: $pd-white;
+  background-color: $pd-brand-gray-dark;
   border-color: $pd-brand-secondary-light;
 }
 
@@ -24,6 +34,10 @@ body {
 .btn-outline-secondary:not(:disabled):not(.disabled).active {
   border-bottom: 3px $pd-success solid !important;
   background-color: unset !important;
+}
+
+body.dark-mode .btn-outline-secondary:not(:disabled):not(.disabled).active {
+  background-color: $pd-brand-gray-light !important;
 }
 
 .btn-outline-dark {
@@ -59,3 +73,54 @@ body {
 .modal-footer {
   display: unset !important;
 }
+
+body.dark-mode a {
+  color: $pd-brand-white;
+}
+
+body.dark-mode .modal-content {
+  background-color: $pd-brand-black !important;
+  color: $pd-white !important;
+}
+
+body.dark-mode .modal-title {
+  color: $pd-brand-white !important;
+}
+
+body.dark-mode .modal-header .close {
+  color: $pd-brand-white !important;
+}
+
+body.dark-mode .form-label, body.dark-mode .form-text {
+  color: $pd-brand-white !important;
+}
+
+body.dark-mode .form-control {
+  background-color: $pd-brand-gray-dark !important;
+  color: $pd-white;
+}
+
+body.dark-mode div.react-select__control, body.dark-mode div.react-select__menu {
+  background-color: $pd-brand-gray-dark !important;
+  color: $pd-brand-white !important;
+}
+
+body.dark-mode div.react-select__multi-value {
+  background-color: $pd-brand-gray-light !important;
+  color: $pd-brand-white !important;
+}
+
+body.dark-mode div.react-select__single-value {
+  color: $pd-brand-white !important;
+}
+
+body.dark-mode div.react-select__option:hover {
+  background-color: $pd-brand-secondary-light !important;
+  color: $pd-brand-white !important;
+}
+
+body.dark-mode div.react-select__option--is-focused {
+  background-color: $pd-brand-secondary-light !important;
+  color: $pd-brand-white !important;
+}
+

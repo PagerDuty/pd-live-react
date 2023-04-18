@@ -29,6 +29,8 @@ import {
   SET_AUTO_ACCEPT_INCIDENTS_QUERY_COMPLETED,
   SET_AUTO_REFRESH_INTERVAL_REQUESTED,
   SET_AUTO_REFRESH_INTERVAL_COMPLETED,
+  SET_DARK_MODE_REQUESTED,
+  SET_DARK_MODE_COMPLETED,
 } from './actions';
 import {
   setDefaultSinceDateTenor,
@@ -37,6 +39,7 @@ import {
   setMaxRateLimit,
   setAutoAcceptIncidentsQuery,
   setAutoRefreshInterval,
+  setDarkMode,
 } from './sagas';
 
 describe('Sagas: Settings', () => {
@@ -66,6 +69,7 @@ describe('Sagas: Settings', () => {
             columnType: 'alert',
           },
         ],
+        darkMode: false,
         status: SET_DEFAULT_SINCE_DATE_TENOR_COMPLETED,
       })
       .silentRun();
@@ -96,6 +100,7 @@ describe('Sagas: Settings', () => {
         autoAcceptIncidentsQuery: true,
         autoRefreshInterval: 5,
         alertCustomDetailFields,
+        darkMode: false,
         status: SET_ALERT_CUSTOM_DETAIL_COLUMNS_COMPLETED,
       })
       .silentRun();
@@ -129,6 +134,7 @@ describe('Sagas: Settings', () => {
             columnType: 'alert',
           },
         ],
+        darkMode: false,
         status: SET_MAX_INCIDENTS_LIMIT_COMPLETED,
       })
       .silentRun();
@@ -162,6 +168,7 @@ describe('Sagas: Settings', () => {
             columnType: 'alert',
           },
         ],
+        darkMode: false,
         status: SET_MAX_RATE_LIMIT_COMPLETED,
       })
       .silentRun();
@@ -192,6 +199,7 @@ describe('Sagas: Settings', () => {
             columnType: 'alert',
           },
         ],
+        darkMode: false,
         status: SET_AUTO_ACCEPT_INCIDENTS_QUERY_COMPLETED,
       })
       .silentRun();
@@ -225,7 +233,39 @@ describe('Sagas: Settings', () => {
             columnType: 'alert',
           },
         ],
+        darkMode: false,
         status: SET_AUTO_REFRESH_INTERVAL_COMPLETED,
+      })
+      .silentRun();
+  });
+  it('setDarkMode', () => {
+    const darkMode = true;
+    return expectSaga(setDarkMode)
+      .withReducer(settings)
+      .dispatch({
+        type: SET_DARK_MODE_REQUESTED,
+        darkMode,
+      })
+      .put({
+        type: SET_DARK_MODE_COMPLETED,
+        darkMode,
+      })
+      .hasFinalState({
+        displaySettingsModal: false,
+        defaultSinceDateTenor: '1 Day',
+        maxIncidentsLimit: 200,
+        maxRateLimit: 200,
+        autoAcceptIncidentsQuery: true,
+        autoRefreshInterval: 5,
+        alertCustomDetailFields: [
+          {
+            label: 'Environment:details.env',
+            value: 'Environment:details.env',
+            columnType: 'alert',
+          },
+        ],
+        darkMode: true,
+        status: SET_DARK_MODE_COMPLETED,
       })
       .silentRun();
   });

@@ -22,6 +22,11 @@
   top: 4px;
 }
 
+body.dark-mode .nav-bar-logo-black {
+  background-image: url('/assets/images/pd_logo_white.svg');
+  background-color: unset;
+}
+
 .settings-panel-icon {
   background-image: url('https://secure.gravatar.com/avatar/0ee453ea32f9f9702c809b4680237b50.png?d=mm&amp;r=PG');
   background-repeat: no-repeat;
@@ -62,4 +67,16 @@ a.dropdown-toggle.nav-link::after {
 .version-info {
   color: $pd-green !important;
   font-weight: 900 !important;
+}
+
+body.dark-mode .version-info {
+  color: $pd-teal !important;
+}
+
+body.dark-mode div.dropdown-menu {
+  background-color: $pd-brand-gray-dark !important;
+}
+
+body.dark-mode div.dropdown-menu a.dropdown-item:hover {
+  background-color: $pd-brand-secondary-light !important;
 }
