@@ -32,21 +32,6 @@ body.dark-mode .empty-incidents-badge {
   overflow-y: scroll;
 }
 
-.incident-table::-webkit-scrollbar {
-  height: 8px;
-  width: 8px;
-}
-
-.incident-table::-webkit-scrollbar-thumb {
-  border-radius: 10px;
-  background-color: $pd-light;
-}
-
-.incident-table::-webkit-scrollbar-thumb:hover {
-  border-radius: 10px;
-  background-color: $pd-gray;
-}
-
 .incident-table-settings-btn {
   position: relative;
   float: right;
@@ -140,6 +125,8 @@ body.dark-mode .empty-incidents-badge {
   position: sticky;
   top: 0; /* Don't forget this, required for the stickiness */
   z-index: 1 !important;
+  // overflow-y: scroll;
+  // overflow-x: scroll;
 }
 
 .th {
@@ -158,8 +145,9 @@ body.dark-mode .th {
 .th-sorted {
   padding: 10px !important;
   background-color: white;
-  color: $pd-primary;
-  font-weight: 1000;
+  // color: $pd-primary;
+  // font-weight: 1000;
+  font-weight: 700;
   border-right: 1px $pd-brand-background-3 solid;
 }
 
@@ -183,10 +171,10 @@ body.dark-mode .th-sorted {
   }
 }
 
-.tbody {
-  overflow-y: scroll;
-  overflow-x: hidden;
-}
+// .tbody {
+  // overflow-y: scroll;
+  // overflow-x: scroll;
+// }
 
 .tr {
   font-size: 14px;

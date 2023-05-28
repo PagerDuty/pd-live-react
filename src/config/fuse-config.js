@@ -1,5 +1,6 @@
 // Configuration for Fuse.js (Fuzzy Search)
 
+// TODO: Use column-generator
 import {
   availableIncidentTableColumns,
   availableAlertTableColumns,

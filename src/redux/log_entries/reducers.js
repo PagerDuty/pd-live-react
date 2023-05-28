@@ -24,6 +24,7 @@ const logEntries = produce(
         draft.fetchingData = false;
         draft.status = FETCH_LOG_ENTRIES_COMPLETED;
         draft.logEntries = action.logEntries;
+        draft.recentLogEntries = action.recentLogEntries;
         break;
 
       case FETCH_LOG_ENTRIES_ERROR:
@@ -40,10 +41,10 @@ const logEntries = produce(
       case UPDATE_RECENT_LOG_ENTRIES_COMPLETED:
         draft.fetchingData = false;
         draft.status = UPDATE_RECENT_LOG_ENTRIES_COMPLETED;
-        draft.recentLogEntries = action.recentLogEntries;
-        draft.addList = action.addList;
-        draft.updateList = action.updateList;
-        draft.removeList = action.removeList;
+        // draft.recentLogEntries = action.recentLogEntries;
+        // draft.addList = action.addList;
+        // draft.updateList = action.updateList;
+        // draft.removeList = action.removeList;
         break;
 
       case UPDATE_RECENT_LOG_ENTRIES_ERROR:
@@ -75,7 +76,7 @@ const logEntries = produce(
   },
   {
     logEntries: [],
-    recentLogEntries: [],
+    recentLogEntries: {},
     addList: [],
     updateList: [],
     removeList: [],

@@ -16,7 +16,7 @@ import {
 } from 'redux/incident_table/actions';
 
 import {
-  getIncidentByIdRequest, updateIncidentsList,
+  getIncidentByIdRequest, // updateIncidentsList,
 } from 'redux/incidents/sagas';
 
 import selectPriorities from 'redux/priorities/selectors';
@@ -84,6 +84,10 @@ import {
   SYNC_WITH_EXTERNAL_SYSTEM_COMPLETED,
   SYNC_WITH_EXTERNAL_SYSTEM_ERROR,
 } from './actions';
+
+import {
+  PROCESS_LOG_ENTRIES_COMPLETED,
+} from '../incidents/actions';
 
 export function* acknowledgeAsync() {
   yield takeLatest(ACKNOWLEDGE_REQUESTED, acknowledge);
@@ -731,15 +735,15 @@ export function* syncWithExternalSystem(action) {
         selectedRows: updatedSelectedRows,
       });
 
-      // Call Saga directly to update list (dispatch didn't work for some reason)
-      yield updateIncidentsList({
-        addList: [],
-        removeList: [],
-        updateList: updatedSelectedRows.map((incident) => ({
-          incident: { ...incident },
-        })),
+      const incidentUpdatesMap = Object.assign({}, ...updatedSelectedRows.map((incident) => ({
+        [incident.id]: incident,
+      })));
+      yield put({
+        type: PROCESS_LOG_ENTRIES_COMPLETED,
+        incidentUpdatesMap,
+        incidentAlertsMap: {},
+        incidentNotesMap: {},
       });
-
       // Render modal
       yield put({
         type: SYNC_WITH_EXTERNAL_SYSTEM_COMPLETED,

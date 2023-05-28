@@ -5,7 +5,7 @@ import {
 import i18next from 'i18n';
 
 import {
-  pd,
+  pdParallelFetch,
 } from 'util/pd-api-wrapper';
 import {
   UPDATE_CONNECTION_STATUS_REQUESTED,
@@ -22,12 +22,7 @@ export function* getEscalationPoliciesAsync() {
 
 export function* getEscalationPolicies() {
   try {
-    //  Create params and call pd lib
-    const response = yield call(pd.all, 'escalation_policies');
-    if (response.status !== 200) {
-      throw Error(i18next.t('Unable to fetch escalation policies'));
-    }
-    const escalationPolicies = response.resource;
+    const escalationPolicies = yield call(pdParallelFetch, 'escalation_policies');
 
     yield put({
       type: FETCH_ESCALATION_POLICIES_COMPLETED,

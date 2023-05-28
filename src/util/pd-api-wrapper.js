@@ -1,10 +1,13 @@
 /* eslint-disable no-await-in-loop */
 /* eslint-disable no-loop-func */
 
+// TODO: validate that old requests expire properly when idle
+// TODO: bubble error state up to UI
 import {
   api,
 } from '@pagerduty/pdjs';
 import axios from 'axios';
+
 import Bottleneck from 'bottleneck';
 
 import {
@@ -72,31 +75,38 @@ const limiterSettings = {
   reservoirRefreshAmount: 200,
   reservoirRefreshInterval: 60 * 1000,
   maxConcurrent: 20,
+  minTime: Math.floor((60 / 200) * 1000),
 };
 
-// limiter needs to be a mutable export because we need it to get the
-// queue stats, and we have to reassign it when we clear the queue
+const limiter = new Bottleneck(limiterSettings);
 
-// eslint-disable-next-line import/no-mutable-exports
-export let limiter = new Bottleneck(limiterSettings);
+export const throttledPdAxiosRequest = (
+  method,
+  endpoint,
+  params = {},
+  data = {},
+  expiration = 60 * 1000,
+) => limiter.schedule(
+  {
+    expiration,
+  },
+  () => pdAxiosRequest(method, endpoint, params, data),
+);
 
-// throttledPdAxiosRequest needs to be a mutable export because when we
-// reset the limiter, we have to re-wrap pdAxiosRequest
+export const getLimiterStats = () => limiter.counts();
+export const getLimiter = () => limiter;
 
-// eslint-disable-next-line import/no-mutable-exports
-export let throttledPdAxiosRequest = limiter.wrap(pdAxiosRequest);
-
-// drop all the queued requests in the limiter - needed if we are getting
-// the list of incidents again but there are still outstanding requests
-// for notes, etc.
 export const resetLimiterWithRateLimit = async (limit = 200) => {
-  await limiter.stop({ dropWaitingJobs: true });
-  limiter = new Bottleneck({
+  // eslint-disable-next-line no-console
+  console.log(
+    `updating limiter with rate limit ${limit} and minTime ${Math.floor((60 / limit) * 1000)}`,
+  );
+  limiter.updateSettings({
     ...limiterSettings,
     reservoir: limit,
     reservoirRefreshAmount: limit,
+    minTime: Math.floor((60 / limit) * 1000),
   });
-  throttledPdAxiosRequest = limiter.wrap(pdAxiosRequest);
 };
 
 /*
@@ -122,7 +132,7 @@ export const pdParallelFetch = async (endpoint, params, progressCallback) => {
   let reversedSortOrder = false;
   if (endpoint.indexOf('log_entries') > -1) reversedSortOrder = true;
 
-  const firstPage = (await pdAxiosRequest('GET', endpoint, requestParams)).data;
+  const firstPage = (await throttledPdAxiosRequest('GET', endpoint, requestParams)).data;
   const fetchedData = firstPage[endpointIdentifier(endpoint)];
 
   const promises = [];

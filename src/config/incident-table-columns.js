@@ -373,7 +373,7 @@ export const availableIncidentTableColumns = [
     accessor: (incident) => {
       let content;
       if (incident.notes && incident.notes.length > 0) {
-        content = incident.notes[0].content;
+        content = incident.notes.slice(-1)[0].content;
       } else if (incident.notes && incident.notes.length === 0) {
         content = '--';
       } else {
@@ -435,21 +435,35 @@ export const availableAlertTableColumns = [
   {
     columnType: 'alert',
     accessor: (incident) => {
-      let content;
-      if (
-        incident.alerts
-        && incident.alerts.length > 0
-        && incident.alerts[0].body
-        && incident.alerts[0].body.cef_details
-        && incident.alerts[0].body.cef_details.severity
-      ) {
-        content = incident.alerts[0].body.cef_details.severity;
-      } else if (incident.alerts) {
-        content = '--';
+      let content = `${i18next.t('Fetching Alerts')} ...`;
+      if (incident.alerts) {
+        if (incident.alerts.status) {
+          content = incident.alerts.status;
+        } else if (incident.alerts.length > 0) {
+          content = incident.alerts[0].severity
+            || incident.alerts[0].body?.cef_details.severity
+            || '--';
+        } else {
+          content = '--';
+        }
       } else {
-        content = `${i18next.t('Fetching Alerts')} ...`;
+        content = '--';
       }
       return content;
+      // if (
+      //   incident.alerts
+      //   && incident.alerts.length > 0
+      //   && incident.alerts[0].body
+      //   && incident.alerts[0].body.cef_details
+      //   && incident.alerts[0].body.cef_details.severity
+      // ) {
+      //   content = incident.alerts[0].body.cef_details.severity;
+      // } else if (incident.alerts) {
+      //   content = '--';
+      // } else {
+      //   content = `${i18next.t('Fetching Alerts')} ...`;
+      // }
+      // return content;
     },
     Header: 'Severity',
     i18n: i18next.t('Severity'),
@@ -490,9 +504,12 @@ export const availableAlertTableColumns = [
           variant = 'info';
           i18nValue = i18next.t('info');
           break;
-        default:
+        case '--':
           variant = null;
           break;
+        default:
+          variant = 'secondary';
+          i18nValue = i18next.t(value);
       }
       return (
         <Badge className="severity-badge" variant={variant}>

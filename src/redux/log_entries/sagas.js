@@ -1,4 +1,6 @@
 /* eslint-disable no-unused-vars */
+/* eslint-disable max-len */
+
 import {
   put, call, select, takeLatest, take,
 } from 'redux-saga/effects';
@@ -14,12 +16,14 @@ import {
 } from 'util/log-entries';
 import {
   pd,
+  pdParallelFetch,
 } from 'util/pd-api-wrapper';
 
 import {
   UPDATE_CONNECTION_STATUS_REQUESTED,
 } from 'redux/connection/actions';
 import {
+  PROCESS_LOG_ENTRIES,
   UPDATE_INCIDENTS_LIST,
 } from 'redux/incidents/actions';
 
@@ -44,6 +48,10 @@ export function* getLogEntriesAsync() {
 }
 
 export function* getLogEntries(action) {
+  const {
+    recentLogEntries,
+  } = yield select(selectLogEntries);
+
   try {
     //  Create params and call pd lib
     const {
@@ -51,17 +59,47 @@ export function* getLogEntries(action) {
     } = action;
     const params = {
       since: since.toISOString().replace(/\.[\d]{3}/, ''),
-      'include[]': ['incidents'],
+      'include[]': ['incidents', 'linked_incidents', 'external_references', 'channels'],
     };
-    const response = yield call(pd.all, 'log_entries', { data: { ...params } });
-    if (response.status !== 200) {
-      throw Error(i18next.t('Unable to fetch log entries'));
+
+    let logEntries;
+    try {
+      logEntries = yield call(pdParallelFetch, 'log_entries', params);
+    } catch (e) {
+      throw Error(i18next.t('Unable to fetch log entries') + e.message ? `: ${e.message}` : '');
     }
-    const logEntries = response.resource;
-    yield put({ type: FETCH_LOG_ENTRIES_COMPLETED, logEntries });
+
+    // Filter out log entries that are already in recent log entries map
+    // sort by date ascending (oldest first)
+    logEntries = logEntries.filter((x) => !recentLogEntries[x.id])
+      .sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
+
+    // Add new log entries to recent log entries map by id
+    const recentLogEntriesLocal = {
+      ...recentLogEntries,
+      ...Object.assign({}, ...logEntries.map((x) => ({
+        [x.id]: new Date(x.created_at),
+      }))),
+    };
+
+    yield put({
+      type: FETCH_LOG_ENTRIES_COMPLETED,
+      logEntries,
+      recentLogEntries: recentLogEntriesLocal,
+    });
+
+    if (logEntries.length === 0) {
+      // No new log entries, so no need to process
+      return;
+    }
+
+    yield put({
+      type: PROCESS_LOG_ENTRIES,
+      logEntries,
+    });
 
     // Call to update recent log entries with this data.
-    yield call(updateRecentLogEntries);
+    // yield call(updateRecentLogEntries);
   } catch (e) {
     // Handle API auth failure
     if (e.status === 401) {
@@ -76,120 +114,6 @@ export function* getLogEntries(action) {
   }
 }
 
-export function* updateRecentLogEntriesAsync() {
-  yield takeLatest(UPDATE_RECENT_LOG_ENTRIES, updateRecentLogEntries);
-}
-
-export function* updateRecentLogEntries() {
-  try {
-    // Grab log entries & alerts from store and determine what is recent based on last polling
-    take(FETCH_LOG_ENTRIES_COMPLETED);
-    const {
-      logEntries, recentLogEntries,
-    } = yield select(selectLogEntries);
-    const recentLogEntriesLocal = [...recentLogEntries];
-    const addSet = new Set();
-    const removeSet = new Set();
-    const updateSet = new Set();
-    const linkLogEntryList = [];
-
-    // Get existing incidents in store for patching alerts
-    const {
-      incidents,
-    } = yield select(selectIncidents);
-
-    // yield doesn't work with forEach; using old implementation
-    for (let i = 0; i < logEntries.length; i++) {
-      // Skip duplicate log entry
-      const logEntry = logEntries[i];
-      if (recentLogEntriesLocal.filter((x) => x.id === logEntry.id).length > 0) {
-        // eslint-disable-next-line no-continue
-        continue;
-      }
-
-      // Push new log entry to array with details
-      const logEntryDate = new Date(logEntry.created_at);
-      recentLogEntriesLocal.push({
-        date: logEntryDate,
-        id: logEntry.id,
-      });
-
-      // Find out what incidents need to be updated based on log entry type
-      if (logEntry.type === RESOLVE_LOG_ENTRY || logEntry.type === UNLINK_LOG_ENTRY) {
-        // We no longer need to remove the incident as filters later on take care of this
-        updateSet.add(logEntry);
-      } else if (logEntry.type === TRIGGER_LOG_ENTRY) {
-        addSet.add(logEntry);
-      } else if (logEntry.type === ANNOTATE_LOG_ENTRY) {
-        // Handle special case for notes: create synthetic notes object
-        const modifiedLogEntry = { ...logEntry };
-        const tempIncident = { ...modifiedLogEntry.incident };
-        tempIncident.notes = [
-          {
-            id: null, // This is missing in log_entries
-            user: logEntry.agent,
-            channel: {
-              summary: 'The PagerDuty website or APIs',
-            },
-            content: logEntry.channel.summary,
-            created_at: logEntry.created_at,
-          },
-        ];
-        modifiedLogEntry.incident = tempIncident;
-        updateSet.add(modifiedLogEntry);
-      } else if (logEntry.type === LINK_LOG_ENTRY) {
-        // Handle special case for alerts: create synthetic alerts object
-        // TODO: Consider moving this logic to updateIncidentsList saga
-        linkLogEntryList.push(logEntry);
-      } else {
-        // Assume everything else is an update
-        updateSet.add(logEntry);
-      }
-    }
-
-    // Deduplicate link log entries on incident id, then fetch alerts and patch incident object
-    linkLogEntryList.sort((a, b) => new Date(b.created_at) - new Date(a.created_at)); // Force reverse sort for find below
-    const incidentIds = [...new Set(linkLogEntryList.map((logEntry) => logEntry.incident.id))];
-    for (let i = 0; i < incidentIds.length; i++) {
-      const incidentId = incidentIds[i];
-      const modifiedLogEntry = {
-        ...linkLogEntryList.find((logEntry) => logEntry.incident.id === incidentId),
-      };
-      const tempIncident = { ...modifiedLogEntry.incident };
-      // FIXME: Pagination fails beyond the max limit below - need to replace PDJS lib.
-      const alertsResponse = yield call(pd.all, `incidents/${incidentId}/alerts`, {
-        data: { limit: 100 },
-      });
-      const fetchedAlerts = [];
-      alertsResponse.data.forEach((data) => {
-        fetchedAlerts.push(...data.alerts);
-      });
-      tempIncident.alerts = fetchedAlerts;
-      modifiedLogEntry.incident = tempIncident;
-      updateSet.add(modifiedLogEntry);
-    }
-
-    // Generate update lists from sets
-    const addList = [...addSet].filter((x) => !removeSet.has(x));
-    const updateList = [...updateSet].filter((x) => !removeSet.has(x) && !addSet.has(x));
-    const removeList = [...removeSet];
-
-    // Update recent log entries and dispatch update incident list
-    yield put({
-      type: UPDATE_RECENT_LOG_ENTRIES_COMPLETED,
-      recentLogEntries: recentLogEntriesLocal,
-    });
-    yield put({
-      type: UPDATE_INCIDENTS_LIST,
-      addList,
-      updateList,
-      removeList,
-    });
-  } catch (e) {
-    yield put({ type: UPDATE_RECENT_LOG_ENTRIES_ERROR, message: e.message });
-  }
-}
-
 export function* cleanRecentLogEntriesAsync() {
   yield takeLatest(CLEAN_RECENT_LOG_ENTRIES, cleanRecentLogEntries);
 }
@@ -198,7 +122,7 @@ export function* cleanRecentLogEntries() {
   try {
     yield put({
       type: CLEAN_RECENT_LOG_ENTRIES_COMPLETED,
-      recentLogEntries: [],
+      recentLogEntries: {},
     });
   } catch (e) {
     yield put({ type: CLEAN_RECENT_LOG_ENTRIES_ERROR, message: e.message });

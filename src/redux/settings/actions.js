@@ -3,6 +3,9 @@
 export const TOGGLE_SETTINGS_REQUESTED = 'TOGGLE_SETTINGS_REQUESTED';
 export const TOGGLE_SETTINGS_COMPLETED = 'TOGGLE_SETTINGS_COMPLETED';
 
+export const TOGGLE_COLUMNS_REQUESTED = 'TOGGLE_COLUMNS_REQUESTED';
+export const TOGGLE_COLUMNS_COMPLETED = 'TOGGLE_COLUMNS_COMPLETED';
+
 export const SET_DEFAULT_SINCE_DATE_TENOR_REQUESTED = 'SET_DEFAULT_SINCE_DATE_TENOR_REQUESTED';
 export const SET_DEFAULT_SINCE_DATE_TENOR_COMPLETED = 'SET_DEFAULT_SINCE_DATE_TENOR_COMPLETED';
 
@@ -27,9 +30,16 @@ export const CLEAR_LOCAL_CACHE_COMPLETED = 'CLEAR_LOCAL_CACHE_COMPLETED';
 export const SET_DARK_MODE_REQUESTED = 'SET_DARK_MODE_REQUESTED';
 export const SET_DARK_MODE_COMPLETED = 'SET_DARK_MODE_COMPLETED';
 
+export const SET_SERVER_SIDE_FILTERING_REQUESTED = 'SET_SERVER_SIDE_FILTERING_REQUESTED';
+export const SET_SERVER_SIDE_FILTERING_COMPLETED = 'SET_SERVER_SIDE_FILTERING_COMPLETED';
+
 // Define Actions
 export const toggleSettingsModal = () => ({
   type: TOGGLE_SETTINGS_REQUESTED,
+});
+
+export const toggleColumnsModal = () => ({
+  type: TOGGLE_COLUMNS_REQUESTED,
 });
 
 export const setDefaultSinceDateTenor = (defaultSinceDateTenor) => ({
@@ -69,4 +79,9 @@ export const clearLocalCache = () => ({
 export const setDarkMode = (darkMode) => ({
   type: SET_DARK_MODE_REQUESTED,
   darkMode,
+});
+
+export const setServerSideFiltering = (serverSideFiltering) => ({
+  type: SET_SERVER_SIDE_FILTERING_REQUESTED,
+  serverSideFiltering,
 });

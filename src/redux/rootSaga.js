@@ -25,11 +25,16 @@ import {
 
 import {
   getIncidentsAsync,
-  refreshIncidentsAsync,
+  // refreshIncidentsAsync,
+  getIncidentAlertsAsync,
   getIncidentNotesAsync,
-  getAllIncidentNotesAsync,
-  getAllIncidentAlertsAsync,
-  updateIncidentsListAsync,
+  // getAllIncidentNotesAsync,
+  // getAllIncidentAlertsAsync,
+  // updateIncidentsListAsync,
+  processLogEntries,
+  updateIncidentAlerts,
+  updateIncidentNotes,
+  filterIncidents,
   filterIncidentsByPriority,
   filterIncidentsByStatus,
   filterIncidentsByUrgency,
@@ -41,7 +46,7 @@ import {
 
 import {
   getLogEntriesAsync,
-  updateRecentLogEntriesAsync,
+  // updateRecentLogEntriesAsync,
   cleanRecentLogEntriesAsync,
 } from './log_entries/sagas';
 
@@ -108,6 +113,7 @@ import {
 // eslint-disable-next-line import/no-cycle
 import {
   toggleSettingsModal,
+  toggleColumnsModal,
   setDefaultSinceDateTenor,
   setAlertCustomDetailColumns,
   setMaxIncidentsLimit,
@@ -115,6 +121,7 @@ import {
   setAutoAcceptIncidentsQuery,
   setAutoRefreshInterval,
   setDarkMode,
+  setServerSideFiltering,
   clearLocalCache,
 } from './settings/sagas';
 
@@ -150,11 +157,16 @@ export default function* rootSaga() {
 
     // Incidents
     getIncidentsAsync(),
-    refreshIncidentsAsync(),
+    // refreshIncidentsAsync(),
+    getIncidentAlertsAsync(),
     getIncidentNotesAsync(),
-    getAllIncidentNotesAsync(),
-    getAllIncidentAlertsAsync(),
-    updateIncidentsListAsync(),
+    // getAllIncidentNotesAsync(),
+    // getAllIncidentAlertsAsync(),
+    // updateIncidentsListAsync(),
+    processLogEntries(),
+    updateIncidentAlerts(),
+    updateIncidentNotes(),
+    filterIncidents(),
     filterIncidentsByPriority(),
     filterIncidentsByStatus(),
     filterIncidentsByUrgency(),
@@ -165,7 +177,7 @@ export default function* rootSaga() {
 
     // Log Entries
     getLogEntriesAsync(),
-    updateRecentLogEntriesAsync(),
+    // updateRecentLogEntriesAsync(),
     cleanRecentLogEntriesAsync(),
 
     // Incident Table
@@ -226,6 +238,7 @@ export default function* rootSaga() {
 
     // Settings
     toggleSettingsModal(),
+    toggleColumnsModal(),
     setDefaultSinceDateTenor(),
     setAlertCustomDetailColumns(),
     setMaxIncidentsLimit(),
@@ -233,6 +246,7 @@ export default function* rootSaga() {
     setAutoAcceptIncidentsQuery(),
     setAutoRefreshInterval(),
     setDarkMode(),
+    setServerSideFiltering(),
     clearLocalCache(),
 
     // Connection

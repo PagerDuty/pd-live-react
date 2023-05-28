@@ -3,24 +3,23 @@
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 /* eslint-disable consistent-return */
 /* eslint-disable no-nested-ternary */
+
 import {
   useEffect, useMemo, useCallback, useState,
 } from 'react';
+
 import {
-  connect,
+  useSelector,
+  useDispatch,
 } from 'react-redux';
+
 import {
   useDebouncedCallback,
 } from 'use-debounce';
 
-import mezr from 'mezr';
 import {
   FixedSizeList,
 } from 'react-window';
-
-import i18next from 'i18n';
-
-import BTable from 'react-bootstrap/Table';
 
 import {
   useTable, useSortBy, useRowSelect, useBlockLayout, useResizeColumns,
@@ -32,17 +31,28 @@ import {
 } from 'redux/incident_table/actions';
 
 import {
-  getReactTableColumnSchemas,
-} from 'config/incident-table-columns';
+  getIncidentAlertsAsync as getIncidentAlertsAsyncConnected,
+  getIncidentNotesAsync as getIncidentNotesAsyncConnected,
+} from 'redux/incidents/actions';
 
 import {
   ContextMenu, MenuItem, ContextMenuTrigger,
 } from 'react-contextmenu';
 
+import {
+  columnsForSavedColumns,
+} from 'config/column-generator';
+
+import {
+  Box,
+  Text,
+} from '@chakra-ui/react';
+
 import CheckboxComponent from './subcomponents/CheckboxComponent';
 import EmptyIncidentsComponent from './subcomponents/EmptyIncidentsComponent';
 import QueryActiveComponent from './subcomponents/QueryActiveComponent';
 import QueryCancelledComponent from './subcomponents/QueryCancelledComponent';
+import IncidentTableRow from './subcomponents/IncidentTableRow';
 
 import './IncidentTableComponent.scss';
 
@@ -75,11 +85,15 @@ const Delayed = ({
   return isShown ? children : null;
 };
 
+// TODO: Make CSV Export work properly
+// (fetch all the notes and alerts for the selected incidents,
+//   warn the user if that will take a long time)
 const exportTableDataToCsv = (tableData) => {
   // Create headers from table columns
   const headers = tableData.columns.map((column) => column.Header);
 
-  const rowsToMap = tableData.selectedFlatRows.length > 0 ? tableData.selectedFlatRows : tableData.rows;
+  const rowsToMap = tableData.selectedFlatRows.length > 0
+    ? tableData.selectedFlatRows : tableData.rows;
   const exportRows = rowsToMap.map((row) => {
     tableData.prepareRow(row);
     const cells = row.cells.slice(1);
@@ -109,14 +123,30 @@ const exportTableDataToCsv = (tableData) => {
 };
 
 const IncidentTableComponent = ({
-  selectIncidentTableRows,
-  updateIncidentTableState,
-  incidentTable,
-  incidentActions,
-  incidents,
-  querySettings,
-  users,
+  headerRef,
+  footerRef,
 }) => {
+  const incidentTable = useSelector((state) => state.incidentTable);
+  const incidentActions = useSelector((state) => state.incidentActions);
+  const incidents = useSelector((state) => state.incidents);
+  const querySettings = useSelector((state) => state.querySettings);
+  const currentUserLocale = useSelector((state) => state.users.currentUserLocale);
+
+  const dispatch = useDispatch();
+  const selectIncidentTableRows = (allSelected, selectedCount, selectedRows) => {
+    dispatch(selectIncidentTableRowsConnected(allSelected, selectedCount, selectedRows));
+  };
+  const updateIncidentTableState = (incidentTableState) => {
+    dispatch(updateIncidentTableStateConnected(incidentTableState));
+  };
+  const getIncidentAlerts = (incidentId) => {
+    dispatch(getIncidentAlertsAsyncConnected(incidentId));
+  };
+  const getIncidentNotes = (incidentId) => {
+    dispatch(getIncidentNotesAsyncConnected(incidentId));
+  };
+
+  // TODO: clean this up
   const {
     incidentTableState, incidentTableColumns,
   } = incidentTable;
@@ -124,14 +154,14 @@ const IncidentTableComponent = ({
     status,
   } = incidentActions;
   const {
-    filteredIncidentsByQuery, fetchingIncidents,
+    filteredIncidentsByQuery,
+    incidentAlerts,
+    incidentNotes,
+    fetchingIncidents,
   } = incidents;
   const {
     displayConfirmQueryModal,
   } = querySettings;
-  const {
-    currentUserLocale,
-  } = users;
 
   // React Table Config
   const defaultColumn = useMemo(
@@ -143,25 +173,47 @@ const IncidentTableComponent = ({
     [],
   );
 
-  const memoizedColumns = useMemo(() => {
-    const tempReactTableColumns = getReactTableColumnSchemas(incidentTableColumns).map((col) => {
-      // Monkeypatch for i18n
-      const tempCol = { ...col };
-      tempCol.Header = i18next.t(col.Header);
-      return tempCol;
-    });
-    return tempReactTableColumns;
-  }, [incidentTableColumns, currentUserLocale]);
+  const columns = useMemo(() => columnsForSavedColumns(incidentTableColumns),
+    [incidentTableColumns, currentUserLocale]);
+
+  const tableData = useMemo(() => filteredIncidentsByQuery.map(
+    (incident) => ({
+      ...incident,
+      alerts: incidentAlerts[incident.id],
+      notes: incidentNotes[incident.id],
+    }),
+  ), [filteredIncidentsByQuery, incidentAlerts, incidentNotes]);
 
   const scrollBarSize = useMemo(() => scrollbarWidth(), []);
 
   // Dynamic Table Height
-  const querySettingsEl = document.getElementById('query-settings-ctr');
-  const incidentActionsEl = document.getElementById('incident-actions-ctr');
-  const incidentActionsHeight = incidentActionsEl ? mezr.height(incidentActionsEl) + 50 : 0;
-  const distanceBetweenQueryAndAction = incidentActionsEl
-    ? mezr.distance([querySettingsEl, 'border'], [incidentActionsEl, 'border'])
-    : 0;
+  const [tableHeight, setTableHeight] = useState(0);
+
+  const calculateTableHeight = () => {
+    const headerEl = document.querySelector('header');
+    const footerEl = document.querySelector('footer');
+    const headerRect = headerEl.getBoundingClientRect();
+    const footerRect = footerEl.getBoundingClientRect();
+    const rectDistance = footerRect.top - headerRect.bottom;
+    setTableHeight(rectDistance);
+  };
+  const resizeObserver = useMemo(() => new ResizeObserver(() => {
+    calculateTableHeight();
+  }), []);
+
+  useEffect(() => {
+    const headerEl = document.querySelector('header');
+    const footerEl = document.querySelector('footer');
+    if (headerEl && footerEl) {
+      resizeObserver.observe(headerEl);
+      resizeObserver.observe(footerEl);
+    }
+  }, [resizeObserver, headerRef, footerRef]);
+
+  useEffect(() => {
+    window.addEventListener('resize', calculateTableHeight);
+    return () => window.removeEventListener('resize', calculateTableHeight);
+  }, []);
 
   // Debouncing for table state
   const debouncedUpdateIncidentTableState = useDebouncedCallback((state, action) => {
@@ -169,16 +221,16 @@ const IncidentTableComponent = ({
     if (action.type === 'toggleSortBy' || action.type === 'columnDoneResizing') {
       updateIncidentTableState(state);
     }
-  }, 1000);
+  }, 500);
 
   // Custom row id fetch to handle dynamic table updates
   const getRowId = useCallback((row) => row.id, []);
 
   // Create instance of react-table with options and plugins
-  const tableHook = useTable(
+  const tableInstance = useTable(
     {
-      columns: memoizedColumns,
-      data: filteredIncidentsByQuery, // Potential issue with Memoization hook?
+      columns,
+      data: tableData,
       defaultColumn,
       getRowId,
       // Prevent re-render when redux store updates
@@ -202,10 +254,10 @@ const IncidentTableComponent = ({
     useBlockLayout,
     useResizeColumns,
     (hooks) => {
-      hooks.visibleColumns.push((columns) => [
-        // Let's make a column for selection
+      // Let's make a column for selection
+      hooks.visibleColumns.push((existingColumns) => [
         {
-          id: 'selection',
+          id: 'select',
           disableResizing: true,
           minWidth: 35,
           width: 35,
@@ -213,31 +265,26 @@ const IncidentTableComponent = ({
           Header: ({
             getToggleAllRowsSelectedProps,
           }) => (
-            <div>
-              <CheckboxComponent id="all-incidents-checkbox" {...getToggleAllRowsSelectedProps()} />
-            </div>
+            <CheckboxComponent
+              id="select-all"
+              {...getToggleAllRowsSelectedProps()}
+            />
           ),
           Cell: ({
             row,
           }) => (
-            <div>
-              <CheckboxComponent
-                data-incident-row-idx={row.index}
-                data-incident-id={row.original.id}
-                {...row.getToggleRowSelectedProps()}
-              />
-            </div>
+            <CheckboxComponent
+              id={`${row.original.id}-checkbox`}
+              {...row.getToggleRowSelectedProps()}
+            />
           ),
         },
-        ...columns,
+        ...existingColumns,
       ]);
     },
   );
 
   const {
-    state: {
-      selectedRowIds,
-    },
     getTableProps,
     getTableBodyProps,
     headerGroups,
@@ -246,44 +293,13 @@ const IncidentTableComponent = ({
     selectedFlatRows,
     toggleAllRowsSelected,
     totalColumnsWidth,
-  } = tableHook;
-
-  // Custom component required for virtualized rows
-  const RenderRow = useCallback(
-    ({
-      index, style,
-    }) => {
-      const row = rows[index];
-      prepareRow(row);
-      return (
-        <tr
-          {...row.getRowProps({
-            style,
-          })}
-          className={index % 2 === 0 ? 'tr' : 'tr-odd'}
-        >
-          {row.cells.map((cell) => (
-            <td
-              {...cell.getCellProps()}
-              className="td"
-              data-incident-header={cell.column.Header}
-              data-incident-row-cell-idx={row.index}
-              data-incident-cell-id={row.original.id}
-            >
-              {cell.render('Cell')}
-            </td>
-          ))}
-        </tr>
-      );
-    },
-    [prepareRow, rows, selectedRowIds],
-  );
+  } = tableInstance;
 
   // Row selection hooks
   useEffect(() => {
     const selectedRows = selectedFlatRows.map((row) => row.original);
     selectIncidentTableRows(true, selectedRows.length, selectedRows);
-    return () => {};
+    return () => { };
   }, [selectedFlatRows]);
 
   // Handle deselecting rows after incident action has completed
@@ -316,85 +332,100 @@ const IncidentTableComponent = ({
 
   if (!fetchingIncidents && filteredIncidentsByQuery.length > 0) {
     return (
-      <div className="incident-table-ctr">
-        <div className="incident-table">
-          <BTable responsive="sm" hover size="sm" {...getTableProps()}>
-            <table className="table">
-              <thead className="thead">
-                {headerGroups.map((headerGroup) => (
-                  <ContextMenuTrigger id="header-contextmenu">
-                    <tr {...headerGroup.getHeaderGroupProps()}>
-                      {headerGroup.headers.map((column) => (
-                        <th
-                          data-column-name={column.Header}
-                          className={column.isSorted ? 'th-sorted' : 'th'}
-                          {...column.getHeaderProps(column.getSortByToggleProps())}
-                        >
-                          {column.render('Header')}
-                          <span>{column.isSorted ? (column.isSortedDesc ? ' ▼' : ' ▲') : ''}</span>
-                          {column.canResize && (
-                            <div
-                              {...column.getResizerProps()}
-                              className={`resizer ${column.isResizing ? 'isResizing' : ''}`}
-                              onClick={(e) => {
-                                e.preventDefault();
-                                e.stopPropagation();
-                              }}
-                            />
-                          )}
-                        </th>
-                      ))}
-                    </tr>
-                  </ContextMenuTrigger>
+      <Box
+        {...getTableProps()}
+        height={`${tableHeight}px`}
+        overflow="scroll"
+        fontSize="sm"
+      >
+        <Box>
+          <ContextMenuTrigger
+            id="header-contextmenu-csv"
+            key="header-contextmenu-csv"
+          >
+            {headerGroups.map((headerGroup) => (
+              <Box {...headerGroup.getHeaderGroupProps()}>
+                {headerGroup.headers.map((column) => (
+                  <Box
+                    data-column-name={column.id === 'select' ? 'select' : column.Header}
+                    {...column.getHeaderProps()}
+                    className={column.isSorted ? 'th-sorted' : 'th'}
+                  >
+                    <Box {...column.getSortByToggleProps()} className="th-sort">
+                      <Text
+                        textOverflow="ellipsis"
+                        overflow="hidden"
+                        whiteSpace="nowrap"
+                        display="inline"
+                      >
+                        {column.render('Header')}
+                      </Text>
+                      <span>{column.isSorted ? (column.isSortedDesc ? ' ▼' : ' ▲') : ''}</span>
+                    </Box>
+                    {column.canResize && (
+                      <Box
+                        {...column.getResizerProps()}
+                        className={`resizer ${column.isResizing ? 'isResizing' : ''}`}
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                        }}
+                      />
+                    )}
+                  </Box>
                 ))}
-              </thead>
-              <tbody {...getTableBodyProps()} className="tbody">
-                <FixedSizeList
-                  className="incident-table-fixed-list"
-                  height={distanceBetweenQueryAndAction - incidentActionsHeight}
-                  itemCount={rows.length}
-                  itemSize={60}
-                  width={totalColumnsWidth + scrollBarSize}
-                >
-                  {RenderRow}
-                </FixedSizeList>
-              </tbody>
-            </table>
-          </BTable>
-          <ContextMenu id="header-contextmenu" style={{ zIndex: 2 }}>
+              </Box>
+            ))}
+          </ContextMenuTrigger>
+          <ContextMenu id="header-contextmenu-csv" style={{ zIndex: 2 }}>
             <MenuItem
               className="dropdown-item"
               onClick={() => {
-                exportTableDataToCsv(tableHook);
+                exportTableDataToCsv(tableInstance);
               }}
             >
               Export CSV
-              {tableHook.selectedFlatRows.length > 0
-                ? ` (${tableHook.selectedFlatRows.length} rows)`
-                : ` (${tableHook.rows.length} rows)`}
+              {tableInstance.selectedFlatRows.length > 0
+                ? ` (${tableInstance.selectedFlatRows.length} rows)`
+                : ` (${tableInstance.rows.length} rows)`}
+            </MenuItem>
+            <MenuItem
+              className="dropdown-item"
+              onClick={() => {
+                // eslint-disable-next-line no-console
+                console.log(tableData);
+              }}
+            >
+              {/* TODO: remove this */}
+              Log stuff
             </MenuItem>
           </ContextMenu>
-        </div>
-      </div>
+        </Box>
+        <Box
+          {...getTableBodyProps()}
+        >
+          <FixedSizeList
+            className="incident-table-fixed-list"
+            height={tableHeight - 60}
+            itemCount={rows.length}
+            itemSize={60}
+            itemKey={(index) => rows[index].id}
+            width={totalColumnsWidth + scrollBarSize}
+          >
+            {
+              (rowProps) => IncidentTableRow({
+                ...rowProps,
+                rows,
+                prepareRow,
+                getIncidentAlerts,
+                getIncidentNotes,
+              })
+            }
+          </FixedSizeList>
+        </Box>
+      </Box>
     );
   }
 };
 
-const mapStateToProps = (state) => ({
-  incidentTable: state.incidentTable,
-  incidentActions: state.incidentActions,
-  incidents: state.incidents,
-  querySettings: state.querySettings,
-  users: state.users,
-});
-
-const mapDispatchToProps = (dispatch) => ({
-  selectIncidentTableRows: (allSelected, selectedCount, selectedRows) => {
-    dispatch(selectIncidentTableRowsConnected(allSelected, selectedCount, selectedRows));
-  },
-  updateIncidentTableState: (incidentTableState) => {
-    dispatch(updateIncidentTableStateConnected(incidentTableState));
-  },
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(IncidentTableComponent);
+export default IncidentTableComponent;

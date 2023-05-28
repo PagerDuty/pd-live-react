@@ -3,12 +3,18 @@ import {
 } from 'react-redux';
 
 import {
-  OverlayTrigger, Tooltip,
-} from 'react-bootstrap';
+  Avatar,
+  Tooltip,
+  Link,
+} from '@chakra-ui/react';
 
-import {
-  getInitials,
-} from 'util/helpers';
+// import {
+//   OverlayTrigger, Tooltip,
+// } from 'react-bootstrap';
+
+// import {
+//   getInitials,
+// } from 'util/helpers';
 
 const PersonInitialsComponent = ({
   users, displayedUsers,
@@ -28,7 +34,7 @@ const PersonInitialsComponent = ({
       }
       return {
         summary: user.summary,
-        initials: getInitials(user.summary),
+        // initials: getInitials(user.summary),
         id: user.id,
         html_url: user.html_url,
         color: CSS.supports('color', color) ? color : 'black',
@@ -36,39 +42,28 @@ const PersonInitialsComponent = ({
     })
     : [];
 
-  if (displayedUsersByInitials.length > 0) {
-    return (
-      <div>
-        {displayedUsersByInitials.map((user) => (
-          <OverlayTrigger
-            key={user.id}
-            placement="top"
-            overlay={<Tooltip id={`tooltip-${user.id}`}>{user.summary}</Tooltip>}
-          >
-            <div
-              data-user-id={user.id}
-              style={{
-                backgroundColor: user.color,
-                height: '32px',
-                width: '32px',
-                color: 'white',
-                display: 'table-cell',
-                textAlign: 'center',
-                lineHeight: 'initial',
-                verticalAlign: 'middle',
-                fontWeight: 700,
-                borderRadius: '100%',
-              }}
-            >
-              {user.initials}
-            </div>
-          </OverlayTrigger>
-        ))}
-      </div>
-    );
-  }
-
-  return <div />;
+  return (
+    <div>
+      {displayedUsersByInitials.map((user) => (
+        <Tooltip
+          key={user.id}
+          label={user.summary}
+          aria-label={user.summary}
+        >
+          <Link isExternal href={user.html_url}>
+            <Avatar
+              color="white"
+              mr={1}
+              name={user.summary}
+              href={user.html_url}
+              size="sm"
+              bg={user.color}
+            />
+          </Link>
+        </Tooltip>
+      ))}
+    </div>
+  );
 };
 
 const mapStateToProps = (state) => ({

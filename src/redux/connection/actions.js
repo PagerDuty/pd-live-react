@@ -12,11 +12,19 @@ export const CHECK_ABILITIES_REQUESTED = 'CHECK_ABILITIES_REQUESTED';
 export const CHECK_ABILITIES_COMPLETED = 'CHECK_ABILITIES_COMPLETED';
 export const CHECK_ABILITIES_ERROR = 'CHECK_ABILITIES_ERROR';
 
+export const SAVE_ERROR_REQUESTED = 'SAVE_ERROR_REQUESTED';
+export const SAVE_ERROR_COMPLETED = 'SAVE_ERROR_COMPLETED';
+
 // Define Actions
-export const updateConnectionStatus = (connectionStatus, connectionStatusMessage) => ({
+export const updateConnectionStatus = (
+  connectionStatus,
+  connectionStatusMessage,
+  messageDetail,
+) => ({
   type: UPDATE_CONNECTION_STATUS_REQUESTED,
   connectionStatus,
   connectionStatusMessage,
+  messageDetail,
 });
 
 export const updateQueueStats = (queueStats) => ({
@@ -30,4 +38,9 @@ export const checkConnectionStatus = () => ({
 
 export const checkAbilities = () => ({
   type: CHECK_ABILITIES_REQUESTED,
+});
+
+export const saveError = (error) => ({
+  type: SAVE_ERROR_REQUESTED,
+  error,
 });

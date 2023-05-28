@@ -2,7 +2,7 @@ import {
   put, takeLatest, select,
 } from 'redux-saga/effects';
 
-// eslint-disable-next-line import/no-cycle
+// TODO: Use column-generator
 import {
   getReactTableColumnSchemas,
 } from 'config/incident-table-columns';

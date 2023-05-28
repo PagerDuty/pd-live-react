@@ -1,6 +1,20 @@
+// you can use this to debug why did you render
+// import './wdyr';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './i18n';
+
+import {
+  ColorModeScript,
+  ChakraProvider,
+} from '@chakra-ui/react';
+
+import {
+  DndProvider,
+} from 'react-dnd';
+import {
+  HTML5Backend,
+} from 'react-dnd-html5-backend';
 
 import {
   Provider,
@@ -15,15 +29,30 @@ import {
 import App from 'App';
 import reportWebVitals from 'reportWebVitals';
 
+import theme from './theme';
 import 'index.scss';
 import 'react-datepicker/dist/react-datepicker.css';
+
+const toastOptions = {
+  defaultOptions: {
+    position: 'top',
+    duration: 5000,
+    isClosable: true,
+  },
+};
 
 ReactDOM.render(
   <Provider store={store}>
     <PersistGate loading={null} persistor={persistor}>
-      <React.StrictMode>
+      <ColorModeScript initialColorMode={theme.config.initialColorMode} />
+      <ChakraProvider toastOptions={toastOptions}>
+        <DndProvider backend={HTML5Backend}>
+          <App />
+        </DndProvider>
+      </ChakraProvider>
+      {/* <React.StrictMode>
         <App />
-      </React.StrictMode>
+      </React.StrictMode> */}
     </PersistGate>
   </Provider>,
   document.getElementById('root'),
