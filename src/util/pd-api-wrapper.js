@@ -1,7 +1,6 @@
 /* eslint-disable no-await-in-loop */
 /* eslint-disable no-loop-func */
 
-// TODO: validate that old requests expire properly when idle
 // TODO: bubble error state up to UI
 import {
   api,
@@ -33,7 +32,7 @@ export const getPdAccessTokenObject = () => {
     tokenType = 'bearer';
   }
 
-  // Return object neeed for PD API helpers
+  // Return object needed for PD API helpers
   if (tokenType === 'bearer') {
     return {
       token,
@@ -46,10 +45,6 @@ export const getPdAccessTokenObject = () => {
 };
 
 export const pd = api(getPdAccessTokenObject());
-
-/*
-  Throttled version of Axios requests for direct API calls
-*/
 
 export const pdAxiosRequest = async (method, endpoint, params = {}, data = {}) => axios({
   method,
@@ -71,15 +66,15 @@ export const pdAxiosRequest = async (method, endpoint, params = {}, data = {}) =
 
 // Ref: https://www.npmjs.com/package/bottleneck#refresh-interval
 const limiterSettings = {
-  reservoir: 200,
-  reservoirRefreshAmount: 200,
-  reservoirRefreshInterval: 60 * 1000,
   maxConcurrent: 20,
   minTime: Math.floor((60 / 200) * 1000),
 };
 
 const limiter = new Bottleneck(limiterSettings);
 
+/*
+  Throttled version of Axios requests for direct API calls
+*/
 export const throttledPdAxiosRequest = (
   method,
   endpoint,
@@ -89,6 +84,7 @@ export const throttledPdAxiosRequest = (
 ) => limiter.schedule(
   {
     expiration,
+    id: `${method}-${endpoint}-${JSON.stringify(params)}`,
   },
   () => pdAxiosRequest(method, endpoint, params, data),
 );
@@ -99,12 +95,10 @@ export const getLimiter = () => limiter;
 export const resetLimiterWithRateLimit = async (limit = 200) => {
   // eslint-disable-next-line no-console
   console.log(
-    `updating limiter with rate limit ${limit} and minTime ${Math.floor((60 / limit) * 1000)}`,
+    `updating limiter with rate limit ${limit} => minTime ${Math.floor((60 / limit) * 1000)}`,
   );
   limiter.updateSettings({
     ...limiterSettings,
-    reservoir: limit,
-    reservoirRefreshAmount: limit,
     minTime: Math.floor((60 / limit) * 1000),
   });
 };

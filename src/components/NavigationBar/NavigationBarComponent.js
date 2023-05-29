@@ -54,6 +54,7 @@ import {
   ReactComponent as Logo,
 } from 'assets/images/pd_logo_black.svg';
 
+import GlobalSearchComponent from 'components/GlobalSearch/GlobalSearchComponent';
 import QuerySettingsComponent from 'components/QuerySettings/QuerySettingsComponent';
 import DetailedStatusOverlay from 'components/DetailedStatusOverlay/DetailedStatusOverlay';
 import StatusBeaconComponent from './StatusBeaconComponent';
@@ -155,6 +156,7 @@ const NavigationBarComponent = () => {
         <Flex
           alignItems="center"
         >
+          <GlobalSearchComponent />
           <Tooltip
             label={isFiltersOpen ? t('Hide filters') : t('Show filters')}
           >
