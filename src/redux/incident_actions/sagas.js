@@ -40,6 +40,8 @@ import {
 } from 'util/pd-api-wrapper';
 import selectIncidentActions from './selectors';
 import {
+  ACTION_REQUESTED,
+  ACTION_COMPLETED,
   ACKNOWLEDGE_REQUESTED,
   ACKNOWLEDGE_COMPLETED,
   ACKNOWLEDGE_ERROR,
@@ -88,6 +90,16 @@ import {
 import {
   PROCESS_LOG_ENTRIES_COMPLETED,
 } from '../incidents/actions';
+
+export function* doAction() {
+  yield takeLatest(ACTION_REQUESTED, doActionImpl);
+}
+
+export function* doActionImpl() {
+  yield put({
+    type: ACTION_COMPLETED,
+  });
+}
 
 export function* acknowledgeAsync() {
   yield takeLatest(ACKNOWLEDGE_REQUESTED, acknowledge);

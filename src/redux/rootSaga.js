@@ -58,6 +58,7 @@ import {
 } from './incident_table/sagas';
 
 import {
+  doAction,
   acknowledgeAsync,
   escalateAsync,
   reassignAsync,
@@ -187,6 +188,7 @@ export default function* rootSaga() {
     selectIncidentTableRows(),
 
     // Incident Actions
+    doAction(),
     acknowledgeAsync(),
     escalateAsync(),
     reassignAsync(),

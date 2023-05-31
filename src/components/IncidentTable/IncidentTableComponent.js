@@ -305,7 +305,11 @@ const IncidentTableComponent = ({
   // Handle deselecting rows after incident action has completed
   useEffect(() => {
     // TODO: Get user feedback on this workflow
-    if (!status.includes('TOGGLE') && status.includes('COMPLETED')) toggleAllRowsSelected(false);
+    if (status === 'ACTION_COMPLETED') {
+      toggleAllRowsSelected(false);
+    } else if (!status.includes('TOGGLE') && status.includes('COMPLETED')) {
+      toggleAllRowsSelected(false);
+    }
   }, [status]);
 
   // Render components based on application state
