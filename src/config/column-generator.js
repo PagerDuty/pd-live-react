@@ -38,39 +38,55 @@ import {
 import StatusComponent from 'components/IncidentTable/subcomponents/StatusComponent';
 import PersonInitialsComponents from 'components/IncidentTable/subcomponents/PersonInitialsComponents';
 
+const CellDiv = ({
+  children,
+}) => (
+  <div className="td-wrapper">
+    {children}
+  </div>
+);
+
 const renderLinkCell = ({
   href,
   text,
 }) => (
-  <Link
-    ml={1}
-    href={href}
-    isExternal
-  >
-    {text}
-  </Link>
+  <CellDiv>
+    <Link
+      ml={1}
+      href={href}
+      isExternal
+    >
+      {text}
+    </Link>
+  </CellDiv>
 );
 
 const renderLinkCells = (linkObjs) => {
   const links = linkObjs.map(({
     text, href,
   }) => (
-    renderLinkCell({
-      key: `${text}: ${href}`,
-      text,
-      href,
-    })
+    <Link
+      ml={1}
+      href={href}
+      isExternal
+    >
+      {text}
+    </Link>
   ));
   return (
-    <>
+    <CellDiv>
       {links.reduce((prev, curr) => [prev, ', ', curr])}
-    </>
+    </CellDiv>
   );
 };
 
 const renderDateCell = ({
   iso8601Date,
-}) => moment(iso8601Date).format(DATE_FORMAT);
+}) => (
+  <CellDiv>
+    {moment(iso8601Date).format(DATE_FORMAT)}
+  </CellDiv>
+);
 
 export const incidentColumn = ({
   id,
