@@ -1,4 +1,6 @@
-import React from 'react';
+import React, {
+  useCallback,
+} from 'react';
 
 import {
   useSelector,
@@ -35,6 +37,9 @@ import {
 } from '@chakra-ui/icons';
 
 import {
+  toggleDisplayQuerySettings as toggleDisplayQuerySettingsConnected,
+} from 'redux/query_settings/actions';
+import {
   toggleSettingsModal as toggleSettingsModalConnected,
   toggleColumnsModal as toggleColumnsModalConnected,
   clearLocalCache as clearLocalCacheConnected,
@@ -65,7 +70,10 @@ const NavigationBarComponent = () => {
   } = useTranslation();
 
   const darkMode = useSelector((state) => state.settings.darkMode);
+  const displayQuerySettings = useSelector((state) => state.querySettings.displayQuerySettings);
+
   const dispatch = useDispatch();
+  const toggleDisplayQuerySettings = () => dispatch(toggleDisplayQuerySettingsConnected());
   const setDarkMode = (dark) => dispatch(setDarkModeConnected(dark));
   const toggleSettingsModal = () => dispatch(toggleSettingsModalConnected());
   const toggleColumnsModal = () => dispatch(toggleColumnsModalConnected());
@@ -79,11 +87,18 @@ const NavigationBarComponent = () => {
     toggleColorMode,
   } = useColorMode();
 
-  const {
-    isOpen: isFiltersOpen,
-    onOpen: onFiltersOpen,
-    onClose: onFiltersClose,
-  } = useDisclosure();
+  const hideQuerySettings = useCallback(() => {
+    if (displayQuerySettings) {
+      toggleDisplayQuerySettings();
+    }
+  }, [displayQuerySettings, toggleDisplayQuerySettings]);
+
+  const showQuerySettings = useCallback(() => {
+    if (!displayQuerySettings) {
+      toggleDisplayQuerySettings();
+    }
+  }, [displayQuerySettings, toggleDisplayQuerySettings]);
+
   const {
     isOpen: isDetailedStatusOpen,
     onOpen: onDetailedStatusOpen,
@@ -158,12 +173,12 @@ const NavigationBarComponent = () => {
         >
           <GlobalSearchComponent />
           <Tooltip
-            label={isFiltersOpen ? t('Hide filters') : t('Show filters')}
+            label={displayQuerySettings ? t('Hide filters') : t('Show filters')}
           >
             <IconButton
               aria-label="Toggle filters"
-              icon={isFiltersOpen ? <ViewOffIcon /> : <ViewIcon />}
-              onClick={isFiltersOpen ? onFiltersClose : onFiltersOpen}
+              icon={displayQuerySettings ? <ViewOffIcon /> : <ViewIcon />}
+              onClick={displayQuerySettings ? hideQuerySettings : showQuerySettings}
               size="sm"
               mr={1}
             />
@@ -248,10 +263,10 @@ const NavigationBarComponent = () => {
         style={{
           overflow: 'visible',
         }}
-        in={isFiltersOpen}
+        in={displayQuerySettings}
       >
         <Box
-          onClose={onFiltersClose}
+          onClose={hideQuerySettings}
         >
           <QuerySettingsComponent />
         </Box>
