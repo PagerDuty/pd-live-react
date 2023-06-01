@@ -53,6 +53,7 @@ import EmptyIncidentsComponent from './subcomponents/EmptyIncidentsComponent';
 import QueryActiveComponent from './subcomponents/QueryActiveComponent';
 import QueryCancelledComponent from './subcomponents/QueryCancelledComponent';
 import IncidentTableRow from './subcomponents/IncidentTableRow';
+import GetAllModal from './subcomponents/GetAllModal';
 
 import './IncidentTableComponent.scss';
 
@@ -88,9 +89,11 @@ const Delayed = ({
 // TODO: Make CSV Export work properly
 // (fetch all the notes and alerts for the selected incidents,
 //   warn the user if that will take a long time)
-const exportTableDataToCsv = (tableData) => {
+const doCsvExport = (tableData) => {
   // Create headers from table columns
-  const headers = tableData.columns.map((column) => column.Header);
+  const headers = tableData.columns
+    .filter((column) => column.id !== 'select')
+    .map((column) => column.Header);
 
   const rowsToMap = tableData.selectedFlatRows.length > 0
     ? tableData.selectedFlatRows : tableData.rows;
@@ -295,6 +298,11 @@ const IncidentTableComponent = ({
     totalColumnsWidth,
   } = tableInstance;
 
+  const [displayGetAllModal, setDisplayGetAllModal] = useState(false);
+  const exportCsv = useCallback(() => {
+    doCsvExport(tableInstance);
+  }, [tableInstance]);
+
   // Row selection hooks
   useEffect(() => {
     const selectedRows = selectedFlatRows.map((row) => row.original);
@@ -385,7 +393,7 @@ const IncidentTableComponent = ({
             <MenuItem
               className="dropdown-item"
               onClick={() => {
-                exportTableDataToCsv(tableInstance);
+                setDisplayGetAllModal(true);
               }}
             >
               Export CSV
@@ -427,6 +435,11 @@ const IncidentTableComponent = ({
             }
           </FixedSizeList>
         </Box>
+        <GetAllModal
+          isOpen={displayGetAllModal}
+          onClose={() => setDisplayGetAllModal(false)}
+          exportCsv={exportCsv}
+        />
       </Box>
     );
   }

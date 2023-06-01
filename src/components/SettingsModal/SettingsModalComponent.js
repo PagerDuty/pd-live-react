@@ -97,9 +97,6 @@ const SettingsModalComponent = () => {
   const setMaxRateLimit = (newMaxRateLimit) => {
     dispatch(setMaxRateLimitConnected(newMaxRateLimit));
   };
-  // const setDarkMode = (newDarkMode) => {
-  //   dispatch(setDarkModeConnected(newDarkMode));
-  // };
   const setServerSideFiltering = (newServerSideFiltering) => {
     dispatch(setServerSideFilteringConnected(newServerSideFiltering));
   };
