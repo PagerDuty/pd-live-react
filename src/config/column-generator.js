@@ -293,7 +293,7 @@ export const defaultIncidentColumns = () => ([
   }),
   incidentColumn({
     header: 'Priority',
-    accessor: 'priority.summary',
+    accessor: (incident) => (incident.priority?.summary || ''),
     minWidth: 90,
     renderer: ({
       value,
