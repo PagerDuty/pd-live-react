@@ -88,11 +88,19 @@ const renderDateCell = ({
   </CellDiv>
 );
 
+const renderPlainTextCell = ({
+  value,
+}) => (
+  <CellDiv>
+    {value}
+  </CellDiv>
+);
+
 export const incidentColumn = ({
   id,
   header,
   accessor,
-  renderer,
+  renderer = renderPlainTextCell,
   minWidth,
   sortType,
 }) => {
@@ -101,15 +109,14 @@ export const incidentColumn = ({
     Header: i18next.t(header),
     i18n: i18next.t(header),
     accessor,
+    Cell: renderer,
     minWidth,
   };
 
   if (id) {
     column.id = id;
   }
-  if (renderer) {
-    column.Cell = renderer;
-  }
+
   if (sortType) {
     column.sortType = sortType;
   }
@@ -384,15 +391,22 @@ export const defaultIncidentColumns = () => ([
       row: {
         original,
       },
-    }) => {
-      if (original.notes && original.notes.length > 0) {
-        return original.notes.slice(-1)[0].content;
-      }
-      if (original.notes && original.notes.length === 0) {
-        return '--';
-      }
-      return `${i18next.t('Fetching Notes')} ...`;
-    },
+    }) => (
+      <CellDiv>
+        {
+          original.notes?.length > 0
+          && original.notes.slice(-1)[0].content
+        }
+        {
+          original.notes?.length === 0
+          && '--'
+        }
+        {
+          original.notes?.status === 'fetching'
+          && `${i18next.t('Fetching Notes')} ...`
+        }
+      </CellDiv>
+    ),
   }),
   incidentColumn({
     id: 'external_references',

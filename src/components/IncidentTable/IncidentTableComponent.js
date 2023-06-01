@@ -195,6 +195,7 @@ const IncidentTableComponent = ({
   const calculateTableHeight = () => {
     const headerEl = document.querySelector('header');
     const footerEl = document.querySelector('footer');
+    if (!headerEl || !footerEl) return;
     const headerRect = headerEl.getBoundingClientRect();
     const footerRect = footerEl.getBoundingClientRect();
     const rectDistance = footerRect.top - headerRect.bottom;

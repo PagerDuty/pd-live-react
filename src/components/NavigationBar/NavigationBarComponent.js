@@ -37,6 +37,15 @@ import {
 } from '@chakra-ui/icons';
 
 import {
+  PD_OAUTH_CLIENT_ID,
+  PD_OAUTH_CLIENT_SECRET,
+} from 'config/constants';
+
+import {
+  revokeToken,
+} from 'util/auth';
+
+import {
   toggleDisplayQuerySettings as toggleDisplayQuerySettingsConnected,
 } from 'redux/query_settings/actions';
 import {
@@ -220,6 +229,10 @@ const NavigationBarComponent = () => {
               </MenuItem>
               <MenuItem
                 onClick={() => {
+                  const token = sessionStorage.getItem('pd_access_token');
+                  if (token) {
+                    revokeToken(token, PD_OAUTH_CLIENT_ID, PD_OAUTH_CLIENT_SECRET);
+                  }
                   userAcceptDisclaimer();
                   userUnauthorize();
                   stopMonitoring();
