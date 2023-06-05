@@ -501,7 +501,7 @@ const IncidentTableComponent = () => {
         >
           <FixedSizeList
             className="incident-table-fixed-list"
-            height={tableHeight}
+            height={tableHeight - 45}
             itemCount={rows.length}
             itemSize={60}
             itemKey={(index) => rows[index].id}

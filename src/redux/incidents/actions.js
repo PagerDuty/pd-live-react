@@ -20,13 +20,17 @@ export const FETCH_INCIDENT_ALERTS_REQUESTED = 'FETCH_INCIDENT_ALERTS_REQUESTED'
 export const FETCH_INCIDENT_ALERTS_COMPLETED = 'FETCH_INCIDENT_ALERTS_COMPLETED';
 export const FETCH_INCIDENT_ALERTS_ERROR = 'FETCH_INCIDENT_ALERTS_ERROR';
 
-export const UPDATE_INCIDENTS_LIST = 'UPDATE_INCIDENTS_LIST';
-export const UPDATE_INCIDENTS_LIST_COMPLETED = 'UPDATE_INCIDENTS_LIST_COMPLETED';
-export const UPDATE_INCIDENTS_LIST_ERROR = 'UPDATE_INCIDENTS_LIST_ERROR';
+// export const UPDATE_INCIDENTS_LIST = 'UPDATE_INCIDENTS_LIST';
+// export const UPDATE_INCIDENTS_LIST_COMPLETED = 'UPDATE_INCIDENTS_LIST_COMPLETED';
+// export const UPDATE_INCIDENTS_LIST_ERROR = 'UPDATE_INCIDENTS_LIST_ERROR';
 
 export const PROCESS_LOG_ENTRIES = 'PROCESS_LOG_ENTRIES';
 export const PROCESS_LOG_ENTRIES_COMPLETED = 'PROCESS_LOG_ENTRIES_COMPLETED';
 export const PROCESS_LOG_ENTRIES_ERROR = 'PROCESS_LOG_ENTRIES_ERROR';
+
+export const UPDATE_INCIDENTS = 'UPDATE_INCIDENTS';
+export const UPDATE_INCIDENTS_COMPLETED = 'UPDATE_INCIDENTS_COMPLETED';
+export const UPDATE_INCIDENTS_ERROR = 'UPDATE_INCIDENTS_ERROR';
 
 export const UPDATE_INCIDENT_ALERTS = 'UPDATE_INCIDENT_ALERTS';
 export const UPDATE_INCIDENT_ALERTS_COMPLETED = 'UPDATE_INCIDENT_ALERTS_COMPLETED';
@@ -100,11 +104,16 @@ export const getIncidentNotesAsync = (incidentId) => ({
   incidentId,
 });
 
-export const updateIncidentsListAsync = (addList = [], updateList = [], removeList = []) => ({
-  type: UPDATE_INCIDENTS_LIST,
-  addList,
-  updateList,
-  removeList,
+// export const updateIncidentsListAsync = (addList = [], updateList = [], removeList = []) => ({
+//   type: UPDATE_INCIDENTS_LIST,
+//   addList,
+//   updateList,
+//   removeList,
+// });
+
+export const updateIncidents = (updatedIncidents = []) => ({
+  type: UPDATE_INCIDENTS,
+  updatedIncidents,
 });
 
 export const updateIncidentAlerts = (incidentId, alerts = []) => ({

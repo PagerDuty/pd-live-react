@@ -17,12 +17,15 @@ import {
   FETCH_INCIDENT_NOTES_REQUESTED,
   FETCH_INCIDENT_NOTES_COMPLETED,
   FETCH_INCIDENT_NOTES_ERROR,
-  UPDATE_INCIDENTS_LIST,
-  UPDATE_INCIDENTS_LIST_COMPLETED,
-  UPDATE_INCIDENTS_LIST_ERROR,
+  // UPDATE_INCIDENTS_LIST,
+  // UPDATE_INCIDENTS_LIST_COMPLETED,
+  // UPDATE_INCIDENTS_LIST_ERROR,
   PROCESS_LOG_ENTRIES,
   PROCESS_LOG_ENTRIES_COMPLETED,
   PROCESS_LOG_ENTRIES_ERROR,
+  UPDATE_INCIDENTS,
+  UPDATE_INCIDENTS_COMPLETED,
+  UPDATE_INCIDENTS_ERROR,
   UPDATE_INCIDENT_ALERTS,
   UPDATE_INCIDENT_ALERTS_COMPLETED,
   UPDATE_INCIDENT_ALERTS_ERROR,
@@ -177,22 +180,22 @@ const incidents = produce(
         draft.status = FETCH_INCIDENT_NOTES_ERROR;
         break;
 
-      case UPDATE_INCIDENTS_LIST:
-        draft.fetchingData = false;
-        draft.status = UPDATE_INCIDENTS_LIST;
-        break;
+        // case UPDATE_INCIDENTS_LIST:
+        //   draft.fetchingData = false;
+        //   draft.status = UPDATE_INCIDENTS_LIST;
+        //   break;
 
-      case UPDATE_INCIDENTS_LIST_COMPLETED:
-        draft.fetchingData = false;
-        draft.status = UPDATE_INCIDENTS_LIST_COMPLETED;
-        draft.incidents = action.incidents;
-        break;
+        // case UPDATE_INCIDENTS_LIST_COMPLETED:
+        //   draft.fetchingData = false;
+        //   draft.status = UPDATE_INCIDENTS_LIST_COMPLETED;
+        //   draft.incidents = action.incidents;
+        //   break;
 
-      case UPDATE_INCIDENTS_LIST_ERROR:
-        draft.fetchingData = false;
-        draft.status = UPDATE_INCIDENTS_LIST_ERROR;
-        draft.error = action.message;
-        break;
+        // case UPDATE_INCIDENTS_LIST_ERROR:
+        //   draft.fetchingData = false;
+        //   draft.status = UPDATE_INCIDENTS_LIST_ERROR;
+        //   draft.error = action.message;
+        //   break;
 
       case PROCESS_LOG_ENTRIES:
         draft.status = PROCESS_LOG_ENTRIES;
@@ -230,6 +233,40 @@ const incidents = produce(
 
       case PROCESS_LOG_ENTRIES_ERROR:
         draft.status = PROCESS_LOG_ENTRIES_ERROR;
+        draft.error = action.message;
+        break;
+
+      case UPDATE_INCIDENTS:
+        draft.status = UPDATE_INCIDENTS;
+        break;
+
+      case UPDATE_INCIDENTS_COMPLETED:
+        console.log('updatedIncidents', action.updatedIncidents);
+        /* eslint-disable no-param-reassign, no-case-declarations */
+        const updatedIncidentsMapById = action.updatedIncidents.reduce(
+          (map, incident) => {
+            map[incident.id] = incident;
+            return map;
+          },
+          {},
+        );
+        /* eslint-enable no-param-reassign, no-case-declarations */
+        console.log('updatedIncidentsMapById', updatedIncidentsMapById);
+        Object.keys(updatedIncidentsMapById).forEach((incidentId) => {
+          const idx = draft.incidents.findIndex((incident) => incident.id === incidentId);
+          if (idx !== -1) {
+            console.log('updating incident', incidentId, idx);
+            draft.incidents[idx] = {
+              ...draft.incidents[idx],
+              ...updatedIncidentsMapById[incidentId],
+            };
+          }
+        });
+        draft.status = UPDATE_INCIDENTS_COMPLETED;
+        break;
+
+      case UPDATE_INCIDENTS_ERROR:
+        draft.status = UPDATE_INCIDENTS_ERROR;
         draft.error = action.message;
         break;
 

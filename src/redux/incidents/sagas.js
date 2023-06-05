@@ -51,18 +51,12 @@ import {
   FETCH_INCIDENT_NOTES_REQUESTED,
   FETCH_INCIDENT_NOTES_COMPLETED,
   FETCH_INCIDENT_NOTES_ERROR,
-  // FETCH_ALL_INCIDENT_NOTES_REQUESTED,
-  // FETCH_ALL_INCIDENT_NOTES_COMPLETED,
-  // FETCH_ALL_INCIDENT_NOTES_ERROR,
-  // FETCH_ALL_INCIDENT_ALERTS_REQUESTED,
-  // FETCH_ALL_INCIDENT_ALERTS_COMPLETED,
-  // FETCH_ALL_INCIDENT_ALERTS_ERROR,
-  // UPDATE_INCIDENTS_LIST,
-  // UPDATE_INCIDENTS_LIST_COMPLETED,
-  // UPDATE_INCIDENTS_LIST_ERROR,
   PROCESS_LOG_ENTRIES,
   PROCESS_LOG_ENTRIES_COMPLETED,
   // PROCESS_LOG_ENTRIES_ERROR,
+  UPDATE_INCIDENTS,
+  UPDATE_INCIDENTS_COMPLETED,
+  // UPDATE_INCIDENTS_ERROR,
   UPDATE_INCIDENT_ALERTS,
   UPDATE_INCIDENT_ALERTS_COMPLETED,
   // UPDATE_INCIDENT_ALERTS_ERROR,
@@ -173,13 +167,6 @@ export function* getIncidents() {
       incidents,
     });
 
-    // Filter incident list on priority (can't do this from API)
-    // yield call(filterIncidentsByPriorityImpl, { incidentPriority });
-    // Filter incident list on escalation policy (can't do this from API)
-    // yield call(filterIncidentsByEscalationPolicyImpl, { escalationPolicyIds });
-
-    // Filter updated incident list by query; updates memoized data within incidents table
-    // yield call(filterIncidentsByQueryImpl, { searchQuery });
     yield call(filterIncidentsImpl);
   } catch (e) {
     yield put({ type: FETCH_INCIDENTS_ERROR, message: e.message });
@@ -190,48 +177,6 @@ export function* getIncidents() {
     });
   }
 }
-
-// export function* refreshIncidentsAsync() {
-//   yield takeLatest(REFRESH_INCIDENTS_REQUESTED, refreshIncidents);
-// }
-
-// export function* refreshIncidents() {
-//   try {
-//     // Fetch incidents, notes, and alerts for refresh
-//     const {
-//       incidentPriority, escalationPolicyIds, searchQuery,
-//     } = yield select(
-//       selectQuerySettings,
-//     );
-
-//     // const {
-//     //   maxRateLimit,
-//     // } = yield select(selectSettings);
-
-//     // yield call(resetLimiterWithRateLimit, maxRateLimit);
-//     const incidents = yield getIncidentsImpl();
-//     yield put({
-//       type: REFRESH_INCIDENTS_COMPLETED,
-//       incidents,
-//     });
-//     // Filter incident list on priority (can't do this from API)
-//     yield call(filterIncidentsByPriorityImpl, { incidentPriority });
-//     // Filter incident list on escalation policy (can't do this from API)
-//     yield call(filterIncidentsByEscalationPolicyImpl, { escalationPolicyIds });
-//     // Filter updated incident list by query; updates memoized data within incidents table
-//     yield call(filterIncidentsByQueryImpl, { searchQuery });
-
-//     // yield call(getAllIncidentNotes);
-//     // yield call(getAllIncidentAlerts);
-//   } catch (e) {
-//     yield put({ type: REFRESH_INCIDENTS_ERROR, message: e.message });
-//     yield put({
-//       type: UPDATE_CONNECTION_STATUS_REQUESTED,
-//       connectionStatus: 'neutral',
-//       connectionStatusMessage: 'Unable to refresh incidents',
-//     });
-//   }
-// }
 
 export function* getIncidentAlertsAsync() {
   yield takeEvery(FETCH_INCIDENT_ALERTS_REQUESTED, getIncidentAlerts);
@@ -296,253 +241,6 @@ export function* getIncidentNotes(action) {
     });
   }
 }
-
-// export function* getAllIncidentNotesAsync() {
-//   yield takeEvery(FETCH_ALL_INCIDENT_NOTES_REQUESTED, getAllIncidentNotes);
-// }
-
-// export function* getAllIncidentNotes() {
-//   try {
-//     yield put({
-//       type: UPDATE_INCIDENT_REDUCER_STATUS,
-//       status: FETCH_ALL_INCIDENT_NOTES_REQUESTED,
-//       fetchingIncidentNotes: true,
-//     });
-
-//     // Build list of promises to call PD endpoint
-//     const {
-//       incidents,
-//     } = yield select(selectIncidents);
-//     const requests = incidents.map(({
-//       id,
-//     }) => call(throttledPdAxiosRequest, 'GET', `incidents/${id}/notes`));
-//     const results = yield all(requests);
-
-//     // Grab matching incident and apply note update
-//     const updatedIncidentsList = incidents.map((incident, idx) => {
-//       const tempIncident = { ...incident };
-//       tempIncident.notes = results[idx].data.notes;
-//       return tempIncident;
-//     });
-
-//     // Update store with incident having notes data
-//     yield put({
-//       type: FETCH_ALL_INCIDENT_NOTES_COMPLETED,
-//       incidents: updatedIncidentsList,
-//     });
-
-//     /*
-//       Apply filters that already are configured down below
-//     */
-//     const {
-//       incidentPriority,
-//       incidentStatus,
-//       incidentUrgency,
-//       teamIds,
-//       escalationPolicyIds,
-//       serviceIds,
-//       userIds,
-//       searchQuery,
-//     } = yield select(selectQuerySettings);
-//     yield call(filterIncidentsByPriorityImpl, { incidentPriority });
-//     yield call(filterIncidentsByStatusImpl, { incidentStatus });
-//     yield call(filterIncidentsByUrgencyImpl, { incidentUrgency });
-//     yield call(filterIncidentsByTeamImpl, { teamIds });
-//     yield call(filterIncidentsByEscalationPolicyImpl, { escalationPolicyIds });
-//     yield call(filterIncidentsByServiceImpl, { serviceIds });
-//     yield call(filterIncidentsByUserImpl, { userIds });
-//     yield call(filterIncidentsByQueryImpl, { searchQuery });
-//   } catch (e) {
-//     yield put({ type: FETCH_ALL_INCIDENT_NOTES_ERROR, message: e.message });
-//     yield put({
-//       type: UPDATE_CONNECTION_STATUS_REQUESTED,
-//       connectionStatus: 'neutral',
-//       connectionStatusMessage: 'Unable to fetch all incident notes',
-//     });
-//   }
-// }
-
-// export function* getAllIncidentAlertsAsync() {
-//   yield takeEvery(FETCH_ALL_INCIDENT_ALERTS_REQUESTED, getAllIncidentAlerts);
-// }
-
-// export function* getAllIncidentAlerts() {
-//   try {
-//     yield put({
-//       type: UPDATE_INCIDENT_REDUCER_STATUS,
-//       status: FETCH_ALL_INCIDENT_ALERTS_REQUESTED,
-//       fetchingIncidentAlerts: true,
-//     });
-
-//     // Build list of promises to call PD endpoint
-//     const {
-//       incidents,
-//     } = yield select(selectIncidents);
-//     const requests = incidents.map(({
-//       id,
-//     }) => call(throttledPdAxiosRequest, 'GET', `incidents/${id}/alerts`));
-//     const results = yield all(requests);
-
-//     // Grab matching incident and apply alert update
-//     const updatedIncidentsList = incidents.map((incident, idx) => {
-//       const tempIncident = { ...incident };
-//       tempIncident.alerts = results[idx].data.alerts;
-//       return tempIncident;
-//     });
-
-//     // Update store with incident having alerts data
-//     yield put({
-//       type: FETCH_ALL_INCIDENT_ALERTS_COMPLETED,
-//       incidents: updatedIncidentsList,
-//     });
-
-//     /*
-//       Apply filters that already are configured down below
-//     */
-//     const {
-//       incidentPriority,
-//       incidentStatus,
-//       incidentUrgency,
-//       teamIds,
-//       escalationPolicyIds,
-//       serviceIds,
-//       userIds,
-//       searchQuery,
-//     } = yield select(selectQuerySettings);
-//     yield call(filterIncidentsByPriorityImpl, { incidentPriority });
-//     yield call(filterIncidentsByStatusImpl, { incidentStatus });
-//     yield call(filterIncidentsByUrgencyImpl, { incidentUrgency });
-//     yield call(filterIncidentsByTeamImpl, { teamIds });
-//     yield call(filterIncidentsByEscalationPolicyImpl, { escalationPolicyIds });
-//     yield call(filterIncidentsByServiceImpl, { serviceIds });
-//     yield call(filterIncidentsByUserImpl, { userIds });
-//     yield call(filterIncidentsByQueryImpl, { searchQuery });
-//   } catch (e) {
-//     yield put({ type: FETCH_ALL_INCIDENT_ALERTS_ERROR, message: e.message });
-//     yield put({
-//       type: UPDATE_CONNECTION_STATUS_REQUESTED,
-//       connectionStatus: 'neutral',
-//       connectionStatusMessage: 'Unable to fetch all incident alerts',
-//     });
-//   }
-// }
-
-// export function* updateIncidentsListAsync() {
-//   yield takeEvery(UPDATE_INCIDENTS_LIST, updateIncidentsList);
-// }
-
-// export function* updateIncidentsList(action) {
-//   try {
-//     take(UPDATE_RECENT_LOG_ENTRIES_COMPLETED);
-//     const {
-//       addList, updateList,
-//     } = action;
-//     const {
-//       incidents,
-//     } = yield select(selectIncidents);
-//     const {
-//       incidentPriority,
-//       incidentStatus,
-//       incidentUrgency,
-//       teamIds,
-//       escalationPolicyIds,
-//       serviceIds,
-//       userIds,
-//       searchQuery,
-//     } = yield select(selectQuerySettings);
-//     let updatedIncidentsList = [...incidents];
-
-//     // Add new incidents to list (need to re-query to get external_references, notes, and alerts)
-//     const addListRequests = addList.map((addItem) => {
-//       if (addItem.incident) return getIncidentByIdRequest(addItem.incident.id);
-//     });
-//     const addListResponses = yield all(addListRequests);
-//     const addListNoteRequests = addList.map((addItem) => {
-//       if (addItem.incident) return call(pd.get, `incidents/${addItem.incident.id}/notes`);
-//     });
-//     const addListNoteResponses = yield all(addListNoteRequests);
-//     const addListAlertRequests = addList.map((addItem) => {
-//       if (addItem.incident) return call(pd.get, `incidents/${addItem.incident.id}/alerts`);
-//     });
-//     const addListAlertResponses = yield all(addListAlertRequests);
-
-//     // Synthetically create notes + alerts object to be added to new incident
-//     addListResponses.map((response, idx) => {
-//       const {
-//         notes,
-//       } = addListNoteResponses[idx].response.data;
-//       const {
-//         alerts,
-//       } = addListAlertResponses[idx].response.data;
-//       const newIncident = { ...response.data.incident };
-//       newIncident.notes = notes;
-//       newIncident.alerts = alerts;
-//       updatedIncidentsList.push(newIncident);
-//     });
-
-//     // Update existing incidents within list including resolved
-//     if (incidents.length && updateList.length) {
-//       updatedIncidentsList = updatedIncidentsList.map((existingIncident) => {
-//         // Iteratively patch incident with multiple associated log entries
-//         let updatedIncident = null;
-//         const updateItems = updateList.filter((updateItem) => {
-//           if (updateItem.incident) return updateItem.incident.id === existingIncident.id;
-//         });
-//         updateItems.forEach((updateItem) => {
-//           updatedIncident = { ...existingIncident, ...updatedIncident, ...updateItem.incident };
-//         });
-//         return updatedIncident || existingIncident;
-//       });
-//     }
-
-//     // Handle where new updates come in against an empty incident list or filtered out incidents
-//     if (updateList.length) {
-//       updateList.map((updateItem) => {
-//         if (updateItem.incident) {
-//           // Check if item is matched against updatedIncidentsList (skip)
-//           if (updatedIncidentsList.find((incident) => incident.id === updateItem.incident.id)) {
-//             return;
-//           }
-//           // Update incident list (push if we haven't updated already)
-//           pushToArray(updatedIncidentsList, updateItem.incident, 'id');
-//         }
-//       });
-//     }
-
-//     // Sort incidents by reverse created_at date (i.e. recent incidents at the top)
-//     updatedIncidentsList.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
-
-//     // Remove any unintentional duplicate incidents (i.e. new incident triggered)
-//     const updatedIncidentsIds = updatedIncidentsList.map((o) => o.id);
-//     const uniqueUpdatedIncidentsList = updatedIncidentsList.filter(
-//       ({
-//         id,
-//       }, index) => !updatedIncidentsIds.includes(id, index + 1),
-//     );
-
-//     // Update store with updated list of incidents
-//     yield put({
-//       type: UPDATE_INCIDENTS_LIST_COMPLETED,
-//       incidents: uniqueUpdatedIncidentsList,
-//     });
-
-//     /*
-//       Apply filters that already are configured down below
-//     */
-
-//     // Filter updated incident list on priority (can't do this from API)
-//     yield call(filterIncidentsByPriorityImpl, { incidentPriority });
-//     yield call(filterIncidentsByStatusImpl, { incidentStatus });
-//     yield call(filterIncidentsByUrgencyImpl, { incidentUrgency });
-//     yield call(filterIncidentsByTeamImpl, { teamIds });
-//     yield call(filterIncidentsByEscalationPolicyImpl, { escalationPolicyIds });
-//     yield call(filterIncidentsByServiceImpl, { serviceIds });
-//     yield call(filterIncidentsByUserImpl, { userIds });
-//     yield call(filterIncidentsByQueryImpl, { searchQuery });
-//   } catch (e) {
-//     yield put({ type: UPDATE_INCIDENTS_LIST_ERROR, message: e.message });
-//   }
-// }
 
 export function* processLogEntries() {
   yield takeEvery(PROCESS_LOG_ENTRIES, processLogEntriesImpl);
@@ -609,6 +307,22 @@ export function* processLogEntriesImpl(action) {
     incidentAlertsMap,
   });
   yield call(filterIncidentsImpl);
+}
+export function* updateIncidents() {
+  yield takeEvery(UPDATE_INCIDENTS, updateIncidentsImpl);
+}
+
+export function* updateIncidentsImpl(action) {
+  const {
+    updatedIncidents,
+  } = action;
+  yield put({
+    type: UPDATE_INCIDENTS_COMPLETED,
+    updatedIncidents,
+  });
+  yield put({
+    type: FILTER_INCIDENTS_LIST,
+  });
 }
 
 export function* updateIncidentAlerts() {

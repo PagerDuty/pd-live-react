@@ -89,6 +89,7 @@ import {
 
 import {
   PROCESS_LOG_ENTRIES_COMPLETED,
+  UPDATE_INCIDENTS,
 } from '../incidents/actions';
 
 export function* doAction() {
@@ -133,7 +134,11 @@ export function* acknowledge(action) {
     if (response.ok) {
       yield put({
         type: ACKNOWLEDGE_COMPLETED,
-        acknowledgedIncidents: response.resource,
+        acknowledgedIncidents: response.data.incidents,
+      });
+      yield put({
+        type: UPDATE_INCIDENTS,
+        updatedIncidents: response.data.incidents,
       });
       if (displayModal) {
         const {
@@ -180,7 +185,11 @@ export function* escalate(action) {
     if (response.ok) {
       yield put({
         type: ESCALATE_COMPLETED,
-        escalatedIncidents: response.resource,
+        escalatedIncidents: response.data.incidents,
+      });
+      yield put({
+        type: UPDATE_INCIDENTS,
+        updatedIncidents: response.data.incidents,
       });
       if (displayModal) {
         const actionAlertsModalType = 'success';
@@ -243,8 +252,13 @@ export function* reassign(action) {
     if (response.ok) {
       yield put({
         type: REASSIGN_COMPLETED,
-        escalatedIncidents: response.resource,
+        reassignedIncidents: response.data.incidents,
       });
+      yield put({
+        type: UPDATE_INCIDENTS,
+        updatedIncidents: response.data.incidents,
+      });
+
       yield toggleDisplayReassignModalImpl();
       if (displayModal) {
         const actionAlertsModalType = 'success';
@@ -380,6 +394,11 @@ export function* snooze(action) {
         type: SNOOZE_COMPLETED,
         snoozedIncidents: responses,
       });
+      const updatedIncidents = responses.map((response) => response.resource);
+      yield put({
+        type: UPDATE_INCIDENTS,
+        updatedIncidents,
+      });
       if (displayModal) {
         const {
           actionAlertsModalType, actionAlertsModalMessage,
@@ -445,6 +464,17 @@ export function* merge(action) {
         mergedIncident: response.resource,
       });
       yield toggleDisplayMergeModalImpl();
+
+      const mergedIncident = response.resource;
+      const resolvedIncidents = incidentsToBeMerged.map((incident) => ({
+        id: incident.id,
+        status: RESOLVED,
+      }));
+      yield put({
+        type: UPDATE_INCIDENTS,
+        updatedIncidents: [...resolvedIncidents, mergedIncident],
+      });
+
       if (displayModal) {
         const actionAlertsModalType = 'success';
         const actionAlertsModalMessage = `${i18next.t('Incident')}(s) ${incidentsToBeMerged
@@ -509,6 +539,10 @@ export function* resolve(action) {
         type: RESOLVE_COMPLETED,
         resolvedIncidents: response.resource,
       });
+      yield put({
+        type: UPDATE_INCIDENTS,
+        updatedIncidents: response.data.incidents,
+      });
       if (displayModal) {
         const {
           actionAlertsModalType, actionAlertsModalMessage,
@@ -570,6 +604,12 @@ export function* updatePriority(action) {
         type: UPDATE_PRIORITY_COMPLETED,
         updatedIncidentPriorities: responses,
       });
+      const updatedIncidents = responses.map((response) => response.resource);
+      yield put({
+        type: UPDATE_INCIDENTS,
+        updatedIncidents,
+      });
+
       if (displayModal) {
         const actionAlertsModalType = 'success';
         const actionAlertsModalMessage = `${i18next.t('Incident')}(s) ${selectedIncidents
