@@ -80,10 +80,14 @@ export const throttledPdAxiosRequest = (
   endpoint,
   params = {},
   data = {},
-  expiration = 60 * 1000,
+  options = {
+    expiration: 60 * 1000,
+    priority: 5,
+  },
 ) => limiter.schedule(
   {
-    expiration,
+    expiration: options.expiration || 60 * 1000,
+    priority: options.priority || 5,
     id: `${method}-${endpoint}-${JSON.stringify(params)}`,
   },
   () => pdAxiosRequest(method, endpoint, params, data),
@@ -114,11 +118,18 @@ const endpointIdentifier = (endpoint) => {
   return endpoint.split('/').pop();
 };
 
-export const pdParallelFetch = async (endpoint, params, progressCallback) => {
+export const pdParallelFetch = async (endpoint, params, progressCallback, options = {
+  priority: 5,
+}) => {
   let requestParams = {
     limit: 100,
     total: true,
     offset: 0,
+  };
+
+  const axiosRequestOptions = {
+    expiration: 60 * 1000,
+    priority: options.priority,
   };
 
   if (params) requestParams = { ...requestParams, ...params };
@@ -126,7 +137,9 @@ export const pdParallelFetch = async (endpoint, params, progressCallback) => {
   let reversedSortOrder = false;
   if (endpoint.indexOf('log_entries') > -1) reversedSortOrder = true;
 
-  const firstPage = (await throttledPdAxiosRequest('GET', endpoint, requestParams)).data;
+  const firstPage = (
+    await throttledPdAxiosRequest('GET', endpoint, requestParams, undefined, axiosRequestOptions)
+  ).data;
   const fetchedData = firstPage[endpointIdentifier(endpoint)];
 
   const promises = [];
@@ -136,7 +149,9 @@ export const pdParallelFetch = async (endpoint, params, progressCallback) => {
       offset < firstPage.total;
       offset += requestParams.limit
     ) {
-      const promise = throttledPdAxiosRequest('GET', endpoint, { ...requestParams, offset })
+      const promise = throttledPdAxiosRequest(
+        'GET', endpoint, { ...requestParams, offset }, undefined, axiosRequestOptions,
+      )
         .then(({
           data,
         }) => {

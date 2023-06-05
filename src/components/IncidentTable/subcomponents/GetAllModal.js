@@ -1,6 +1,5 @@
 import React, {
   useMemo,
-  // useState,
   useCallback,
 } from 'react';
 
@@ -19,7 +18,6 @@ import {
   ModalBody,
   ModalCloseButton,
   Progress,
-  // Stack,
   Box,
   Text,
 } from '@chakra-ui/react';
@@ -80,20 +78,8 @@ const GetAllModal = ({
     });
   }, [rowsNeedingFetch]);
 
-  // const [isOpen, setIsOpen] = useState(false);
-
   return (
     <>
-      {/* <Button
-        size="sm"
-        px={8}
-        mx={2}
-        onClick={() => (
-          readyToExport ? exportRows(rowsToExport) : setIsOpen(true)
-        )}
-      >
-        Export CSV
-      </Button> */}
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
         <ModalContent>

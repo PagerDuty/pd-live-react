@@ -242,7 +242,9 @@ export function* getIncidentAlerts(action) {
     incidentId,
   } = action;
   try {
-    const alerts = yield call(pdParallelFetch, `incidents/${incidentId}/alerts`);
+    const alerts = yield call(
+      pdParallelFetch, `incidents/${incidentId}/alerts`, undefined, undefined, { priority: 6 },
+    );
 
     yield put({
       type: FETCH_INCIDENT_ALERTS_COMPLETED,
@@ -272,7 +274,9 @@ export function* getIncidentNotes(action) {
     incidentId,
   } = action;
   try {
-    const notes = yield call(pdParallelFetch, `incidents/${incidentId}/notes`);
+    const notes = yield call(
+      pdParallelFetch, `incidents/${incidentId}/notes`, undefined, undefined, { priority: 6 },
+    );
 
     yield put({
       type: FETCH_INCIDENT_NOTES_COMPLETED,
@@ -597,8 +601,6 @@ export function* processLogEntriesImpl(action) {
     }
   }
 
-  console.log('processLogEntriesImpl maps',
-    incidentInsertList, incidentUpdatesMap, incidentNotesMap, incidentAlertsMap);
   yield put({
     type: PROCESS_LOG_ENTRIES_COMPLETED,
     incidentInsertList,

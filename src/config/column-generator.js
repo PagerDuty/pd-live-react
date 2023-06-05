@@ -28,6 +28,7 @@ import {
 import {
   Box,
   Link,
+  Skeleton,
 } from '@chakra-ui/react';
 
 import {
@@ -96,6 +97,48 @@ const renderPlainTextCell = ({
   </CellDiv>
 );
 
+const renderPlainTextAlertCell = ({
+  value,
+  cell,
+}) => {
+  const {
+    alerts,
+  } = cell.row.original;
+  if (alerts?.status === 'fetching') {
+    return (
+      <CellDiv>
+        <Skeleton>
+          fetching
+        </Skeleton>
+      </CellDiv>
+    );
+  }
+  return (
+    <CellDiv>
+      {value || '--'}
+    </CellDiv>
+  );
+};
+
+const alertTextValueSortType = (row1, row2, columnId, descending) => {
+  const value1 = row1.values[columnId];
+  const value2 = row2.values[columnId];
+
+  const isLast = (row) => (
+    row.original.alerts?.status || row.original.alerts === undefined
+  );
+  if (isLast(row1) && !isLast(row2)) {
+    return descending ? -1 : 1;
+  }
+  if (!isLast(row1) && isLast(row2)) {
+    return descending ? 1 : -1;
+  }
+  if (value1 === value2) {
+    return 0;
+  }
+  return value1.localeCompare(value2, undefined, { sensitivity: 'accent' });
+};
+
 export const incidentColumn = ({
   id,
   header,
@@ -103,6 +146,7 @@ export const incidentColumn = ({
   renderer = renderPlainTextCell,
   minWidth,
   sortType,
+  columnType,
 }) => {
   const column = {
     originalHeader: header,
@@ -111,6 +155,7 @@ export const incidentColumn = ({
     accessor,
     Cell: renderer,
     minWidth,
+    columnType,
   };
 
   if (id) {
@@ -403,7 +448,11 @@ export const defaultIncidentColumns = () => ([
         }
         {
           original.notes?.status === 'fetching'
-          && `${i18next.t('Fetching Notes')} ...`
+          && (
+            <Skeleton>
+              fetching
+            </Skeleton>
+          )
         }
       </CellDiv>
     ),
@@ -436,15 +485,19 @@ export const defaultAlertsColumns = () => ([
   incidentColumn({
     id: 'severity',
     header: 'Severity',
+    columnType: 'alert',
     accessor: (incident) => (
-      incident.alerts?.status
-      || incident.alerts?.[0]?.body?.cef_details?.severity
+      incident.alerts?.[0]?.body?.cef_details?.severity
       || ''
     ),
     minWidth: 100,
     renderer: ({
       value,
+      cell,
     }) => {
+      if (cell.row.original.alerts?.status === 'fetching') {
+        return renderPlainTextAlertCell({ value, cell });
+      }
       const i18nValue = i18next.t(value);
       let variant;
       switch (value) {
@@ -472,7 +525,7 @@ export const defaultAlertsColumns = () => ([
         </Badge>
       );
     },
-    sortType: (row1, row2, columnId) => {
+    sortType: (row1, row2, columnId, descending) => {
       const severityRank = {
         critical: 4,
         error: 3,
@@ -480,44 +533,46 @@ export const defaultAlertsColumns = () => ([
         info: 1,
         '--': 0,
       };
-      const row1Rank = row1.values[columnId] ? severityRank[row1.values[columnId]] : 0;
-      const row2Rank = row2.values[columnId] ? severityRank[row2.values[columnId]] : 0;
-      const order = row1Rank > row2Rank ? 1 : -1;
+      const rowRank = (row) => {
+        if (row.original.alerts?.status || row.original.alerts === undefined) {
+          // if it's fetching or not yet requested, it's the lowest rank
+          return descending ? -1 : 5;
+        }
+        return severityRank[row.values[columnId]] || 0;
+      };
+      const order = rowRank(row1) > rowRank(row2) ? 1 : -1;
       return order;
     },
   }),
   incidentColumn({
     id: 'source_component',
     header: 'Component',
+    columnType: 'alert',
     accessor: (incident) => (
-      incident.alerts?.status
-      || incident.alerts?.[0]?.body?.cef_details?.source_component
+      incident.alerts?.[0]?.body?.cef_details?.source_component
       || ''
     ),
     minWidth: 100,
-    renderer: ({
-      value,
-    }) => value || '--',
+    renderer: renderPlainTextAlertCell,
   }),
   incidentColumn({
     id: 'source_origin',
     header: 'Source',
+    columnType: 'alert',
     accessor: (incident) => (
-      incident.alerts?.status
-      || incident.alerts?.[0]?.body?.cef_details?.source_origin
+      incident.alerts?.[0]?.body?.cef_details?.source_origin
       || ''
     ),
     minWidth: 100,
-    renderer: ({
-      value,
-    }) => value || '--',
+    renderer: renderPlainTextAlertCell,
+    sortType: alertTextValueSortType,
   }),
   incidentColumn({
     id: 'event_class',
     header: 'Class',
+    columnType: 'alert',
     accessor: (incident) => (
-      incident.alerts?.status
-      || incident.alerts?.[0]?.body?.cef_details?.event_class
+      incident.alerts?.[0]?.body?.cef_details?.event_class
       || ''
     ),
     minWidth: 100,
@@ -528,15 +583,13 @@ export const defaultAlertsColumns = () => ([
   incidentColumn({
     id: 'service_group',
     header: 'Group',
+    columnType: 'alert',
     accessor: (incident) => (
-      incident.alerts?.status
-      || incident.alerts?.[0]?.body?.cef_details?.service_group
+      incident.alerts?.[0]?.body?.cef_details?.service_group
       || ''
     ),
     minWidth: 100,
-    renderer: ({
-      value,
-    }) => value || '--',
+    renderer: renderPlainTextAlertCell,
   }),
 ]);
 
@@ -569,11 +622,10 @@ export const customAlertColumnForSavedColumn = (savedColumn) => {
   const column = incidentColumn({
     id: accessorPath,
     header,
+    columnType: 'alert',
     accessor,
     minWidth: 100,
-    renderer: ({
-      value,
-    }) => value || '--',
+    renderer: renderPlainTextAlertCell,
   });
   if (width) {
     column.width = width;

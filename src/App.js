@@ -244,7 +244,7 @@ const App = () => {
           as="header"
           top={0}
           w="100%"
-          pb={2}
+          pb={1}
           ref={headerRef}
         >
           <NavigationBarComponent />
@@ -271,6 +271,7 @@ const App = () => {
           bottom={0}
           w="100%"
           zIndex="1"
+          pt={1}
           ref={footerRef}
         >
           <IncidentActionsComponent />

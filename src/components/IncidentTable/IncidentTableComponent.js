@@ -52,8 +52,8 @@ import CheckboxComponent from './subcomponents/CheckboxComponent';
 import EmptyIncidentsComponent from './subcomponents/EmptyIncidentsComponent';
 import QueryActiveComponent from './subcomponents/QueryActiveComponent';
 import QueryCancelledComponent from './subcomponents/QueryCancelledComponent';
-import IncidentTableRow from './subcomponents/IncidentTableRow';
 import GetAllModal from './subcomponents/GetAllModal';
+import GetAllForSortModal from './subcomponents/GetAllForSortModal';
 
 import './IncidentTableComponent.scss';
 
@@ -125,46 +125,38 @@ const doCsvExport = (tableData) => {
   document.body.removeChild(link);
 };
 
-const IncidentTableComponent = ({
-  headerRef,
-  footerRef,
-}) => {
-  const incidentTable = useSelector((state) => state.incidentTable);
-  const incidentActions = useSelector((state) => state.incidentActions);
-  const incidents = useSelector((state) => state.incidents);
-  const querySettings = useSelector((state) => state.querySettings);
-  const currentUserLocale = useSelector((state) => state.users.currentUserLocale);
-
-  const dispatch = useDispatch();
-  const selectIncidentTableRows = (allSelected, selectedCount, selectedRows) => {
-    dispatch(selectIncidentTableRowsConnected(allSelected, selectedCount, selectedRows));
-  };
-  const updateIncidentTableState = (incidentTableState) => {
-    dispatch(updateIncidentTableStateConnected(incidentTableState));
-  };
-  const getIncidentAlerts = (incidentId) => {
-    dispatch(getIncidentAlertsAsyncConnected(incidentId));
-  };
-  const getIncidentNotes = (incidentId) => {
-    dispatch(getIncidentNotesAsyncConnected(incidentId));
-  };
-
-  // TODO: clean this up
+const IncidentTableComponent = () => {
   const {
     incidentTableState, incidentTableColumns,
-  } = incidentTable;
+  } = useSelector((state) => state.incidentTable);
   const {
     status,
-  } = incidentActions;
+  } = useSelector((state) => state.incidentActions);
   const {
     filteredIncidentsByQuery,
     incidentAlerts,
     incidentNotes,
     fetchingIncidents,
-  } = incidents;
+  } = useSelector((state) => state.incidents);
   const {
     displayConfirmQueryModal,
-  } = querySettings;
+    error: querySettingsError,
+  } = useSelector((state) => state.querySettings);
+  const currentUserLocale = useSelector((state) => state.users.currentUserLocale);
+
+  const dispatch = useDispatch();
+  const selectIncidentTableRows = useCallback((allSelected, selectedCount, selectedRows) => {
+    dispatch(selectIncidentTableRowsConnected(allSelected, selectedCount, selectedRows));
+  }, [dispatch]);
+  const updateIncidentTableState = useCallback((newIncidentTableState) => {
+    dispatch(updateIncidentTableStateConnected(newIncidentTableState));
+  }, [dispatch]);
+  const getIncidentAlerts = useCallback((incidentId) => {
+    dispatch(getIncidentAlertsAsyncConnected(incidentId));
+  }, [dispatch]);
+  const getIncidentNotes = useCallback((incidentId) => {
+    dispatch(getIncidentNotesAsyncConnected(incidentId));
+  }, [dispatch]);
 
   // React Table Config
   const defaultColumn = useMemo(
@@ -192,7 +184,7 @@ const IncidentTableComponent = ({
   // Dynamic Table Height
   const [tableHeight, setTableHeight] = useState(0);
 
-  const calculateTableHeight = () => {
+  const calculateTableHeight = useDebouncedCallback(() => {
     const headerEl = document.querySelector('header');
     const footerEl = document.querySelector('footer');
     if (!headerEl || !footerEl) return;
@@ -200,7 +192,7 @@ const IncidentTableComponent = ({
     const footerRect = footerEl.getBoundingClientRect();
     const rectDistance = footerRect.top - headerRect.bottom;
     setTableHeight(rectDistance);
-  };
+  }, 25);
   const resizeObserver = useMemo(() => new ResizeObserver(() => {
     calculateTableHeight();
   }), []);
@@ -212,20 +204,34 @@ const IncidentTableComponent = ({
       resizeObserver.observe(headerEl);
       resizeObserver.observe(footerEl);
     }
-  }, [resizeObserver, headerRef, footerRef]);
+  }, [resizeObserver]);
 
   useEffect(() => {
     window.addEventListener('resize', calculateTableHeight);
     return () => window.removeEventListener('resize', calculateTableHeight);
   }, []);
 
+  const [visibleRowIndexes, setVisibleRowIndexes] = useState({ start: 0, stop: 0 });
+
+  const [sortingBy, setSortingBy] = useState([]);
   // Debouncing for table state
   const debouncedUpdateIncidentTableState = useDebouncedCallback((state, action) => {
     // Only update store with sorted and column resizing state
+    if (action.type === 'toggleSortBy') {
+      // if sorting has changed, different rows are visible so might need to fetch alerts/notes
+      setSortingBy(state.sortBy);
+    }
     if (action.type === 'toggleSortBy' || action.type === 'columnDoneResizing') {
       updateIncidentTableState(state);
     }
-  }, 500);
+  }, 100);
+
+  const onItemsRendered = useCallback(
+    (args) => {
+      // FixedSizeList calls this when visible row indexes change, moght need to fetch alerts/notes
+      setVisibleRowIndexes({ start: args.visibleStartIndex, stop: args.visibleStopIndex });
+    }, [],
+  );
 
   // Custom row id fetch to handle dynamic table updates
   const getRowId = useCallback((row) => row.id, []);
@@ -299,6 +305,52 @@ const IncidentTableComponent = ({
     totalColumnsWidth,
   } = tableInstance;
 
+  useEffect(() => {
+    // Get alerts and notes for visible rows when sorting changes or visible row indexes change
+    const visibleRows = rows.slice(visibleRowIndexes.start, visibleRowIndexes.stop);
+    visibleRows.forEach((row) => {
+      if (!row.original.alerts) {
+        getIncidentAlerts(row.original.id);
+      }
+      if (!row.original.notes) {
+        getIncidentNotes(row.original.id);
+      }
+    });
+  }, [sortingBy, visibleRowIndexes]);
+
+  const MyIncidentRow = useCallback(
+    ({
+      data,
+      index,
+      style,
+    }) => {
+      const row = data[index];
+      prepareRow(row);
+      return (
+        <Box
+          {...row.getRowProps({
+            style,
+          })}
+          className={index % 2 === 0 ? 'tr' : 'tr-odd'}
+        >
+          {row.cells.map((cell) => (
+            <Box
+              {...cell.getCellProps()}
+              className="td"
+              data-incident-header={
+                cell.column.Header instanceof String ? cell.column.Header : 'incident-header'
+              }
+              data-incident-row-cell-idx={row.index}
+              data-incident-cell-id={row.original.id}
+            >
+              {cell.render('Cell')}
+            </Box>
+          ))}
+        </Box>
+      );
+    }, [prepareRow, columns],
+  );
+
   const [displayGetAllModal, setDisplayGetAllModal] = useState(false);
   const exportCsv = useCallback(() => {
     doCsvExport(tableInstance);
@@ -321,12 +373,33 @@ const IncidentTableComponent = ({
     }
   }, [status]);
 
+  const [displayGetAllForSortModal, setDisplayGetAllForSortModal] = useState(false);
+  const [columnTypeForGetAllModal, setColumnForGetAllModal] = useState(null);
+  const showGetAllForSortModal = useCallback((column) => {
+    if (column.columnType === 'alert') {
+      const incidentsNeedingAlertsFetched = tableData.filter(
+        (incident) => incident.alerts === undefined,
+      ).length;
+      if (incidentsNeedingAlertsFetched > 0) {
+        setColumnForGetAllModal('alert');
+        setDisplayGetAllForSortModal(true);
+      }
+    } else if (column.id === 'latest_note') {
+      const incidentsNeedingNotesFetched = tableData.filter(
+        (incident) => incident.notes === undefined,
+      ).length;
+      if (incidentsNeedingNotesFetched > 0) {
+        setColumnForGetAllModal('notes');
+        setDisplayGetAllForSortModal(true);
+      }
+    }
+  }, [tableData]);
   // Render components based on application state
   if (displayConfirmQueryModal) {
     return <></>;
   }
 
-  if (!displayConfirmQueryModal && querySettings.error) {
+  if (!displayConfirmQueryModal && querySettingsError) {
     return <QueryCancelledComponent />;
   }
 
@@ -337,7 +410,7 @@ const IncidentTableComponent = ({
   // TODO: Find a better way to prevent Empty Incidents from being shown during render
   if (!fetchingIncidents && filteredIncidentsByQuery.length === 0) {
     return (
-      <Delayed waitBeforeShow={4000}>
+      <Delayed waitBeforeShow={500}>
         <EmptyIncidentsComponent />
       </Delayed>
     );
@@ -364,7 +437,16 @@ const IncidentTableComponent = ({
                     {...column.getHeaderProps()}
                     className={column.isSorted ? 'th-sorted' : 'th'}
                   >
-                    <Box {...column.getSortByToggleProps()} className="th-sort">
+                    <Box
+                      {...column.getSortByToggleProps()}
+                      onClick={(e) => {
+                        if (column.id !== 'select') {
+                          column.getSortByToggleProps().onClick(e);
+                          showGetAllForSortModal(column);
+                        }
+                      }}
+                      className="th-sort"
+                    >
                       <Text
                         textOverflow="ellipsis"
                         overflow="hidden"
@@ -406,7 +488,7 @@ const IncidentTableComponent = ({
               className="dropdown-item"
               onClick={() => {
                 // eslint-disable-next-line no-console
-                console.log(tableData);
+                console.log(tableInstance);
               }}
             >
               {/* TODO: remove this */}
@@ -419,27 +501,26 @@ const IncidentTableComponent = ({
         >
           <FixedSizeList
             className="incident-table-fixed-list"
-            height={tableHeight - 60}
+            height={tableHeight}
             itemCount={rows.length}
             itemSize={60}
             itemKey={(index) => rows[index].id}
+            itemData={rows}
             width={totalColumnsWidth + scrollBarSize}
+            onItemsRendered={onItemsRendered}
           >
-            {
-              (rowProps) => IncidentTableRow({
-                ...rowProps,
-                rows,
-                prepareRow,
-                getIncidentAlerts,
-                getIncidentNotes,
-              })
-            }
+            {MyIncidentRow}
           </FixedSizeList>
         </Box>
         <GetAllModal
           isOpen={displayGetAllModal}
           onClose={() => setDisplayGetAllModal(false)}
           exportCsv={exportCsv}
+        />
+        <GetAllForSortModal
+          isOpen={displayGetAllForSortModal}
+          onClose={() => setDisplayGetAllForSortModal(false)}
+          columnType={columnTypeForGetAllModal}
         />
       </Box>
     );
