@@ -1,3 +1,5 @@
+'use client';
+
 // Column Generator for React Table
 // defaultIncidentColumns() returns the default incident columns
 // defaultAlertColumns() returns the default alert columns
@@ -11,6 +13,10 @@ import moment from 'moment';
 import {
   JSONPath,
 } from 'jsonpath-plus';
+
+import {
+  formatError,
+} from 'pretty-print-error';
 
 import i18next from 'i18n';
 
@@ -29,11 +35,13 @@ import {
   Box,
   Link,
   Skeleton,
+  Tooltip,
 } from '@chakra-ui/react';
 
 import {
   ChevronDownIcon,
   ChevronUpIcon,
+  NotAllowedIcon,
 } from '@chakra-ui/icons';
 
 import StatusComponent from 'components/IncidentTable/subcomponents/StatusComponent';
@@ -91,11 +99,27 @@ const renderDateCell = ({
 
 const renderPlainTextCell = ({
   value,
-}) => (
-  <CellDiv>
-    {value}
-  </CellDiv>
-);
+}) => {
+  try {
+    return (
+      <CellDiv>
+        <a
+          href={new URL(value).href}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          {value}
+        </a>
+      </CellDiv>
+    );
+  } catch (e) {
+    return (
+      <CellDiv>
+        {value || '--'}
+      </CellDiv>
+    );
+  }
+};
 
 const renderPlainTextAlertCell = ({
   value,
@@ -113,11 +137,25 @@ const renderPlainTextAlertCell = ({
       </CellDiv>
     );
   }
-  return (
-    <CellDiv>
-      {value || '--'}
-    </CellDiv>
-  );
+  try {
+    return (
+      <CellDiv>
+        <a
+          href={new URL(value).href}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          {value}
+        </a>
+      </CellDiv>
+    );
+  } catch (e) {
+    return (
+      <CellDiv>
+        {value || '--'}
+      </CellDiv>
+    );
+  }
 };
 
 const alertTextValueSortType = (row1, row2, columnId, descending) => {
@@ -148,12 +186,38 @@ export const incidentColumn = ({
   sortType,
   columnType,
 }) => {
+  const wrappedRenderer = ({
+    cell,
+    value,
+    row,
+  }) => {
+    try {
+      return renderer({
+        cell,
+        value,
+        row,
+      });
+    } catch (e) {
+      // eslint-disable-next-line no-console
+      console.error(e);
+      return (
+        <CellDiv>
+          <Tooltip
+            label={formatError(e.message)}
+          >
+            <NotAllowedIcon />
+          </Tooltip>
+        </CellDiv>
+      );
+    }
+  };
+
   const column = {
     originalHeader: header,
     Header: i18next.t(header),
     i18n: i18next.t(header),
     accessor,
-    Cell: renderer,
+    Cell: wrappedRenderer,
     minWidth,
     columnType,
   };
