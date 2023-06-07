@@ -37,10 +37,14 @@ const TeamsQueryComponent = () => {
 
   const enabled = useMemo(() => teamList.length > 0, [teamList]);
 
-  const selectListTeams = useMemo(() => teamList.map((team) => ({
-    label: team.name,
-    value: team.id,
-  })), [teamList]);
+  const selectListTeams = useMemo(() => (
+    teamList
+      ? teamList.map((team) => ({
+        label: team.name,
+        value: team.id,
+      }))
+      : []
+  ), [teamList]);
 
   const storedSelectTeams = useMemo(
     () => {

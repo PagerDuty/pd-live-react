@@ -37,10 +37,14 @@ const EscalationPolicyQueryComponent = () => {
 
   const enabled = useMemo(() => epList.length > 0, [epList]);
 
-  const selectListEps = useMemo(() => epList.map((team) => ({
-    label: team.name,
-    value: team.id,
-  })), [epList]);
+  const selectListEps = useMemo(() => (
+    epList
+      ? epList.map((team) => ({
+        label: team.name,
+        value: team.id,
+      }))
+      : []
+  ), [epList]);
 
   const storedSelectEps = useMemo(
     () => {

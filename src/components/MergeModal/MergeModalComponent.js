@@ -68,23 +68,30 @@ const MergeModalComponent = () => {
     t,
   } = useTranslation();
 
-  const selectedIncidents = useMemo(() => (
-    selectedRows
-      .toSorted((a, b) => (a.created_at > b.created_at ? -1 : 1))
-      .map((incident) => ({
-        label: incident.summary,
-        value: incident.id,
-        id: incident.id,
-        incident_number: incident.incident_number,
-        status: incident.status,
-      }))
-  ), [displayMergeModal, selectedRows]);
+  const selectedIncidents = useMemo(() => {
+    if (selectedRows instanceof Array) {
+      return [...selectedRows]
+        .sort((a, b) => (a.created_at > b.created_at ? -1 : 1))
+        .map((incident) => ({
+          label: incident.summary,
+          value: incident.id,
+          id: incident.id,
+          incident_number: incident.incident_number,
+          status: incident.status,
+        }));
+    }
+    // eslint-disable-next-line no-console
+    console.log('selectedRows is not an array', selectedRows);
+    return [];
+  }, [displayMergeModal, selectedRows]);
 
   const unselectedIncidents = useMemo(() => {
     const selectedIncidentIds = selectedRows.map((incident) => incident.id);
     const r = incidents
-      .toSorted((a, b) => (a.created_at > b.created_at ? -1 : 1))
-      .filter((incident) => !selectedIncidentIds.includes(incident.id));
+      ? [...incidents]
+        .sort((a, b) => (a.created_at > b.created_at ? -1 : 1))
+        .filter((incident) => !selectedIncidentIds.includes(incident.id))
+      : [];
     return r;
   }, [displayMergeModal, incidents, selectedRows]);
 

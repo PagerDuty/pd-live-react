@@ -30,7 +30,14 @@ const ServicesQueryComponent = () => {
 
   const serviceListUnsorted = useSelector((state) => state.services.services);
   const serviceList = useMemo(
-    () => serviceListUnsorted.toSorted((a, b) => a.name.localeCompare(b.name)),
+    () => {
+      if (serviceListUnsorted instanceof Array) {
+        return [...serviceListUnsorted].sort((a, b) => a.name.localeCompare(b.name));
+      }
+      // eslint-disable-next-line no-console
+      console.error('serviceListUnsorted is not an array', serviceListUnsorted);
+      return [];
+    },
     [serviceListUnsorted],
   );
   const serviceIds = useSelector((state) => state.querySettings.serviceIds);
