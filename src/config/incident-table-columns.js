@@ -675,13 +675,22 @@ export const customReactTableColumnSchema = (
       value,
     }) => {
       // Determine if content should be rendered as link or plaintext
-      const sanitizedValue = sanitizeUrl(value);
-      if (validator.isURL(sanitizedValue)) {
-        return (
-          <a href={sanitizedValue} target="_blank" rel="noopener noreferrer" className="td-wrapper">
-            {sanitizedValue}
-          </a>
-        );
+      try {
+        const sanitizedValue = sanitizeUrl(value);
+        if (validator.isURL(sanitizedValue)) {
+          return (
+            <a
+              href={sanitizedValue}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="td-wrapper"
+            >
+              {sanitizedValue}
+            </a>
+          );
+        }
+      } catch (e) {
+        console.log(e);
       }
       return <div className="td-wrapper">{value}</div>;
     },
