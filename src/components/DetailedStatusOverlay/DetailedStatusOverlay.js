@@ -1,14 +1,16 @@
 /* eslint-disable react/jsx-props-no-spreading */
-/* eslint-disable no-unused-vars */
 import React from 'react';
 
 import {
   useSelector,
+  useDispatch,
+  useStore,
 } from 'react-redux';
 
 import {
   Badge,
   Box,
+  Button,
   Drawer,
   DrawerBody,
   DrawerHeader,
@@ -17,17 +19,23 @@ import {
   DrawerCloseButton,
   Flex,
   Text,
-  VStack,
-  Grid,
-  GridItem,
+  // VStack,
+  // Grid,
+  // GridItem,
   Spacer,
   Heading,
-  Code,
+  // Code,
 } from '@chakra-ui/react';
 
+// import {
+//   formatError,
+// } from 'pretty-print-error';
+
 import {
-  formatError,
-} from 'pretty-print-error';
+  getIncidentsAsync as getIncidentsAsyncAction,
+  UPDATE_INCIDENT_ALERTS,
+  UPDATE_INCIDENT_NOTES,
+} from 'redux/incidents/actions';
 
 const DetailedStatusOverlay = ({
   btnRef,
@@ -35,10 +43,11 @@ const DetailedStatusOverlay = ({
   onOpen,
   onClose,
 }) => {
+  const store = useStore();
   const {
     status: connectionStatus,
     error: connectionError,
-    errors,
+    // errors,
   } = useSelector((state) => state.connection);
   const {
     status: incidentStatus,
@@ -73,6 +82,17 @@ const DetailedStatusOverlay = ({
     status: responsePlaysStatus,
     error: responsePlaysError,
   } = useSelector((state) => state.responsePlays);
+
+  const dispatch = useDispatch();
+  const getIncidents = () => dispatch(getIncidentsAsyncAction());
+  const clearAlerts = () => dispatch({
+    type: UPDATE_INCIDENT_ALERTS,
+    incidentId: 'CLEAR_ALL',
+  });
+  const clearNotes = () => dispatch({
+    type: UPDATE_INCIDENT_NOTES,
+    incidentId: 'CLEAR_ALL',
+  });
 
   const badgeForStatus = (status) => {
     const badgeProps = {
@@ -121,37 +141,37 @@ const DetailedStatusOverlay = ({
     </Box>
   );
 
-  const boxForError = (error) => {
-    let errorText;
-    if (error instanceof String) {
-      errorText = error;
-    } else if (error instanceof Error) {
-      errorText = formatError(error);
-    } else {
-      try {
-        errorText = JSON.stringify(error);
-      } catch (e) {
-        try {
-          errorText = error.toString();
-        } catch (e2) {
-          errorText = 'Unknown error';
-        }
-      }
-    }
+  // const boxForError = (error) => {
+  //   let errorText;
+  //   if (error instanceof String) {
+  //     errorText = error;
+  //   } else if (error instanceof Error) {
+  //     errorText = formatError(error);
+  //   } else {
+  //     try {
+  //       errorText = JSON.stringify(error);
+  //     } catch (e) {
+  //       try {
+  //         errorText = error.toString();
+  //       } catch (e2) {
+  //         errorText = 'Unknown error';
+  //       }
+  //     }
+  //   }
 
-    return (
-      <Box
-        rounded="md"
-        borderWidth="1px"
-        p={2}
-        mb={2}
-      >
-        <Text m={2} fontSize="sm">
-          {errorText}
-        </Text>
-      </Box>
-    );
-  };
+  //   return (
+  //     <Box
+  //       rounded="md"
+  //       borderWidth="1px"
+  //       p={2}
+  //       mb={2}
+  //     >
+  //       <Text m={2} fontSize="sm">
+  //         {errorText}
+  //       </Text>
+  //     </Box>
+  //   );
+  // };
 
   return (
     <Drawer
@@ -209,20 +229,48 @@ const DetailedStatusOverlay = ({
             p={2}
             mb={2}
           >
-            <Heading size="sm" pb={4} borderBottomWidth="1px">Messages</Heading>
-            {errors.map((error, idx) => (
-              <Code
-                as="pre"
-                rounded="md"
-                fontSize="xs"
-                p={2}
-                mb={2}
-                // eslint-disable-next-line react/no-array-index-key
-                key={`${error}-${idx}`}
-              >
-                {error}
-              </Code>
-            ))}
+            <Heading size="sm" pb={4} borderBottomWidth="1px">Debugging Actions</Heading>
+            <Button
+              size="sm"
+              m={2}
+              colorScheme="red"
+              onClick={() => {
+                // eslint-disable-next-line no-console
+                console.log(store.getState());
+              }}
+            >
+              Log App State to console
+            </Button>
+            <Button
+              size="sm"
+              m={2}
+              colorScheme="red"
+              onClick={() => {
+                getIncidents();
+              }}
+            >
+              Refresh Incidents
+            </Button>
+            <Button
+              size="sm"
+              m={2}
+              colorScheme="red"
+              onClick={() => {
+                clearAlerts();
+              }}
+            >
+              Clear Alerts
+            </Button>
+            <Button
+              size="sm"
+              m={2}
+              colorScheme="red"
+              onClick={() => {
+                clearNotes();
+              }}
+            >
+              Clear Notes
+            </Button>
           </Box>
         </DrawerBody>
       </DrawerContent>

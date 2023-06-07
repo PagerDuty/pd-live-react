@@ -241,7 +241,6 @@ const incidents = produce(
         break;
 
       case UPDATE_INCIDENTS_COMPLETED:
-        console.log('updatedIncidents', action.updatedIncidents);
         /* eslint-disable no-param-reassign, no-case-declarations */
         const updatedIncidentsMapById = action.updatedIncidents.reduce(
           (map, incident) => {
@@ -251,11 +250,9 @@ const incidents = produce(
           {},
         );
         /* eslint-enable no-param-reassign, no-case-declarations */
-        console.log('updatedIncidentsMapById', updatedIncidentsMapById);
         Object.keys(updatedIncidentsMapById).forEach((incidentId) => {
           const idx = draft.incidents.findIndex((incident) => incident.id === incidentId);
           if (idx !== -1) {
-            console.log('updating incident', incidentId, idx);
             draft.incidents[idx] = {
               ...draft.incidents[idx],
               ...updatedIncidentsMapById[incidentId],
@@ -275,7 +272,11 @@ const incidents = produce(
         break;
 
       case UPDATE_INCIDENT_ALERTS_COMPLETED:
-        draft.incidentAlerts[action.incidentId] = action.alerts;
+        if (action.incidentId === 'CLEAR_ALL') {
+          draft.incidentAlerts = {};
+        } else {
+          draft.incidentAlerts[action.incidentId] = action.alerts;
+        }
         draft.status = UPDATE_INCIDENT_ALERTS_COMPLETED;
         break;
 
@@ -289,7 +290,11 @@ const incidents = produce(
         break;
 
       case UPDATE_INCIDENT_NOTES_COMPLETED:
-        draft.incidentNotes[action.incidentId] = action.notes;
+        if (action.incidentId === 'CLEAR_ALL') {
+          draft.incidentNotes = {};
+        } else {
+          draft.incidentNotes[action.incidentId] = action.notes;
+        }
         draft.status = UPDATE_INCIDENT_NOTES_COMPLETED;
         break;
 

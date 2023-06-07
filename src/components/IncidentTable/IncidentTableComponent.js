@@ -229,7 +229,7 @@ const IncidentTableComponent = () => {
   const onItemsRendered = useCallback(
     (args) => {
       // FixedSizeList calls this when visible row indexes change, moght need to fetch alerts/notes
-      setVisibleRowIndexes({ start: args.visibleStartIndex, stop: args.visibleStopIndex });
+      setVisibleRowIndexes({ start: args.overscanStartIndex, stop: args.overscanStopIndex });
     }, [],
   );
 
@@ -307,7 +307,7 @@ const IncidentTableComponent = () => {
 
   useEffect(() => {
     // Get alerts and notes for visible rows when sorting changes or visible row indexes change
-    const visibleRows = rows.slice(visibleRowIndexes.start, visibleRowIndexes.stop);
+    const visibleRows = rows.slice(visibleRowIndexes.start, visibleRowIndexes.stop + 1);
     visibleRows.forEach((row) => {
       if (!row.original.alerts) {
         getIncidentAlerts(row.original.id);
