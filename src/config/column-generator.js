@@ -191,10 +191,24 @@ export const incidentColumn = ({
     value,
     row,
   }) => {
+    let valueStr;
+    switch (typeof value) {
+      case 'string':
+        valueStr = value;
+        break;
+      case 'undefined':
+        valueStr = '';
+        break;
+      case 'object':
+        valueStr = value ? JSON.stringify(value) : '';
+        break;
+      default:
+        valueStr = `${value}`;
+    }
     try {
       return renderer({
         cell,
-        value,
+        value: valueStr,
         row,
       });
     } catch (e) {
