@@ -39,6 +39,10 @@ import {
   ContextMenu, MenuItem, ContextMenuTrigger,
 } from 'react-contextmenu';
 
+import {
+  useTranslation,
+} from 'react-i18next';
+
 import CheckboxComponent from './subcomponents/CheckboxComponent';
 import EmptyIncidentsComponent from './subcomponents/EmptyIncidentsComponent';
 import QueryActiveComponent from './subcomponents/QueryActiveComponent';
@@ -132,6 +136,9 @@ const IncidentTableComponent = ({
   const {
     currentUserLocale,
   } = users;
+  const {
+    t,
+  } = useTranslation();
 
   // React Table Config
   const defaultColumn = useMemo(
@@ -368,7 +375,8 @@ const IncidentTableComponent = ({
                 exportTableDataToCsv(tableHook);
               }}
             >
-              Export CSV
+              $
+              {t('Export CSV')}
               {tableHook.selectedFlatRows.length > 0
                 ? ` (${tableHook.selectedFlatRows.length} rows)`
                 : ` (${tableHook.rows.length} rows)`}

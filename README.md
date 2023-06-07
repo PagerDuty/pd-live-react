@@ -2,7 +2,7 @@
 
 This repository hosts the source code for PagerDuty Live, an open-source, single page application which enables organisations to manage their PagerDuty incidents in real-time through a unified console view.
 
-**Live URL: https://giranm.github.io/pd-live-react/**
+**Live URL: https://pagerduty.github.io/pd-live-react/**
 
 ## :warning: Disclaimer
 
@@ -10,8 +10,7 @@ This repository hosts the source code for PagerDuty Live, an open-source, single
 This is an open-source project designed to be used in a safe/test environment before users can leverage on their primary domains.**
 
 - Full Disclaimer: https://www.termsfeed.com/live/68d1a0f2-9e68-47d0-9623-68afe0c31f6d
-- Further details on roadmap functionality, bugs, etc can be viewed on the [wiki](https://github.com/giranm/pd-live-react/wiki).
-- For any issues, please raise a [GitHub issue](https://github.com/giranm/pd-live-react/issues/new) which can be tracked accordingly.
+- For any issues, please raise a [GitHub issue](https://github.com/pagerduty/pd-live-react/issues/new) which can be tracked accordingly.
 
 ## Screenshot
 
@@ -99,7 +98,7 @@ To prepare PagerDuty Live for release, the current workflow should be carried ou
     $ git push --set-upstream origin release/<VERSION>
     ```
 
-6.  Raise [pull requests](https://github.com/giranm/pd-live-react/pulls) to merge into `main` branch.
+6.  Raise [pull requests](https://github.com/pagerduty/pd-live-react/pulls) to merge into `main` branch.
 
 7.  Build static bundle via `$ yarn build` or use appropriate CI/CD workflow.
 
