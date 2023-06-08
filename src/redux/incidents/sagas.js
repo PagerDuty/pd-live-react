@@ -315,6 +315,7 @@ export function* processLogEntriesImpl(action) {
     incidentUpdatesMap,
     incidentNotesMap,
     incidentAlertsMap,
+    incidentAlertsUnlinkMap,
   });
   yield call(filterIncidentsImpl);
 }
