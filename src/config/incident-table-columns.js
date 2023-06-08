@@ -675,24 +675,41 @@ export const customReactTableColumnSchema = (
       value,
     }) => {
       // Determine if content should be rendered as link or plaintext
+      let valueStr;
+      switch (typeof value) {
+        case 'string':
+          valueStr = value;
+          break;
+        case 'undefined':
+          valueStr = '';
+          break;
+        case 'object':
+          valueStr = value ? JSON.stringify(value) : '';
+          break;
+        default:
+          valueStr = `${value}`;
+      }
+
       try {
-        const sanitizedValue = sanitizeUrl(value);
-        if (validator.isURL(sanitizedValue)) {
-          return (
-            <a
-              href={sanitizedValue}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="td-wrapper"
-            >
-              {sanitizedValue}
-            </a>
-          );
+        if (typeof value === 'string') {
+          const sanitizedValue = sanitizeUrl(valueStr);
+          if (validator.isURL(sanitizedValue)) {
+            return (
+              <a
+                href={sanitizedValue}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="td-wrapper"
+              >
+                {sanitizedValue}
+              </a>
+            );
+          }
         }
       } catch (e) {
         console.log(e);
       }
-      return <div className="td-wrapper">{value}</div>;
+      return <div className="td-wrapper">{valueStr}</div>;
     },
   };
 };
