@@ -220,6 +220,15 @@ const incidents = produce(
           draft.incidentAlerts[incidentId] = draft.incidentAlerts[incidentId]
             .concat(action.incidentAlertsMap[incidentId]);
         }
+        for (let i = 0; i < Object.keys(action.incidentAlertsUnlinkMap).length; i++) {
+          const incidentId = Object.keys(action.incidentAlertsUnlinkMap)[i];
+          if (draft.incidentAlerts[incidentId]) {
+            const unlinkedAlertIds = action.incidentAlertsUnlinkMap[incidentId]
+              .map((alert) => alert.id);
+            draft.incidentAlerts[incidentId] = draft.incidentAlerts[incidentId]
+              .filter((alert) => !unlinkedAlertIds.includes(alert.id));
+          }
+        }
         for (let i = 0; i < Object.keys(action.incidentNotesMap).length; i++) {
           const incidentId = Object.keys(action.incidentNotesMap)[i];
           if (!draft.incidentNotes[incidentId]) {

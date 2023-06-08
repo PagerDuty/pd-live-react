@@ -22,6 +22,8 @@ import {
   TOGGLE_COLUMNS_COMPLETED,
   SET_DEFAULT_SINCE_DATE_TENOR_REQUESTED,
   SET_DEFAULT_SINCE_DATE_TENOR_COMPLETED,
+  SET_SEARCH_ALL_CUSTOM_DETAILS_REQUESTED,
+  SET_SEARCH_ALL_CUSTOM_DETAILS_COMPLETED,
   SET_ALERT_CUSTOM_DETAIL_COLUMNS_REQUESTED,
   SET_ALERT_CUSTOM_DETAIL_COLUMNS_COMPLETED,
   SET_MAX_INCIDENTS_LIMIT_REQUESTED,
@@ -81,6 +83,20 @@ export function* setDefaultSinceDateTenorImpl(action) {
   yield put({
     type: SET_DEFAULT_SINCE_DATE_TENOR_COMPLETED,
     defaultSinceDateTenor,
+  });
+}
+
+export function* setSearchAllCustomDetails() {
+  yield takeLatest(SET_SEARCH_ALL_CUSTOM_DETAILS_REQUESTED, setSearchAllCustomDetailsImpl);
+}
+
+export function* setSearchAllCustomDetailsImpl(action) {
+  const {
+    searchAllCustomDetails,
+  } = action;
+  yield put({
+    type: SET_SEARCH_ALL_CUSTOM_DETAILS_COMPLETED,
+    searchAllCustomDetails,
   });
 }
 

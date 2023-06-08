@@ -440,7 +440,7 @@ export function* mergeAsync() {
 export function* merge(action) {
   try {
     const {
-      targetIncident, incidents, displayModal,
+      targetIncident, incidents, displayModal, addToTitleText,
     } = action;
     const incidentsToBeMerged = [...incidents];
 
@@ -485,6 +485,31 @@ export function* merge(action) {
       }
     } else {
       handleSingleAPIErrorResponse(response);
+    }
+
+    if (addToTitleText) {
+      const titleUpdates = incidentsToBeMerged.map((incident) => (
+        call(pd, {
+          method: 'put',
+          endpoint: `incidents/${incident.id}`,
+          data: {
+            incident: {
+              type: 'incident_reference',
+              title: `${addToTitleText} ${incident.title}`,
+            },
+          },
+        })
+      ));
+      const titleResponses = yield all(titleUpdates);
+      const successes = titleResponses.filter((r) => r.ok);
+      if (successes.length !== titleResponses.length) {
+        handleMultipleAPIErrorResponses(titleResponses.filter((r) => !r.ok));
+      }
+      const updatedIncidents = successes.map((r) => r.resource);
+      yield put({
+        type: UPDATE_INCIDENTS,
+        updatedIncidents,
+      });
     }
   } catch (e) {
     handleSagaError(MERGE_ERROR, e);

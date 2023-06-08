@@ -17,9 +17,11 @@ import {
   UPDATE_INCIDENT_REDUCER_STATUS,
   UPDATE_INCIDENT_LAST_FETCH_DATE,
 } from 'util/incidents';
-// import {
-//   pushToArray,
-// } from 'util/helpers';
+
+import {
+  flattenObject,
+} from 'util/helpers';
+
 import fuseOptions from 'config/fuse-config';
 
 import selectSettings from 'redux/settings/selectors';
@@ -261,6 +263,7 @@ export function* processLogEntriesImpl(action) {
   const incidentUpdatesMap = {};
   const incidentNotesMap = {};
   const incidentAlertsMap = {};
+  const incidentAlertsUnlinkMap = {};
 
   for (let i = 0; i < logEntries.length; i += 1) {
     const logEntry = logEntries[i];
@@ -296,6 +299,13 @@ export function* processLogEntriesImpl(action) {
         incidentAlertsMap[logEntry.incident.id] = [];
       }
       incidentAlertsMap[logEntry.incident.id].push(logEntry.linked_incident);
+    } else if (logEntry.type === 'unlink_log_entry') {
+      // update incident alerts
+      incidentUpdatesMap[logEntry.incident.id] = logEntry.incident;
+      if (!incidentAlertsUnlinkMap[logEntry.incident.id]) {
+        incidentAlertsUnlinkMap[logEntry.incident.id] = [];
+      }
+      incidentAlertsUnlinkMap[logEntry.incident.id].push(logEntry.linked_incident);
     }
   }
 
@@ -364,6 +374,8 @@ export function* filterIncidents() {
 export function* filterIncidentsImpl() {
   const {
     incidents,
+    incidentNotes,
+    incidentAlerts,
   } = yield select(selectIncidents);
   const {
     incidentPriority,
@@ -379,6 +391,9 @@ export function* filterIncidentsImpl() {
   const {
     incidentTableColumns,
   } = yield select(selectIncidentTable);
+  const {
+    searchAllCustomDetails,
+  } = yield select(selectSettings);
 
   let filteredIncidentsByQuery = [...incidents];
 
@@ -461,10 +476,50 @@ export function* filterIncidentsImpl() {
               .filter((a) => a !== '')
           );
         });
-      updatedFuseOptions.keys = fuseOptions.keys.concat(customAlertDetailColumnKeys);
+      updatedFuseOptions.keys = [
+        ...fuseOptions.keys,
+        ...customAlertDetailColumnKeys,
+      ];
 
-      const fuse = new Fuse(filteredIncidentsByQuery, updatedFuseOptions);
-      filteredIncidentsByQuery = fuse.search(searchQuery).map((res) => res.item);
+      if (searchAllCustomDetails) {
+        updatedFuseOptions.keys = [
+          ...updatedFuseOptions.keys,
+          'alerts.flattedCustomDetails',
+        ];
+      }
+
+      try {
+        const incidentsForSearch = filteredIncidentsByQuery.map((incident) => {
+          const incidentNotesForSearch = incidentNotes[incident.id] instanceof Array
+            ? incidentNotes[incident.id]
+            : [];
+          const incidentAlertsForSearch = incidentAlerts[incident.id] instanceof Array
+            ? incidentAlerts[incident.id]
+            : [];
+          const incidentAlertsForSearchWithFlattedCustomDetails = incidentAlertsForSearch
+            .map((alert) => {
+              const flattedCustomDetails = alert.body?.cef_details
+                ? Object.values(flattenObject(alert.body.cef_details)).join(' ')
+                : '';
+              return ({
+                ...alert,
+                flattedCustomDetails,
+              });
+            });
+          return {
+            ...incident,
+            notes: incidentNotesForSearch,
+            alerts: incidentAlertsForSearchWithFlattedCustomDetails,
+          };
+        });
+
+        const fuse = new Fuse(incidentsForSearch, updatedFuseOptions);
+        filteredIncidentsByQuery = fuse.search(searchQuery)
+          .map((res) => filteredIncidentsByQuery[res.refIndex]);
+      } catch (e) {
+        // eslint-disable-next-line no-console
+        console.log('Error in Fuse search', e);
+      }
     }
 
     yield put({

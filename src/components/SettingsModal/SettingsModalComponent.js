@@ -62,6 +62,7 @@ import {
   setMaxRateLimit as setMaxRateLimitConnected,
   // setDarkMode as setDarkModeConnected,
   setServerSideFiltering as setServerSideFilteringConnected,
+  setSearchAllCustomDetails as setSearchAllCustomDetailsConnected,
 } from 'redux/settings/actions';
 
 const SettingsModalComponent = () => {
@@ -82,6 +83,7 @@ const SettingsModalComponent = () => {
     maxRateLimit,
     // darkMode,
     serverSideFiltering,
+    searchAllCustomDetails,
   } = useSelector((state) => state.settings);
   const currentUserLocale = useSelector((state) => state.users.currentUserLocale);
 
@@ -100,6 +102,9 @@ const SettingsModalComponent = () => {
   const setServerSideFiltering = (newServerSideFiltering) => {
     dispatch(setServerSideFilteringConnected(newServerSideFiltering));
   };
+  const setSearchAllCustomDetails = (newSearchAllCustomDetails) => {
+    dispatch(setSearchAllCustomDetailsConnected(newSearchAllCustomDetails));
+  };
 
   const localeOptions = Object.keys(locales).map((locale) => ({
     label: locales[locale],
@@ -112,6 +117,9 @@ const SettingsModalComponent = () => {
   const [tempMaxRateLimit, setTempMaxRateLimit] = useState(maxRateLimit);
 
   const [tempServerSideFiltering, setTempServerSideFiltering] = useState(serverSideFiltering);
+  const [
+    tempSearchAllCustomDetails, setTempSearchAllCustomDetails,
+  ] = useState(searchAllCustomDetails);
 
   const saveSettings = () => {
     if (selectedLocale !== currentUserLocale) {
@@ -128,6 +136,9 @@ const SettingsModalComponent = () => {
     }
     if (tempServerSideFiltering !== serverSideFiltering) {
       setServerSideFiltering(tempServerSideFiltering);
+    }
+    if (tempSearchAllCustomDetails !== searchAllCustomDetails) {
+      setSearchAllCustomDetails(tempSearchAllCustomDetails);
     }
   };
 
@@ -254,6 +265,23 @@ const SettingsModalComponent = () => {
                 }}
               >
                 {t('Server Side Filtering')}
+              </Switch>
+            </FormControl>
+            <FormControl>
+              <FormLabel
+                htmlFor="search-all-custom-details-switch"
+              >
+                {t('Global search')}
+              </FormLabel>
+              <Switch
+                id="search-all-custom-details-switch"
+                isChecked={tempSearchAllCustomDetails}
+                aria-label={t('Server Side Filtering')}
+                onChange={(e) => {
+                  setTempSearchAllCustomDetails(e.target.checked);
+                }}
+              >
+                {t('Search all alert custom details in global search')}
               </Switch>
             </FormControl>
           </Stack>

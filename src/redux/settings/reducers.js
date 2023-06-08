@@ -7,6 +7,8 @@ import {
   TOGGLE_COLUMNS_COMPLETED,
   SET_DEFAULT_SINCE_DATE_TENOR_REQUESTED,
   SET_DEFAULT_SINCE_DATE_TENOR_COMPLETED,
+  SET_SEARCH_ALL_CUSTOM_DETAILS_REQUESTED,
+  SET_SEARCH_ALL_CUSTOM_DETAILS_COMPLETED,
   SET_ALERT_CUSTOM_DETAIL_COLUMNS_REQUESTED,
   SET_ALERT_CUSTOM_DETAIL_COLUMNS_COMPLETED,
   SET_MAX_INCIDENTS_LIMIT_REQUESTED,
@@ -62,6 +64,15 @@ const settings = produce(
       case SET_ALERT_CUSTOM_DETAIL_COLUMNS_COMPLETED:
         draft.alertCustomDetailFields = action.alertCustomDetailFields;
         draft.status = SET_ALERT_CUSTOM_DETAIL_COLUMNS_COMPLETED;
+        break;
+
+      case SET_SEARCH_ALL_CUSTOM_DETAILS_REQUESTED:
+        draft.status = SET_SEARCH_ALL_CUSTOM_DETAILS_REQUESTED;
+        break;
+
+      case SET_SEARCH_ALL_CUSTOM_DETAILS_COMPLETED:
+        draft.searchAllCustomDetails = action.searchAllCustomDetails;
+        draft.status = SET_SEARCH_ALL_CUSTOM_DETAILS_COMPLETED;
         break;
 
       case SET_MAX_INCIDENTS_LIMIT_REQUESTED:
@@ -139,6 +150,7 @@ const settings = produce(
     autoAcceptIncidentsQuery: true,
     autoRefreshInterval: 5,
     serverSideFiltering: true,
+    searchAllCustomDetails: false,
     alertCustomDetailFields: [
       {
         label: 'Environment:details.env',

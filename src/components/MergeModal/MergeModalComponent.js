@@ -14,8 +14,10 @@ import {
 import {
   Box,
   Button,
+  Checkbox,
   FormControl,
   FormLabel,
+  Input,
   Modal,
   ModalOverlay,
   ModalContent,
@@ -60,8 +62,8 @@ const MergeModalComponent = () => {
   } = useSelector((state) => state.incidentTable);
   const dispatch = useDispatch();
   const toggleDisplayMergeModal = () => dispatch(toggleDisplayMergeModalConnected());
-  const merge = (targetIncident, mergedIncidents) => dispatch(
-    mergeConnected(targetIncident, mergedIncidents),
+  const merge = (targetIncident, mergedIncidents, displayModal, addToTitleText) => dispatch(
+    mergeConnected(targetIncident, mergedIncidents, displayModal, addToTitleText),
   );
 
   const {
@@ -76,6 +78,7 @@ const MergeModalComponent = () => {
           label: incident.summary,
           value: incident.id,
           id: incident.id,
+          title: incident.title,
           incident_number: incident.incident_number,
           status: incident.status,
         }));
@@ -101,6 +104,7 @@ const MergeModalComponent = () => {
         label: incident.summary,
         value: incident.id,
         id: incident.id,
+        title: incident.title,
         incident_number: incident.incident_number,
         status: incident.status,
       }))
@@ -112,6 +116,7 @@ const MergeModalComponent = () => {
         label: incident.summary,
         value: incident.id,
         id: incident.id,
+        title: incident.title,
         incident_number: incident.incident_number,
         status: incident.status,
       }))
@@ -155,10 +160,21 @@ const MergeModalComponent = () => {
     setMergeTarget(defaultMergeTarget);
   }, [displayMergeModal]);
 
+  const [addToTitle, setAddToTitle] = useState(false);
+  const [addToTitleText, setAddToTitleText] = useState('');
+
+  useEffect(() => {
+    if (mergeTarget) {
+      setAddToTitleText(`[merged into incident #${mergeTarget.incident_number}]`);
+    } else {
+      setAddToTitleText('');
+    }
+  }, [mergeTarget]);
+
   const doMerge = () => {
     const incidentsToMerge = selectedIncidents
       .filter((incident) => incident.id !== mergeTarget.id);
-    merge(mergeTarget, incidentsToMerge);
+    merge(mergeTarget, incidentsToMerge, true, addToTitle ? addToTitleText : null);
   };
 
   return (
@@ -202,6 +218,22 @@ const MergeModalComponent = () => {
             >
               {t('The remaining selected incidents will be resolved after the merge is complete')}
             </Text>
+          </FormControl>
+          <FormControl>
+            <Checkbox
+              size="sm"
+              isChecked={addToTitle}
+              onChange={(e) => setAddToTitle(e.target.checked)}
+            >
+              {t('Add text to merged incident titles')}
+            </Checkbox>
+            {addToTitle && (
+              <Input
+                placeholder={t('Text to add')}
+                value={addToTitleText}
+                onChange={(e) => setAddToTitleText(e.target.value)}
+              />
+            )}
           </FormControl>
           {mergingIsDisallowed && (
             <Box>

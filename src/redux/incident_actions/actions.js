@@ -121,11 +121,12 @@ export const toggleDisplayCustomSnoozeModal = () => ({
   type: TOGGLE_DISPLAY_CUSTOM_SNOOZE_MODAL_REQUESTED,
 });
 
-export const merge = (targetIncident, incidents, displayModal = true) => ({
+export const merge = (targetIncident, incidents, displayModal = true, addToTitleText) => ({
   type: MERGE_REQUESTED,
   targetIncident,
   incidents,
   displayModal,
+  addToTitleText,
 });
 
 export const toggleDisplayMergeModal = () => ({

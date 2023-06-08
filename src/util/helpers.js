@@ -4,6 +4,17 @@
 /* eslint-disable no-return-assign */
 import moment from 'moment';
 
+export const flattenObject = (obj, out = {}) => {
+  Object.keys(obj).forEach((key) => {
+    if (typeof obj[key] === 'object' && obj[key] !== null) {
+      out = flattenObject(obj[key], out);
+    } else {
+      out[key] = obj[key];
+    }
+  });
+  return out;
+};
+
 export const pushToArray = (arr, obj, key) => {
   const index = arr.findIndex((e) => e[key] === obj[key]);
   if (index === -1) {
