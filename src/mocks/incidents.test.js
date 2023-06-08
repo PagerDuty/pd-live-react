@@ -38,6 +38,9 @@ const generateMockAlert = () => {
           quote,
           'some obsecure field': uuid,
           link,
+          object_details: {
+            key1: 'value1',
+          },
         },
         event_class: jobType,
         message,

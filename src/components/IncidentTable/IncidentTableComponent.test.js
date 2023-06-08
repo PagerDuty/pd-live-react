@@ -57,6 +57,13 @@ describe('IncidentTableComponent', () => {
             width: 100,
             columnType: 'alert',
           },
+          {
+            Header: 'object_details',
+            accessorPath: 'details.object_details',
+            aggregator: null,
+            width: 100,
+            columnType: 'alert',
+          },
         ],
       },
       incidentActions: {
@@ -107,5 +114,22 @@ describe('IncidentTableComponent', () => {
     const sanitizedUrl = sanitizeUrl(url);
 
     expect(validator.isURL(sanitizedUrl)).toBeTruthy();
+  });
+
+  it('should render cell with JSON stringified value for custom detail field', () => {
+    store = mockStore(baseStore);
+    const wrapper = componentWrapper(store, IncidentTableComponent);
+
+    const incidentNumber = 1;
+    const customDetailField = 'object_details';
+    const jsonValue = wrapper
+      .find('[role="row"]')
+      .get(incidentNumber)
+      .props.children.find((td) => td.key.includes(customDetailField)).props.children.props
+      .cell.value;
+
+    // jsonValue should include a key with value 'value1'
+    expect(typeof jsonValue).toBe('object');
+    expect(JSON.stringify(jsonValue)).toContain('value1');
   });
 });
