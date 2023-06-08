@@ -133,7 +133,10 @@ export function* getIncidentsImpl() {
       if (userIds.length) baseParams.user_ids = userIds;
     }
 
-    incidents = yield call(pdParallelFetch, 'incidents', baseParams);
+    incidents = yield call(pdParallelFetch, 'incidents', baseParams, null, {
+      priority: 5,
+      skipSort: true,
+    });
   } catch (e) {
     yield put({ type: FETCH_INCIDENTS_ERROR, message: e.message });
     yield put({

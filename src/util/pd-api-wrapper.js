@@ -88,7 +88,7 @@ export const throttledPdAxiosRequest = (
   {
     expiration: options.expiration || 60 * 1000,
     priority: options.priority || 5,
-    id: `${method}-${endpoint}-${JSON.stringify(params)}`,
+    id: `${method}-${endpoint}-${JSON.stringify(params)}-${Date.now()}`,
   },
   () => pdAxiosRequest(method, endpoint, params, data),
 );
@@ -168,7 +168,10 @@ export const pdParallelFetch = async (endpoint, params, progressCallback, option
     }
   }
   await Promise.all(promises);
-  // eslint-disable-next-line max-len
-  fetchedData.sort((a, b) => (reversedSortOrder ? compareCreatedAt(b, a) : compareCreatedAt(a, b)));
+  if (!options.skipSort) {
+    fetchedData.sort(
+      (a, b) => (reversedSortOrder ? compareCreatedAt(b, a) : compareCreatedAt(a, b)),
+    );
+  }
   return fetchedData;
 };

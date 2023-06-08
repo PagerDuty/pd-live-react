@@ -205,7 +205,7 @@ const incidents = produce(
         if (action.incidentInsertList.length > 0) {
           draft.incidents = draft.incidents
             .concat(action.incidentInsertList)
-            .sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
+            .sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
         }
         for (let i = 0; i < draft.incidents.length; i++) {
           if (action.incidentUpdatesMap[draft.incidents[i].id]) {
