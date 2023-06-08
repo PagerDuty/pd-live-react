@@ -222,7 +222,7 @@ const incidents = produce(
         }
         for (let i = 0; i < Object.keys(action.incidentAlertsUnlinkMap).length; i++) {
           const incidentId = Object.keys(action.incidentAlertsUnlinkMap)[i];
-          if (draft.incidentAlerts[incidentId]) {
+          if (draft.incidentAlerts[incidentId] instanceof Array) {
             const unlinkedAlertIds = action.incidentAlertsUnlinkMap[incidentId]
               .map((alert) => alert.id);
             draft.incidentAlerts[incidentId] = draft.incidentAlerts[incidentId]

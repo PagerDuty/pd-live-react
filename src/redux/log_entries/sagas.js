@@ -24,7 +24,7 @@ import {
 } from 'redux/connection/actions';
 import {
   PROCESS_LOG_ENTRIES,
-  UPDATE_INCIDENTS_LIST,
+  // UPDATE_INCIDENTS_LIST,
 } from 'redux/incidents/actions';
 
 import selectIncidents from 'redux/incidents/selectors';
