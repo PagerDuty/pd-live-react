@@ -45,6 +45,7 @@ import {
 } from '@chakra-ui/icons';
 
 import StatusComponent from 'components/IncidentTable/subcomponents/StatusComponent';
+import NumAlertsComponent from 'components/IncidentTable/subcomponents/NumAlertsComponent';
 import PersonInitialsComponents from 'components/IncidentTable/subcomponents/PersonInitialsComponents';
 
 const CellDiv = ({
@@ -349,6 +350,17 @@ export const defaultIncidentColumns = () => ([
     header: 'Num Alerts',
     accessor: 'alert_counts.all',
     minWidth: 130,
+    renderer: ({
+      row: {
+        original: {
+          alerts,
+        },
+      },
+    }) => (
+      <CellDiv>
+        <NumAlertsComponent alerts={alerts} />
+      </CellDiv>
+    ),
   }),
   incidentColumn({
     header: 'Escalation Policy',

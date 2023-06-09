@@ -110,23 +110,33 @@ const GetAllModal = ({
             {rowsFetchingAlerts.length > 0
               && rowsNeedingFetch.length === 0
               && (
-                <Box
-                  rounded="md"
-                  borderWidth={1}
-                  p={2}
-                >
-                  <Text
-                    fontSize="sm"
-                    fontWeight="bold"
-                  >
-                    {`${rowsFetchingAlerts.length} remaining`}
+                <>
+                  <Text fontSize="sm">
+                    Fetching notes and alerts...
                   </Text>
-                  <Progress
-                    min={0}
-                    value={rowsDoneFetchingAlerts.length}
-                    max={rowsToExport.length}
-                  />
-                </Box>
+                  <Box
+                    rounded="md"
+                    borderWidth={1}
+                    p={2}
+                  >
+                    <Text
+                      fontSize="sm"
+                      fontWeight="bold"
+                    >
+                      {`${rowsFetchingAlerts.length} remaining`}
+                    </Text>
+                    <Progress
+                      min={0}
+                      value={rowsDoneFetchingAlerts.length}
+                      max={rowsToExport.length}
+                    />
+                  </Box>
+                  <Text fontSize="sm" mt={6}>
+                    You can close this box and continue using the app,
+                    {' '}
+                    download will continue in the background.
+                  </Text>
+                </>
               )}
           </ModalBody>
           <ModalFooter>
