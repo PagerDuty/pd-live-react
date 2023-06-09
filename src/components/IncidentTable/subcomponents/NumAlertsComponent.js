@@ -13,6 +13,7 @@ import {
   Td,
   // Text,
   Popover,
+  PopoverArrow,
   PopoverTrigger,
   PopoverContent,
 } from '@chakra-ui/react';
@@ -117,6 +118,7 @@ const NumAlertsComponent = ({
         </Box>
       </PopoverTrigger>
       <PopoverContent w="content">
+        <PopoverArrow />
         {tooltipText}
       </PopoverContent>
     </Popover>
