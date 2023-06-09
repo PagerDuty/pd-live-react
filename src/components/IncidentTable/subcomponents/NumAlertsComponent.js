@@ -28,7 +28,7 @@ const NumAlertsComponent = ({
   let value;
   if (alerts instanceof Array) {
     value = `${alerts.length}`;
-  } else if (alerts.status) {
+  } else if (alerts?.status) {
     value = alerts.status;
   } else {
     value = '';
@@ -98,7 +98,7 @@ const NumAlertsComponent = ({
         No alerts
       </Box>
     );
-  } else if (alerts.status) {
+  } else if (alerts?.status) {
     tooltipText = (
       <Box p={4}>
         {alerts.status}
