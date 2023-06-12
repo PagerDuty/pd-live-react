@@ -57,6 +57,7 @@ describe('Sagas: Settings', () => {
       })
       .hasFinalState({
         displaySettingsModal: false,
+      displayColumnsModal: false,
         defaultSinceDateTenor: tenor,
         maxIncidentsLimit: 200,
         maxRateLimit: 200,
@@ -67,9 +68,14 @@ describe('Sagas: Settings', () => {
             label: 'Environment:details.env',
             value: 'Environment:details.env',
             columnType: 'alert',
+            Header: 'Environment',
+          accessorPath: 'details.env',
+          aggregator: null
           },
         ],
         darkMode: false,
+        serverSideFiltering: true,
+        searchAllCustomDetails: false,
         status: SET_DEFAULT_SINCE_DATE_TENOR_COMPLETED,
       })
       .silentRun();
@@ -80,6 +86,9 @@ describe('Sagas: Settings', () => {
         label: faker.git.branch(),
         value: faker.git.branch(),
         columnType: 'alert',
+        Header: 'Environment',
+          accessorPath: 'details.env',
+          aggregator: null
       },
     ];
     return expectSaga(setAlertCustomDetailColumns)
@@ -94,6 +103,7 @@ describe('Sagas: Settings', () => {
       })
       .hasFinalState({
         displaySettingsModal: false,
+      displayColumnsModal: false,
         defaultSinceDateTenor: '1 Day',
         maxIncidentsLimit: 200,
         maxRateLimit: 200,
@@ -101,6 +111,8 @@ describe('Sagas: Settings', () => {
         autoRefreshInterval: 5,
         alertCustomDetailFields,
         darkMode: false,
+        serverSideFiltering: true,
+        searchAllCustomDetails: false,
         status: SET_ALERT_CUSTOM_DETAIL_COLUMNS_COMPLETED,
       })
       .silentRun();
@@ -122,6 +134,7 @@ describe('Sagas: Settings', () => {
       })
       .hasFinalState({
         displaySettingsModal: false,
+      displayColumnsModal: false,
         defaultSinceDateTenor: '1 Day',
         maxIncidentsLimit,
         maxRateLimit: 200,
@@ -132,9 +145,14 @@ describe('Sagas: Settings', () => {
             label: 'Environment:details.env',
             value: 'Environment:details.env',
             columnType: 'alert',
+            Header: 'Environment',
+          accessorPath: 'details.env',
+          aggregator: null
           },
         ],
         darkMode: false,
+        serverSideFiltering: true,
+        searchAllCustomDetails: false,
         status: SET_MAX_INCIDENTS_LIMIT_COMPLETED,
       })
       .silentRun();
@@ -156,6 +174,7 @@ describe('Sagas: Settings', () => {
       })
       .hasFinalState({
         displaySettingsModal: false,
+      displayColumnsModal: false,
         defaultSinceDateTenor: '1 Day',
         maxIncidentsLimit: 200,
         maxRateLimit,
@@ -166,9 +185,14 @@ describe('Sagas: Settings', () => {
             label: 'Environment:details.env',
             value: 'Environment:details.env',
             columnType: 'alert',
+            Header: 'Environment',
+          accessorPath: 'details.env',
+          aggregator: null
           },
         ],
         darkMode: false,
+        serverSideFiltering: true,
+        searchAllCustomDetails: false,
         status: SET_MAX_RATE_LIMIT_COMPLETED,
       })
       .silentRun();
@@ -187,6 +211,7 @@ describe('Sagas: Settings', () => {
       })
       .hasFinalState({
         displaySettingsModal: false,
+      displayColumnsModal: false,
         defaultSinceDateTenor: '1 Day',
         maxIncidentsLimit: 200,
         maxRateLimit: 200,
@@ -197,9 +222,14 @@ describe('Sagas: Settings', () => {
             label: 'Environment:details.env',
             value: 'Environment:details.env',
             columnType: 'alert',
+            Header: 'Environment',
+          accessorPath: 'details.env',
+          aggregator: null
           },
         ],
         darkMode: false,
+        serverSideFiltering: true,
+        searchAllCustomDetails: false,
         status: SET_AUTO_ACCEPT_INCIDENTS_QUERY_COMPLETED,
       })
       .silentRun();
@@ -221,6 +251,7 @@ describe('Sagas: Settings', () => {
       })
       .hasFinalState({
         displaySettingsModal: false,
+      displayColumnsModal: false,
         defaultSinceDateTenor: '1 Day',
         maxIncidentsLimit: 200,
         maxRateLimit: 200,
@@ -231,9 +262,14 @@ describe('Sagas: Settings', () => {
             label: 'Environment:details.env',
             value: 'Environment:details.env',
             columnType: 'alert',
+            Header: 'Environment',
+          accessorPath: 'details.env',
+          aggregator: null
           },
         ],
         darkMode: false,
+        serverSideFiltering: true,
+        searchAllCustomDetails: false,
         status: SET_AUTO_REFRESH_INTERVAL_COMPLETED,
       })
       .silentRun();
@@ -252,6 +288,7 @@ describe('Sagas: Settings', () => {
       })
       .hasFinalState({
         displaySettingsModal: false,
+      displayColumnsModal: false,
         defaultSinceDateTenor: '1 Day',
         maxIncidentsLimit: 200,
         maxRateLimit: 200,
@@ -262,9 +299,14 @@ describe('Sagas: Settings', () => {
             label: 'Environment:details.env',
             value: 'Environment:details.env',
             columnType: 'alert',
+            Header: 'Environment',
+          accessorPath: 'details.env',
+          aggregator: null
           },
         ],
         darkMode: true,
+        serverSideFiltering: true,
+        searchAllCustomDetails: false,
         status: SET_DARK_MODE_COMPLETED,
       })
       .silentRun();
