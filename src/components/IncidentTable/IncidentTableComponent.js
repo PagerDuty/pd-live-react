@@ -48,6 +48,10 @@ import {
   Text,
 } from '@chakra-ui/react';
 
+import {
+  useTranslation,
+} from 'react-i18next';
+
 import CheckboxComponent from './subcomponents/CheckboxComponent';
 import EmptyIncidentsComponent from './subcomponents/EmptyIncidentsComponent';
 import QueryActiveComponent from './subcomponents/QueryActiveComponent';
@@ -157,6 +161,10 @@ const IncidentTableComponent = () => {
   const getIncidentNotes = useCallback((incidentId) => {
     dispatch(getIncidentNotesAsyncConnected(incidentId));
   }, [dispatch]);
+  
+  const {
+    t,
+  } = useTranslation();
 
   // React Table Config
   const defaultColumn = useMemo(
@@ -479,7 +487,7 @@ const IncidentTableComponent = () => {
                 setDisplayGetAllModal(true);
               }}
             >
-              Export CSV
+              {t('Export CSV')}
               {tableInstance.selectedFlatRows.length > 0
                 ? ` (${tableInstance.selectedFlatRows.length} rows)`
                 : ` (${tableInstance.rows.length} rows)`}

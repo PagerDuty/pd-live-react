@@ -254,11 +254,11 @@ const DisclaimerModalComponent = ({
               By visiting this page on our website:
               {' '}
               <a
-                href="https://github.com/giranm/pd-live-react"
+                href="https://github.com/pagerduty/pd-live-react"
                 rel="external nofollow noopener noreferrer"
                 target="_blank"
               >
-                https://github.com/giranm/pd-live-react
+                https://github.com/pagerduty/pd-live-react
               </a>
             </li>
           </ul>
