@@ -68,7 +68,8 @@
     "web-vitals": "^3.1.0"
   },
   "resolutions": {
-    "autoprefixer": "10.4.5"
+    "autoprefixer": "10.4.5",
+    "nwsapi": "2.2.2"
   },
   "scripts": {
     "start": "npx craco start",
@@ -113,9 +114,9 @@
     "@cypress/webpack-dev-server": "^3.2.3",
     "@faker-js/faker": "^8.0.2",
     "@testing-library/dom": "^9.3.0",
-    "@testing-library/react-hooks": "^8.0.1",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^14.0.0",
+    "@testing-library/react-hooks": "^8.0.1",
     "@testing-library/user-event": "^14.4.3",
     "@welldone-software/why-did-you-render": "^7.0.1",
     "@wojtekmaj/enzyme-adapter-react-17": "^0.8.0",
