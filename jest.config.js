@@ -12,4 +12,5 @@ module.exports = {
     '^.+\\.[t|j]sx?$': 'babel-jest',
     '^.+\\.svg$': 'svg-jest',
   },
+  transformIgnorePatterns: [`/node_modules/(?!(somePkg)|react-dnd|dnd-core|@react-dnd)`],
 };
