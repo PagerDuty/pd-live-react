@@ -106,7 +106,7 @@ describe('Sagas: Settings', () => {
       .silentRun();
   });
   it('setMaxIncidentsLimit', () => {
-    const maxIncidentsLimit = faker.datatype.number({
+    const maxIncidentsLimit = faker.number.int({
       min: MAX_INCIDENTS_LIMIT_LOWER,
       max: MAX_INCIDENTS_LIMIT_UPPER,
     });
@@ -140,7 +140,7 @@ describe('Sagas: Settings', () => {
       .silentRun();
   });
   it('setMaxRateLimit', () => {
-    const maxRateLimit = faker.datatype.number({
+    const maxRateLimit = faker.number.int({
       min: MAX_RATE_LIMIT_LOWER,
       max: MAX_RATE_LIMIT_UPPER,
     });
@@ -205,7 +205,7 @@ describe('Sagas: Settings', () => {
       .silentRun();
   });
   it('setAutoRefreshInterval', () => {
-    const autoRefreshInterval = faker.datatype.number({
+    const autoRefreshInterval = faker.number.int({
       min: REFRESH_INTERVAL_LOWER,
       max: REFRESH_INTERVAL_UPPER,
     });

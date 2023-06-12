@@ -4,8 +4,8 @@ import {
 
 const generateMockEscalationPolicy = () => {
   // Generate Faker stubs for escalation policy
-  const id = faker.random.alphaNumeric(7);
-  const escalationPolicyName = faker.name.jobArea();
+  const id = faker.string.alphanumeric(7);
+  const escalationPolicyName = faker.person.jobArea();
   return {
     id,
     summary: escalationPolicyName,

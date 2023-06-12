@@ -71,7 +71,7 @@ describe('Manage Settings', { failFast: { enabled: false } }, () => {
   });
 
   it('Update auto-refresh interval', () => {
-    const autoRefreshInterval = faker.datatype.number({ min: 5, max: 60 });
+    const autoRefreshInterval = faker.number.int({ min: 5, max: 60 });
     updateAutoRefreshInterval(autoRefreshInterval);
     cy.window()
       .its('store')
@@ -82,7 +82,7 @@ describe('Manage Settings', { failFast: { enabled: false } }, () => {
   });
 
   it('Update max incidents limit', () => {
-    const maxIncidentsLimit = faker.datatype.number({ min: 200, max: 1000 });
+    const maxIncidentsLimit = faker.number.int({ min: 200, max: 1000 });
     updateMaxIncidentsLimit(maxIncidentsLimit);
     cy.window()
       .its('store')
@@ -93,7 +93,7 @@ describe('Manage Settings', { failFast: { enabled: false } }, () => {
   });
 
   it('Update max rate limit', () => {
-    const maxRateLimit = faker.datatype.number({ min: 100, max: 1000 });
+    const maxRateLimit = faker.number.int({ min: 100, max: 1000 });
     updateMaxRateLimit(maxRateLimit);
     cy.window()
       .its('store')

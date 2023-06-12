@@ -4,8 +4,8 @@ import {
 
 const generateMockTeam = () => {
   // Generate Faker stubs for team
-  const id = faker.random.alphaNumeric(7);
-  const teamName = faker.name.jobArea();
+  const id = faker.string.alphanumeric(7);
+  const teamName = faker.person.jobArea();
   return {
     id,
     summary: teamName,

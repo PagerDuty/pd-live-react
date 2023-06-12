@@ -4,8 +4,8 @@ import {
 
 const generateMockUser = () => {
   // Generate Faker stubs for user
-  const id = faker.random.alphaNumeric(7);
-  const userName = faker.name.fullName();
+  const id = faker.string.alphanumeric(7);
+  const userName = faker.person.fullName();
   return {
     id,
     summary: userName,

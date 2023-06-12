@@ -23,7 +23,7 @@ describe('Authentication Helper Suite', () => {
   const clientSecret = PD_OAUTH_CLIENT_SECRET;
   const redirectURL = 'http://localhost:3000/';
   const code = 'SOME_REDIRECT_CODE';
-  const mockAccessToken = faker.random.alphaNumeric();
+  const mockAccessToken = faker.string.alphanumeric();
   let codeVerifier;
   let hash;
   let authURL;
