@@ -161,7 +161,7 @@ const IncidentTableComponent = () => {
   const getIncidentNotes = useCallback((incidentId) => {
     dispatch(getIncidentNotesAsyncConnected(incidentId));
   }, [dispatch]);
-  
+
   const {
     t,
   } = useTranslation();
