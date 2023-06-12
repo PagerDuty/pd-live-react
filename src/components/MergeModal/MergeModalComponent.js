@@ -148,8 +148,8 @@ const MergeModalComponent = () => {
 
   const [mergeTarget, setMergeTarget] = useState(null);
 
+  // you're not allowed to merge open incidents into a resolved incident
   const mergingIsDisallowed = useMemo(() => (
-    // you're not allowed to merge open incidents into a resolved incident
     !!mergeTarget
     && mergeTarget.status === RESOLVED
     && selectedIncidents.length > 1
