@@ -28,6 +28,9 @@ const AuthComponent = (props) => {
   const urlParams = new URLSearchParams(window.location.search);
   const accessToken = sessionStorage.getItem('pd_access_token');
   const code = urlParams.get('code');
+  const subdomain = urlParams.get('subdomain');
+  const region = urlParams.get('service_region') || 'us';
+
   let codeVerifier = sessionStorage.getItem('code_verifier');
   let {
     redirectURL,
@@ -54,7 +57,8 @@ const AuthComponent = (props) => {
       codeVerifier = createCodeVerifier();
       sessionStorage.setItem('code_verifier', codeVerifier);
       getAuthURL(clientId, clientSecret, redirectURL, codeVerifier).then((url) => {
-        setAuthURL(url);
+        const subdomainParams = subdomain ? `&subdomain=${subdomain}&service_region=${region}` : '';
+        setAuthURL(`${url}${subdomainParams}`);
       });
     }
   }, []);
