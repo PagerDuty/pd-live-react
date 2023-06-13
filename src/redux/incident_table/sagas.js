@@ -2,10 +2,9 @@ import {
   put, takeLatest, select,
 } from 'redux-saga/effects';
 
-// TODO: Use column-generator
 import {
-  getReactTableColumnSchemas,
-} from 'config/incident-table-columns';
+  columnsForSavedColumns,
+} from 'config/column-generator';
 
 import {
   SAVE_INCIDENT_TABLE_SETTINGS_REQUESTED,
@@ -36,7 +35,7 @@ export function* saveIncidentTableImpl(action) {
     } = action;
 
     // Merge state from incident table and defined columns into a format which can be persisted
-    const reactTableColumnSchemas = getReactTableColumnSchemas(updatedIncidentTableColumns);
+    const reactTableColumnSchemas = columnsForSavedColumns(updatedIncidentTableColumns);
     const existingColumnWidths = incidentTableState.columnResizing
       ? incidentTableState.columnResizing.columnWidths
       : null;

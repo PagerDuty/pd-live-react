@@ -18,11 +18,10 @@ import {
   useDrop,
 } from 'react-dnd';
 
-// TODO: Use column-generator
 import {
-  availableIncidentTableColumns,
-  availableAlertTableColumns,
-} from 'config/incident-table-columns';
+  defaultColumns,
+  customAlertColumns,
+} from 'config/column-generator';
 
 import {
   saveIncidentTable as saveIncidentTableConnected,
@@ -98,9 +97,8 @@ const TableColumnsModalComponent = () => {
 
   const getAllAvailableColumns = () => {
     const v = [
-      ...availableIncidentTableColumns,
-      ...availableAlertTableColumns,
-      ...alertCustomDetailFields,
+      ...defaultColumns(),
+      ...customAlertColumns(alertCustomDetailFields),
     ].sort((a, b) => columnValue(a).localeCompare(columnValue(b)));
     return v;
   };

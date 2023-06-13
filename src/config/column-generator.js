@@ -234,7 +234,7 @@ export const incidentColumn = ({
     accessor,
     Cell: wrappedRenderer,
     minWidth,
-    columnType,
+    columnType: columnType || 'incident',
   };
 
   if (id) {
@@ -281,6 +281,16 @@ export const defaultIncidentColumns = () => ([
   incidentColumn({
     header: 'Created At',
     accessor: 'created_at',
+    minWidth: 200,
+    renderer: ({
+      value,
+    }) => renderDateCell({
+      iso8601Date: value,
+    }),
+  }),
+  incidentColumn({
+    header: 'Updated At',
+    accessor: 'updated_at',
     minWidth: 200,
     renderer: ({
       value,
@@ -548,6 +558,22 @@ export const defaultIncidentColumns = () => ([
     ),
   }),
   incidentColumn({
+    id: 'latest_note_at',
+    header: 'Latest Note At',
+    accessor: (incident) => {
+      if (incident.notes && incident.notes.length > 0) {
+        return incident.notes.slice(-1)[0].created_at;
+      }
+      return '';
+    },
+    minWidth: 300,
+    renderer: ({
+      value,
+    }) => renderDateCell({
+      iso8601Date: value,
+    }),
+  }),
+  incidentColumn({
     id: 'external_references',
     header: 'External References',
     accessor: (incident) => (incident.external_references
@@ -727,6 +753,19 @@ export const defaultColumns = () => ([
   ...defaultIncidentColumns(),
   ...defaultAlertsColumns(),
 ]);
+
+export const customAlertColumns = (savedColumns) => {
+  const allColumns = defaultColumns();
+  return savedColumns.map((column) => {
+    if (
+      column.columnType === 'alert'
+      && !allColumns.find((c) => c.originalHeader === column.Header)
+    ) {
+      return customAlertColumnForSavedColumn(column);
+    }
+    return undefined;
+  });
+};
 
 export const columnsForSavedColumns = (savedColumns) => {
   const allColumns = defaultColumns();
