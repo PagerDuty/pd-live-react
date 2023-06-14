@@ -40,6 +40,10 @@ import {
 } from 'react-contextmenu';
 
 import {
+  InView,
+} from 'react-intersection-observer';
+
+import {
   columnsForSavedColumns,
 } from 'config/column-generator';
 
@@ -58,6 +62,7 @@ import QueryActiveComponent from './subcomponents/QueryActiveComponent';
 import QueryCancelledComponent from './subcomponents/QueryCancelledComponent';
 import GetAllModal from './subcomponents/GetAllModal';
 import GetAllForSortModal from './subcomponents/GetAllForSortModal';
+// import IncidentTableRow from './subcomponents/IncidentTableRow';
 
 import './IncidentTableComponent.scss';
 
@@ -219,27 +224,13 @@ const IncidentTableComponent = () => {
     return () => window.removeEventListener('resize', calculateTableHeight);
   }, []);
 
-  const [visibleRowIndexes, setVisibleRowIndexes] = useState({ start: 0, stop: 0 });
-
-  const [sortingBy, setSortingBy] = useState([]);
   // Debouncing for table state
   const debouncedUpdateIncidentTableState = useDebouncedCallback((state, action) => {
     // Only update store with sorted and column resizing state
-    if (action.type === 'toggleSortBy') {
-      // if sorting has changed, different rows are visible so might need to fetch alerts/notes
-      setSortingBy(state.sortBy);
-    }
     if (action.type === 'toggleSortBy' || action.type === 'columnDoneResizing') {
       updateIncidentTableState(state);
     }
   }, 100);
-
-  const onItemsRendered = useCallback(
-    (args) => {
-      // FixedSizeList calls this when visible row indexes change, moght need to fetch alerts/notes
-      setVisibleRowIndexes({ start: args.overscanStartIndex, stop: args.overscanStopIndex });
-    }, [],
-  );
 
   // Custom row id fetch to handle dynamic table updates
   const getRowId = useCallback((row) => row.id, []);
@@ -313,19 +304,6 @@ const IncidentTableComponent = () => {
     totalColumnsWidth,
   } = tableInstance;
 
-  useEffect(() => {
-    // Get alerts and notes for visible rows when sorting changes or visible row indexes change
-    const visibleRows = rows.slice(visibleRowIndexes.start, visibleRowIndexes.stop + 1);
-    visibleRows.forEach((row) => {
-      if (!row.original.alerts) {
-        getIncidentAlerts(row.original.id);
-      }
-      if (!row.original.notes) {
-        getIncidentNotes(row.original.id);
-      }
-    });
-  }, [sortingBy, visibleRowIndexes]);
-
   const MyIncidentRow = useCallback(
     ({
       data,
@@ -335,26 +313,44 @@ const IncidentTableComponent = () => {
       const row = data[index];
       prepareRow(row);
       return (
-        <Box
-          {...row.getRowProps({
-            style,
-          })}
-          className={index % 2 === 0 ? 'tr' : 'tr-odd'}
-        >
-          {row.cells.map((cell) => (
-            <Box
-              {...cell.getCellProps()}
-              className="td"
-              data-incident-header={
-                cell.column.Header instanceof String ? cell.column.Header : 'incident-header'
+        <InView>
+          {({
+            inView,
+            ref,
+          }) => {
+            if (inView) {
+              if (!row.original.alerts) {
+                getIncidentAlerts(row.original.id);
               }
-              data-incident-row-cell-idx={row.index}
-              data-incident-cell-id={row.original.id}
-            >
-              {cell.render('Cell')}
-            </Box>
-          ))}
-        </Box>
+              if (!row.original.notes) {
+                getIncidentNotes(row.original.id);
+              }
+            }
+            return (
+              <Box
+                {...row.getRowProps({
+                  style,
+                })}
+                className={index % 2 === 0 ? 'tr' : 'tr-odd'}
+                ref={ref}
+              >
+                {row.cells.map((cell) => (
+                  <Box
+                    {...cell.getCellProps()}
+                    className="td"
+                    data-incident-header={
+                      cell.column.Header instanceof String ? cell.column.Header : 'incident-header'
+                    }
+                    data-incident-row-cell-idx={row.index}
+                    data-incident-cell-id={row.original.id}
+                  >
+                    {cell.render('Cell')}
+                  </Box>
+                ))}
+              </Box>
+            );
+          }}
+        </InView>
       );
     }, [prepareRow, columns],
   );
@@ -515,7 +511,6 @@ const IncidentTableComponent = () => {
             itemKey={(index) => rows[index].id}
             itemData={rows}
             width={totalColumnsWidth + scrollBarSize}
-            onItemsRendered={onItemsRendered}
           >
             {MyIncidentRow}
           </FixedSizeList>
