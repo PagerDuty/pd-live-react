@@ -12,7 +12,7 @@ import {
 } from 'util/pd-api-wrapper';
 
 import {
-  FETCH_INCIDENTS_REQUESTED,
+  FETCH_INCIDENTS_REQUESTED, FILTER_INCIDENTS_LIST,
 } from 'redux/incidents/actions';
 
 import {
@@ -24,6 +24,8 @@ import {
   SET_DEFAULT_SINCE_DATE_TENOR_COMPLETED,
   SET_SEARCH_ALL_CUSTOM_DETAILS_REQUESTED,
   SET_SEARCH_ALL_CUSTOM_DETAILS_COMPLETED,
+  SET_RESPONDERS_IN_EP_FILTER_REQUESTED,
+  SET_RESPONDERS_IN_EP_FILTER_COMPLETED,
   SET_ALERT_CUSTOM_DETAIL_COLUMNS_REQUESTED,
   SET_ALERT_CUSTOM_DETAIL_COLUMNS_COMPLETED,
   SET_MAX_INCIDENTS_LIMIT_REQUESTED,
@@ -97,6 +99,23 @@ export function* setSearchAllCustomDetailsImpl(action) {
   yield put({
     type: SET_SEARCH_ALL_CUSTOM_DETAILS_COMPLETED,
     searchAllCustomDetails,
+  });
+}
+
+export function* setRespondersInEpFilter() {
+  yield takeLatest(SET_RESPONDERS_IN_EP_FILTER_REQUESTED, setRespondersInEpFilterImpl);
+}
+
+export function* setRespondersInEpFilterImpl(action) {
+  const {
+    respondersInEpFilter,
+  } = action;
+  yield put({
+    type: SET_RESPONDERS_IN_EP_FILTER_COMPLETED,
+    respondersInEpFilter,
+  });
+  yield put({
+    type: FILTER_INCIDENTS_LIST,
   });
 }
 

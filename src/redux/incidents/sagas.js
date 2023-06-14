@@ -397,6 +397,7 @@ export function* filterIncidentsImpl() {
   } = yield select(selectIncidentTable);
   const {
     searchAllCustomDetails,
+    respondersInEpFilter,
   } = yield select(selectSettings);
 
   let filteredIncidentsByQuery = [...incidents];
@@ -438,11 +439,26 @@ export function* filterIncidentsImpl() {
 
     // Filter current incident list by escalation policy
     if (escalationPolicyIds.length > 0) {
-      filteredIncidentsByQuery = filterIncidentsByField(
-        filteredIncidentsByQuery,
-        'escalation_policy.id',
-        escalationPolicyIds,
-      );
+      filteredIncidentsByQuery = filteredIncidentsByQuery.filter((incident) => {
+        if (escalationPolicyIds.includes(incident.escalation_policy.id)) return true;
+        if (respondersInEpFilter && incident.responder_requests.length > 0) {
+          const responderRequestTargets = incident.responder_requests.map((responderRequest) => (
+            responderRequest.responder_request_targets
+              .filter((responderRequestTarget) => (
+                responderRequestTarget.responder_request_target.type === 'escalation_policy'
+              ))
+              .map((responderRequestTarget) => (
+                responderRequestTarget.responder_request_target.id
+              ))
+              .flat()
+          )).flat();
+          if (escalationPolicyIds.some((escalationPolicyId) => (
+            responderRequestTargets.includes(escalationPolicyId)
+          ))) return true;
+        }
+
+        return false;
+      });
     }
 
     // Filter current incident list by service

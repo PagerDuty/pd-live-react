@@ -63,6 +63,7 @@ import {
   // setDarkMode as setDarkModeConnected,
   setServerSideFiltering as setServerSideFilteringConnected,
   setSearchAllCustomDetails as setSearchAllCustomDetailsConnected,
+  setRespondersInEpFilter as setRespondersInEpFilterConnected,
 } from 'redux/settings/actions';
 
 const SettingsModalComponent = () => {
@@ -84,6 +85,7 @@ const SettingsModalComponent = () => {
     // darkMode,
     serverSideFiltering,
     searchAllCustomDetails,
+    respondersInEpFilter,
   } = useSelector((state) => state.settings);
   const currentUserLocale = useSelector((state) => state.users.currentUserLocale);
 
@@ -105,6 +107,9 @@ const SettingsModalComponent = () => {
   const setSearchAllCustomDetails = (newSearchAllCustomDetails) => {
     dispatch(setSearchAllCustomDetailsConnected(newSearchAllCustomDetails));
   };
+  const setRespondersInEpFilter = (newRespondersInEpFilter) => {
+    dispatch(setRespondersInEpFilterConnected(newRespondersInEpFilter));
+  };
 
   const localeOptions = Object.keys(locales).map((locale) => ({
     label: locales[locale],
@@ -120,6 +125,9 @@ const SettingsModalComponent = () => {
   const [
     tempSearchAllCustomDetails, setTempSearchAllCustomDetails,
   ] = useState(searchAllCustomDetails);
+  const [
+    tempRespondersInEpFilter, setTempRespondersInEpFilter,
+  ] = useState(respondersInEpFilter);
 
   const saveSettings = () => {
     if (selectedLocale !== currentUserLocale) {
@@ -139,6 +147,9 @@ const SettingsModalComponent = () => {
     }
     if (tempSearchAllCustomDetails !== searchAllCustomDetails) {
       setSearchAllCustomDetails(tempSearchAllCustomDetails);
+    }
+    if (tempRespondersInEpFilter !== respondersInEpFilter) {
+      setRespondersInEpFilter(tempRespondersInEpFilter);
     }
   };
 
@@ -282,6 +293,23 @@ const SettingsModalComponent = () => {
                 }}
               >
                 {t('Search all alert custom details in global search')}
+              </Switch>
+            </FormControl>
+            <FormControl>
+              <FormLabel
+                htmlFor="responders-in-ep-filter-switch"
+              >
+                {t('Filters')}
+              </FormLabel>
+              <Switch
+                id="responders-in-ep-filter-switch"
+                isChecked={tempRespondersInEpFilter}
+                aria-label={t('Escalation Policy filter searches responders as well as assignees')}
+                onChange={(e) => {
+                  setTempRespondersInEpFilter(e.target.checked);
+                }}
+              >
+                {t('Escalation Policy filter searches responders as well as assignees')}
               </Switch>
             </FormControl>
           </Stack>
