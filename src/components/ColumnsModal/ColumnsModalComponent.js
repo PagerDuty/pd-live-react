@@ -82,6 +82,7 @@ const TableColumnsModalComponent = () => {
   const toast = useToast();
 
   const columnValue = (column) => {
+    if (!column) return '';
     let value;
     if (column.columnType === 'alert') {
       // Alert column based on aggregator
