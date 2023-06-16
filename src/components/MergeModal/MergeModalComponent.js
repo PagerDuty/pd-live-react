@@ -196,6 +196,7 @@ const MergeModalComponent = () => {
             </Text>
             <FormLabel>{t('Select an incident to merge into')}</FormLabel>
             <Select
+              id="merge-select"
               size="md"
               isSearchable
               options={selectOptions}
@@ -250,6 +251,7 @@ const MergeModalComponent = () => {
         <ModalFooter>
           <Box>
             <Button
+              id="merge-button"
               colorScheme="blue"
               mr={3}
               onClick={doMerge}

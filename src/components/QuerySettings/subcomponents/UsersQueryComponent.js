@@ -54,6 +54,7 @@ const UsersQueryComponent = () => {
 
   return (
     <Select
+      id="query-user-select"
       size="sm"
       isMulti
       isSearchable

@@ -58,6 +58,7 @@ const StatusQueryComponent = () => {
   return (
     <Flex>
       <QuerySettingsCheckbox
+        id="query-status-triggered-button"
         {...getCheckboxProps({
           value: TRIGGERED,
         })}
@@ -65,6 +66,7 @@ const StatusQueryComponent = () => {
         {t('Triggered')}
       </QuerySettingsCheckbox>
       <QuerySettingsCheckbox
+        id="query-status-acknowledged-button"
         {...getCheckboxProps({
           value: ACKNOWLEDGED,
         })}
@@ -72,6 +74,7 @@ const StatusQueryComponent = () => {
         {t('Acknowledged')}
       </QuerySettingsCheckbox>
       <QuerySettingsCheckbox
+        id="query-status-resolved-button"
         {...getCheckboxProps({
           value: RESOLVED,
         })}

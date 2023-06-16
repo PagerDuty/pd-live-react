@@ -1,3 +1,5 @@
+/* eslint-disable cypress/unsafe-to-chain-command */
+
 import moment from 'moment';
 import 'moment/min/locales.min';
 
@@ -17,8 +19,8 @@ import {
   updateDarkMode,
   manageIncidentTableColumns,
   manageCustomAlertColumnDefinitions,
-  activateButton,
-  priorityNames,
+  // activateButton,
+  // priorityNames,
 } from '../../support/util/common';
 
 describe('Manage Settings', { failFast: { enabled: false } }, () => {
@@ -27,9 +29,9 @@ describe('Manage Settings', { failFast: { enabled: false } }, () => {
 
   before(() => {
     acceptDisclaimer();
-    priorityNames.forEach((currentPriority) => {
-      activateButton(`query-priority-${currentPriority}-button`);
-    });
+    // priorityNames.forEach((currentPriority) => {
+    //   activateButton(`query-priority-${currentPriority}-button`);
+    // });
     waitForIncidentTable();
   });
 
@@ -37,16 +39,20 @@ describe('Manage Settings', { failFast: { enabled: false } }, () => {
     if (cy.state('test').currentRetry() > 1) {
       acceptDisclaimer();
     }
-    priorityNames.forEach((currentPriority) => {
-      activateButton(`query-priority-${currentPriority}-button`);
-    });
+    // priorityNames.forEach((currentPriority) => {
+    //   activateButton(`query-priority-${currentPriority}-button`);
+    // });
     waitForIncidentTable();
   });
 
   it('Change user locale to fr', () => {
     const localeName = 'Français';
 
-    updateUserLocale(localeName,'Settings', 'User Profile', 'Update User Profile', 'Paramètres du profil utilisateur mis à jour');
+    updateUserLocale(
+      localeName,
+      'Settings',
+      'Paramètres du profil utilisateur mis à jour',
+    );
   });
 
   it('Change user locale to en-US', () => {
@@ -54,23 +60,41 @@ describe('Manage Settings', { failFast: { enabled: false } }, () => {
     const expectedSinceDateFormat = moment().subtract(1, 'days').format('L');
     const expectedIncidentDateFormat = moment().format('LL');
 
-    updateUserLocale(localeName,'Paramètres', 'Profil utilisateur', 'Mettre à jour le profil utilisateur', 'Updated user profile settings');
+    updateUserLocale(
+      localeName,
+      'Paramètres',
+      'Updated user profile settings',
+    );
     cy.get('#query-date-input').should('have.value', expectedSinceDateFormat);
     cy.get('[data-incident-header="Created At"][data-incident-row-cell-idx="0"]')
       .should('be.visible')
       .should('contain', expectedIncidentDateFormat);
   });
 
-  ['1 Day', '3 Days', '1 Week', '2 Weeks', '1 Month', '3 Months', '6 Months'].forEach((tenor) => {
+  [
+    '1 Day',
+    '3 Days',
+    '1 Week',
+    '2 Weeks',
+    '1 Month',
+    '3 Months',
+    '6 Months',
+  ].forEach((tenor) => {
     it(`Update default since date lookback to ${tenor}`, () => {
       const [sinceDateNum, sinceDateTenor] = tenor.split(' ');
       const expectedDate = moment().subtract(Number(sinceDateNum), sinceDateTenor).format('L');
       updateDefaultSinceDateLookback(tenor);
+      updateUserLocale(
+        'English (United States)',
+        'Settings',
+        'Updated user profile settings',
+      );
       cy.get('#query-date-input').should('have.value', expectedDate);
     });
   });
 
-  it('Update auto-refresh interval', () => {
+  // no longer applicable
+  xit('Update auto-refresh interval', () => {
     const autoRefreshInterval = faker.number.int({ min: 5, max: 60 });
     updateAutoRefreshInterval(autoRefreshInterval);
     cy.window()
@@ -82,7 +106,7 @@ describe('Manage Settings', { failFast: { enabled: false } }, () => {
   });
 
   it('Update max incidents limit', () => {
-    const maxIncidentsLimit = faker.number.int({ min: 200, max: 1000 });
+    const maxIncidentsLimit = 400;
     updateMaxIncidentsLimit(maxIncidentsLimit);
     cy.window()
       .its('store')
@@ -93,7 +117,7 @@ describe('Manage Settings', { failFast: { enabled: false } }, () => {
   });
 
   it('Update max rate limit', () => {
-    const maxRateLimit = faker.number.int({ min: 100, max: 1000 });
+    const maxRateLimit = 600;
     updateMaxRateLimit(maxRateLimit);
     cy.window()
       .its('store')
@@ -103,7 +127,8 @@ describe('Manage Settings', { failFast: { enabled: false } }, () => {
       ).to.equal(maxRateLimit));
   });
 
-  it('Update auto-accept incident query', () => {
+  // no longer applicable
+  xit('Update auto-accept incident query', () => {
     [true, false].forEach((autoAcceptIncidentsQuery) => {
       updateAutoAcceptIncidentQuery(autoAcceptIncidentsQuery);
       cy.window()
@@ -116,44 +141,58 @@ describe('Manage Settings', { failFast: { enabled: false } }, () => {
   });
 
   it('Add standard columns to incident table', () => {
-    const columns = ['Teams', 'Num Alerts', 'Group', 'Component'];
-    manageIncidentTableColumns('add', columns);
-    columns.forEach((columnName) => {
+    const columns = [
+      ['Teams', 'teams'],
+      ['Num Alerts', 'num_alerts'],
+      ['Group', 'service_group'],
+      ['Component', 'source_component'],
+    ];
+    manageIncidentTableColumns('add', columns.map((column) => column[1]));
+    columns.map((column) => column[0]).forEach((columnName) => {
       cy.get(`[data-column-name="${columnName}"]`).scrollIntoView().should('be.visible');
     });
   });
 
   it('Remove standard columns from incident table', () => {
-    const columns = ['Service', 'Latest Note'];
-    manageIncidentTableColumns('remove', columns);
+    const columns = [
+      ['Service', 'service'],
+      ['Latest Note', 'latest_note'],
+    ];
+    manageIncidentTableColumns('remove', columns.map((column) => column[1]));
 
     // Assert against DOM to see if element has been removed
     cy.get('body').then((body) => {
-      columns.forEach((columnName) => {
+      columns.map((column) => column[0]).forEach((columnName) => {
         expect(body.find(`[data-column-name="${columnName}"]`).length).to.equal(0);
       });
     });
   });
 
   it('Update and store incident column width correctly', () => {
-    const columnName = 'Status';
-    const targetColumn = 'Priority';
+    const columnToResize = ['Status', 'status'];
+    const targetColumn = ['Priority', 'priority'];
     let newColumnWidth;
 
-    // Resize column by dragging header and find updated width
-    cy.get(`[data-column-name="${columnName}"] > div`).drag(
-      `[data-column-name="${targetColumn}"] > div`,
-    );
-    cy.get(`[data-column-name="${columnName}"]`)
+    cy.get(`[data-column-name="${columnToResize[0]}"] > .resizer`)
+      .trigger('mousedown', { which: 1 });
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(500);
+    cy.get(`[data-column-name="${targetColumn[0]}"] > .resizer`)
+      .trigger('mousemove')
+      .trigger('mouseup');
+
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(500);
+    cy.get(`[data-column-name="${columnToResize[0]}"]`)
       .invoke('css', 'width')
       .then((str) => {
         newColumnWidth = parseInt(str, 10);
       });
 
     // Remove, re-add column, and ensure width has not been changed
-    manageIncidentTableColumns('remove', [columnName, targetColumn]);
-    manageIncidentTableColumns('add', [columnName]);
-    cy.get(`[data-column-name="${columnName}"]`)
+    manageIncidentTableColumns('remove', [columnToResize[1], targetColumn[1]]);
+    manageIncidentTableColumns('add', [columnToResize[1]]);
+    cy.get(`[data-column-name="${columnToResize[0]}"]`)
       .invoke('css', 'width')
       .then((str) => {
         expect(parseInt(str, 10)).to.equal(newColumnWidth);
@@ -163,9 +202,9 @@ describe('Manage Settings', { failFast: { enabled: false } }, () => {
   it('Add valid custom alert column to incident table', () => {
     const customAlertColumnDefinitions = ['Quote:details.quote'];
     manageCustomAlertColumnDefinitions(customAlertColumnDefinitions);
-    manageIncidentTableColumns('add', customAlertColumnDefinitions);
+    // manageIncidentTableColumns('add', customAlertColumnDefinitions);
     customAlertColumnDefinitions.forEach((columnName) => {
-      const [header] = columnName.split(':');
+      const header = columnName.split(':')[0];
       cy.get(`[data-column-name="${header}"]`).scrollIntoView().should('be.visible');
       cy.get(`[data-incident-header="${header}"][data-incident-row-cell-idx="0"]`).then(($el) => {
         // eslint-disable-next-line no-unused-expressions
@@ -174,10 +213,11 @@ describe('Manage Settings', { failFast: { enabled: false } }, () => {
     });
   });
 
-  it('Add invalid custom alert column to incident table', () => {
+  // no longer applicable - add button will be disabled if column is invalid
+  xit('Add invalid custom alert column to incident table', () => {
     const customAlertColumnDefinitions = ['SOMEINVALIDCOLUMN'];
     manageCustomAlertColumnDefinitions(customAlertColumnDefinitions);
-    manageIncidentTableColumns('add', customAlertColumnDefinitions);
+    // manageIncidentTableColumns('add', customAlertColumnDefinitions);
     customAlertColumnDefinitions.forEach((columnName) => {
       const [header] = columnName.split(':');
       cy.get(`[data-column-name="${header}"]`).scrollIntoView().should('be.visible');
@@ -189,21 +229,25 @@ describe('Manage Settings', { failFast: { enabled: false } }, () => {
 
   it('Clear local cache', () => {
     cy.get('.settings-panel-dropdown').click();
-    cy.get('.dropdown-item').contains('Settings').click();
-    cy.get('.nav-item').contains('Local Cache').click();
-    cy.get('.btn').contains('Clear Local Cache').click();
+    cy.get('.dropdown-item').contains('Clear Local Cache').click();
     cy.get('.modal-title').contains('Disclaimer & License').should('be.visible');
+    acceptDisclaimer();
   });
-  
+
   it('Update dark mode', () => {
-    [true, false].forEach((darkMode) => {
-      updateDarkMode(darkMode);
-      cy.window()
-        .its('store')
-        .invoke('getState')
-        .then((state) => expect(
-          state.settings.darkMode,
-        ).to.equal(darkMode));
-    });
+    let currentDarkMode;
+    cy.window()
+      .its('store')
+      .invoke('getState')
+      .then((state) => {
+        currentDarkMode = state.settings.darkMode;
+      });
+    updateDarkMode();
+    cy.window()
+      .its('store')
+      .invoke('getState')
+      .then((state) => expect(
+        state.settings.darkMode,
+      ).to.equal(!currentDarkMode));
   });
 });

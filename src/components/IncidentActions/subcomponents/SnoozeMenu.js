@@ -57,6 +57,7 @@ const SnoozeMenu = () => {
   return (
     <Menu>
       <MenuButton
+        className="incident-action-snooze-button"
         size="sm"
         as={Button}
         leftIcon={<FaBellSlash />}
@@ -69,6 +70,7 @@ const SnoozeMenu = () => {
       <MenuList>
         {Object.keys(snoozeTimes).map((duration) => (
           <MenuItem
+            className="dropdown-item"
             key={duration}
             onClick={() => snooze(selectedRows, duration)}
           >
@@ -77,6 +79,7 @@ const SnoozeMenu = () => {
         ))}
         <MenuDivider />
         <MenuItem
+          className="snooze-duration-custom-modal-button"
           key="custom-snooze"
           onClick={() => toggleDisplayCustomSnoozeModal()}
         >

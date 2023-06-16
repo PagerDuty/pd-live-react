@@ -10,13 +10,6 @@ import {
 } from '@chakra-ui/react';
 
 import {
-  DndProvider,
-} from 'react-dnd';
-import {
-  HTML5Backend,
-} from 'react-dnd-html5-backend';
-
-import {
   Provider,
 } from 'react-redux';
 import {
@@ -47,9 +40,7 @@ root.render(
     <PersistGate loading={null} persistor={persistor}>
       <ColorModeScript initialColorMode={theme.config.initialColorMode} />
       <ChakraProvider toastOptions={toastOptions}>
-        <DndProvider backend={HTML5Backend}>
-          <App />
-        </DndProvider>
+        <App />
       </ChakraProvider>
       {/* <React.StrictMode>
         <App />

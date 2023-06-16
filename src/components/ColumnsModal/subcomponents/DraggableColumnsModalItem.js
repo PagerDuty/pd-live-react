@@ -94,16 +94,29 @@ const DraggableColumnsModalItem = ({
     case 'available':
       ariaLabel = 'Add column';
       // eslint-disable-next-line max-len
-      iconComponent = <AddIcon {...iconProps} aria-label={ariaLabel} />;
+      iconComponent = (
+        <AddIcon
+          id={`column-${column.id}-add-icon`}
+          {...iconProps}
+          aria-label={ariaLabel}
+        />
+      );
       break;
     case 'selected':
     case 'custom':
     default:
       ariaLabel = 'Remove column';
-      iconComponent = <CloseIcon {...iconProps} aria-label={ariaLabel} />;
+      iconComponent = (
+        <CloseIcon
+          id={`column-${column.id}-remove-icon`}
+          {...iconProps}
+          aria-label={ariaLabel}
+        />
+      );
       break;
   }
   const tagProps = {
+    id: `column-${column.id}-tag`,
     m: 1,
     variant: itemType === 'available' ? 'subtle' : 'solid',
     colorScheme: itemType === 'available' ? 'gray' : 'blue',

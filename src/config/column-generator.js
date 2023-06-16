@@ -182,6 +182,7 @@ export const incidentColumn = ({
   id,
   header,
   accessor,
+  accessorPath,
   renderer = renderPlainTextCell,
   minWidth,
   sortType,
@@ -232,6 +233,7 @@ export const incidentColumn = ({
     Header: i18next.t(header),
     i18n: i18next.t(header),
     accessor,
+    accessorPath,
     Cell: wrappedRenderer,
     minWidth,
     columnType: columnType || 'incident',
@@ -239,6 +241,8 @@ export const incidentColumn = ({
 
   if (id) {
     column.id = id;
+  } else if (typeof accessor === 'string') {
+    column.id = accessor;
   }
 
   if (sortType) {
@@ -274,6 +278,7 @@ export const defaultIncidentColumns = () => ([
     }),
   }),
   incidentColumn({
+    id: 'description',
     header: 'Description',
     accessor: 'description',
     minWidth: 200,
@@ -314,6 +319,7 @@ export const defaultIncidentColumns = () => ([
     minWidth: 300,
   }),
   incidentColumn({
+    id: 'service',
     header: 'Service',
     accessor: 'service.summary',
     minWidth: 150,
@@ -357,6 +363,7 @@ export const defaultIncidentColumns = () => ([
     }),
   }),
   incidentColumn({
+    id: 'num_alerts',
     header: 'Num Alerts',
     accessor: 'alert_counts.all',
     minWidth: 130,
@@ -373,6 +380,7 @@ export const defaultIncidentColumns = () => ([
     ),
   }),
   incidentColumn({
+    id: 'escalation_policy',
     header: 'Escalation Policy',
     accessor: 'escalation_policy.summary',
     minWidth: 150,
@@ -444,6 +452,7 @@ export const defaultIncidentColumns = () => ([
     }),
   }),
   incidentColumn({
+    id: 'priority',
     header: 'Priority',
     accessor: (incident) => (incident.priority?.summary || ''),
     minWidth: 90,
@@ -740,9 +749,11 @@ export const customAlertColumnForSavedColumn = (savedColumn) => {
     header,
     columnType: 'alert',
     accessor,
+    accessorPath,
     minWidth: 100,
     renderer: renderPlainTextAlertCell,
   });
+
   if (width) {
     column.width = width;
   }

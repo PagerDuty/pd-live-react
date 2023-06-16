@@ -168,6 +168,7 @@ const NavigationBarComponent = () => {
             fill={colorMode === 'dark' ? '#fff' : '#000'}
           />
           <Text
+            id="navbar-ctr"
             fontSize="xl"
             display="inline-block"
             ml={6}
@@ -200,6 +201,7 @@ const NavigationBarComponent = () => {
               label={t('Main menu')}
             >
               <MenuButton
+                className="settings-panel-dropdown"
                 as={IconButton}
                 size="sm"
                 ml={1}
@@ -210,16 +212,19 @@ const NavigationBarComponent = () => {
             </Tooltip>
             <MenuList zIndex="999">
               <MenuItem
+                className="dropdown-item"
                 onClick={toggleSettingsModal}
               >
                 {t('Settings')}
               </MenuItem>
               <MenuItem
+                className="dropdown-item"
                 onClick={toggleColumnsModal}
               >
                 {t('Columns')}
               </MenuItem>
               <MenuItem
+                className="dropdown-item"
                 onClick={() => {
                   clearLocalCache();
                   window.location.reload();
@@ -228,6 +233,7 @@ const NavigationBarComponent = () => {
                 {t('Clear Local Cache')}
               </MenuItem>
               <MenuItem
+                className="dropdown-item"
                 onClick={() => {
                   const token = sessionStorage.getItem('pd_access_token');
                   if (token) {
@@ -243,7 +249,9 @@ const NavigationBarComponent = () => {
                 {t('Log Out')}
               </MenuItem>
               <MenuDivider />
-              <MenuItem>
+              <MenuItem
+                className="dropdown-item"
+              >
                 <Link
                   isExternal
                   _hover={{
@@ -256,6 +264,7 @@ const NavigationBarComponent = () => {
               </MenuItem>
               <MenuDivider />
               <MenuItem
+                className="version-info"
                 disabled
               >
                 {t('Version')}

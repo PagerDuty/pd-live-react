@@ -45,6 +45,7 @@ const ReassignButton = () => {
   }, [selectedRows]);
   return (
     <Button
+      id="incident-action-reassign-button"
       size="sm"
       leftIcon={<AtSignIcon />}
       mr={2}

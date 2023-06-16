@@ -45,6 +45,7 @@ const ResolveButton = () => {
   }, [selectedRows]);
   return (
     <Button
+      id="incident-action-resolve-button"
       size="sm"
       leftIcon={<FaCheckCircle />}
       mr={2}

@@ -33,6 +33,7 @@ const AddNoteButton = () => {
   const enabled = useMemo(() => selectedCount > 0, [selectedCount]);
   return (
     <Button
+      id="incident-action-add-note-button"
       size="sm"
       leftIcon={<FaStickyNote />}
       mr={2}

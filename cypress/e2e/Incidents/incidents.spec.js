@@ -17,17 +17,17 @@ import {
   runResponsePlay,
   checkActionAlertsModalContent,
   checkIncidentCellContent,
-  activateButton,
-  deactivateButton,
+  // activateButton,
+  // deactivateButton,
   priorityNames,
 } from '../../support/util/common';
 
 describe('Manage Open Incidents', { failFast: { enabled: false } }, () => {
   before(() => {
     acceptDisclaimer();
-    priorityNames.forEach((currentPriority) => {
-      activateButton(`query-priority-${currentPriority}-button`);
-    });
+    // priorityNames.forEach((currentPriority) => {
+    //   activateButton(`query-priority-${currentPriority}-button`);
+    // });
     waitForIncidentTable();
   });
 
@@ -37,9 +37,9 @@ describe('Manage Open Incidents', { failFast: { enabled: false } }, () => {
     if (cy.state('test').currentRetry() > 1) {
       acceptDisclaimer();
     }
-    priorityNames.forEach((currentPriority) => {
-      activateButton(`query-priority-${currentPriority}-button`);
-    });
+    // priorityNames.forEach((currentPriority) => {
+    //   activateButton(`query-priority-${currentPriority}-button`);
+    // });
     waitForIncidentTable();
   });
 
@@ -47,7 +47,7 @@ describe('Manage Open Incidents', { failFast: { enabled: false } }, () => {
     selectAllIncidents();
     cy.get('.selected-incidents-badge').then(($el) => {
       const text = $el.text();
-      const incidentNumbers = text.split('/');
+      const incidentNumbers = text.split(' ')[0].split('/');
       expect(incidentNumbers[0]).to.equal(incidentNumbers[1]);
     });
     // Unselect all incidents for the next run
@@ -88,7 +88,8 @@ describe('Manage Open Incidents', { failFast: { enabled: false } }, () => {
   for (let escalationLevel = 1; escalationLevel < 4; escalationLevel++) {
     it(`Escalate singular incident to level: ${escalationLevel}`, () => {
       // Ensure that only high urgency incidents are visible
-      deactivateButton('query-urgency-low-button');
+      // deactivateButton('query-urgency-low-button');
+      cy.get('.query-urgency-low-button').uncheck({ force: true });
       waitForIncidentTable();
       selectIncident(0);
       escalate(escalationLevel);
@@ -97,7 +98,8 @@ describe('Manage Open Incidents', { failFast: { enabled: false } }, () => {
   }
 
   it('Reassign singular incident to User A1', () => {
-    activateButton('query-urgency-low-button'); // bring back low urgency incidents
+    // activateButton('query-urgency-low-button'); // bring back low urgency incidents
+    cy.get('.query-urgency-low-button').check({ force: true });
     const assignment = 'User A1';
     selectIncident(0);
     reassign(assignment);
@@ -120,7 +122,7 @@ describe('Manage Open Incidents', { failFast: { enabled: false } }, () => {
   });
 
   it('Add responder (Team A) to singular incident', () => {
-    const responders = ['Team A (EP)'];
+    const responders = ['Team A'];
     const message = 'Need help with this incident';
     selectIncident(0);
     addResponders(responders, message);
@@ -128,7 +130,7 @@ describe('Manage Open Incidents', { failFast: { enabled: false } }, () => {
   });
 
   it('Add multiple responders (Team A + Team B) to singular incident', () => {
-    const responders = ['Team A (EP)', 'Team B (EP)'];
+    const responders = ['Team A', 'Team B'];
     const message = "Need everyone's help with this incident";
     selectIncident(0);
     addResponders(responders, message);
@@ -179,15 +181,17 @@ describe('Manage Open Incidents', { failFast: { enabled: false } }, () => {
       cy.get(`@selectedIncidentId_${incidentIdx}`).then((incidentId) => {
         updatePriority(priorityName);
         checkActionAlertsModalContent(`have been updated with priority = ${priorityName}`);
-        // checkIncidentCellContent(incidentId, 'Priority', priorityName); // FIXME: Race conditions
+        // eslint-disable-next-line cypress/no-unnecessary-waiting
+        cy.wait(2000);
+        checkIncidentCellContent(incidentId, 'Priority', priorityName); // FIXME: Race conditions
       });
     });
   });
 
   it('Run external system sync on singular incident', () => {
     // For some reason this doesn't work on first attempt - clearing cache as a workaround
-    acceptDisclaimer();
-    waitForIncidentTable();
+    // acceptDisclaimer();
+    // waitForIncidentTable();
 
     const externalSystemName = 'ServiceNow';
     selectIncident(0);

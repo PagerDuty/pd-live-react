@@ -48,6 +48,7 @@ const PriorityQueryComponent = () => {
     <Flex>
       {priorities.map((priority) => (
         <QuerySettingsCheckbox
+          id={`query-priority-${priority.summary || '--'}-button`}
           {...getCheckboxProps({
             value: priority.id || '--',
           })}

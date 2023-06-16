@@ -57,6 +57,7 @@ const UrgencyQueryComponent = () => {
   return (
     <Flex>
       <QuerySettingsCheckbox
+        id="query-urgency-high-button"
         {...getCheckboxProps({
           value: HIGH,
         })}
@@ -65,6 +66,7 @@ const UrgencyQueryComponent = () => {
         {t('High')}
       </QuerySettingsCheckbox>
       <QuerySettingsCheckbox
+        id="query-urgency-low-button"
         {...getCheckboxProps({
           value: LOW,
         })}

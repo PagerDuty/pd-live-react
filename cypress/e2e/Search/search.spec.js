@@ -1,18 +1,17 @@
 /* eslint-disable cypress/no-unnecessary-waiting */
+/* eslint-disable cypress/unsafe-to-chain-command */
+
 import {
   acceptDisclaimer,
   waitForIncidentTable,
-  activateButton,
-  priorityNames,
+  // activateButton,
+  // priorityNames,
   selectIncident,
 } from '../../support/util/common';
 
 describe('Search Incidents', { failFast: { enabled: false } }, () => {
   before(() => {
     acceptDisclaimer();
-    priorityNames.forEach((currentPriority) => {
-      activateButton(`query-priority-${currentPriority}-button`);
-    });
     waitForIncidentTable();
   });
 
@@ -20,9 +19,6 @@ describe('Search Incidents', { failFast: { enabled: false } }, () => {
     if (cy.state('test').currentRetry() > 1) {
       acceptDisclaimer();
     }
-    priorityNames.forEach((currentPriority) => {
-      activateButton(`query-priority-${currentPriority}-button`);
-    });
     waitForIncidentTable();
   });
 
@@ -42,7 +38,7 @@ describe('Search Incidents', { failFast: { enabled: false } }, () => {
     });
     cy.wait(1000);
     cy.get('.selected-incidents-badge').then(($el) => {
-      const text = $el.text();
+      const text = $el.text().split(' ')[0];
       expect(text).to.equal('1/1');
     });
   });

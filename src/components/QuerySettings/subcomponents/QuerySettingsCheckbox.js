@@ -11,6 +11,7 @@ import {
 
 const QuerySettingsCheckbox = ({
   children,
+  id,
   ...props
 }) => {
   const {
@@ -42,7 +43,7 @@ const QuerySettingsCheckbox = ({
       bg={isChecked ? highlightColor : 'transparent'}
       {...checkbox}
     >
-      <input {...input} />
+      <input className={id} {...input} />
       <Flex
         m={0}
         p={0}

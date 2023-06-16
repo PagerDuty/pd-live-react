@@ -160,7 +160,7 @@ const SelectedIncidentsComponent = () => {
       justifyContent="center"
       m={0}
     >
-      <Tag size="md" colorScheme="blue" mb={0} mr={1}>
+      <Tag size="md" colorScheme="blue" mb={0} mr={1} className="selected-incidents-badge">
         {`${selectedCount}/${filteredIncidentsByQuery.length} ${t('Selected')}`}
       </Tag>
     </Flex>

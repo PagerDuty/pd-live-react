@@ -112,6 +112,7 @@ const RunActionMenu = () => {
   return (
     <Menu>
       <MenuButton
+        className="incident-action-run-action-button"
         size="sm"
         as={Button}
         leftIcon={<FaPlay />}
@@ -121,7 +122,7 @@ const RunActionMenu = () => {
       >
         {t('Run Action')}
       </MenuButton>
-      <MenuList w={10}>
+      <MenuList size="content" preventOverflow>
         {selectListResponsePlays.length > 0 && (
           <MenuGroup
             fontSize="md"
@@ -130,6 +131,7 @@ const RunActionMenu = () => {
           >
             {selectListResponsePlays.map((responsePlay) => (
               <MenuItem
+                className="dropdown-item"
                 key={responsePlay.id}
                 onClick={() => {
                   runResponsePlayAsync(selectedRows, responsePlay);
@@ -156,6 +158,7 @@ const RunActionMenu = () => {
           >
             {customIncidentActions.map((customIncidentAction) => (
               <MenuItem
+                className="dropdown-item"
                 key={customIncidentAction.id}
                 onClick={() => {
                   runCustomIncidentAction(selectedRows, customIncidentAction);
@@ -179,6 +182,7 @@ const RunActionMenu = () => {
           >
             {externalSystems.map((externalSystem) => (
               <MenuItem
+                className="dropdown-item"
                 key={externalSystem.id}
                 disabled={externalSystem.synced}
                 onClick={() => {

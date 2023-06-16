@@ -59,6 +59,7 @@ const DisclaimerModalComponent = ({
           <Heading
             as="h1"
             size="2xl"
+            className="modal-title"
           >
             {t('Disclaimer & License')}
           </Heading>
@@ -274,6 +275,7 @@ const DisclaimerModalComponent = ({
             </Checkbox>
           </InputGroup>
           <Button
+            id="disclaimer-accept-button"
             mr={4}
             colorScheme="green"
             onClick={() => userAcceptDisclaimer()}

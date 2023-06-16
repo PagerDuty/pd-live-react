@@ -283,6 +283,8 @@ const IncidentTableComponent = () => {
             row,
           }) => (
             <CheckboxComponent
+              data-incident-row-idx={row.index}
+              data-incident-id={row.original.id}
               id={`${row.original.id}-checkbox`}
               {...row.getToggleRowSelectedProps()}
             />
@@ -339,7 +341,9 @@ const IncidentTableComponent = () => {
                     {...cell.getCellProps()}
                     className="td"
                     data-incident-header={
-                      cell.column.Header instanceof String ? cell.column.Header : 'incident-header'
+                      typeof cell.column.Header === 'string'
+                        ? cell.column.Header
+                        : 'incident-header'
                     }
                     data-incident-row-cell-idx={row.index}
                     data-incident-cell-id={row.original.id}
@@ -423,6 +427,7 @@ const IncidentTableComponent = () => {
   if (!fetchingIncidents && filteredIncidentsByQuery.length > 0) {
     return (
       <Box
+        id="incident-table-ctr"
         {...getTableProps()}
         height={`${tableHeight}px`}
         overflow="scroll"
@@ -487,16 +492,6 @@ const IncidentTableComponent = () => {
               {tableInstance.selectedFlatRows.length > 0
                 ? ` (${tableInstance.selectedFlatRows.length} rows)`
                 : ` (${tableInstance.rows.length} rows)`}
-            </MenuItem>
-            <MenuItem
-              className="dropdown-item"
-              onClick={() => {
-                // eslint-disable-next-line no-console
-                console.log(tableInstance);
-              }}
-            >
-              {/* TODO: remove this */}
-              Log stuff
             </MenuItem>
           </ContextMenu>
         </Box>

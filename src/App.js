@@ -7,6 +7,13 @@ import {
 } from 'react-redux';
 
 import {
+  DndProvider,
+} from 'react-dnd';
+import {
+  HTML5Backend,
+} from 'react-dnd-html5-backend';
+
+import {
   Box,
   Flex,
 } from '@chakra-ui/react';
@@ -146,6 +153,9 @@ const App = () => {
   useEffect(
     () => {
       let useLastFetchDate = true;
+      setTimeout(() => {
+        checkAbilities();
+      }, 10000);
       const pollingInterval = setInterval(() => {
         // TODO: check abilities but less frequently
         // checkAbilities();
@@ -256,7 +266,9 @@ const App = () => {
         >
           <IncidentTableComponent headerRef={headerRef} mainRef={mainRef} footerRef={footerRef} />
           <SettingsModalComponent />
-          <ColumnsModalComponent />
+          <DndProvider backend={HTML5Backend}>
+            <ColumnsModalComponent />
+          </DndProvider>
           <ActionAlertsModalComponent />
           <CustomSnoozeModalComponent />
           <AddNoteModalComponent />

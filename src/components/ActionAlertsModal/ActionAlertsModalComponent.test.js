@@ -7,9 +7,8 @@ import ActionAlertsModalComponent from './ActionAlertsModalComponent';
 jest.useFakeTimers();
 
 xdescribe('ActionAlertsModalComponent', () => {
-  
-  // FIXME: Toasts not working in tests
-  
+  // FIXME: Toasts not working in tests -- it doesn't render to the DOM directly
+  // but uses a hook to render to the DOM, so maybe should test in cypress instead
   it('should render success modal with contents="winning"', () => {
     const store = mockStore({
       actionAlertsModalData: {
@@ -19,7 +18,7 @@ xdescribe('ActionAlertsModalComponent', () => {
       },
     });
     const wrapper = componentWrapper(store, ActionAlertsModalComponent);
-    expect(wrapper.find('.chakra-alert').props()); // can't be found
+    expect(wrapper.find('.chakra-alert__title').props()); // can't be found
   });
 
   // it('should render error modal with contents="failing"', () => {

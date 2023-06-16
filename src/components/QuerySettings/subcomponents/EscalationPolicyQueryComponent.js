@@ -58,6 +58,7 @@ const EscalationPolicyQueryComponent = () => {
 
   return (
     <Select
+      id="query-escalation-policy-select"
       size="sm"
       isMulti
       isSearchable

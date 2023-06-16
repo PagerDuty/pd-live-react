@@ -11,6 +11,9 @@ import {
 } from '@chakra-ui/icons';
 
 const columnLabel = (column) => {
+  if (!column) {
+    return '';
+  }
   if (column.label) {
     return column.label;
   }
@@ -29,21 +32,36 @@ const ColumnsModalItem = ({
     ml: 1,
   };
 
+  const columnId = column.id || column.label || column.accessorPath;
+
   let ariaLabel = '';
   let iconComponent = null;
   switch (itemType) {
     case 'available':
       ariaLabel = 'Add column';
-      iconComponent = <AddIcon {...iconProps} aria-label={ariaLabel} />;
+      iconComponent = (
+        <AddIcon
+          id={`column-${columnId}-add-icon`}
+          {...iconProps}
+          aria-label={ariaLabel}
+        />
+      );
       break;
     case 'selected':
     case 'custom':
     default:
       ariaLabel = 'Remove column';
-      iconComponent = <CloseIcon {...iconProps} aria-label={ariaLabel} />;
+      iconComponent = (
+        <CloseIcon
+          id={`column-${columnId}-remove-icon`}
+          {...iconProps}
+          aria-label={ariaLabel}
+        />
+      );
       break;
   }
   const tagProps = {
+    id: `column-${columnId}-tag`,
     m: 1,
     variant: itemType === 'available' ? 'subtle' : 'solid',
     colorScheme: itemType === 'available' ? 'gray' : 'blue',

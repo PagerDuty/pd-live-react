@@ -316,13 +316,14 @@ const SettingsModalComponent = () => {
         </ModalBody>
         <ModalFooter>
           <Button
+            id="save-settings-button"
             colorScheme="blue"
             mr={3}
             onClick={() => {
               saveSettings();
               toggleSettingsModal();
               toast({
-                title: 'Settings saved',
+                title: t('Updated user profile settings'),
                 status: 'success',
               });
             }}

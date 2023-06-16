@@ -25,7 +25,7 @@ import {
 } from 'react-i18next';
 
 import {
-  TRIGGERED,
+  RESOLVED,
   HIGH,
 } from 'util/incidents';
 
@@ -52,7 +52,7 @@ const EscalateMenu = () => {
       return false;
     }
     const incident = selectedRows[0];
-    return incident.status === TRIGGERED && incident.urgency === HIGH;
+    return incident.status !== RESOLVED && incident.urgency === HIGH;
   }, [selectedRows]);
 
   const selectedEscalationRules = useMemo(() => {
@@ -73,6 +73,7 @@ const EscalateMenu = () => {
   return (
     <Menu>
       <MenuButton
+        className="incident-action-escalate-button"
         size="sm"
         as={Button}
         leftIcon={<FaArrowUp />}
@@ -87,6 +88,7 @@ const EscalateMenu = () => {
           const escalationLevel = selectedEscalationRules.length - idx;
           return (
             <MenuItem
+              className={`escalation-level-${escalationLevel}-button`}
               key={escalationRule.id}
               onClick={() => escalate(selectedRows, escalationLevel)}
             >

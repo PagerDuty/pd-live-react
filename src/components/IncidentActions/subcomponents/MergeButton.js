@@ -34,6 +34,7 @@ const MergeButton = () => {
 
   return (
     <Button
+      id="incident-action-merge-button"
       size="sm"
       leftIcon={<BsSignMergeRightFill />}
       mr={2}

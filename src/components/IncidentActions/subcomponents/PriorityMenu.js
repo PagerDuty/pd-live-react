@@ -45,6 +45,7 @@ const PriorityMenu = () => {
   return (
     <Menu>
       <MenuButton
+        className="incident-action-update-priority-button"
         size="sm"
         as={Button}
         leftIcon={<FaExclamation />}
@@ -57,6 +58,7 @@ const PriorityMenu = () => {
       <MenuList w={10}>
         {priorities.map((priority) => (
           <MenuItem
+            className="dropdown-item"
             key={priority.id}
             onClick={() => updatePriority(selectedRows, priority.id)}
           >

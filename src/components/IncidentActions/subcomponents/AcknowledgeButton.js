@@ -45,6 +45,7 @@ const AcknowledgeButton = () => {
   }, [selectedRows]);
   return (
     <Button
+      id="incident-action-acknowledge-button"
       size="sm"
       leftIcon={<FaHandshake />}
       mr={2}

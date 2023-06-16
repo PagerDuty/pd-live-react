@@ -21,6 +21,7 @@ import {
 import {
   defaultColumns,
   customAlertColumns,
+  columnsForSavedColumns,
 } from 'config/column-generator';
 
 import {
@@ -106,10 +107,11 @@ const TableColumnsModalComponent = () => {
 
   const allAvailableColumns = useMemo(getAllAvailableColumns, [alertCustomDetailFields]);
 
-  const getSelectedColumns = () => incidentTableColumns.map((column) => {
+  const getSelectedColumns = () => columnsForSavedColumns(incidentTableColumns).map((column) => {
     // Recreate original value used from react-select in order to populate dual list
     const value = columnValue(column);
     return {
+      id: column.id,
       Header: column.Header,
       columnType: column.columnType,
       label: column.i18n ? column.i18n : column.Header,
@@ -255,7 +257,9 @@ const TableColumnsModalComponent = () => {
                 <Heading size="sm">Custom</Heading>
               </CardHeader>
               <CardBody>
-                <Box>
+                <Box
+                  id="custom-columns-card-body"
+                >
                   {alertCustomDetailFields.map((column) => (
                     <ColumnsModalItem
                       key={columnValue(column)}
@@ -306,6 +310,7 @@ const TableColumnsModalComponent = () => {
         </ModalBody>
         <ModalFooter>
           <Button
+            id="save-columns-button"
             colorScheme="blue"
             mr={3}
             onClick={() => {

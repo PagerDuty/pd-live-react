@@ -1,4 +1,5 @@
 /* eslint-disable cypress/no-unnecessary-waiting */
+/* eslint-disable cypress/unsafe-to-chain-command */
 /* eslint-disable import/prefer-default-export */
 import {
   api,
@@ -16,14 +17,14 @@ export const acceptDisclaimer = () => {
     },
   });
   cy.get('.modal-title', { timeout: 30000 }).contains('Disclaimer & License');
-  cy.get('#disclaimer-agree-checkbox').click();
-  cy.get('#disclaimer-accept-button').click();
+  cy.get('#disclaimer-agree-checkbox').click({ force: true });
+  cy.get('#disclaimer-accept-button').click({ force: true });
 };
 
 export const waitForIncidentTable = () => {
   // Ref: https://stackoverflow.com/a/60065672/6480733
   cy.wait(3000); // Required for query debounce
-  cy.get('.incident-table-ctr', { timeout: 60000 }).should('be.visible');
+  cy.get('#incident-table-ctr', { timeout: 60000 }).should('be.visible');
 };
 
 export const selectIncident = (incidentIdx = 0) => {
@@ -33,13 +34,13 @@ export const selectIncident = (incidentIdx = 0) => {
 };
 
 export const selectAllIncidents = () => {
-  cy.get('#all-incidents-checkbox', { timeout: 20000 }).click();
+  cy.get('#select-all', { timeout: 20000 }).click();
 };
 
 export const checkActionAlertsModalContent = (content) => {
   cy.wait(2000);
-  cy.get('.action-alerts-modal').contains(content, { timeout: 10000 });
-  cy.get('.action-alerts-modal').type('{esc}');
+  cy.get('.chakra-alert__title').contains(content, { timeout: 10000 });
+  // cy.get('.action-alerts-modal').type('{esc}');
 };
 
 export const checkIncidentCellContent = (incidentId, incidentHeader, content) => {
@@ -51,8 +52,8 @@ export const checkIncidentCellContent = (incidentId, incidentHeader, content) =>
 
 export const checkIncidentCellContentAllRows = (incidentHeader, content) => {
   cy.wait(2000);
-  cy.get('.tbody').then(($tbody) => {
-    const visibleIncidentCount = $tbody.find('tr').length;
+  cy.get('.incident-table-fixed-list > div').then(($tbody) => {
+    const visibleIncidentCount = $tbody.find('[role="row"]').length;
     for (let incidentIdx = 0; incidentIdx < visibleIncidentCount; incidentIdx++) {
       cy.get(
         `[data-incident-header="${incidentHeader}"][data-incident-row-cell-idx="${incidentIdx}"]`,
@@ -76,8 +77,8 @@ export const checkIncidentCellIcon = (incidentIdx, incidentHeader, icon) => {
 
 export const checkIncidentCellIconAllRows = (incidentHeader, icon) => {
   cy.wait(2000);
-  cy.get('.tbody').then(($tbody) => {
-    const visibleIncidentCount = $tbody.find('tr').length;
+  cy.get('.incident-table-fixed-list > div').then(($tbody) => {
+    const visibleIncidentCount = $tbody.find('[role="row"]').length;
     for (let incidentIdx = 0; incidentIdx < visibleIncidentCount; incidentIdx++) {
       checkIncidentCellIcon(incidentIdx, incidentHeader, icon);
     }
@@ -103,35 +104,37 @@ export const activateButton = (domId) => {
 };
 
 export const escalate = (escalationLevel) => {
-  cy.get('#incident-action-escalate-button').click();
-  cy.get(`#escalation-level-${escalationLevel}-button`).click();
+  cy.get('.incident-action-escalate-button').click();
+  cy.get(`.escalation-level-${escalationLevel}-button`).click();
 };
 
 export const reassign = (assignment) => {
   cy.get('#incident-action-reassign-button').click();
   cy.get('#reassign-select').click();
-  cy.contains('div', assignment).click();
-  cy.get('#reassign-button').click();
+  cy.wait(200);
+  cy.contains('.react-select__option', assignment).click({ force: true });
+  cy.wait(200);
+  cy.get('#reassign-button').click({ force: true });
 };
 
 export const addResponders = (responders = [], message = null) => {
   cy.get('#incident-action-add-responders-button').click();
   responders.forEach((responder) => {
     cy.get('#add-responders-select').click();
-    cy.contains('div', responder).click();
+    cy.contains('.react-select__option', responder).click({ force: true });
   });
   if (message) cy.get('#add-responders-textarea').type(message);
-  cy.get('#add-responders-button').click();
+  cy.get('#add-responders-button').click({ force: true });
 };
 
 export const snooze = (duration) => {
-  cy.get('#incident-action-snooze-button').click();
+  cy.get('.incident-action-snooze-button').click();
   cy.get('.dropdown-item').contains(duration).click();
 };
 
 export const snoozeCustom = (type, option) => {
-  cy.get('#incident-action-snooze-button').click();
-  cy.get('#snooze-duration-custom-modal-button').click();
+  cy.get('.incident-action-snooze-button').click();
+  cy.get('.snooze-duration-custom-modal-button').click();
   if (type === 'hours') {
     cy.get('#snooze-hours').click();
     cy.get('#snooze-hours-input').clear().type(option);
@@ -146,12 +149,12 @@ export const snoozeCustom = (type, option) => {
 export const merge = (targetIncidentIdx) => {
   cy.get('#incident-action-merge-button').click();
   cy.get('#merge-select').click();
-  cy.get(`[id*="-option-${targetIncidentIdx}"]`).click();
+  cy.get(`[id*="-option-0-${targetIncidentIdx}"]`).click();
   cy.get('#merge-button').click();
 };
 
 export const updatePriority = (priorityName) => {
-  cy.get('#incident-action-update-priority-button').click();
+  cy.get('.incident-action-update-priority-button').click();
   cy.get('.dropdown-item').contains(priorityName).click();
 };
 
@@ -163,7 +166,7 @@ export const addNote = (note) => {
 
 const toggleRunAction = () => {
   cy.wait(2000); // Unsure why we can't find DOM of action without wait
-  cy.get('#incident-action-run-action-button').click();
+  cy.get('.incident-action-run-action-button').click();
 };
 
 export const runAction = (actionName) => {
@@ -188,69 +191,68 @@ export const runExternalSystemSync = (externalSystemName) => {
 
 export const runResponsePlay = (responsePlayName) => {
   toggleRunAction();
-  cy.get('#response-play-select').click();
-  cy.contains('div', responsePlayName).click();
+  // cy.get('#response-play-select').click();
+  // cy.contains('div', responsePlayName).click();
+  cy.get('.dropdown-item').contains(responsePlayName).click();
 };
 
 export const manageIncidentTableColumns = (desiredState = 'add', columns = []) => {
   cy.get('.settings-panel-dropdown').click();
-  cy.get('.dropdown-item').contains('Settings').click();
-  cy.get('.nav-item').contains('Incident Table').click();
+  cy.get('.dropdown-item').contains('Columns').click();
+  // cy.get('.nav-item').contains('Incident Table').click();
 
-  columns.forEach((columnName) => {
-    if (desiredState === 'add') {
-      cy.get('[id*="-available"][class="rdl-control"]').select(columnName);
-      cy.get('[aria-label="Move right"]').click();
-    } else if (desiredState === 'remove') {
-      cy.get('[id*="-selected"][class="rdl-control"]').select(columnName);
-      cy.get('[aria-label="Move left"]').click();
-    }
+  columns.forEach((columnId) => {
+    cy.get(`#column-${columnId}-${desiredState}-icon`).click();
   });
 
-  cy.get('.btn').contains('Update Incident Table').click();
-  checkActionAlertsModalContent('Updated incident table settings');
-  cy.get('.close').click();
+  cy.get('#save-columns-button').click();
+  checkActionAlertsModalContent('Incident table columns saved');
 };
 
 export const manageCustomAlertColumnDefinitions = (customAlertColumnDefinitions) => {
   cy.get('.settings-panel-dropdown').click();
-  cy.get('.dropdown-item').contains('Settings').click();
-  cy.get('.nav-item').contains('Incident Table').click();
+  cy.get('.dropdown-item').contains('Columns').click();
 
-  cy.get('#alert-column-definition-select').click().type('{del}'); // Clear default example
+  cy.get('#custom-columns-card-body .chakra-icon')
+    .each(($el) => {
+      cy.wrap($el).click();
+    });
+
   customAlertColumnDefinitions.forEach((customAlertColumnDefinition) => {
-    cy.get('#alert-column-definition-select').click().type(`${customAlertColumnDefinition}{enter}`);
+    const [header, accessorPath] = customAlertColumnDefinition.split(':');
+    cy.get('input[placeholder="Header"]').type(header);
+    cy.get('input[placeholder="Accessor Path"]').type(accessorPath);
+    cy.get('button[aria-label="Add custom column"]').click();
+    cy.get(`#column-${accessorPath.replace('.', '\\.')}-add-icon`).click();
   });
-
-  cy.get('.btn').contains('Update Incident Table').click();
-  checkActionAlertsModalContent('Updated incident table settings');
-  cy.get('.close').click();
+  cy.get('#save-columns-button').click();
+  checkActionAlertsModalContent('Incident table columns saved');
 };
 
-export const updateUserLocale = (localeName = 'English (United Kingdom)', settingsMenu = 'Settings', userProfile = 'User Profile', updateuserProfile = 'Update User Profile', updatedUserProfileSettings = 'Updated user profile settings') => {
+export const updateUserLocale = (
+  localeName = 'English (United Kingdom)',
+  settingsMenu = 'Settings',
+  updatedUserProfileSettings = 'Updated user profile settings',
+) => {
   cy.get('.settings-panel-dropdown').click();
   cy.get('.dropdown-item').contains(settingsMenu).click();
-  cy.get('.nav-item').contains(userProfile).click();
 
-  cy.get('#user-locale-select').click();
-  cy.contains('div', localeName).click();
+  cy.get('#user-locale-select').select(localeName);
 
-  cy.get('.btn').contains(updateuserProfile).click();
+  cy.get('#save-settings-button').click();
   checkActionAlertsModalContent(updatedUserProfileSettings);
-  cy.get('.close').click();
 };
 
 export const updateDefaultSinceDateLookback = (tenor = '1 Day') => {
   cy.get('.settings-panel-dropdown').click();
   cy.get('.dropdown-item').contains('Settings').click();
-  cy.get('.nav-item').contains('User Profile').click();
 
-  cy.get(`input[value="${tenor}"]`).parent().click();
+  cy.get('#since-date-tenor-select').select(tenor);
 
-  cy.get('.btn').contains('Update User Profile').click();
+  cy.get('#save-settings-button').click();
   checkActionAlertsModalContent('Updated user profile settings');
-  cy.get('.close').click();
   cy.reload();
+  acceptDisclaimer();
 };
 
 export const updateAutoRefreshInterval = (autoRefreshInterval = 5) => {
@@ -268,25 +270,25 @@ export const updateAutoRefreshInterval = (autoRefreshInterval = 5) => {
 export const updateMaxIncidentsLimit = (limit = 200) => {
   cy.get('.settings-panel-dropdown').click();
   cy.get('.dropdown-item').contains('Settings').click();
-  cy.get('.nav-item').contains('User Profile').click();
 
-  cy.get('#user-profile-max-incidents-limit-input').clear().type(`${limit}{enter}`);
-
-  cy.get('.btn').contains('Update User Profile').click();
+  cy.get('[aria-label="Max Incidents Limit"]').focus().type('{home}');
+  for (let i = 100; i < limit; i += 100) {
+    cy.get('[aria-label="Max Incidents Limit"]').focus().type('{rightArrow}');
+  }
+  cy.get('#save-settings-button').click();
   checkActionAlertsModalContent('Updated user profile settings');
-  cy.get('.close').click();
 };
 
 export const updateMaxRateLimit = (limit = 200) => {
   cy.get('.settings-panel-dropdown').click();
   cy.get('.dropdown-item').contains('Settings').click();
-  cy.get('.nav-item').contains('User Profile').click();
 
-  cy.get('#user-profile-max-rate-limit-input').clear().type(`${limit}{enter}`);
-
-  cy.get('.btn').contains('Update User Profile').click();
+  cy.get('[aria-label="Max Rate Limit"]').focus().type('{home}');
+  for (let i = 100; i < limit; i += 100) {
+    cy.get('[aria-label="Max Rate Limit"]').focus().type('{rightArrow}');
+  }
+  cy.get('#save-settings-button').click();
   checkActionAlertsModalContent('Updated user profile settings');
-  cy.get('.close').click();
 };
 
 export const updateAutoAcceptIncidentQuery = (autoAcceptIncidentsQuery = false) => {
@@ -305,20 +307,8 @@ export const updateAutoAcceptIncidentQuery = (autoAcceptIncidentsQuery = false) 
   cy.get('.close').click();
 };
 
-export const updateDarkMode = (darkMode = false) => {
-  cy.get('.settings-panel-dropdown').click();
-  cy.get('.dropdown-item').contains('Settings').click();
-  cy.get('.nav-item').contains('User Profile').click();
-
-  if (darkMode) {
-    cy.get('#user-profile-dark-mode-checkbox').check({ force: true });
-  } else {
-    cy.get('#user-profile-dark-mode-checkbox').uncheck({ force: true });
-  }
-
-  cy.get('.btn').contains('Update User Profile').click();
-  checkActionAlertsModalContent('Updated user profile settings');
-  cy.get('.close').click();
+export const updateDarkMode = () => {
+  cy.get('[aria-label="Toggle dark mode"]').click();
 };
 
 export const priorityNames = ['--', 'P5', 'P4', 'P3', 'P2', 'P1'];

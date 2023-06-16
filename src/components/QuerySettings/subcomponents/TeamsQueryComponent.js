@@ -58,6 +58,7 @@ const TeamsQueryComponent = () => {
 
   return (
     <Select
+      id="query-team-select"
       size="sm"
       isMulti
       isSearchable

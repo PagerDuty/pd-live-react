@@ -67,6 +67,7 @@ const ServicesQueryComponent = () => {
 
   return (
     <Select
+      id="query-service-select"
       size="sm"
       isMulti
       isSearchable

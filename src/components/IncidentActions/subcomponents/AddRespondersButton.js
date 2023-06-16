@@ -45,6 +45,7 @@ const AddRespondersButton = () => {
   }, [selectedRows]);
   return (
     <Button
+      id="incident-action-add-responders-button"
       size="sm"
       leftIcon={<FaUserPlus />}
       mr={2}

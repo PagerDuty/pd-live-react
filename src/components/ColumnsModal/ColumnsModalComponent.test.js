@@ -4,6 +4,13 @@ import {
   mockStore, componentWrapper,
 } from 'mocks/store.test';
 
+import {
+  DndProvider,
+} from 'react-dnd';
+import {
+  HTML5Backend,
+} from 'react-dnd-html5-backend';
+
 import ColumnsModalComponent from './ColumnsModalComponent';
 
 describe('ColumnsModalComponent', () => {
@@ -36,9 +43,15 @@ describe('ColumnsModalComponent', () => {
     };
   });
 
-  xit('should render modal', () => {
+  it('should render modal', () => {
     store = mockStore(baseStore);
-    const wrapper = componentWrapper(store, ColumnsModalComponent);
+    const DndColumnsModalComponent = () => (
+      <DndProvider backend={HTML5Backend}>
+        <ColumnsModalComponent />
+      </DndProvider>
+    );
+
+    const wrapper = componentWrapper(store, DndColumnsModalComponent);
     expect(wrapper.find('.chakra-modal__header').contains('Incident Table')).toBeTruthy();
   });
 
