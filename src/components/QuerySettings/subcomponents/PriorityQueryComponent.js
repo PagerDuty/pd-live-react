@@ -6,13 +6,11 @@ import React, {
 } from 'react';
 
 import {
-  useSelector,
-  useDispatch,
+  useSelector, useDispatch,
 } from 'react-redux';
 
 import {
-  Flex,
-  useCheckboxGroup,
+  Flex, useCheckboxGroup,
 } from '@chakra-ui/react';
 
 import {
@@ -34,8 +32,7 @@ const PriorityQueryComponent = () => {
   };
 
   const {
-    getCheckboxProps,
-    value,
+    getCheckboxProps, value,
   } = useCheckboxGroup({
     defaultValue: incidentPriority,
   });

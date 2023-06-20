@@ -6,8 +6,7 @@ import {
 } from '@chakra-ui/react';
 
 import {
-  AddIcon,
-  CloseIcon,
+  AddIcon, CloseIcon,
 } from '@chakra-ui/icons';
 
 const columnLabel = (column) => {
@@ -21,9 +20,7 @@ const columnLabel = (column) => {
 };
 
 const ColumnsModalItem = ({
-  column,
-  onClick,
-  itemType,
+  column, onClick, itemType,
 }) => {
   const iconProps = {
     onClick,
@@ -40,11 +37,7 @@ const ColumnsModalItem = ({
     case 'available':
       ariaLabel = 'Add column';
       iconComponent = (
-        <AddIcon
-          id={`column-${columnId}-add-icon`}
-          {...iconProps}
-          aria-label={ariaLabel}
-        />
+        <AddIcon id={`column-${columnId}-add-icon`} {...iconProps} aria-label={ariaLabel} />
       );
       break;
     case 'selected':
@@ -52,11 +45,7 @@ const ColumnsModalItem = ({
     default:
       ariaLabel = 'Remove column';
       iconComponent = (
-        <CloseIcon
-          id={`column-${columnId}-remove-icon`}
-          {...iconProps}
-          aria-label={ariaLabel}
-        />
+        <CloseIcon id={`column-${columnId}-remove-icon`} {...iconProps} aria-label={ariaLabel} />
       );
       break;
   }

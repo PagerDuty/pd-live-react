@@ -76,8 +76,7 @@ export const compareCreatedAt = (a, b) => moment(a.created_at).diff(moment(b.cre
 export const getSubdomainFromUserUrl = (htmlUrl) => htmlUrl.split('.')[0].split('https://')[1];
 
 // Generate random integer between numbers
-export const generateRandomInteger = (min = 0, max = 100) => (
-  Math.floor(min + Math.random() * (max - min + 1)));
+export const generateRandomInteger = (min = 0, max = 100) => Math.floor(min + Math.random() * (max - min + 1));
 
 /**
  * Uses canvas.measureText to compute and return the width of the given text of given font in pixels

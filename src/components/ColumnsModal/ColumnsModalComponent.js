@@ -1,13 +1,9 @@
 import {
-  useState,
-  useMemo,
-  useRef,
-  useCallback,
+  useState, useMemo, useRef, useCallback,
 } from 'react';
 
 import {
-  useSelector,
-  useDispatch,
+  useSelector, useDispatch,
 } from 'react-redux';
 
 import {
@@ -98,10 +94,7 @@ const TableColumnsModalComponent = () => {
   };
 
   const getAllAvailableColumns = () => {
-    const v = [
-      ...defaultColumns(),
-      ...customAlertColumns(alertCustomDetailFields),
-    ].sort((a, b) => columnValue(a).localeCompare(columnValue(b)));
+    const v = [...defaultColumns(), ...customAlertColumns(alertCustomDetailFields)].sort((a, b) => columnValue(a).localeCompare(columnValue(b)));
     return v;
   };
 
@@ -161,10 +154,7 @@ const TableColumnsModalComponent = () => {
   const [inputIsValid, setInputIsValid] = useState(false);
   const validateInput = () => {
     let valid = true;
-    if (
-      !headerInputRef.current.value
-      || !headerInputRef.current.value.match(/^[a-zA-Z0-9_.]+$/)
-    ) {
+    if (!headerInputRef.current.value || !headerInputRef.current.value.match(/^[a-zA-Z0-9_.]+$/)) {
       valid = false;
     }
     if (
@@ -176,42 +166,40 @@ const TableColumnsModalComponent = () => {
     setInputIsValid(valid);
   };
 
-  const findColumnInSelectedColumns = useCallback((value) => {
-    const column = selectedColumns.find((c) => columnValue(c) === value);
-    return {
-      column,
-      index: selectedColumns.indexOf(column),
-    };
-  }, [selectedColumns]);
+  const findColumnInSelectedColumns = useCallback(
+    (value) => {
+      const column = selectedColumns.find((c) => columnValue(c) === value);
+      return {
+        column,
+        index: selectedColumns.indexOf(column),
+      };
+    },
+    [selectedColumns],
+  );
 
-  const moveColumnInSelectedColumns = useCallback((value, toIndex) => {
-    const {
-      column,
-      index,
-    } = findColumnInSelectedColumns(value);
-    const newSelectedColumns = [...selectedColumns];
-    newSelectedColumns.splice(index, 1);
-    newSelectedColumns.splice(toIndex, 0, column);
-    setSelectedColumns(newSelectedColumns);
-  }, [findColumnInSelectedColumns, selectedColumns]);
+  const moveColumnInSelectedColumns = useCallback(
+    (value, toIndex) => {
+      const {
+        column, index,
+      } = findColumnInSelectedColumns(value);
+      const newSelectedColumns = [...selectedColumns];
+      newSelectedColumns.splice(index, 1);
+      newSelectedColumns.splice(toIndex, 0, column);
+      setSelectedColumns(newSelectedColumns);
+    },
+    [findColumnInSelectedColumns, selectedColumns],
+  );
 
   const [, drop] = useDrop(() => ({ accept: 'DraggableColumnsModalItem' }));
   return (
-    <Modal
-      isOpen={displayColumnsModal}
-      onClose={toggleColumnsModal}
-      size="xl"
-    >
+    <Modal isOpen={displayColumnsModal} onClose={toggleColumnsModal} size="xl">
       <ModalOverlay />
       <ModalContent>
         <ModalHeader>{t('Incident Table')}</ModalHeader>
         <ModalCloseButton />
         <ModalBody>
           <VStack align="top">
-            <Card
-              size="sm"
-              borderWidth="1px"
-            >
+            <Card size="sm" borderWidth="1px">
               <CardHeader>
                 <Heading size="sm">Selected</Heading>
               </CardHeader>
@@ -257,9 +245,7 @@ const TableColumnsModalComponent = () => {
                 <Heading size="sm">Custom</Heading>
               </CardHeader>
               <CardBody>
-                <Box
-                  id="custom-columns-card-body"
-                >
+                <Box id="custom-columns-card-body">
                   {alertCustomDetailFields.map((column) => (
                     <ColumnsModalItem
                       key={columnValue(column)}
@@ -324,7 +310,9 @@ const TableColumnsModalComponent = () => {
           >
             OK
           </Button>
-          <Button variant="ghost" onClick={toggleColumnsModal}>Cancel</Button>
+          <Button variant="ghost" onClick={toggleColumnsModal}>
+            Cancel
+          </Button>
         </ModalFooter>
       </ModalContent>
     </Modal>

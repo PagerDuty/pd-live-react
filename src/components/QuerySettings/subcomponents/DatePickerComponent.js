@@ -1,11 +1,9 @@
 import React, {
-  useState,
-  useEffect,
+  useState, useEffect,
 } from 'react';
 
 import {
-  useSelector,
-  useDispatch,
+  useSelector, useDispatch,
 } from 'react-redux';
 
 import moment from 'moment';
@@ -52,14 +50,7 @@ const DatePickerComponent = () => {
   }, [sinceDate]);
 
   return (
-    <Flex
-      borderWidth="1px"
-      rounded="md"
-      mb={2}
-      p={0}
-      justifyContent="center"
-      alignItems="stretch"
-    >
+    <Flex borderWidth="1px" rounded="md" mb={2} p={0} justifyContent="center" alignItems="stretch">
       <DatePicker
         id="query-date-input"
         className="date-picker"

@@ -2,8 +2,7 @@
 import React from 'react';
 
 import {
-  useDrag,
-  useDrop,
+  useDrag, useDrop,
 } from 'react-dnd';
 
 import {
@@ -11,8 +10,7 @@ import {
 } from '@chakra-ui/react';
 
 import {
-  AddIcon,
-  CloseIcon,
+  AddIcon, CloseIcon,
 } from '@chakra-ui/icons';
 
 const columnValue = (column) => {
@@ -53,8 +51,7 @@ const DraggableColumnsModalItem = ({
       }),
       end: (item, monitor) => {
         const {
-          id: droppedId,
-          originalIndex: droppedOriginalIndex,
+          id: droppedId, originalIndex: droppedOriginalIndex,
         } = item;
         const didDrop = monitor.didDrop();
         if (!didDrop) {
@@ -95,11 +92,7 @@ const DraggableColumnsModalItem = ({
       ariaLabel = 'Add column';
       // eslint-disable-next-line max-len
       iconComponent = (
-        <AddIcon
-          id={`column-${column.id}-add-icon`}
-          {...iconProps}
-          aria-label={ariaLabel}
-        />
+        <AddIcon id={`column-${column.id}-add-icon`} {...iconProps} aria-label={ariaLabel} />
       );
       break;
     case 'selected':
@@ -107,11 +100,7 @@ const DraggableColumnsModalItem = ({
     default:
       ariaLabel = 'Remove column';
       iconComponent = (
-        <CloseIcon
-          id={`column-${column.id}-remove-icon`}
-          {...iconProps}
-          aria-label={ariaLabel}
-        />
+        <CloseIcon id={`column-${column.id}-remove-icon`} {...iconProps} aria-label={ariaLabel} />
       );
       break;
   }

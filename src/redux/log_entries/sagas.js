@@ -15,8 +15,7 @@ import {
   UNLINK_LOG_ENTRY,
 } from 'util/log-entries';
 import {
-  pd,
-  pdParallelFetch,
+  pd, pdParallelFetch,
 } from 'util/pd-api-wrapper';
 
 import {
@@ -71,15 +70,19 @@ export function* getLogEntries(action) {
 
     // Filter out log entries that are already in recent log entries map
     // sort by date ascending (oldest first)
-    logEntries = logEntries.filter((x) => !recentLogEntries[x.id])
+    logEntries = logEntries
+      .filter((x) => !recentLogEntries[x.id])
       .sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
 
     // Add new log entries to recent log entries map by id
     const recentLogEntriesLocal = {
       ...recentLogEntries,
-      ...Object.assign({}, ...logEntries.map((x) => ({
-        [x.id]: new Date(x.created_at),
-      }))),
+      ...Object.assign(
+        {},
+        ...logEntries.map((x) => ({
+          [x.id]: new Date(x.created_at),
+        })),
+      ),
     };
 
     yield put({

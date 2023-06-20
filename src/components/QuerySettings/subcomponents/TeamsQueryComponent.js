@@ -3,8 +3,7 @@ import React, {
 } from 'react';
 
 import {
-  useSelector,
-  useDispatch,
+  useSelector, useDispatch,
 } from 'react-redux';
 
 import {
@@ -37,24 +36,20 @@ const TeamsQueryComponent = () => {
 
   const enabled = useMemo(() => teamList.length > 0, [teamList]);
 
-  const selectListTeams = useMemo(() => (
-    teamList
+  const selectListTeams = useMemo(
+    () => (teamList
       ? teamList.map((team) => ({
         label: team.name,
         value: team.id,
       }))
-      : []
-  ), [teamList]);
-
-  const storedSelectTeams = useMemo(
-    () => {
-      const r = (
-        (selectListTeams && teamIds) ? getObjectsFromList(selectListTeams, teamIds, 'value') : []
-      );
-      return r;
-    },
-    [selectListTeams, teamIds],
+      : []),
+    [teamList],
   );
+
+  const storedSelectTeams = useMemo(() => {
+    const r = selectListTeams && teamIds ? getObjectsFromList(selectListTeams, teamIds, 'value') : [];
+    return r;
+  }, [selectListTeams, teamIds]);
 
   return (
     <Select

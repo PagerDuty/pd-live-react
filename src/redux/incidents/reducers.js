@@ -217,16 +217,19 @@ const incidents = produce(
           if (!draft.incidentAlerts[incidentId]) {
             draft.incidentAlerts[incidentId] = [];
           }
-          draft.incidentAlerts[incidentId] = draft.incidentAlerts[incidentId]
-            .concat(action.incidentAlertsMap[incidentId]);
+          draft.incidentAlerts[incidentId] = draft.incidentAlerts[incidentId].concat(
+            action.incidentAlertsMap[incidentId],
+          );
         }
         for (let i = 0; i < Object.keys(action.incidentAlertsUnlinkMap).length; i++) {
           const incidentId = Object.keys(action.incidentAlertsUnlinkMap)[i];
           if (draft.incidentAlerts[incidentId] instanceof Array) {
-            const unlinkedAlertIds = action.incidentAlertsUnlinkMap[incidentId]
-              .map((alert) => alert.id);
-            draft.incidentAlerts[incidentId] = draft.incidentAlerts[incidentId]
-              .filter((alert) => !unlinkedAlertIds.includes(alert.id));
+            const unlinkedAlertIds = action.incidentAlertsUnlinkMap[incidentId].map(
+              (alert) => alert.id,
+            );
+            draft.incidentAlerts[incidentId] = draft.incidentAlerts[incidentId].filter(
+              (alert) => !unlinkedAlertIds.includes(alert.id),
+            );
           }
         }
         for (let i = 0; i < Object.keys(action.incidentNotesMap).length; i++) {
@@ -234,8 +237,9 @@ const incidents = produce(
           if (!draft.incidentNotes[incidentId]) {
             draft.incidentNotes[incidentId] = [];
           }
-          draft.incidentNotes[incidentId] = draft.incidentNotes[incidentId]
-            .concat(action.incidentNotesMap[incidentId]);
+          draft.incidentNotes[incidentId] = draft.incidentNotes[incidentId].concat(
+            action.incidentNotesMap[incidentId],
+          );
         }
         draft.status = PROCESS_LOG_ENTRIES_COMPLETED;
         break;
@@ -251,13 +255,10 @@ const incidents = produce(
 
       case UPDATE_INCIDENTS_COMPLETED:
         /* eslint-disable no-param-reassign, no-case-declarations */
-        const updatedIncidentsMapById = action.updatedIncidents.reduce(
-          (map, incident) => {
-            map[incident.id] = incident;
-            return map;
-          },
-          {},
-        );
+        const updatedIncidentsMapById = action.updatedIncidents.reduce((map, incident) => {
+          map[incident.id] = incident;
+          return map;
+        }, {});
         /* eslint-enable no-param-reassign, no-case-declarations */
         Object.keys(updatedIncidentsMapById).forEach((incidentId) => {
           const idx = draft.incidents.findIndex((incident) => incident.id === incidentId);

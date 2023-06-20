@@ -3,8 +3,7 @@ import React, {
 } from 'react';
 
 import {
-  useSelector,
-  useDispatch,
+  useSelector, useDispatch,
 } from 'react-redux';
 
 import {
@@ -26,8 +25,7 @@ import {
 } from 'react-i18next';
 
 import {
-  CUSTOM_INCIDENT_ACTION,
-  EXTERNAL_SYSTEM,
+  CUSTOM_INCIDENT_ACTION, EXTERNAL_SYSTEM,
 } from 'util/extensions';
 
 import {
@@ -58,16 +56,22 @@ const RunActionMenu = () => {
   };
 
   const enabled = useMemo(() => selectedRows.length === 1, [selectedRows]);
-  const selectedIncident = useMemo(() => (selectedRows.length === 1 ? selectedRows[0] : null),
-    [selectedRows]);
-  const serviceExtensions = useMemo(() => (selectedIncident
-    ? serviceExtensionMap[selectedIncident.service.id]
-    : []), [selectedIncident]);
-  const customIncidentActions = useMemo(() => (serviceExtensions
-    ? serviceExtensions.filter(
-      (serviceExtension) => serviceExtension.extension_type === CUSTOM_INCIDENT_ACTION,
-    )
-    : []), [serviceExtensions]);
+  const selectedIncident = useMemo(
+    () => (selectedRows.length === 1 ? selectedRows[0] : null),
+    [selectedRows],
+  );
+  const serviceExtensions = useMemo(
+    () => (selectedIncident ? serviceExtensionMap[selectedIncident.service.id] : []),
+    [selectedIncident],
+  );
+  const customIncidentActions = useMemo(
+    () => (serviceExtensions
+      ? serviceExtensions.filter(
+        (serviceExtension) => serviceExtension.extension_type === CUSTOM_INCIDENT_ACTION,
+      )
+      : []),
+    [serviceExtensions],
+  );
 
   const selectListResponsePlays = responsePlays.length > 0
     ? responsePlays.map((responsePlay) => ({
@@ -124,11 +128,7 @@ const RunActionMenu = () => {
       </MenuButton>
       <MenuList size="content" preventOverflow>
         {selectListResponsePlays.length > 0 && (
-          <MenuGroup
-            fontSize="md"
-            ml={2}
-            title={t('Response Plays')}
-          >
+          <MenuGroup fontSize="md" ml={2} title={t('Response Plays')}>
             {selectListResponsePlays.map((responsePlay) => (
               <MenuItem
                 className="dropdown-item"
@@ -142,20 +142,10 @@ const RunActionMenu = () => {
             ))}
           </MenuGroup>
         )}
-        {
-          selectListResponsePlays.length > 0
-          && (
-            customIncidentActions.length > 0
-            || externalSystems.length > 0
-          )
-          && <MenuDivider />
-        }
+        {selectListResponsePlays.length > 0
+          && (customIncidentActions.length > 0 || externalSystems.length > 0) && <MenuDivider />}
         {customIncidentActions.length > 0 && (
-          <MenuGroup
-            fontSize="md"
-            ml={2}
-            title={t('Actions')}
-          >
+          <MenuGroup fontSize="md" ml={2} title={t('Actions')}>
             {customIncidentActions.map((customIncidentAction) => (
               <MenuItem
                 className="dropdown-item"
@@ -169,17 +159,9 @@ const RunActionMenu = () => {
             ))}
           </MenuGroup>
         )}
-        {
-          customIncidentActions.length > 0
-          && externalSystems.length > 0
-          && <MenuDivider />
-        }
+        {customIncidentActions.length > 0 && externalSystems.length > 0 && <MenuDivider />}
         {externalSystems.length > 0 && (
-          <MenuGroup
-            fontSize="md"
-            ml={2}
-            title={t('External Systems')}
-          >
+          <MenuGroup fontSize="md" ml={2} title={t('External Systems')}>
             {externalSystems.map((externalSystem) => (
               <MenuItem
                 className="dropdown-item"

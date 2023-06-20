@@ -3,8 +3,7 @@ import React, {
 } from 'react';
 
 import {
-  useSelector,
-  useDispatch,
+  useSelector, useDispatch,
 } from 'react-redux';
 
 import {
@@ -25,8 +24,7 @@ import {
 } from 'react-i18next';
 
 import {
-  RESOLVED,
-  HIGH,
+  RESOLVED, HIGH,
 } from 'util/incidents';
 
 import {
@@ -44,9 +42,7 @@ const EscalateMenu = () => {
   const selectedRows = useSelector((state) => state.incidentTable.selectedRows);
   const escalationPolicies = useSelector((state) => state.escalationPolicies.escalationPolicies);
   const dispatch = useDispatch();
-  const escalate = (
-    (incidents, escalationLevel) => dispatch(escalateConnected(incidents, escalationLevel))
-  );
+  const escalate = (incidents, escalationLevel) => dispatch(escalateConnected(incidents, escalationLevel));
   const enabled = useMemo(() => {
     if (selectedRows.length !== 1) {
       return false;

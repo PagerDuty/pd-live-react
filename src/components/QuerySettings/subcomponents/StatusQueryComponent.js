@@ -6,13 +6,11 @@ import React, {
 } from 'react';
 
 import {
-  useSelector,
-  useDispatch,
+  useSelector, useDispatch,
 } from 'react-redux';
 
 import {
-  Flex,
-  useCheckboxGroup,
+  Flex, useCheckboxGroup,
 } from '@chakra-ui/react';
 
 import {
@@ -20,9 +18,7 @@ import {
 } from 'react-i18next';
 
 import {
-  TRIGGERED,
-  ACKNOWLEDGED,
-  RESOLVED,
+  TRIGGERED, ACKNOWLEDGED, RESOLVED,
 } from 'util/incidents';
 
 import {
@@ -45,8 +41,7 @@ const StatusQueryComponent = () => {
   } = useTranslation();
 
   const {
-    getCheckboxProps,
-    value,
+    getCheckboxProps, value,
   } = useCheckboxGroup({
     defaultValue: incidentStatus,
   });

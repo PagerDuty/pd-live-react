@@ -32,16 +32,11 @@ import {
 } from 'react-bootstrap';
 
 import {
-  Box,
-  Link,
-  Skeleton,
-  Tooltip,
+  Box, Link, Skeleton, Tooltip,
 } from '@chakra-ui/react';
 
 import {
-  ChevronDownIcon,
-  ChevronUpIcon,
-  NotAllowedIcon,
+  ChevronDownIcon, ChevronUpIcon, NotAllowedIcon,
 } from '@chakra-ui/icons';
 
 import StatusComponent from 'components/IncidentTable/subcomponents/StatusComponent';
@@ -50,22 +45,13 @@ import PersonInitialsComponents from 'components/IncidentTable/subcomponents/Per
 
 const CellDiv = ({
   children,
-}) => (
-  <div className="td-wrapper">
-    {children}
-  </div>
-);
+}) => <div className="td-wrapper">{children}</div>;
 
 const renderLinkCell = ({
-  href,
-  text,
+  href, text,
 }) => (
   <CellDiv>
-    <Link
-      ml={1}
-      href={href}
-      isExternal
-    >
+    <Link ml={1} href={href} isExternal>
       {text}
     </Link>
   </CellDiv>
@@ -75,27 +61,17 @@ const renderLinkCells = (linkObjs) => {
   const links = linkObjs.map(({
     text, href,
   }) => (
-    <Link
-      ml={1}
-      href={href}
-      isExternal
-    >
+    <Link ml={1} href={href} isExternal>
       {text}
     </Link>
   ));
-  return (
-    <CellDiv>
-      {links.reduce((prev, curr) => [prev, ', ', curr])}
-    </CellDiv>
-  );
+  return <CellDiv>{links.reduce((prev, curr) => [prev, ', ', curr])}</CellDiv>;
 };
 
 const renderDateCell = ({
   iso8601Date,
 }) => (
-  <CellDiv>
-    {moment(iso8601Date).format(DATE_FORMAT)}
-  </CellDiv>
+  <CellDiv>{moment(iso8601Date).format(DATE_FORMAT)}</CellDiv>
 );
 
 const renderPlainTextCell = ({
@@ -104,27 +80,18 @@ const renderPlainTextCell = ({
   try {
     return (
       <CellDiv>
-        <a
-          href={new URL(value).href}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
+        <a href={new URL(value).href} target="_blank" rel="noopener noreferrer">
           {value}
         </a>
       </CellDiv>
     );
   } catch (e) {
-    return (
-      <CellDiv>
-        {value || '--'}
-      </CellDiv>
-    );
+    return <CellDiv>{value || '--'}</CellDiv>;
   }
 };
 
 const renderPlainTextAlertCell = ({
-  value,
-  cell,
+  value, cell,
 }) => {
   const {
     alerts,
@@ -132,30 +99,20 @@ const renderPlainTextAlertCell = ({
   if (alerts?.status === 'fetching') {
     return (
       <CellDiv>
-        <Skeleton>
-          fetching
-        </Skeleton>
+        <Skeleton>fetching</Skeleton>
       </CellDiv>
     );
   }
   try {
     return (
       <CellDiv>
-        <a
-          href={new URL(value).href}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
+        <a href={new URL(value).href} target="_blank" rel="noopener noreferrer">
           {value}
         </a>
       </CellDiv>
     );
   } catch (e) {
-    return (
-      <CellDiv>
-        {value || '--'}
-      </CellDiv>
-    );
+    return <CellDiv>{value || '--'}</CellDiv>;
   }
 };
 
@@ -163,9 +120,7 @@ const alertTextValueSortType = (row1, row2, columnId, descending) => {
   const value1 = row1.values[columnId];
   const value2 = row2.values[columnId];
 
-  const isLast = (row) => (
-    row.original.alerts?.status || row.original.alerts === undefined
-  );
+  const isLast = (row) => row.original.alerts?.status || row.original.alerts === undefined;
   if (isLast(row1) && !isLast(row2)) {
     return descending ? -1 : 1;
   }
@@ -189,9 +144,7 @@ export const incidentColumn = ({
   columnType,
 }) => {
   const wrappedRenderer = ({
-    cell,
-    value,
-    row,
+    cell, value, row,
   }) => {
     let valueStr;
     switch (typeof value) {
@@ -218,9 +171,7 @@ export const incidentColumn = ({
       console.error(e);
       return (
         <CellDiv>
-          <Tooltip
-            label={formatError(e.message)}
-          >
+          <Tooltip label={formatError(e.message)}>
             <NotAllowedIcon />
           </Tooltip>
         </CellDiv>
@@ -252,14 +203,13 @@ export const incidentColumn = ({
   return column;
 };
 
-export const defaultIncidentColumns = () => ([
+export const defaultIncidentColumns = () => [
   incidentColumn({
     header: '#',
     accessor: 'incident_number',
     minWidth: 80,
     renderer: ({
-      value,
-      row,
+      value, row,
     }) => renderLinkCell({
       text: value,
       href: row.original.html_url,
@@ -270,8 +220,7 @@ export const defaultIncidentColumns = () => ([
     accessor: 'title',
     minWidth: 200,
     renderer: ({
-      value,
-      row,
+      value, row,
     }) => renderLinkCell({
       text: value,
       href: row.original.html_url,
@@ -309,9 +258,7 @@ export const defaultIncidentColumns = () => ([
     minWidth: 90,
     renderer: ({
       value,
-    }) => (
-      <StatusComponent status={value} />
-    ),
+    }) => <StatusComponent status={value} />,
   }),
   incidentColumn({
     header: 'Incident Key',
@@ -324,8 +271,7 @@ export const defaultIncidentColumns = () => ([
     accessor: 'service.summary',
     minWidth: 150,
     renderer: ({
-      value,
-      row,
+      value, row,
     }) => renderLinkCell({
       text: value,
       href: row.original.service.html_url,
@@ -334,21 +280,15 @@ export const defaultIncidentColumns = () => ([
   incidentColumn({
     id: 'assignees',
     header: 'Assignees',
-    accessor: (incident) => (
-      incident.assignments.map(
-        (assignment) => (assignment.assignee.summary),
-      ).join(', ')
-    ),
+    accessor: (incident) => incident.assignments.map((assignment) => assignment.assignee.summary).join(', '),
     minWidth: 160,
     renderer: ({
       row,
     }) => (
       <PersonInitialsComponents
-        displayedUsers={row.original.assignments.map(
-          (assignment) => ({
-            user: assignment.assignee,
-          }),
-        )}
+        displayedUsers={row.original.assignments.map((assignment) => ({
+          user: assignment.assignee,
+        }))}
       />
     ),
   }),
@@ -385,8 +325,7 @@ export const defaultIncidentColumns = () => ([
     accessor: 'escalation_policy.summary',
     minWidth: 150,
     renderer: ({
-      value,
-      row,
+      value, row,
     }) => renderLinkCell({
       text: value,
       href: row.original.escalation_policy.html_url,
@@ -395,13 +334,7 @@ export const defaultIncidentColumns = () => ([
   incidentColumn({
     id: 'teams',
     header: 'Teams',
-    accessor: (incident) => (
-      incident.teams
-        ? incident.teams.map(
-          (team) => (team.summary),
-        ).join(', ')
-        : ''
-    ),
+    accessor: (incident) => (incident.teams ? incident.teams.map((team) => team.summary).join(', ') : ''),
     minWidth: 200,
     renderer: ({
       row,
@@ -410,10 +343,12 @@ export const defaultIncidentColumns = () => ([
         teams,
       } = row.original.teams ? row.original : [];
       if (teams.length > 0) {
-        return renderLinkCells(teams.map((team) => ({
-          text: team.summary,
-          href: team.html_url,
-        })));
+        return renderLinkCells(
+          teams.map((team) => ({
+            text: team.summary,
+            href: team.html_url,
+          })),
+        );
       }
       return null;
     },
@@ -421,21 +356,15 @@ export const defaultIncidentColumns = () => ([
   incidentColumn({
     id: 'acknowledgements',
     header: 'Acknowledgements',
-    accessor: (incident) => (
-      incident.acknowledgements.map(
-        (acknowledger) => (acknowledger.summary),
-      ).join(', ')
-    ),
+    accessor: (incident) => incident.acknowledgements.map((acknowledger) => acknowledger.summary).join(', '),
     minWidth: 160,
     renderer: ({
       row,
     }) => (
       <PersonInitialsComponents
-        displayedUsers={row.original.acknowledgements.map(
-          (acknowledgement) => ({
-            user: acknowledgement.acknowledger,
-          }),
-        )}
+        displayedUsers={row.original.acknowledgements.map((acknowledgement) => ({
+          user: acknowledgement.acknowledger,
+        }))}
       />
     ),
   }),
@@ -444,8 +373,7 @@ export const defaultIncidentColumns = () => ([
     accessor: 'last_status_change_by.summary',
     minWidth: 150,
     renderer: ({
-      value,
-      row,
+      value, row,
     }) => renderLinkCell({
       text: value,
       href: row.original.last_status_change_by.html_url,
@@ -454,11 +382,10 @@ export const defaultIncidentColumns = () => ([
   incidentColumn({
     id: 'priority',
     header: 'Priority',
-    accessor: (incident) => (incident.priority?.summary || ''),
+    accessor: (incident) => incident.priority?.summary || '',
     minWidth: 90,
     renderer: ({
-      value,
-      row,
+      value, row,
     }) => {
       if (value) {
         return (
@@ -524,8 +451,7 @@ export const defaultIncidentColumns = () => ([
     accessor: 'summary',
     minWidth: 300,
     renderer: ({
-      value,
-      row,
+      value, row,
     }) => renderLinkCell({
       text: value,
       href: row.original.html_url,
@@ -547,22 +473,9 @@ export const defaultIncidentColumns = () => ([
       },
     }) => (
       <CellDiv>
-        {
-          original.notes?.length > 0
-          && original.notes.slice(-1)[0].content
-        }
-        {
-          original.notes?.length === 0
-          && '--'
-        }
-        {
-          original.notes?.status === 'fetching'
-          && (
-            <Skeleton>
-              fetching
-            </Skeleton>
-          )
-        }
+        {original.notes?.length > 0 && original.notes.slice(-1)[0].content}
+        {original.notes?.length === 0 && '--'}
+        {original.notes?.status === 'fetching' && <Skeleton>fetching</Skeleton>}
       </CellDiv>
     ),
   }),
@@ -596,29 +509,27 @@ export const defaultIncidentColumns = () => ([
     }) => {
       const externalReferences = original.external_references || [];
       if (externalReferences.length > 0) {
-        return renderLinkCells(externalReferences.map((ext) => ({
-          text: `${ext.summary} (${ext.external_id})`,
-          href: ext.external_url,
-        })));
+        return renderLinkCells(
+          externalReferences.map((ext) => ({
+            text: `${ext.summary} (${ext.external_id})`,
+            href: ext.external_url,
+          })),
+        );
       }
       return '--';
     },
   }),
-]);
+];
 
-export const defaultAlertsColumns = () => ([
+export const defaultAlertsColumns = () => [
   incidentColumn({
     id: 'severity',
     header: 'Severity',
     columnType: 'alert',
-    accessor: (incident) => (
-      incident.alerts?.[0]?.body?.cef_details?.severity
-      || ''
-    ),
+    accessor: (incident) => incident.alerts?.[0]?.body?.cef_details?.severity || '',
     minWidth: 100,
     renderer: ({
-      value,
-      cell,
+      value, cell,
     }) => {
       if (cell.row.original.alerts?.status === 'fetching') {
         return renderPlainTextAlertCell({ value, cell });
@@ -673,10 +584,7 @@ export const defaultAlertsColumns = () => ([
     id: 'source_component',
     header: 'Component',
     columnType: 'alert',
-    accessor: (incident) => (
-      incident.alerts?.[0]?.body?.cef_details?.source_component
-      || ''
-    ),
+    accessor: (incident) => incident.alerts?.[0]?.body?.cef_details?.source_component || '',
     minWidth: 100,
     renderer: renderPlainTextAlertCell,
   }),
@@ -684,10 +592,7 @@ export const defaultAlertsColumns = () => ([
     id: 'source_origin',
     header: 'Source',
     columnType: 'alert',
-    accessor: (incident) => (
-      incident.alerts?.[0]?.body?.cef_details?.source_origin
-      || ''
-    ),
+    accessor: (incident) => incident.alerts?.[0]?.body?.cef_details?.source_origin || '',
     minWidth: 100,
     renderer: renderPlainTextAlertCell,
     sortType: alertTextValueSortType,
@@ -696,10 +601,7 @@ export const defaultAlertsColumns = () => ([
     id: 'event_class',
     header: 'Class',
     columnType: 'alert',
-    accessor: (incident) => (
-      incident.alerts?.[0]?.body?.cef_details?.event_class
-      || ''
-    ),
+    accessor: (incident) => incident.alerts?.[0]?.body?.cef_details?.event_class || '',
     minWidth: 100,
     renderer: ({
       value,
@@ -709,21 +611,15 @@ export const defaultAlertsColumns = () => ([
     id: 'service_group',
     header: 'Group',
     columnType: 'alert',
-    accessor: (incident) => (
-      incident.alerts?.[0]?.body?.cef_details?.service_group
-      || ''
-    ),
+    accessor: (incident) => incident.alerts?.[0]?.body?.cef_details?.service_group || '',
     minWidth: 100,
     renderer: renderPlainTextAlertCell,
   }),
-]);
+];
 
 export const customAlertColumnForSavedColumn = (savedColumn) => {
   const {
-    Header: header,
-    accessorPath,
-    aggregator,
-    width,
+    Header: header, accessorPath, aggregator, width,
   } = savedColumn;
   if (!(header && accessorPath)) {
     return null;
@@ -760,10 +656,7 @@ export const customAlertColumnForSavedColumn = (savedColumn) => {
   return column;
 };
 
-export const defaultColumns = () => ([
-  ...defaultIncidentColumns(),
-  ...defaultAlertsColumns(),
-]);
+export const defaultColumns = () => [...defaultIncidentColumns(), ...defaultAlertsColumns()];
 
 export const customAlertColumns = (savedColumns) => {
   const allColumns = defaultColumns();
@@ -780,18 +673,20 @@ export const customAlertColumns = (savedColumns) => {
 
 export const columnsForSavedColumns = (savedColumns) => {
   const allColumns = defaultColumns();
-  const columns = savedColumns.map((column) => {
-    const foundColumn = allColumns.find((c) => c.originalHeader === column.Header);
-    if (foundColumn) {
-      return {
-        ...foundColumn,
-        ...column,
-      };
-    }
-    if (column.columnType === 'alert') {
-      return customAlertColumnForSavedColumn(column);
-    }
-    return null;
-  }).filter((c) => !!c);
+  const columns = savedColumns
+    .map((column) => {
+      const foundColumn = allColumns.find((c) => c.originalHeader === column.Header);
+      if (foundColumn) {
+        return {
+          ...foundColumn,
+          ...column,
+        };
+      }
+      if (column.columnType === 'alert') {
+        return customAlertColumnForSavedColumn(column);
+      }
+      return null;
+    })
+    .filter((c) => !!c);
   return columns;
 };

@@ -440,9 +440,7 @@ export const availableAlertTableColumns = [
         if (incident.alerts.status) {
           content = incident.alerts.status;
         } else if (incident.alerts.length > 0) {
-          content = incident.alerts[0].severity
-            || incident.alerts[0].body?.cef_details.severity
-            || '--';
+          content = incident.alerts[0].severity || incident.alerts[0].body?.cef_details.severity || '--';
         } else {
           content = '--';
         }

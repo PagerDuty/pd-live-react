@@ -19,8 +19,7 @@ import {
 } from '@chakra-ui/react';
 
 import {
-  CheckCircleIcon,
-  WarningTwoIcon,
+  CheckCircleIcon, WarningTwoIcon,
 } from '@chakra-ui/icons';
 
 const NumAlertsComponent = ({
@@ -44,49 +43,34 @@ const NumAlertsComponent = ({
         <Table size="sm">
           <Thead>
             <Tr>
-              <Th>
-                Created At
-              </Th>
-              <Th>
-                Status
-              </Th>
-              <Th>
-                Summary
-              </Th>
+              <Th>Created At</Th>
+              <Th>Status</Th>
+              <Th>Summary</Th>
             </Tr>
           </Thead>
           <Tbody>
-            {
-              alertsSortedDescendingDate.slice(0, 20).map((alert) => (
-                <Tr key={alert.id}>
-                  <Td>
-                    {new Date(alert.created_at).toLocaleString()}
-                  </Td>
-                  <Td aria-label={alert.status}>
-                    {
-                      alert.status === 'triggered'
-                        ? <WarningTwoIcon color="red.500" />
-                        : <CheckCircleIcon color="green.500" />
-                    }
-                  </Td>
-                  <Td>
-                    <Link
-                      href={alert.html_url}
-                      isExternal
-                    >
-                      {alert.summary}
-                    </Link>
-                  </Td>
-                </Tr>
-              ))
-            }
+            {alertsSortedDescendingDate.slice(0, 20).map((alert) => (
+              <Tr key={alert.id}>
+                <Td>{new Date(alert.created_at).toLocaleString()}</Td>
+                <Td aria-label={alert.status}>
+                  {alert.status === 'triggered' ? (
+                    <WarningTwoIcon color="red.500" />
+                  ) : (
+                    <CheckCircleIcon color="green.500" />
+                  )}
+                </Td>
+                <Td>
+                  <Link href={alert.html_url} isExternal>
+                    {alert.summary}
+                  </Link>
+                </Td>
+              </Tr>
+            ))}
           </Tbody>
-          {(alertsSortedDescendingDate.length > 20) && (
+          {alertsSortedDescendingDate.length > 20 && (
             <Tfoot>
               <Tr>
-                <Th colSpan={3}>
-                  {`${alertsSortedDescendingDate.length - 20} more not shown`}
-                </Th>
+                <Th colSpan={3}>{`${alertsSortedDescendingDate.length - 20} more not shown`}</Th>
               </Tr>
             </Tfoot>
           )}
@@ -94,26 +78,14 @@ const NumAlertsComponent = ({
       </TableContainer>
     );
   } else if (alerts instanceof Array && alerts.length === 0) {
-    tooltipText = (
-      <Box p={4}>
-        No alerts
-      </Box>
-    );
+    tooltipText = <Box p={4}>No alerts</Box>;
   } else if (alerts?.status) {
-    tooltipText = (
-      <Box p={4}>
-        {alerts.status}
-      </Box>
-    );
+    tooltipText = <Box p={4}>{alerts.status}</Box>;
   }
   return (
     <Popover trigger="hover" size="content" preventOverflow>
       <PopoverTrigger>
-        <Box
-          m={0}
-          p={2}
-          cursor="default"
-        >
+        <Box m={0} p={2} cursor="default">
           {value}
         </Box>
       </PopoverTrigger>

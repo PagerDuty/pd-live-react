@@ -3,8 +3,7 @@ import React, {
 } from 'react';
 
 import {
-  useSelector,
-  useDispatch,
+  useSelector, useDispatch,
 } from 'react-redux';
 
 import {
@@ -20,9 +19,7 @@ import {
 } from 'react-i18next';
 
 import {
-  TRIGGERED,
-  ACKNOWLEDGED,
-  filterIncidentsByField,
+  TRIGGERED, ACKNOWLEDGED, filterIncidentsByField,
 } from 'util/incidents';
 
 import {
@@ -41,7 +38,7 @@ const AddRespondersButton = () => {
       TRIGGERED,
       ACKNOWLEDGED,
     ]);
-    return (unresolvedIncidents.length > 0);
+    return unresolvedIncidents.length > 0;
   }, [selectedRows]);
   return (
     <Button

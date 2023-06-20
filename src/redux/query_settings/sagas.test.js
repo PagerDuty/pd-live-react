@@ -210,9 +210,7 @@ xdescribe('Sagas: Query Settings', () => {
     const totalIncidentsFromQuery = generateRandomInteger(0, MAX_INCIDENTS_LIMIT_LOWER);
     return expectSaga(updateTotalIncidentsFromQuery)
       .withReducer(querySettings)
-      .provide([
-        [select(selectSettings), mockSettings],
-      ])
+      .provide([[select(selectSettings), mockSettings]])
       .dispatch({ type: UPDATE_TOTAL_INCIDENTS_FROM_QUERY_REQUESTED, totalIncidentsFromQuery })
       .silentRun()
       .then((result) => {
@@ -225,9 +223,7 @@ xdescribe('Sagas: Query Settings', () => {
     const confirm = true;
     return expectSaga(confirmIncidentQuery)
       .withReducer(querySettings)
-      .provide([
-        [select(selectSettings), mockSettings],
-      ])
+      .provide([[select(selectSettings), mockSettings]])
       .dispatch({ type: CONFIRM_INCIDENT_QUERY_REQUESTED, confirm })
       .silentRun()
       .then((result) => {
@@ -239,9 +235,7 @@ xdescribe('Sagas: Query Settings', () => {
     const confirm = false;
     return expectSaga(confirmIncidentQuery)
       .withReducer(querySettings)
-      .provide([
-        [select(selectSettings), mockSettings],
-      ])
+      .provide([[select(selectSettings), mockSettings]])
       .dispatch({ type: CONFIRM_INCIDENT_QUERY_REQUESTED, confirm })
       .silentRun()
       .then((result) => {
@@ -254,9 +248,7 @@ xdescribe('Sagas: Query Settings', () => {
     const userIds = users.map((user) => user.id);
     return expectSaga(updateQuerySettingsUsers)
       .withReducer(querySettings)
-      .provide([
-        [select(selectSettings), mockSettings],
-      ])
+      .provide([[select(selectSettings), mockSettings]])
       .dispatch({ type: UPDATE_QUERY_SETTINGS_USERS_REQUESTED, userIds })
       .silentRun()
       .then((result) => {
@@ -270,9 +262,7 @@ xdescribe('Sagas: Query Settings', () => {
     const teamIds = teams.map((team) => team.id);
     return expectSaga(updateQuerySettingsTeams)
       .withReducer(querySettings)
-      .provide([
-        [select(selectSettings), mockSettings],
-      ])
+      .provide([[select(selectSettings), mockSettings]])
       .dispatch({ type: UPDATE_QUERY_SETTINGS_TEAMS_REQUESTED, teamIds })
       .silentRun()
       .then((result) => {
@@ -286,9 +276,7 @@ xdescribe('Sagas: Query Settings', () => {
     const escalationPolicyIds = escalationPolicies.map((escalationPolicy) => escalationPolicy.id);
     return expectSaga(updateQuerySettingsEscalationPolicies)
       .withReducer(querySettings)
-      .provide([
-        [select(selectSettings), mockSettings],
-      ])
+      .provide([[select(selectSettings), mockSettings]])
       .dispatch({ type: UPDATE_QUERY_SETTINGS_ESCALATION_POLICIES_REQUESTED, escalationPolicyIds })
       .silentRun()
       .then((result) => {
@@ -302,9 +290,7 @@ xdescribe('Sagas: Query Settings', () => {
     const serviceIds = services.map((service) => service.id);
     return expectSaga(updateQuerySettingsServices)
       .withReducer(querySettings)
-      .provide([
-        [select(selectSettings), mockSettings],
-      ])
+      .provide([[select(selectSettings), mockSettings]])
       .dispatch({ type: UPDATE_QUERY_SETTINGS_SERVICES_REQUESTED, serviceIds })
       .silentRun()
       .then((result) => {

@@ -1,8 +1,7 @@
 import React from 'react';
 
 import {
-  Box,
-  Flex,
+  Box, Flex,
 } from '@chakra-ui/react';
 
 import SelectedIncidentsComponent from './subcomponents/SelectedIncidentsComponent';
@@ -34,10 +33,7 @@ const IncidentActionsComponent = () => (
     <Box>
       <SelectedIncidentsComponent />
     </Box>
-    <Box
-      ml={2}
-      mr="auto"
-    >
+    <Box ml={2} mr="auto">
       <AcknowledgeButton />
       <EscalateMenu />
       <ReassignButton />

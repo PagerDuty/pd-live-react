@@ -1,14 +1,11 @@
 /* eslint-disable no-unused-vars */
 
 import React, {
-  useEffect,
-  useMemo,
-  useState,
+  useEffect, useMemo, useState,
 } from 'react';
 
 import {
-  useSelector,
-  useDispatch,
+  useSelector, useDispatch,
 } from 'react-redux';
 
 import {
@@ -42,10 +39,7 @@ import {
 } from 'redux/incident_actions/actions';
 
 import {
-  TRIGGERED,
-  ACKNOWLEDGED,
-  RESOLVED,
-  filterIncidentsByField,
+  TRIGGERED, ACKNOWLEDGED, RESOLVED, filterIncidentsByField,
 } from 'util/incidents';
 
 import './MergeModalComponent.scss';
@@ -62,9 +56,7 @@ const MergeModalComponent = () => {
   } = useSelector((state) => state.incidentTable);
   const dispatch = useDispatch();
   const toggleDisplayMergeModal = () => dispatch(toggleDisplayMergeModalConnected());
-  const merge = (targetIncident, mergedIncidents, displayModal, addToTitleText) => dispatch(
-    mergeConnected(targetIncident, mergedIncidents, displayModal, addToTitleText),
-  );
+  const merge = (targetIncident, mergedIncidents, displayModal, addToTitleText) => dispatch(mergeConnected(targetIncident, mergedIncidents, displayModal, addToTitleText));
 
   const {
     t,
@@ -98,29 +90,31 @@ const MergeModalComponent = () => {
     return r;
   }, [displayMergeModal, incidents, selectedRows]);
 
-  const unselectedOpenIncidents = useMemo(() => (
-    filterIncidentsByField(unselectedIncidents, 'status', [TRIGGERED, ACKNOWLEDGED])
-      .map((incident) => ({
+  const unselectedOpenIncidents = useMemo(
+    () => filterIncidentsByField(unselectedIncidents, 'status', [TRIGGERED, ACKNOWLEDGED]).map(
+      (incident) => ({
         label: incident.summary,
         value: incident.id,
         id: incident.id,
         title: incident.title,
         incident_number: incident.incident_number,
         status: incident.status,
-      }))
-  ), [unselectedIncidents]);
+      }),
+    ),
+    [unselectedIncidents],
+  );
 
-  const unselectedClosedIncidents = useMemo(() => (
-    filterIncidentsByField(unselectedIncidents, 'status', [RESOLVED])
-      .map((incident) => ({
-        label: incident.summary,
-        value: incident.id,
-        id: incident.id,
-        title: incident.title,
-        incident_number: incident.incident_number,
-        status: incident.status,
-      }))
-  ), [unselectedIncidents]);
+  const unselectedClosedIncidents = useMemo(
+    () => filterIncidentsByField(unselectedIncidents, 'status', [RESOLVED]).map((incident) => ({
+      label: incident.summary,
+      value: incident.id,
+      id: incident.id,
+      title: incident.title,
+      incident_number: incident.incident_number,
+      status: incident.status,
+    })),
+    [unselectedIncidents],
+  );
 
   const selectOptions = useMemo(() => {
     const r = [
@@ -142,19 +136,21 @@ const MergeModalComponent = () => {
     return r;
   }, [selectedIncidents, unselectedClosedIncidents, unselectedOpenIncidents]);
 
-  const defaultMergeTarget = useMemo(() => (
-    selectedIncidents.length > 1 ? selectedIncidents[0] : null
-  ), [selectedIncidents]);
+  const defaultMergeTarget = useMemo(
+    () => (selectedIncidents.length > 1 ? selectedIncidents[0] : null),
+    [selectedIncidents],
+  );
 
   const [mergeTarget, setMergeTarget] = useState(null);
 
   // you're not allowed to merge open incidents into a resolved incident
-  const mergingIsDisallowed = useMemo(() => (
-    !!mergeTarget
-    && mergeTarget.status === RESOLVED
-    && selectedIncidents.length > 1
-    && selectedIncidents.some((incident) => incident.status !== RESOLVED)
-  ), [mergeTarget, selectedIncidents]);
+  const mergingIsDisallowed = useMemo(
+    () => !!mergeTarget
+      && mergeTarget.status === RESOLVED
+      && selectedIncidents.length > 1
+      && selectedIncidents.some((incident) => incident.status !== RESOLVED),
+    [mergeTarget, selectedIncidents],
+  );
 
   useEffect(() => {
     setMergeTarget(defaultMergeTarget);
@@ -172,26 +168,19 @@ const MergeModalComponent = () => {
   }, [mergeTarget]);
 
   const doMerge = () => {
-    const incidentsToMerge = selectedIncidents
-      .filter((incident) => incident.id !== mergeTarget.id);
+    const incidentsToMerge = selectedIncidents.filter((incident) => incident.id !== mergeTarget.id);
     merge(mergeTarget, incidentsToMerge, true, addToTitle ? addToTitleText : null);
   };
 
   return (
-    <Modal
-      isOpen={displayMergeModal}
-      onClose={toggleDisplayMergeModal}
-      size="xl"
-    >
+    <Modal isOpen={displayMergeModal} onClose={toggleDisplayMergeModal} size="xl">
       <ModalOverlay />
       <ModalContent>
         <ModalHeader>{t('Merge Incidents')}</ModalHeader>
         <ModalCloseButton />
         <ModalBody>
           <FormControl>
-            <Text
-              fontSize="sm"
-            >
+            <Text fontSize="sm">
               {t('The alerts of the selected incidents will be merged into a single incident')}
             </Text>
             <FormLabel>{t('Select an incident to merge into')}</FormLabel>
@@ -213,10 +202,7 @@ const MergeModalComponent = () => {
                 }),
               }}
             />
-            <Text
-              fontSize="sm"
-              mt={6}
-            >
+            <Text fontSize="sm" mt={6}>
               {t('The remaining selected incidents will be resolved after the merge is complete')}
             </Text>
           </FormControl>
@@ -238,11 +224,7 @@ const MergeModalComponent = () => {
           </FormControl>
           {mergingIsDisallowed && (
             <Box>
-              <Text
-                color="red.500"
-                fontWeight={500}
-                fontSize="sm"
-              >
+              <Text color="red.500" fontWeight={500} fontSize="sm">
                 {t('You cannot merge open incidents into a resolved incident')}
               </Text>
             </Box>
@@ -259,10 +241,7 @@ const MergeModalComponent = () => {
             >
               {t('Merge')}
             </Button>
-            <Button
-              variant="ghost"
-              onClick={toggleDisplayMergeModal}
-            >
+            <Button variant="ghost" onClick={toggleDisplayMergeModal}>
               {t('Cancel')}
             </Button>
           </Box>

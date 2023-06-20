@@ -3,8 +3,7 @@ import React, {
 } from 'react';
 
 import {
-  useSelector,
-  useDispatch,
+  useSelector, useDispatch,
 } from 'react-redux';
 
 import {
@@ -37,24 +36,20 @@ const EscalationPolicyQueryComponent = () => {
 
   const enabled = useMemo(() => epList.length > 0, [epList]);
 
-  const selectListEps = useMemo(() => (
-    epList
+  const selectListEps = useMemo(
+    () => (epList
       ? epList.map((team) => ({
         label: team.name,
         value: team.id,
       }))
-      : []
-  ), [epList]);
-
-  const storedSelectEps = useMemo(
-    () => {
-      const r = (
-        (selectListEps && epIds) ? getObjectsFromList(selectListEps, epIds, 'value') : []
-      );
-      return r;
-    },
-    [selectListEps, epIds],
+      : []),
+    [epList],
   );
+
+  const storedSelectEps = useMemo(() => {
+    const r = selectListEps && epIds ? getObjectsFromList(selectListEps, epIds, 'value') : [];
+    return r;
+  }, [selectListEps, epIds]);
 
   return (
     <Select

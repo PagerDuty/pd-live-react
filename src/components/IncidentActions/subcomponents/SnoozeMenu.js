@@ -3,8 +3,7 @@ import React, {
 } from 'react';
 
 import {
-  useSelector,
-  useDispatch,
+  useSelector, useDispatch,
 } from 'react-redux';
 
 import {
@@ -26,10 +25,7 @@ import {
 } from 'react-i18next';
 
 import {
-  TRIGGERED,
-  ACKNOWLEDGED,
-  filterIncidentsByField,
-  getSnoozeTimes,
+  TRIGGERED, ACKNOWLEDGED, filterIncidentsByField, getSnoozeTimes,
 } from 'util/incidents';
 
 import {
@@ -48,7 +44,7 @@ const SnoozeMenu = () => {
       TRIGGERED,
       ACKNOWLEDGED,
     ]);
-    return (unresolvedIncidents.length > 0);
+    return unresolvedIncidents.length > 0;
   }, [selectedRows]);
   const snooze = (incidents, duration) => dispatch(snoozeConnected(incidents, duration));
   const toggleDisplayCustomSnoozeModal = () => dispatch(toggleDisplayCustomSnoozeModalConnected());

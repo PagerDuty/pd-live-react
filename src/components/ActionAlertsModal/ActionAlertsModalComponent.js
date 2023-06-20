@@ -3,9 +3,7 @@ import React, {
 } from 'react';
 
 import {
-  connect,
-  useSelector,
-  useDispatch,
+  connect, useSelector, useDispatch,
 } from 'react-redux';
 
 import {
@@ -19,7 +17,9 @@ import {
 const ActionAlertsModalComponent = () => {
   const {
     displayActionAlertsModal, actionAlertsModalType, actionAlertsModalMessage,
-  } = useSelector((state) => state.actionAlertsModalData);
+  } = useSelector(
+    (state) => state.actionAlertsModalData,
+  );
   const dispatch = useDispatch();
   const toggleDisplayActionAlertsModal = () => dispatch(toggleDisplayActionAlertsModalConnected());
 
@@ -29,7 +29,7 @@ const ActionAlertsModalComponent = () => {
 
   useEffect(() => {
     let timeout;
-    if (displayActionAlertsModal && !(toast.isActive(actionAlertsModalMessage))) {
+    if (displayActionAlertsModal && !toast.isActive(actionAlertsModalMessage)) {
       toast({
         id: actionAlertsModalMessage,
         title: actionAlertsModalMessage,
@@ -44,9 +44,7 @@ const ActionAlertsModalComponent = () => {
     };
   }, [displayActionAlertsModal, toggleDisplayActionAlertsModal]);
 
-  return (
-    <></>
-  );
+  return <></>;
 };
 
 const mapStateToProps = (state) => ({

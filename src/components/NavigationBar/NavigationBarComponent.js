@@ -3,8 +3,7 @@ import React, {
 } from 'react';
 
 import {
-  useSelector,
-  useDispatch,
+  useSelector, useDispatch,
 } from 'react-redux';
 
 import {
@@ -29,16 +28,11 @@ import {
 } from '@chakra-ui/react';
 
 import {
-  MoonIcon,
-  SunIcon,
-  ViewIcon,
-  ViewOffIcon,
-  HamburgerIcon,
+  MoonIcon, SunIcon, ViewIcon, ViewOffIcon, HamburgerIcon,
 } from '@chakra-ui/icons';
 
 import {
-  PD_OAUTH_CLIENT_ID,
-  PD_OAUTH_CLIENT_SECRET,
+  PD_OAUTH_CLIENT_ID, PD_OAUTH_CLIENT_SECRET,
 } from 'config/constants';
 
 import {
@@ -92,8 +86,7 @@ const NavigationBarComponent = () => {
   const stopMonitoring = () => dispatch(stopMonitoringConnected());
 
   const {
-    colorMode,
-    toggleColorMode,
+    colorMode, toggleColorMode,
   } = useColorMode();
 
   const hideQuerySettings = useCallback(() => {
@@ -134,9 +127,7 @@ const NavigationBarComponent = () => {
     syncReduxColorMode();
   };
   const DarkModeIconButton = () => (
-    <Tooltip
-      label={colorMode === 'dark' ? t('Light mode') : t('Dark mode')}
-    >
+    <Tooltip label={colorMode === 'dark' ? t('Light mode') : t('Dark mode')}>
       <IconButton
         aria-label="Toggle dark mode"
         icon={colorMode === 'dark' ? <SunIcon /> : <MoonIcon />}
@@ -147,26 +138,10 @@ const NavigationBarComponent = () => {
   );
 
   return (
-    <Box
-      as="nav"
-      rounded="md"
-    >
-      <Flex
-        align="center"
-        justify="space-between"
-        wrap="wrap"
-        pl="1rem"
-        pr="1rem"
-        pt="1rem"
-      >
-        <Flex
-          alt="PagerDuty"
-        >
-          <Logo
-            title="PagerDuty"
-            width="112px"
-            fill={colorMode === 'dark' ? '#fff' : '#000'}
-          />
+    <Box as="nav" rounded="md">
+      <Flex align="center" justify="space-between" wrap="wrap" pl="1rem" pr="1rem" pt="1rem">
+        <Flex alt="PagerDuty">
+          <Logo title="PagerDuty" width="112px" fill={colorMode === 'dark' ? '#fff' : '#000'} />
           <Text
             id="navbar-ctr"
             fontSize="xl"
@@ -178,13 +153,9 @@ const NavigationBarComponent = () => {
             {t('Live Incidents Console')}
           </Text>
         </Flex>
-        <Flex
-          alignItems="center"
-        >
+        <Flex alignItems="center">
           <GlobalSearchComponent />
-          <Tooltip
-            label={displayQuerySettings ? t('Hide filters') : t('Show filters')}
-          >
+          <Tooltip label={displayQuerySettings ? t('Hide filters') : t('Show filters')}>
             <IconButton
               aria-label="Toggle filters"
               icon={displayQuerySettings ? <ViewOffIcon /> : <ViewIcon />}
@@ -193,13 +164,9 @@ const NavigationBarComponent = () => {
               mr={1}
             />
           </Tooltip>
-          <DarkModeIconButton
-            mr={2}
-          />
+          <DarkModeIconButton mr={2} />
           <Menu>
-            <Tooltip
-              label={t('Main menu')}
-            >
+            <Tooltip label={t('Main menu')}>
               <MenuButton
                 className="settings-panel-dropdown"
                 as={IconButton}
@@ -211,16 +178,10 @@ const NavigationBarComponent = () => {
               />
             </Tooltip>
             <MenuList zIndex="999">
-              <MenuItem
-                className="dropdown-item"
-                onClick={toggleSettingsModal}
-              >
+              <MenuItem className="dropdown-item" onClick={toggleSettingsModal}>
                 {t('Settings')}
               </MenuItem>
-              <MenuItem
-                className="dropdown-item"
-                onClick={toggleColumnsModal}
-              >
+              <MenuItem className="dropdown-item" onClick={toggleColumnsModal}>
                 {t('Columns')}
               </MenuItem>
               <MenuItem
@@ -249,9 +210,7 @@ const NavigationBarComponent = () => {
                 {t('Log Out')}
               </MenuItem>
               <MenuDivider />
-              <MenuItem
-                className="dropdown-item"
-              >
+              <MenuItem className="dropdown-item">
                 <Link
                   isExternal
                   _hover={{
@@ -263,10 +222,7 @@ const NavigationBarComponent = () => {
                 </Link>
               </MenuItem>
               <MenuDivider />
-              <MenuItem
-                className="version-info"
-                disabled
-              >
+              <MenuItem className="version-info" disabled>
                 {t('Version')}
                 {`: ${PD_APP_VERSION}`}
               </MenuItem>
@@ -287,9 +243,7 @@ const NavigationBarComponent = () => {
         }}
         in={displayQuerySettings}
       >
-        <Box
-          onClose={hideQuerySettings}
-        >
+        <Box onClose={hideQuerySettings}>
           <QuerySettingsComponent />
         </Box>
       </Collapse>

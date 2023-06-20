@@ -9,8 +9,7 @@ import {
 } from 'react';
 
 import {
-  useSelector,
-  useDispatch,
+  useSelector, useDispatch,
 } from 'react-redux';
 
 import {
@@ -48,8 +47,7 @@ import {
 } from 'config/column-generator';
 
 import {
-  Box,
-  Text,
+  Box, Text,
 } from '@chakra-ui/react';
 
 import {
@@ -104,8 +102,7 @@ const doCsvExport = (tableData) => {
     .filter((column) => column.id !== 'select')
     .map((column) => column.Header);
 
-  const rowsToMap = tableData.selectedFlatRows.length > 0
-    ? tableData.selectedFlatRows : tableData.rows;
+  const rowsToMap = tableData.selectedFlatRows.length > 0 ? tableData.selectedFlatRows : tableData.rows;
   const exportRows = rowsToMap.map((row) => {
     tableData.prepareRow(row);
     const cells = row.cells.slice(1);
@@ -142,30 +139,40 @@ const IncidentTableComponent = () => {
     status,
   } = useSelector((state) => state.incidentActions);
   const {
-    filteredIncidentsByQuery,
-    incidentAlerts,
-    incidentNotes,
-    fetchingIncidents,
+    filteredIncidentsByQuery, incidentAlerts, incidentNotes, fetchingIncidents,
   } = useSelector((state) => state.incidents);
   const {
-    displayConfirmQueryModal,
-    error: querySettingsError,
-  } = useSelector((state) => state.querySettings);
+    displayConfirmQueryModal, error: querySettingsError,
+  } = useSelector(
+    (state) => state.querySettings,
+  );
   const currentUserLocale = useSelector((state) => state.users.currentUserLocale);
 
   const dispatch = useDispatch();
-  const selectIncidentTableRows = useCallback((allSelected, selectedCount, selectedRows) => {
-    dispatch(selectIncidentTableRowsConnected(allSelected, selectedCount, selectedRows));
-  }, [dispatch]);
-  const updateIncidentTableState = useCallback((newIncidentTableState) => {
-    dispatch(updateIncidentTableStateConnected(newIncidentTableState));
-  }, [dispatch]);
-  const getIncidentAlerts = useCallback((incidentId) => {
-    dispatch(getIncidentAlertsAsyncConnected(incidentId));
-  }, [dispatch]);
-  const getIncidentNotes = useCallback((incidentId) => {
-    dispatch(getIncidentNotesAsyncConnected(incidentId));
-  }, [dispatch]);
+  const selectIncidentTableRows = useCallback(
+    (allSelected, selectedCount, selectedRows) => {
+      dispatch(selectIncidentTableRowsConnected(allSelected, selectedCount, selectedRows));
+    },
+    [dispatch],
+  );
+  const updateIncidentTableState = useCallback(
+    (newIncidentTableState) => {
+      dispatch(updateIncidentTableStateConnected(newIncidentTableState));
+    },
+    [dispatch],
+  );
+  const getIncidentAlerts = useCallback(
+    (incidentId) => {
+      dispatch(getIncidentAlertsAsyncConnected(incidentId));
+    },
+    [dispatch],
+  );
+  const getIncidentNotes = useCallback(
+    (incidentId) => {
+      dispatch(getIncidentNotesAsyncConnected(incidentId));
+    },
+    [dispatch],
+  );
 
   const {
     t,
@@ -181,16 +188,19 @@ const IncidentTableComponent = () => {
     [],
   );
 
-  const columns = useMemo(() => columnsForSavedColumns(incidentTableColumns),
-    [incidentTableColumns, currentUserLocale]);
+  const columns = useMemo(
+    () => columnsForSavedColumns(incidentTableColumns),
+    [incidentTableColumns, currentUserLocale],
+  );
 
-  const tableData = useMemo(() => filteredIncidentsByQuery.map(
-    (incident) => ({
+  const tableData = useMemo(
+    () => filteredIncidentsByQuery.map((incident) => ({
       ...incident,
       alerts: incidentAlerts[incident.id],
       notes: incidentNotes[incident.id],
-    }),
-  ), [filteredIncidentsByQuery, incidentAlerts, incidentNotes]);
+    })),
+    [filteredIncidentsByQuery, incidentAlerts, incidentNotes],
+  );
 
   const scrollBarSize = useMemo(() => scrollbarWidth(), []);
 
@@ -206,9 +216,12 @@ const IncidentTableComponent = () => {
     const rectDistance = footerRect.top - headerRect.bottom;
     setTableHeight(rectDistance);
   }, 25);
-  const resizeObserver = useMemo(() => new ResizeObserver(() => {
-    calculateTableHeight();
-  }), []);
+  const resizeObserver = useMemo(
+    () => new ResizeObserver(() => {
+      calculateTableHeight();
+    }),
+    [],
+  );
 
   useEffect(() => {
     const headerEl = document.querySelector('header');
@@ -274,10 +287,7 @@ const IncidentTableComponent = () => {
           Header: ({
             getToggleAllRowsSelectedProps,
           }) => (
-            <CheckboxComponent
-              id="select-all"
-              {...getToggleAllRowsSelectedProps()}
-            />
+            <CheckboxComponent id="select-all" {...getToggleAllRowsSelectedProps()} />
           ),
           Cell: ({
             row,
@@ -308,17 +318,14 @@ const IncidentTableComponent = () => {
 
   const MyIncidentRow = useCallback(
     ({
-      data,
-      index,
-      style,
+      data, index, style,
     }) => {
       const row = data[index];
       prepareRow(row);
       return (
         <InView>
           {({
-            inView,
-            ref,
+            inView, ref,
           }) => {
             if (inView) {
               if (!row.original.alerts) {
@@ -356,7 +363,8 @@ const IncidentTableComponent = () => {
           }}
         </InView>
       );
-    }, [prepareRow, columns],
+    },
+    [prepareRow, columns],
   );
 
   const [displayGetAllModal, setDisplayGetAllModal] = useState(false);
@@ -368,7 +376,7 @@ const IncidentTableComponent = () => {
   useEffect(() => {
     const selectedRows = selectedFlatRows.map((row) => row.original);
     selectIncidentTableRows(true, selectedRows.length, selectedRows);
-    return () => { };
+    return () => {};
   }, [selectedFlatRows]);
 
   // Handle deselecting rows after incident action has completed
@@ -383,25 +391,28 @@ const IncidentTableComponent = () => {
 
   const [displayGetAllForSortModal, setDisplayGetAllForSortModal] = useState(false);
   const [columnTypeForGetAllModal, setColumnForGetAllModal] = useState(null);
-  const showGetAllForSortModal = useCallback((column) => {
-    if (column.columnType === 'alert') {
-      const incidentsNeedingAlertsFetched = tableData.filter(
-        (incident) => incident.alerts === undefined,
-      ).length;
-      if (incidentsNeedingAlertsFetched > 0) {
-        setColumnForGetAllModal('alert');
-        setDisplayGetAllForSortModal(true);
+  const showGetAllForSortModal = useCallback(
+    (column) => {
+      if (column.columnType === 'alert') {
+        const incidentsNeedingAlertsFetched = tableData.filter(
+          (incident) => incident.alerts === undefined,
+        ).length;
+        if (incidentsNeedingAlertsFetched > 0) {
+          setColumnForGetAllModal('alert');
+          setDisplayGetAllForSortModal(true);
+        }
+      } else if (column.id === 'latest_note') {
+        const incidentsNeedingNotesFetched = tableData.filter(
+          (incident) => incident.notes === undefined,
+        ).length;
+        if (incidentsNeedingNotesFetched > 0) {
+          setColumnForGetAllModal('notes');
+          setDisplayGetAllForSortModal(true);
+        }
       }
-    } else if (column.id === 'latest_note') {
-      const incidentsNeedingNotesFetched = tableData.filter(
-        (incident) => incident.notes === undefined,
-      ).length;
-      if (incidentsNeedingNotesFetched > 0) {
-        setColumnForGetAllModal('notes');
-        setDisplayGetAllForSortModal(true);
-      }
-    }
-  }, [tableData]);
+    },
+    [tableData],
+  );
   // Render components based on application state
   if (displayConfirmQueryModal) {
     return <></>;
@@ -434,10 +445,7 @@ const IncidentTableComponent = () => {
         fontSize="sm"
       >
         <Box>
-          <ContextMenuTrigger
-            id="header-contextmenu-csv"
-            key="header-contextmenu-csv"
-          >
+          <ContextMenuTrigger id="header-contextmenu-csv" key="header-contextmenu-csv">
             {headerGroups.map((headerGroup) => (
               <Box {...headerGroup.getHeaderGroupProps()}>
                 {headerGroup.headers.map((column) => (
@@ -495,9 +503,7 @@ const IncidentTableComponent = () => {
             </MenuItem>
           </ContextMenu>
         </Box>
-        <Box
-          {...getTableBodyProps()}
-        >
+        <Box {...getTableBodyProps()}>
           <FixedSizeList
             className="incident-table-fixed-list"
             height={tableHeight - 45}

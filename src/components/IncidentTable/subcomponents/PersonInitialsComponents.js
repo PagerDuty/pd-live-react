@@ -3,9 +3,7 @@ import {
 } from 'react-redux';
 
 import {
-  Avatar,
-  Tooltip,
-  Link,
+  Avatar, Tooltip, Link,
 } from '@chakra-ui/react';
 
 // import {
@@ -45,11 +43,7 @@ const PersonInitialsComponent = ({
   return (
     <div>
       {displayedUsersByInitials.map((user) => (
-        <Tooltip
-          key={user.id}
-          label={user.summary}
-          aria-label={user.summary}
-        >
+        <Tooltip key={user.id} label={user.summary} aria-label={user.summary}>
           <Link isExternal href={user.html_url}>
             <Avatar
               color="white"

@@ -11,7 +11,8 @@ const generateMockAlert = () => {
   const title = faker.lorem.words(20);
   const alertKey = faker.string.alphanumeric(32);
   const alertId = faker.string.alphanumeric(14);
-  const createdAt = faker.date.between({ from: '2020-01-01T00:00:00.000Z', to: '2022-01-01T00:00:00.000Z'})
+  const createdAt = faker.date
+    .between({ from: '2020-01-01T00:00:00.000Z', to: '2022-01-01T00:00:00.000Z' })
     .toISOString();
   const severity = faker.helpers.arrayElement(['info', 'warning', 'error', 'critical']);
   const ipv4 = faker.internet.ipv4();
@@ -74,7 +75,8 @@ const generateMockNote = () => {
   const content = faker.lorem.words(20);
   const userName = faker.person.fullName();
   const userId = faker.string.alphanumeric(7);
-  const createdAt = faker.date.between({ from: '2020-01-01T00:00:00.000Z', to: '2022-01-01T00:00:00.000Z'})
+  const createdAt = faker.date
+    .between({ from: '2020-01-01T00:00:00.000Z', to: '2022-01-01T00:00:00.000Z' })
     .toISOString();
   return {
     id: noteId,
@@ -104,7 +106,8 @@ const generateMockIncident = () => {
   const incidentId = faker.string.alphanumeric(14);
   const escalationPolicyId = faker.string.alphanumeric(7);
   const serviceId = faker.string.alphanumeric(7);
-  const createdAt = faker.date.between({ from: '2020-01-01T00:00:00.000Z', to: '2022-01-01T00:00:00.000Z'})
+  const createdAt = faker.date
+    .between({ from: '2020-01-01T00:00:00.000Z', to: '2022-01-01T00:00:00.000Z' })
     .toISOString();
   return {
     incident_number: incidentNumber,

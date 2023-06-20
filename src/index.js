@@ -5,8 +5,7 @@ import ReactDOM from 'react-dom/client';
 import './i18n';
 
 import {
-  ColorModeScript,
-  ChakraProvider,
+  ColorModeScript, ChakraProvider,
 } from '@chakra-ui/react';
 
 import {

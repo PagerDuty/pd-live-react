@@ -2,9 +2,7 @@
 import React from 'react';
 
 import {
-  useSelector,
-  useDispatch,
-  useStore,
+  useSelector, useDispatch, useStore,
 } from 'react-redux';
 
 import {
@@ -38,10 +36,7 @@ import {
 } from 'redux/incidents/actions';
 
 const DetailedStatusOverlay = ({
-  btnRef,
-  isOpen,
-  onOpen,
-  onClose,
+  btnRef, isOpen, onOpen, onClose,
 }) => {
   const store = useStore();
   const {
@@ -50,20 +45,18 @@ const DetailedStatusOverlay = ({
     // errors,
   } = useSelector((state) => state.connection);
   const {
-    status: incidentStatus,
-    error: incidentError,
+    status: incidentStatus, error: incidentError,
   } = useSelector((state) => state.incidents);
   const {
-    status: logEntriesStatus,
-    error: logEntriesError,
-  } = useSelector((state) => state.logEntries);
+    status: logEntriesStatus, error: logEntriesError,
+  } = useSelector(
+    (state) => state.logEntries,
+  );
   const {
-    status: servicesStatus,
-    error: servicesError,
+    status: servicesStatus, error: servicesError,
   } = useSelector((state) => state.services);
   const {
-    status: teamsStatus,
-    error: teamsError,
+    status: teamsStatus, error: teamsError,
   } = useSelector((state) => state.teams);
   const {
     status: usersStatus,
@@ -71,17 +64,20 @@ const DetailedStatusOverlay = ({
     currentUser,
   } = useSelector((state) => state.users);
   const {
-    status: escalationPoliciesStatus,
-    error: escalationPoliciesError,
-  } = useSelector((state) => state.escalationPolicies);
+    status: escalationPoliciesStatus, error: escalationPoliciesError,
+  } = useSelector(
+    (state) => state.escalationPolicies,
+  );
   const {
-    status: extensionsStatus,
-    error: extensionsError,
-  } = useSelector((state) => state.extensions);
+    status: extensionsStatus, error: extensionsError,
+  } = useSelector(
+    (state) => state.extensions,
+  );
   const {
-    status: responsePlaysStatus,
-    error: responsePlaysError,
-  } = useSelector((state) => state.responsePlays);
+    status: responsePlaysStatus, error: responsePlaysError,
+  } = useSelector(
+    (state) => state.responsePlays,
+  );
 
   const dispatch = useDispatch();
   const getIncidents = () => dispatch(getIncidentsAsyncAction());
@@ -130,13 +126,13 @@ const DetailedStatusOverlay = ({
           </Text>
         </Box>
         <Spacer />
-        <Box>
-          {badgeForStatus(status)}
-        </Box>
+        <Box>{badgeForStatus(status)}</Box>
       </Flex>
       {/* {error && !(['REQUESTED', 'COMPLETED'].includes(status.split('_').pop())) && ( */}
       {error && (
-        <Text fontSize="xs" color="red.500">{error}</Text>
+        <Text fontSize="xs" color="red.500">
+          {error}
+        </Text>
       )}
     </Box>
   );
@@ -186,12 +182,7 @@ const DetailedStatusOverlay = ({
         <DrawerCloseButton />
         <DrawerHeader>Detailed Status</DrawerHeader>
         <DrawerBody>
-          <Box
-            rounded="md"
-            borderWidth="1px"
-            p={2}
-            mb={2}
-          >
+          <Box rounded="md" borderWidth="1px" p={2} mb={2}>
             <Text m={2} fontSize="sm" fontWeight="bold">
               {currentUser?.summary}
             </Text>
@@ -199,20 +190,15 @@ const DetailedStatusOverlay = ({
               {currentUser?.email}
             </Text>
             <Text m={2} fontSize="xs" fontWeight="bold">
-              {
-                currentUser?.html_url
-                  ? currentUser.html_url.match(/https:\/\/(.*)\.pagerduty.com\/.*/)[1]
-                  : 'no URL'
-              }
+              {currentUser?.html_url
+                ? currentUser.html_url.match(/https:\/\/(.*)\.pagerduty.com\/.*/)[1]
+                : 'no URL'}
             </Text>
           </Box>
-          <Box
-            rounded="md"
-            borderWidth="1px"
-            p={2}
-            mb={2}
-          >
-            <Heading size="sm" pb={4} borderBottomWidth="1px">Status</Heading>
+          <Box rounded="md" borderWidth="1px" p={2} mb={2}>
+            <Heading size="sm" pb={4} borderBottomWidth="1px">
+              Status
+            </Heading>
             {statusFor('Connection', connectionStatus, connectionError)}
             {statusFor('Incidents', incidentStatus, incidentError)}
             {statusFor('Log Entries', logEntriesStatus, logEntriesError)}
@@ -223,13 +209,10 @@ const DetailedStatusOverlay = ({
             {statusFor('Extensions', extensionsStatus, extensionsError)}
             {statusFor('Response Plays', responsePlaysStatus, responsePlaysError)}
           </Box>
-          <Box
-            rounded="md"
-            borderWidth="1px"
-            p={2}
-            mb={2}
-          >
-            <Heading size="sm" pb={4} borderBottomWidth="1px">Debugging Actions</Heading>
+          <Box rounded="md" borderWidth="1px" p={2} mb={2}>
+            <Heading size="sm" pb={4} borderBottomWidth="1px">
+              Debugging Actions
+            </Heading>
             <Button
               size="sm"
               m={2}

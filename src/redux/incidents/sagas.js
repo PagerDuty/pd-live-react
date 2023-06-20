@@ -193,7 +193,11 @@ export function* getIncidentAlerts(action) {
   } = action;
   try {
     const alerts = yield call(
-      pdParallelFetch, `incidents/${incidentId}/alerts`, undefined, undefined, { priority: 6 },
+      pdParallelFetch,
+      `incidents/${incidentId}/alerts`,
+      undefined,
+      undefined,
+      { priority: 6 },
     );
 
     yield put({
@@ -225,7 +229,11 @@ export function* getIncidentNotes(action) {
   } = action;
   try {
     const notes = yield call(
-      pdParallelFetch, `incidents/${incidentId}/notes`, undefined, undefined, { priority: 6 },
+      pdParallelFetch,
+      `incidents/${incidentId}/notes`,
+      undefined,
+      undefined,
+      { priority: 6 },
     );
 
     yield put({
@@ -345,8 +353,7 @@ export function* updateIncidentAlerts() {
 
 export function* updateIncidentAlertsImpl(action) {
   const {
-    incidentId,
-    alerts,
+    incidentId, alerts,
   } = action;
   yield put({
     type: UPDATE_INCIDENT_ALERTS_COMPLETED,
@@ -361,8 +368,7 @@ export function* updateIncidentNotes() {
 
 export function* updateIncidentNotesImpl(action) {
   const {
-    incidentId,
-    notes,
+    incidentId, notes,
   } = action;
   yield put({
     type: UPDATE_INCIDENT_NOTES_COMPLETED,
@@ -377,9 +383,7 @@ export function* filterIncidents() {
 
 export function* filterIncidentsImpl() {
   const {
-    incidents,
-    incidentNotes,
-    incidentAlerts,
+    incidents, incidentNotes, incidentAlerts,
   } = yield select(selectIncidents);
   const {
     incidentPriority,
@@ -396,8 +400,7 @@ export function* filterIncidentsImpl() {
     incidentTableColumns,
   } = yield select(selectIncidentTable);
   const {
-    searchAllCustomDetails,
-    respondersInEpFilter,
+    searchAllCustomDetails, respondersInEpFilter,
   } = yield select(selectSettings);
 
   let filteredIncidentsByQuery = [...incidents];
@@ -433,7 +436,10 @@ export function* filterIncidentsImpl() {
     // Filter current incident list by team
     if (teamIds.length) {
       filteredIncidentsByQuery = filterIncidentsByFieldOfList(
-        filteredIncidentsByQuery, 'teams', 'id', teamIds,
+        filteredIncidentsByQuery,
+        'teams',
+        'id',
+        teamIds,
       );
     }
 
@@ -442,19 +448,17 @@ export function* filterIncidentsImpl() {
       filteredIncidentsByQuery = filteredIncidentsByQuery.filter((incident) => {
         if (escalationPolicyIds.includes(incident.escalation_policy.id)) return true;
         if (respondersInEpFilter && incident.responder_requests.length > 0) {
-          const responderRequestTargets = incident.responder_requests.map((responderRequest) => (
-            responderRequest.responder_request_targets
-              .filter((responderRequestTarget) => (
-                responderRequestTarget.responder_request_target.type === 'escalation_policy'
-              ))
-              .map((responderRequestTarget) => (
-                responderRequestTarget.responder_request_target.id
-              ))
-              .flat()
-          )).flat();
-          if (escalationPolicyIds.some((escalationPolicyId) => (
-            responderRequestTargets.includes(escalationPolicyId)
-          ))) return true;
+          const responderRequestTargets = incident.responder_requests
+            .map((responderRequest) => responderRequest.responder_request_targets
+              .filter(
+                (responderRequestTarget) => responderRequestTarget.responder_request_target.type === 'escalation_policy',
+              )
+              .map((responderRequestTarget) => responderRequestTarget.responder_request_target.id)
+              .flat())
+            .flat();
+          if (
+            escalationPolicyIds.some((escalationPolicyId) => responderRequestTargets.includes(escalationPolicyId))
+          ) return true;
         }
 
         return false;
@@ -464,7 +468,9 @@ export function* filterIncidentsImpl() {
     // Filter current incident list by service
     if (serviceIds.length > 0) {
       filteredIncidentsByQuery = filterIncidentsByField(
-        filteredIncidentsByQuery, 'service.id', serviceIds,
+        filteredIncidentsByQuery,
+        'service.id',
+        serviceIds,
       );
     }
 
@@ -496,36 +502,27 @@ export function* filterIncidentsImpl() {
               .filter((a) => a !== '')
           );
         });
-      updatedFuseOptions.keys = [
-        ...fuseOptions.keys,
-        ...customAlertDetailColumnKeys,
-      ];
+      updatedFuseOptions.keys = [...fuseOptions.keys, ...customAlertDetailColumnKeys];
 
       if (searchAllCustomDetails) {
-        updatedFuseOptions.keys = [
-          ...updatedFuseOptions.keys,
-          'alerts.flattedCustomDetails',
-        ];
+        updatedFuseOptions.keys = [...updatedFuseOptions.keys, 'alerts.flattedCustomDetails'];
       }
 
       try {
         const incidentsForSearch = filteredIncidentsByQuery.map((incident) => {
-          const incidentNotesForSearch = incidentNotes[incident.id] instanceof Array
-            ? incidentNotes[incident.id]
-            : [];
-          const incidentAlertsForSearch = incidentAlerts[incident.id] instanceof Array
-            ? incidentAlerts[incident.id]
-            : [];
-          const incidentAlertsForSearchWithFlattedCustomDetails = incidentAlertsForSearch
-            .map((alert) => {
+          const incidentNotesForSearch = incidentNotes[incident.id] instanceof Array ? incidentNotes[incident.id] : [];
+          const incidentAlertsForSearch = incidentAlerts[incident.id] instanceof Array ? incidentAlerts[incident.id] : [];
+          const incidentAlertsForSearchWithFlattedCustomDetails = incidentAlertsForSearch.map(
+            (alert) => {
               const flattedCustomDetails = alert.body?.cef_details
                 ? Object.values(flattenObject(alert.body.cef_details)).join(' ')
                 : '';
-              return ({
+              return {
                 ...alert,
                 flattedCustomDetails,
-              });
-            });
+              };
+            },
+          );
           return {
             ...incident,
             notes: incidentNotesForSearch,
@@ -534,7 +531,8 @@ export function* filterIncidentsImpl() {
         });
 
         const fuse = new Fuse(incidentsForSearch, updatedFuseOptions);
-        filteredIncidentsByQuery = fuse.search(searchQuery)
+        filteredIncidentsByQuery = fuse
+          .search(searchQuery)
           .map((res) => filteredIncidentsByQuery[res.refIndex]);
       } catch (e) {
         // eslint-disable-next-line no-console

@@ -3,8 +3,7 @@ import React, {
 } from 'react';
 
 import {
-  useSelector,
-  useDispatch,
+  useSelector, useDispatch,
 } from 'react-redux';
 
 import {
@@ -122,12 +121,8 @@ const SettingsModalComponent = () => {
   const [tempMaxRateLimit, setTempMaxRateLimit] = useState(maxRateLimit);
 
   const [tempServerSideFiltering, setTempServerSideFiltering] = useState(serverSideFiltering);
-  const [
-    tempSearchAllCustomDetails, setTempSearchAllCustomDetails,
-  ] = useState(searchAllCustomDetails);
-  const [
-    tempRespondersInEpFilter, setTempRespondersInEpFilter,
-  ] = useState(respondersInEpFilter);
+  const [tempSearchAllCustomDetails, setTempSearchAllCustomDetails] = useState(searchAllCustomDetails);
+  const [tempRespondersInEpFilter, setTempRespondersInEpFilter] = useState(respondersInEpFilter);
 
   const saveSettings = () => {
     if (selectedLocale !== currentUserLocale) {
@@ -154,11 +149,7 @@ const SettingsModalComponent = () => {
   };
 
   return (
-    <Modal
-      isOpen={displaySettingsModal}
-      onClose={toggleSettingsModal}
-      size="xl"
-    >
+    <Modal isOpen={displaySettingsModal} onClose={toggleSettingsModal} size="xl">
       <ModalOverlay />
       <ModalContent>
         <ModalHeader>{t('Settings')}</ModalHeader>
@@ -175,14 +166,14 @@ const SettingsModalComponent = () => {
                 }}
               >
                 {localeOptions.map((locale) => (
-                  <option key={locale.value} value={locale.value}>{locale.label}</option>
+                  <option key={locale.value} value={locale.value}>
+                    {locale.label}
+                  </option>
                 ))}
               </Select>
             </FormControl>
             <FormControl>
-              <FormLabel
-                htmlFor="since-date-tenor-select"
-              >
+              <FormLabel htmlFor="since-date-tenor-select">
                 {t('Default Since Date Lookback')}
               </FormLabel>
               <Select
@@ -193,18 +184,15 @@ const SettingsModalComponent = () => {
                 }}
               >
                 {defaultSinceDateTenors.map((tenor) => (
-                  <option key={tenor} value={tenor}>{t(tenor)}</option>
+                  <option key={tenor} value={tenor}>
+                    {t(tenor)}
+                  </option>
                 ))}
               </Select>
             </FormControl>
             <FormControl>
-              <FormLabel htmlFor="max-incidents-limit-slider">
-                {t('Max Incidents Limit')}
-              </FormLabel>
-              <Box
-                borderWidth="1px"
-                borderRadius="lg"
-              >
+              <FormLabel htmlFor="max-incidents-limit-slider">{t('Max Incidents Limit')}</FormLabel>
+              <Box borderWidth="1px" borderRadius="lg">
                 <InputGroup>
                   <Slider
                     m="20px"
@@ -225,18 +213,15 @@ const SettingsModalComponent = () => {
                     <SliderThumb />
                   </Slider>
                   <Spacer />
-                  <Text m="auto" w="10%" verticalAlign="middle">{tempMaxIncidentsLimit}</Text>
+                  <Text m="auto" w="10%" verticalAlign="middle">
+                    {tempMaxIncidentsLimit}
+                  </Text>
                 </InputGroup>
               </Box>
             </FormControl>
             <FormControl>
-              <FormLabel htmlFor="max-rate-limit-slider">
-                {t('Max API Call Rate')}
-              </FormLabel>
-              <Box
-                borderWidth="1px"
-                borderRadius="lg"
-              >
+              <FormLabel htmlFor="max-rate-limit-slider">{t('Max API Call Rate')}</FormLabel>
+              <Box borderWidth="1px" borderRadius="lg">
                 <InputGroup>
                   <Slider
                     m="20px"
@@ -257,14 +242,14 @@ const SettingsModalComponent = () => {
                     <SliderThumb />
                   </Slider>
                   <Spacer />
-                  <Text m="auto" w="10%" verticalAlign="middle">{tempMaxRateLimit}</Text>
+                  <Text m="auto" w="10%" verticalAlign="middle">
+                    {tempMaxRateLimit}
+                  </Text>
                 </InputGroup>
               </Box>
             </FormControl>
             <FormControl>
-              <FormLabel
-                htmlFor="server-side-filtering-switch"
-              >
+              <FormLabel htmlFor="server-side-filtering-switch">
                 {t('Server Side Filtering')}
               </FormLabel>
               <Switch
@@ -279,11 +264,7 @@ const SettingsModalComponent = () => {
               </Switch>
             </FormControl>
             <FormControl>
-              <FormLabel
-                htmlFor="search-all-custom-details-switch"
-              >
-                {t('Global search')}
-              </FormLabel>
+              <FormLabel htmlFor="search-all-custom-details-switch">{t('Global search')}</FormLabel>
               <Switch
                 id="search-all-custom-details-switch"
                 isChecked={tempSearchAllCustomDetails}
@@ -296,11 +277,7 @@ const SettingsModalComponent = () => {
               </Switch>
             </FormControl>
             <FormControl>
-              <FormLabel
-                htmlFor="responders-in-ep-filter-switch"
-              >
-                {t('Filters')}
-              </FormLabel>
+              <FormLabel htmlFor="responders-in-ep-filter-switch">{t('Filters')}</FormLabel>
               <Switch
                 id="responders-in-ep-filter-switch"
                 isChecked={tempRespondersInEpFilter}
@@ -330,7 +307,9 @@ const SettingsModalComponent = () => {
           >
             OK
           </Button>
-          <Button variant="ghost" onClick={toggleSettingsModal}>Cancel</Button>
+          <Button variant="ghost" onClick={toggleSettingsModal}>
+            Cancel
+          </Button>
         </ModalFooter>
       </ModalContent>
     </Modal>

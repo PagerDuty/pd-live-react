@@ -118,9 +118,14 @@ const endpointIdentifier = (endpoint) => {
   return endpoint.split('/').pop();
 };
 
-export const pdParallelFetch = async (endpoint, params, progressCallback, options = {
-  priority: 5,
-}) => {
+export const pdParallelFetch = async (
+  endpoint,
+  params,
+  progressCallback,
+  options = {
+    priority: 5,
+  },
+) => {
   let requestParams = {
     limit: 100,
     total: true,
@@ -150,7 +155,11 @@ export const pdParallelFetch = async (endpoint, params, progressCallback, option
       offset += requestParams.limit
     ) {
       const promise = throttledPdAxiosRequest(
-        'GET', endpoint, { ...requestParams, offset }, undefined, axiosRequestOptions,
+        'GET',
+        endpoint,
+        { ...requestParams, offset },
+        undefined,
+        axiosRequestOptions,
       )
         .then(({
           data,
@@ -169,9 +178,7 @@ export const pdParallelFetch = async (endpoint, params, progressCallback, option
   }
   await Promise.all(promises);
   if (!options.skipSort) {
-    fetchedData.sort(
-      (a, b) => (reversedSortOrder ? compareCreatedAt(b, a) : compareCreatedAt(a, b)),
-    );
+    fetchedData.sort((a, b) => (reversedSortOrder ? compareCreatedAt(b, a) : compareCreatedAt(a, b)));
   }
   return fetchedData;
 };

@@ -5,8 +5,7 @@ import React, {
 } from 'react';
 
 import {
-  useSelector,
-  useDispatch,
+  useSelector, useDispatch,
 } from 'react-redux';
 
 import {
@@ -25,32 +24,31 @@ import {
 } from '@chakra-ui/react';
 
 import {
-  getIncidentAlertsAsync,
-  getIncidentNotesAsync,
+  getIncidentAlertsAsync, getIncidentNotesAsync,
 } from 'redux/incidents/actions';
 
 const GetAllForSortModal = ({
-  isOpen,
-  onClose,
-  columnType,
+  isOpen, onClose, columnType,
 }) => {
   const maxRateLimit = useSelector((state) => state.settings.maxRateLimit);
   const {
-    filteredIncidentsByQuery,
-    incidentAlerts,
-    incidentNotes,
-  } = useSelector((state) => state.incidents);
+    filteredIncidentsByQuery, incidentAlerts, incidentNotes,
+  } = useSelector(
+    (state) => state.incidents,
+  );
   const dispatch = useDispatch();
   const getIncidentAlerts = (incidentId) => dispatch(getIncidentAlertsAsync(incidentId));
   const getIncidentNotes = (incidentId) => dispatch(getIncidentNotesAsync(incidentId));
 
-  const rowsNeedingFetchAlerts = useMemo(() => (
-    filteredIncidentsByQuery.filter((incident) => incidentAlerts[incident.id] === undefined)
-  ), [filteredIncidentsByQuery, incidentAlerts]);
+  const rowsNeedingFetchAlerts = useMemo(
+    () => filteredIncidentsByQuery.filter((incident) => incidentAlerts[incident.id] === undefined),
+    [filteredIncidentsByQuery, incidentAlerts],
+  );
 
-  const rowsNeedingFetchNotes = useMemo(() => (
-    filteredIncidentsByQuery.filter((incident) => incidentNotes[incident.id] === undefined)
-  ), [filteredIncidentsByQuery, incidentNotes]);
+  const rowsNeedingFetchNotes = useMemo(
+    () => filteredIncidentsByQuery.filter((incident) => incidentNotes[incident.id] === undefined),
+    [filteredIncidentsByQuery, incidentNotes],
+  );
 
   const fetchRows = useCallback(() => {
     if (columnType === 'alert') {
@@ -63,8 +61,7 @@ const GetAllForSortModal = ({
         getIncidentNotes(incident.id);
       });
     }
-  },
-  [
+  }, [
     rowsNeedingFetchAlerts,
     rowsNeedingFetchNotes,
     columnType,
@@ -83,12 +80,10 @@ const GetAllForSortModal = ({
             {columnType === 'alert' && (
               <>
                 <p>
-                  {
-                    'To sort on this column, you need to load alerts '
+                  {'To sort on this column, you need to load alerts '
                     + `for ${rowsNeedingFetchAlerts.length} incidents. `
                     + 'This will take about '
-                    + `${Math.ceil(rowsNeedingFetchAlerts.length / maxRateLimit)} minutes.`
-                  }
+                    + `${Math.ceil(rowsNeedingFetchAlerts.length / maxRateLimit)} minutes.`}
                 </p>
                 <p>Fetch alerts?</p>
               </>
@@ -96,12 +91,10 @@ const GetAllForSortModal = ({
             {columnType === 'notes' && (
               <>
                 <p>
-                  {
-                    'To sort on this column, you need to load notes '
+                  {'To sort on this column, you need to load notes '
                     + `for ${rowsNeedingFetchNotes.length} incidents. `
                     + 'This will take about '
-                    + `${Math.ceil(rowsNeedingFetchNotes.length / maxRateLimit)} minutes.`
-                  }
+                    + `${Math.ceil(rowsNeedingFetchNotes.length / maxRateLimit)} minutes.`}
                 </p>
                 <p>Fetch notes?</p>
               </>

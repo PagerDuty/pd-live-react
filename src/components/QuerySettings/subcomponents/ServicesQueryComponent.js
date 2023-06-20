@@ -3,8 +3,7 @@ import React, {
 } from 'react';
 
 import {
-  useSelector,
-  useDispatch,
+  useSelector, useDispatch,
 } from 'react-redux';
 
 import {
@@ -29,17 +28,14 @@ const ServicesQueryComponent = () => {
   } = useTranslation();
 
   const serviceListUnsorted = useSelector((state) => state.services.services);
-  const serviceList = useMemo(
-    () => {
-      if (serviceListUnsorted instanceof Array) {
-        return [...serviceListUnsorted].sort((a, b) => a.name.localeCompare(b.name));
-      }
-      // eslint-disable-next-line no-console
-      console.error('serviceListUnsorted is not an array', serviceListUnsorted);
-      return [];
-    },
-    [serviceListUnsorted],
-  );
+  const serviceList = useMemo(() => {
+    if (serviceListUnsorted instanceof Array) {
+      return [...serviceListUnsorted].sort((a, b) => a.name.localeCompare(b.name));
+    }
+    // eslint-disable-next-line no-console
+    console.error('serviceListUnsorted is not an array', serviceListUnsorted);
+    return [];
+  }, [serviceListUnsorted]);
   const serviceIds = useSelector((state) => state.querySettings.serviceIds);
   const dispatch = useDispatch();
   const updateQuerySettingsServices = (newServiceIds) => {
@@ -48,22 +44,20 @@ const ServicesQueryComponent = () => {
 
   const enabled = useMemo(() => serviceList.length > 0, [serviceList]);
 
-  const selectListServices = useMemo(() => serviceList.map((service) => ({
-    label: service.name,
-    value: service.id,
-  })), [serviceList]);
-
-  const storedSelectServices = useMemo(
-    () => {
-      const r = (
-        (selectListServices && serviceIds)
-          ? getObjectsFromList(selectListServices, serviceIds, 'value')
-          : []
-      );
-      return r;
-    },
-    [selectListServices, serviceIds],
+  const selectListServices = useMemo(
+    () => serviceList.map((service) => ({
+      label: service.name,
+      value: service.id,
+    })),
+    [serviceList],
   );
+
+  const storedSelectServices = useMemo(() => {
+    const r = selectListServices && serviceIds
+      ? getObjectsFromList(selectListServices, serviceIds, 'value')
+      : [];
+    return r;
+  }, [selectListServices, serviceIds]);
 
   return (
     <Select

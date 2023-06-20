@@ -3,8 +3,7 @@ import React, {
 } from 'react';
 
 import {
-  useSelector,
-  useDispatch,
+  useSelector, useDispatch,
 } from 'react-redux';
 
 import {
@@ -62,15 +61,7 @@ const PriorityMenu = () => {
             key={priority.id}
             onClick={() => updatePriority(selectedRows, priority.id)}
           >
-            <Flex
-              ml={6}
-              mr={2}
-              p={0}
-              borderRadius="full"
-              bg={`#${priority.color}`}
-              h={5}
-              w={5}
-            />
+            <Flex ml={6} mr={2} p={0} borderRadius="full" bg={`#${priority.color}`} h={5} w={5} />
             {priority.name}
             {/* </p> */}
           </MenuItem>

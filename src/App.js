@@ -2,8 +2,7 @@ import {
   useEffect, useRef,
 } from 'react';
 import {
-  useSelector,
-  useDispatch,
+  useSelector, useDispatch,
 } from 'react-redux';
 
 import {
@@ -14,8 +13,7 @@ import {
 } from 'react-dnd-html5-backend';
 
 import {
-  Box,
-  Flex,
+  Box, Flex,
 } from '@chakra-ui/react';
 
 import moment from 'moment';
@@ -250,20 +248,10 @@ const App = () => {
   return (
     <div className="App">
       <Box position="fixed" w="100%" h="100%" overflow="hidden">
-        <Box
-          as="header"
-          top={0}
-          w="100%"
-          pb={1}
-          ref={headerRef}
-        >
+        <Box as="header" top={0} w="100%" pb={1} ref={headerRef}>
           <NavigationBarComponent />
         </Box>
-        <Box
-          ref={mainRef}
-          as="main"
-          id="main"
-        >
+        <Box ref={mainRef} as="main" id="main">
           <IncidentTableComponent headerRef={headerRef} mainRef={mainRef} footerRef={footerRef} />
           <SettingsModalComponent />
           <DndProvider backend={HTML5Backend}>
@@ -277,15 +265,7 @@ const App = () => {
           <MergeModalComponent />
           <ConfirmQueryModalComponent />
         </Box>
-        <Flex
-          as="footer"
-          position="fixed"
-          bottom={0}
-          w="100%"
-          zIndex="1"
-          pt={1}
-          ref={footerRef}
-        >
+        <Flex as="footer" position="fixed" bottom={0} w="100%" zIndex="1" pt={1} ref={footerRef}>
           <IncidentActionsComponent />
         </Flex>
       </Box>

@@ -2,17 +2,11 @@
 import React from 'react';
 
 import {
-  Box,
-  Button,
-  Flex,
-  useColorModeValue,
-  useCheckbox,
+  Box, Button, Flex, useColorModeValue, useCheckbox,
 } from '@chakra-ui/react';
 
 const QuerySettingsCheckbox = ({
-  children,
-  id,
-  ...props
+  children, id, ...props
 }) => {
   const {
     state: {
@@ -65,9 +59,7 @@ const QuerySettingsCheckbox = ({
           w={3}
         />
       </Flex>
-      <Box ml={1}>
-        {children}
-      </Box>
+      <Box ml={1}>{children}</Box>
     </Button>
   );
 };

@@ -48,19 +48,11 @@ const DisclaimerModalComponent = ({
   const [acceptDisclaimer, setAcceptDisclaimer] = useState(userAcceptedDisclaimer);
 
   return (
-    <Modal
-      size="l"
-      isOpen={!userAcceptedDisclaimer}
-      scrollBehavior="inside"
-    >
+    <Modal size="l" isOpen={!userAcceptedDisclaimer} scrollBehavior="inside">
       <ModalOverlay />
       <ModalContent>
         <ModalHeader>
-          <Heading
-            as="h1"
-            size="2xl"
-            className="modal-title"
-          >
+          <Heading as="h1" size="2xl" className="modal-title">
             {t('Disclaimer & License')}
           </Heading>
         </ModalHeader>
@@ -98,8 +90,8 @@ const DisclaimerModalComponent = ({
               <p>
                 <strong>You</strong>
                 {' '}
-                means the individual accessing the Service, or the company,
-                or other legal entity on behalf of which such individual is accessing or using the
+                means the individual accessing the Service, or the company, or
+                other legal entity on behalf of which such individual is accessing or using the
                 Service, as applicable.
               </p>
             </li>
@@ -114,18 +106,16 @@ const DisclaimerModalComponent = ({
           </ul>
 
           <h1>Disclaimer</h1>
-          <p>
-            The information contained on the Service is for general information purposes only.
-          </p>
+          <p>The information contained on the Service is for general information purposes only.</p>
           <p>
             The Company assumes no responsibility for errors or omissions in the contents of the
             Service.
           </p>
           <p>
             In no event shall the Company be liable for any special, direct, indirect,
-            consequential, or incidental damages or any damages whatsoever, whether in an action
-            of contract, negligence or other tort, arising out of or in connection with the use of
-            the Service or the contents of the Service. The Company reserves the right to make
+            consequential, or incidental damages or any damages whatsoever, whether in an action of
+            contract, negligence or other tort, arising out of or in connection with the use of the
+            Service or the contents of the Service. The Company reserves the right to make
             additions, deletions, or modifications to the contents on the Service at any time
             without prior notice. This Disclaimer has been created with the help of the
             {' '}
@@ -149,21 +139,21 @@ const DisclaimerModalComponent = ({
             by or in any way affiliated with the Company.
           </p>
           <p>
-            Please note that the Company does not guarantee the accuracy, relevance, timeliness,
-            or completeness of any information on these external websites.
+            Please note that the Company does not guarantee the accuracy, relevance, timeliness, or
+            completeness of any information on these external websites.
           </p>
 
           <h1>Errors and Omissions Disclaimer</h1>
           <p>
             The information given by the Service is for general guidance on matters of interest
             only. Even if the Company takes every precaution to insure that the content of the
-            Service is both current and accurate, errors can occur. Plus, given the changing
-            nature of laws, rules and regulations, there may be delays, omissions or inaccuracies
-            in the information contained on the Service.
+            Service is both current and accurate, errors can occur. Plus, given the changing nature
+            of laws, rules and regulations, there may be delays, omissions or inaccuracies in the
+            information contained on the Service.
           </p>
           <p>
-            The Company is not responsible for any errors or omissions, or for the results
-            obtained from the use of this information.
+            The Company is not responsible for any errors or omissions, or for the results obtained
+            from the use of this information.
           </p>
 
           <h1>Fair Use Disclaimer</h1>
@@ -198,14 +188,14 @@ const DisclaimerModalComponent = ({
           <h1>No Responsibility Disclaimer</h1>
           <p>
             The information on the Service is provided with the understanding that the Company is
-            not herein engaged in rendering legal, accounting, tax, or other professional advice
-            and services. As such, it should not be used as a substitute for consultation with
+            not herein engaged in rendering legal, accounting, tax, or other professional advice and
+            services. As such, it should not be used as a substitute for consultation with
             professional accounting, tax, legal or other competent advisers.
           </p>
           <p>
             In no event shall the Company or its suppliers be liable for any special, incidental,
-            indirect, or consequential damages whatsoever arising out of or in connection with
-            your access or use or inability to access or use the Service.
+            indirect, or consequential damages whatsoever arising out of or in connection with your
+            access or use or inability to access or use the Service.
           </p>
 
           <h1>&quot;Use at Your Own Risk&quot; Disclaimer</h1>
@@ -231,21 +221,21 @@ const DisclaimerModalComponent = ({
             Permission is hereby granted, free of charge, to any person obtaining a copy of this
             software and associated documentation files (the &quot;Software&quot;), to deal in the
             Software without restriction, including without limitation the rights to use, copy,
-            modify, merge, publish, distribute, sublicense, and/or sell copies of the Software,
-            and to permit persons to whom the Software is furnished to do so, subject to the
-            following conditions:
+            modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and
+            to permit persons to whom the Software is furnished to do so, subject to the following
+            conditions:
           </p>
           <p>
-            The above copyright notice and this permission notice shall be included in all copies
-            or substantial portions of the Software.
+            The above copyright notice and this permission notice shall be included in all copies or
+            substantial portions of the Software.
           </p>
           <p>
             THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
             IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
             PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
             HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
-            CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
-            OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+            CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR
+            THE USE OR OTHER DEALINGS IN THE SOFTWARE.
           </p>
 
           <h1>Contact Us</h1>

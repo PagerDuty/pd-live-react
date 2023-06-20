@@ -1,11 +1,9 @@
 import React, {
-  useCallback,
-  useMemo,
+  useCallback, useMemo,
 } from 'react';
 
 import {
-  useSelector,
-  useDispatch,
+  useSelector, useDispatch,
 } from 'react-redux';
 
 import {
@@ -19,8 +17,7 @@ import {
 } from '@chakra-ui/react';
 
 import {
-  CloseIcon,
-  SearchIcon,
+  CloseIcon, SearchIcon,
 } from '@chakra-ui/icons';
 
 import {
@@ -41,40 +38,42 @@ import './GlobalSearchComponent.scss';
 const GlobalSearchComponent = () => {
   const searchQuery = useSelector((state) => state.querySettings.searchQuery);
   const {
-    incidents,
-    incidentAlerts,
-    incidentNotes,
+    incidents, incidentAlerts, incidentNotes,
   } = useSelector((state) => state.incidents);
   const dispatch = useDispatch();
-  const updateSearchQuery = (newSearchQuery) => dispatch(
-    updateSearchQueryConnected(newSearchQuery),
+  const updateSearchQuery = (newSearchQuery) => dispatch(updateSearchQueryConnected(newSearchQuery));
+  const getIncidentAlerts = useCallback(
+    (incidentId) => {
+      dispatch(getIncidentAlertsAsyncConnected(incidentId));
+    },
+    [dispatch],
   );
-  const getIncidentAlerts = useCallback((incidentId) => {
-    dispatch(getIncidentAlertsAsyncConnected(incidentId));
-  }, [dispatch]);
-  const getIncidentNotes = useCallback((incidentId) => {
-    dispatch(getIncidentNotesAsyncConnected(incidentId));
-  }, [dispatch]);
+  const getIncidentNotes = useCallback(
+    (incidentId) => {
+      dispatch(getIncidentNotesAsyncConnected(incidentId));
+    },
+    [dispatch],
+  );
 
   const {
     t,
   } = useTranslation();
 
-  const incidentsNeedingAlertsFetched = useMemo(() => (
-    incidents.filter((incident) => incidentAlerts[incident.id] === undefined)
-  ), [incidents, incidentAlerts]);
-  const incidentsNeedingNotesFetched = useMemo(() => (
-    incidents.filter((incident) => incidentNotes[incident.id] === undefined)
-  ), [incidents, incidentNotes]);
+  const incidentsNeedingAlertsFetched = useMemo(
+    () => incidents.filter((incident) => incidentAlerts[incident.id] === undefined),
+    [incidents, incidentAlerts],
+  );
+  const incidentsNeedingNotesFetched = useMemo(
+    () => incidents.filter((incident) => incidentNotes[incident.id] === undefined),
+    [incidents, incidentNotes],
+  );
 
-  const incidentsNeedingFetch = useMemo(() => (
-    incidents.length > 0 && !!searchQuery.trim()
-      ? Math.max(
-        incidentsNeedingAlertsFetched.length,
-        incidentsNeedingNotesFetched.length,
-      )
-      : 0
-  ), [incidentsNeedingAlertsFetched, incidentsNeedingNotesFetched]);
+  const incidentsNeedingFetch = useMemo(
+    () => (incidents.length > 0 && !!searchQuery.trim()
+      ? Math.max(incidentsNeedingAlertsFetched.length, incidentsNeedingNotesFetched.length)
+      : 0),
+    [incidentsNeedingAlertsFetched, incidentsNeedingNotesFetched],
+  );
 
   const fetchAlertsAndNotes = useCallback(() => {
     incidentsNeedingAlertsFetched.forEach((incident) => {
@@ -88,22 +87,13 @@ const GlobalSearchComponent = () => {
   return (
     <>
       {incidentsNeedingFetch > 0 && (
-        <Tooltip
-          label={`${incidentsNeedingFetch} ${t('incidents need notes/alerts fetched')}`}
-        >
-          <Button
-            size="sm"
-            onClick={fetchAlertsAndNotes}
-            mr={1}
-            w={64}
-          >
+        <Tooltip label={`${incidentsNeedingFetch} ${t('incidents need notes/alerts fetched')}`}>
+          <Button size="sm" onClick={fetchAlertsAndNotes} mr={1} w={64}>
             {t('Get notes/alerts')}
           </Button>
         </Tooltip>
       )}
-      <InputGroup
-        size="sm"
-      >
+      <InputGroup size="sm">
         <Input
           id="global-search-input"
           placeholder={t('Search')}

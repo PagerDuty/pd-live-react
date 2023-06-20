@@ -88,8 +88,7 @@ import {
 } from './actions';
 
 import {
-  PROCESS_LOG_ENTRIES_COMPLETED,
-  UPDATE_INCIDENTS,
+  PROCESS_LOG_ENTRIES_COMPLETED, UPDATE_INCIDENTS,
 } from '../incidents/actions';
 
 export function* doAction() {
@@ -488,18 +487,16 @@ export function* merge(action) {
     }
 
     if (addToTitleText) {
-      const titleUpdates = incidentsToBeMerged.map((incident) => (
-        call(pd, {
-          method: 'put',
-          endpoint: `incidents/${incident.id}`,
-          data: {
-            incident: {
-              type: 'incident_reference',
-              title: `${addToTitleText} ${incident.title}`,
-            },
+      const titleUpdates = incidentsToBeMerged.map((incident) => call(pd, {
+        method: 'put',
+        endpoint: `incidents/${incident.id}`,
+        data: {
+          incident: {
+            type: 'incident_reference',
+            title: `${addToTitleText} ${incident.title}`,
           },
-        })
-      ));
+        },
+      }));
       const titleResponses = yield all(titleUpdates);
       const successes = titleResponses.filter((r) => r.ok);
       if (successes.length !== titleResponses.length) {
@@ -812,9 +809,12 @@ export function* syncWithExternalSystem(action) {
         selectedRows: updatedSelectedRows,
       });
 
-      const incidentUpdatesMap = Object.assign({}, ...updatedSelectedRows.map((incident) => ({
-        [incident.id]: incident,
-      })));
+      const incidentUpdatesMap = Object.assign(
+        {},
+        ...updatedSelectedRows.map((incident) => ({
+          [incident.id]: incident,
+        })),
+      );
       yield put({
         type: PROCESS_LOG_ENTRIES_COMPLETED,
         incidentUpdatesMap,
