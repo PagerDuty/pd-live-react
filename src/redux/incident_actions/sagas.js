@@ -820,6 +820,8 @@ export function* syncWithExternalSystem(action) {
         incidentUpdatesMap,
         incidentAlertsMap: {},
         incidentNotesMap: {},
+        incidentInsertList: [],
+        incidentAlertsUnlinkMap: {},
       });
       // Render modal
       yield put({
