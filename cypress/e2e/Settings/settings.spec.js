@@ -93,18 +93,6 @@ describe('Manage Settings', { failFast: { enabled: false } }, () => {
     });
   });
 
-  // no longer applicable
-  xit('Update auto-refresh interval', () => {
-    const autoRefreshInterval = faker.number.int({ min: 5, max: 60 });
-    updateAutoRefreshInterval(autoRefreshInterval);
-    cy.window()
-      .its('store')
-      .invoke('getState')
-      .then((state) => expect(
-        Number(state.settings.autoRefreshInterval),
-      ).to.equal(autoRefreshInterval));
-  });
-
   it('Update max incidents limit', () => {
     const maxIncidentsLimit = 400;
     updateMaxIncidentsLimit(maxIncidentsLimit);
@@ -125,19 +113,6 @@ describe('Manage Settings', { failFast: { enabled: false } }, () => {
       .then((state) => expect(
         Number(state.settings.maxRateLimit),
       ).to.equal(maxRateLimit));
-  });
-
-  // no longer applicable
-  xit('Update auto-accept incident query', () => {
-    [true, false].forEach((autoAcceptIncidentsQuery) => {
-      updateAutoAcceptIncidentQuery(autoAcceptIncidentsQuery);
-      cy.window()
-        .its('store')
-        .invoke('getState')
-        .then((state) => expect(
-          state.settings.autoAcceptIncidentsQuery,
-        ).to.equal(autoAcceptIncidentsQuery));
-    });
   });
 
   it('Add standard columns to incident table', () => {
@@ -209,20 +184,6 @@ describe('Manage Settings', { failFast: { enabled: false } }, () => {
       cy.get(`[data-incident-header="${header}"][data-incident-row-cell-idx="0"]`).then(($el) => {
         // eslint-disable-next-line no-unused-expressions
         expect($el.text()).to.exist;
-      });
-    });
-  });
-
-  // no longer applicable - add button will be disabled if column is invalid
-  xit('Add invalid custom alert column to incident table', () => {
-    const customAlertColumnDefinitions = ['SOMEINVALIDCOLUMN'];
-    manageCustomAlertColumnDefinitions(customAlertColumnDefinitions);
-    // manageIncidentTableColumns('add', customAlertColumnDefinitions);
-    customAlertColumnDefinitions.forEach((columnName) => {
-      const [header] = columnName.split(':');
-      cy.get(`[data-column-name="${header}"]`).scrollIntoView().should('be.visible');
-      cy.get(`[data-incident-header="${header}"][data-incident-row-cell-idx="0"]`).then(($el) => {
-        expect($el.text()).to.equal('Invalid JSON Path');
       });
     });
   });

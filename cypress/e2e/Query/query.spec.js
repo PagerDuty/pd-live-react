@@ -77,61 +77,6 @@ describe('Query Incidents', { failFast: { enabled: false } }, () => {
     cy.get('.query-urgency-low-button').check({ force: true });
   });
 
-  // no longer applicable
-  xit('Query for incidents exceeding MAX_INCIDENTS_LIMIT'
-    + 'with auto accept incident query on', () => {
-    // Update since date to T-2
-    const queryDate = moment()
-      .subtract(2, 'days')
-      .set({ hour: 0, minute: 0, second: 0, millisecond: 0 });
-    cy.get('#query-date-input').clear().type(queryDate.format('DD/MM/yyyy')).type('{enter}');
-    waitForIncidentTable();
-  });
-
-  // no longer applicable
-  xit('Query for incidents exceeding MAX_INCIDENTS_LIMIT'
-    + 'with auto accept incident query off; Cancel Request', () => {
-    // Set auto accept incident query to false to test cancel & allow request
-    updateAutoAcceptIncidentQuery(false);
-    // Update since date to T-3
-    const queryDate = moment()
-      .subtract(3, 'days')
-      .set({ hour: 0, minute: 0, second: 0, millisecond: 0 });
-    cy.get('#query-date-input').clear().type(queryDate.format('DD/MM/yyyy')).type('{enter}');
-
-    // Cancel request from modal
-    cy.get('#cancel-incident-query-button').click();
-    cy.get('div.query-cancelled-ctr')
-      .should('be.visible')
-      .should('contain.text', 'Query has been cancelled by user');
-    cy.get('div.selected-incidents-ctr').should('be.visible').should('contain.text', 'N/A');
-
-    // Reset query for next test
-    deactivateButton('query-status-resolved-button');
-  });
-
-  // no longer applicable
-  xit('Query for incidents exceeding MAX_INCIDENTS_LIMIT'
-    + 'with auto accept incident query off; Accept Request', () => {
-    // Accept request from modal
-    activateButton('query-status-resolved-button');
-    cy.get('#retrieve-incident-query-button').click();
-    cy.get('div.query-active-ctr')
-      .should('be.visible')
-      .should('contain.text', 'Querying PagerDuty API');
-    cy.get('div.selected-incidents-ctr').should('be.visible').should('contain.text', 'Querying');
-    waitForIncidentTable();
-
-    // Reset query for next test
-    deactivateButton('query-status-resolved-button');
-    const queryDate = moment()
-      .set({ hour: 0, minute: 0, second: 0, millisecond: 0 });
-    cy.get('#query-date-input').clear().type(queryDate.format('DD/MM/yyyy')).type('{enter}');
-    waitForIncidentTable();
-    // Reset auto accept incident query to true
-    updateAutoAcceptIncidentQuery(true);
-  });
-
   it('Query for triggered incidents only', () => {
     cy.get('.query-status-triggered-button').check({ force: true });
     cy.get('.query-status-acknowledged-button').uncheck({ force: true });
