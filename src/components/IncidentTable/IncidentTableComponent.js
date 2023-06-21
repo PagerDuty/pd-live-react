@@ -470,7 +470,7 @@ const IncidentTableComponent = () => {
                         whiteSpace="nowrap"
                         display="inline"
                       >
-                        {column.render('Header')}
+                        {column.id === 'select' ? column.render('Header') : t(column.render('Header'))}
                       </Text>
                       <span>{column.isSorted ? (column.isSortedDesc ? ' ▼' : ' ▲') : ''}</span>
                     </Box>
