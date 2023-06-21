@@ -30,6 +30,10 @@ import {
 // } from 'pretty-print-error';
 
 import {
+  useTranslation,
+} from 'react-i18next';
+
+import {
   getIncidentsAsync as getIncidentsAsyncAction,
   UPDATE_INCIDENT_ALERTS,
   UPDATE_INCIDENT_NOTES,
@@ -39,6 +43,9 @@ const DetailedStatusOverlay = ({
   btnRef, isOpen, onOpen, onClose,
 }) => {
   const store = useStore();
+  const {
+    t,
+  } = useTranslation();
   const {
     status: connectionStatus,
     error: connectionError,
@@ -180,7 +187,7 @@ const DetailedStatusOverlay = ({
       <DrawerOverlay />
       <DrawerContent>
         <DrawerCloseButton />
-        <DrawerHeader>Detailed Status</DrawerHeader>
+        <DrawerHeader>{t('Detailed Status')}</DrawerHeader>
         <DrawerBody>
           <Box rounded="md" borderWidth="1px" p={2} mb={2}>
             <Text m={2} fontSize="sm" fontWeight="bold">
@@ -197,21 +204,21 @@ const DetailedStatusOverlay = ({
           </Box>
           <Box rounded="md" borderWidth="1px" p={2} mb={2}>
             <Heading size="sm" pb={4} borderBottomWidth="1px">
-              Status
+              {t('Status')}
             </Heading>
-            {statusFor('Connection', connectionStatus, connectionError)}
-            {statusFor('Incidents', incidentStatus, incidentError)}
-            {statusFor('Log Entries', logEntriesStatus, logEntriesError)}
-            {statusFor('Services', servicesStatus, servicesError)}
-            {statusFor('Teams', teamsStatus, teamsError)}
-            {statusFor('Users', usersStatus, usersError)}
-            {statusFor('Escalation Policies', escalationPoliciesStatus, escalationPoliciesError)}
-            {statusFor('Extensions', extensionsStatus, extensionsError)}
-            {statusFor('Response Plays', responsePlaysStatus, responsePlaysError)}
+            {statusFor(t('Connection'), connectionStatus, connectionError)}
+            {statusFor(t('Incidents'), incidentStatus, incidentError)}
+            {statusFor(t('Log Entries'), logEntriesStatus, logEntriesError)}
+            {statusFor(t('Services'), servicesStatus, servicesError)}
+            {statusFor(t('Teams'), teamsStatus, teamsError)}
+            {statusFor(t('Users'), usersStatus, usersError)}
+            {statusFor(t('Escalation Policies'), escalationPoliciesStatus, escalationPoliciesError)}
+            {statusFor(t('Extensions'), extensionsStatus, extensionsError)}
+            {statusFor(t('Response Plays'), responsePlaysStatus, responsePlaysError)}
           </Box>
           <Box rounded="md" borderWidth="1px" p={2} mb={2}>
             <Heading size="sm" pb={4} borderBottomWidth="1px">
-              Debugging Actions
+              {t('Debugging Actions')}
             </Heading>
             <Button
               size="sm"
@@ -222,7 +229,7 @@ const DetailedStatusOverlay = ({
                 console.log(store.getState());
               }}
             >
-              Log App State to console
+              {t('Log App State to console')}
             </Button>
             <Button
               size="sm"
@@ -232,7 +239,7 @@ const DetailedStatusOverlay = ({
                 getIncidents();
               }}
             >
-              Refresh Incidents
+              {t('Refresh Incidents')}
             </Button>
             <Button
               size="sm"
@@ -242,7 +249,7 @@ const DetailedStatusOverlay = ({
                 clearAlerts();
               }}
             >
-              Clear Alerts
+              {t('Clear Alerts')}
             </Button>
             <Button
               size="sm"
@@ -252,7 +259,7 @@ const DetailedStatusOverlay = ({
                 clearNotes();
               }}
             >
-              Clear Notes
+              {t('Clear Notes')}
             </Button>
           </Box>
         </DrawerBody>
