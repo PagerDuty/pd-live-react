@@ -202,7 +202,7 @@ const TableColumnsModalComponent = () => {
           <VStack align="top">
             <Card size="sm" borderWidth="1px">
               <CardHeader>
-                <Heading size="sm">Selected</Heading>
+                <Heading size="sm">{t('Selected')}</Heading>
               </CardHeader>
               <CardBody>
                 <Box id="selected-columns-card-body" ref={drop}>
@@ -270,7 +270,7 @@ const TableColumnsModalComponent = () => {
                     onChange={validateInput}
                     m={1}
                     w="60%"
-                    placeholder={t('Accessor Path')}
+                    placeholder={t('JSON Path')}
                     size="sm"
                   />
                   <Button

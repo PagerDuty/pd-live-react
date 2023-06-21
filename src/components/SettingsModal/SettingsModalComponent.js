@@ -264,7 +264,7 @@ const SettingsModalComponent = () => {
               </Switch>
             </FormControl>
             <FormControl>
-              <FormLabel htmlFor="search-all-custom-details-switch">{t('Global search')}</FormLabel>
+              <FormLabel htmlFor="search-all-custom-details-switch">{t('Global Search')}</FormLabel>
               <Switch
                 id="search-all-custom-details-switch"
                 isChecked={tempSearchAllCustomDetails}

@@ -221,7 +221,7 @@ export const manageCustomAlertColumnDefinitions = (customAlertColumnDefinitions)
   customAlertColumnDefinitions.forEach((customAlertColumnDefinition) => {
     const [header, accessorPath] = customAlertColumnDefinition.split(':');
     cy.get('input[placeholder="Header"]').type(header);
-    cy.get('input[placeholder="Accessor Path"]').type(accessorPath);
+    cy.get('input[placeholder="JSON Path"]').type(accessorPath);
     cy.get('button[aria-label="Add custom column"]').click();
     cy.get(`#column-${accessorPath.replace('.', '\\.')}-add-icon`).click();
   });
@@ -308,7 +308,7 @@ export const updateAutoAcceptIncidentQuery = (autoAcceptIncidentsQuery = false) 
 };
 
 export const updateDarkMode = () => {
-  cy.get('[aria-label="Toggle dark mode"]').click();
+  cy.get('[aria-label="Toggle Dark Mode"]').click();
 };
 
 export const priorityNames = ['--', 'P5', 'P4', 'P3', 'P2', 'P1'];

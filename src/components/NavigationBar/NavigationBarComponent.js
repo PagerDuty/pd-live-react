@@ -127,9 +127,9 @@ const NavigationBarComponent = () => {
     syncReduxColorMode();
   };
   const DarkModeIconButton = () => (
-    <Tooltip label={colorMode === 'dark' ? t('Light mode') : t('Dark mode')}>
+    <Tooltip label={colorMode === 'dark' ? t('Light Mode') : t('Dark Mode')}>
       <IconButton
-        aria-label="Toggle dark mode"
+        aria-label="Toggle Dark Mode"
         icon={colorMode === 'dark' ? <SunIcon /> : <MoonIcon />}
         onClick={() => setColorMode(colorMode !== 'dark')}
         size="sm"
