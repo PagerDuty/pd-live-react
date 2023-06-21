@@ -3,10 +3,6 @@ import React, {
 } from 'react';
 
 import {
-  Badge, // Spinner,
-} from 'react-bootstrap';
-
-import {
   useSelector,
 } from 'react-redux';
 
@@ -146,19 +142,9 @@ const SelectedIncidentsComponent = () => {
     </Flex>
   );
 
-  const cancelledQueryRender = (
-    <div className="selected-incidents-ctr">
-      <h4>
-        <Badge className="selected-incidents-badge" variant="warning">
-          {t('N/A')}
-        </Badge>
-      </h4>
-    </div>
-  );
-
   return (
     <div className="selected-incidents-ctr">
-      {queryError && cancelledQueryRender}
+      {queryError}
       {fetchingIncidents && fetchingDataRender('success', t('Querying'))}
       {fetchingIncidentNotes && fetchingDataRender('primary', t('Fetching Notes'))}
       {fetchingIncidentAlerts && fetchingDataRender('info', t('Fetching Alerts'))}

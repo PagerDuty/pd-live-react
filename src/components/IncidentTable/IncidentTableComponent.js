@@ -57,7 +57,6 @@ import {
 import CheckboxComponent from './subcomponents/CheckboxComponent';
 import EmptyIncidentsComponent from './subcomponents/EmptyIncidentsComponent';
 import QueryActiveComponent from './subcomponents/QueryActiveComponent';
-import QueryCancelledComponent from './subcomponents/QueryCancelledComponent';
 import GetAllModal from './subcomponents/GetAllModal';
 import GetAllForSortModal from './subcomponents/GetAllForSortModal';
 // import IncidentTableRow from './subcomponents/IncidentTableRow';
