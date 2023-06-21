@@ -4,18 +4,11 @@ import moment from 'moment';
 import 'moment/min/locales.min';
 
 import {
-  faker,
-} from '@faker-js/faker';
-
-import {
   acceptDisclaimer,
   waitForIncidentTable,
   updateUserLocale,
   updateDefaultSinceDateLookback,
-  updateMaxIncidentsLimit,
   updateMaxRateLimit,
-  updateAutoAcceptIncidentQuery,
-  updateAutoRefreshInterval,
   updateDarkMode,
   manageIncidentTableColumns,
   manageCustomAlertColumnDefinitions,
@@ -91,17 +84,6 @@ describe('Manage Settings', { failFast: { enabled: false } }, () => {
       );
       cy.get('#query-date-input').should('have.value', expectedDate);
     });
-  });
-
-  it('Update max incidents limit', () => {
-    const maxIncidentsLimit = 400;
-    updateMaxIncidentsLimit(maxIncidentsLimit);
-    cy.window()
-      .its('store')
-      .invoke('getState')
-      .then((state) => expect(
-        Number(state.settings.maxIncidentsLimit),
-      ).to.equal(maxIncidentsLimit));
   });
 
   it('Update max rate limit', () => {

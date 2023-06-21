@@ -93,7 +93,9 @@ describe('ColumnsModalComponent', () => {
     const customColumns = wrapper.find('div#custom-columns-card-body');
     const selectedColumns = wrapper.find('div#selected-columns-card-body');
     const availableColumns = wrapper.find('div#available-columns-card-body');
-    expect(customColumns.find('span[value="AnotherCustomField:details.to.some.other.path"]')).toBeTruthy();
+    expect(
+      customColumns.find('span[value="AnotherCustomField:details.to.some.other.path"]'),
+    ).toBeTruthy();
     expect(selectedColumns.find('span[value="AnotherCustomField"]')).toEqual({});
     expect(availableColumns.find('span[value="AnotherCustomField"]')).toBeTruthy();
   });

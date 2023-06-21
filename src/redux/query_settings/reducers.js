@@ -27,8 +27,6 @@ import {
   UPDATE_SEARCH_QUERY_COMPLETED,
   VALIDATE_INCIDENT_QUERY_REQUESTED,
   VALIDATE_INCIDENT_QUERY_COMPLETED,
-  TOGGLE_DISPLAY_CONFIRM_QUERY_MODAL_REQUESTED,
-  TOGGLE_DISPLAY_CONFIRM_QUERY_MODAL_COMPLETED,
   UPDATE_TOTAL_INCIDENTS_FROM_QUERY_REQUESTED,
   UPDATE_TOTAL_INCIDENTS_FROM_QUERY_COMPLETED,
   CONFIRM_INCIDENT_QUERY_REQUESTED,
@@ -137,15 +135,6 @@ const querySettings = produce(
         draft.status = VALIDATE_INCIDENT_QUERY_COMPLETED;
         break;
 
-      case TOGGLE_DISPLAY_CONFIRM_QUERY_MODAL_REQUESTED:
-        draft.status = TOGGLE_DISPLAY_CONFIRM_QUERY_MODAL_REQUESTED;
-        break;
-
-      case TOGGLE_DISPLAY_CONFIRM_QUERY_MODAL_COMPLETED:
-        draft.displayConfirmQueryModal = action.displayConfirmQueryModal;
-        draft.status = TOGGLE_DISPLAY_CONFIRM_QUERY_MODAL_COMPLETED;
-        break;
-
       case UPDATE_TOTAL_INCIDENTS_FROM_QUERY_REQUESTED:
         draft.status = UPDATE_TOTAL_INCIDENTS_FROM_QUERY_REQUESTED;
         break;
@@ -188,7 +177,6 @@ const querySettings = produce(
     serviceIds: [],
     userIds: [],
     searchQuery: '',
-    displayConfirmQueryModal: false,
     totalIncidentsFromQuery: 0,
     status: null,
     fetchingData: false,

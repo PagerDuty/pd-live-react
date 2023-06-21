@@ -13,8 +13,6 @@ import {
   SET_RESPONDERS_IN_EP_FILTER_COMPLETED,
   SET_ALERT_CUSTOM_DETAIL_COLUMNS_REQUESTED,
   SET_ALERT_CUSTOM_DETAIL_COLUMNS_COMPLETED,
-  SET_MAX_INCIDENTS_LIMIT_REQUESTED,
-  SET_MAX_INCIDENTS_LIMIT_COMPLETED,
   SET_MAX_RATE_LIMIT_REQUESTED,
   SET_MAX_RATE_LIMIT_COMPLETED,
   SET_AUTO_ACCEPT_INCIDENTS_QUERY_REQUESTED,
@@ -86,15 +84,6 @@ const settings = produce(
         draft.status = SET_RESPONDERS_IN_EP_FILTER_COMPLETED;
         break;
 
-      case SET_MAX_INCIDENTS_LIMIT_REQUESTED:
-        draft.status = SET_MAX_INCIDENTS_LIMIT_REQUESTED;
-        break;
-
-      case SET_MAX_INCIDENTS_LIMIT_COMPLETED:
-        draft.maxIncidentsLimit = action.maxIncidentsLimit;
-        draft.status = SET_MAX_INCIDENTS_LIMIT_COMPLETED;
-        break;
-
       case SET_MAX_RATE_LIMIT_REQUESTED:
         draft.status = SET_MAX_RATE_LIMIT_REQUESTED;
         break;
@@ -156,7 +145,6 @@ const settings = produce(
     displaySettingsModal: false,
     displayColumnsModal: false,
     defaultSinceDateTenor: '1 Day',
-    maxIncidentsLimit: 200,
     maxRateLimit: 200,
     autoAcceptIncidentsQuery: true,
     autoRefreshInterval: 5,

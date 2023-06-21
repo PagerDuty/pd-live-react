@@ -141,11 +141,6 @@ const IncidentTableComponent = () => {
   const {
     filteredIncidentsByQuery, incidentAlerts, incidentNotes, fetchingIncidents,
   } = useSelector((state) => state.incidents);
-  const {
-    displayConfirmQueryModal, error: querySettingsError,
-  } = useSelector(
-    (state) => state.querySettings,
-  );
   const currentUserLocale = useSelector((state) => state.users.currentUserLocale);
 
   const dispatch = useDispatch();
@@ -414,14 +409,6 @@ const IncidentTableComponent = () => {
     [tableData],
   );
   // Render components based on application state
-  if (displayConfirmQueryModal) {
-    return <></>;
-  }
-
-  if (!displayConfirmQueryModal && querySettingsError) {
-    return <QueryCancelledComponent />;
-  }
-
   if (fetchingIncidents) {
     return <QueryActiveComponent />;
   }
@@ -470,7 +457,9 @@ const IncidentTableComponent = () => {
                         whiteSpace="nowrap"
                         display="inline"
                       >
-                        {column.id === 'select' ? column.render('Header') : t(column.render('Header'))}
+                        {column.id === 'select'
+                          ? column.render('Header')
+                          : t(column.render('Header'))}
                       </Text>
                       <span>{column.isSorted ? (column.isSortedDesc ? ' ▼' : ' ▲') : ''}</span>
                     </Box>

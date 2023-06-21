@@ -32,7 +32,6 @@ import AddNoteModalComponent from 'components/AddNoteModal/AddNoteModalComponent
 import ReassignModalComponent from 'components/ReassignModal/ReassignModalComponent';
 import AddResponderModalComponent from 'components/AddResponderModal/AddResponderModalComponent';
 import MergeModalComponent from 'components/MergeModal/MergeModalComponent';
-import ConfirmQueryModalComponent from 'components/ConfirmQueryModal/ConfirmQueryModalComponent';
 
 import {
   getIncidentsAsync as getIncidentsAsyncConnected,
@@ -263,7 +262,6 @@ const App = () => {
           <ReassignModalComponent />
           <AddResponderModalComponent />
           <MergeModalComponent />
-          <ConfirmQueryModalComponent />
         </Box>
         <Flex as="footer" position="fixed" bottom={0} w="100%" zIndex="1" pt={1} ref={footerRef}>
           <IncidentActionsComponent />

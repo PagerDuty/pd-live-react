@@ -74,9 +74,6 @@ xdescribe('IncidentTableComponent', () => {
         filteredIncidentsByQuery: mockIncidents,
         fetchingIncidents: false,
       },
-      querySettings: {
-        displayConfirmQueryModal: false,
-      },
       users: {
         currentUserLocale: 'en-GB',
       },

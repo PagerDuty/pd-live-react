@@ -5,7 +5,7 @@ import {
 } from 'mocks/store.test';
 
 import {
-  MAX_INCIDENTS_LIMIT_LOWER, MAX_RATE_LIMIT_LOWER,
+  MAX_RATE_LIMIT_LOWER,
 } from 'config/constants';
 
 import SettingsModalComponent from './SettingsModalComponent';
@@ -19,7 +19,6 @@ describe('SettingsModalComponent', () => {
       settings: {
         displaySettingsModal: true,
         defaultSinceDateTenor: '1 Day',
-        maxIncidentsLimit: MAX_INCIDENTS_LIMIT_LOWER,
         maxRateLimit: MAX_RATE_LIMIT_LOWER,
         darkMode: false,
       },
@@ -41,9 +40,6 @@ describe('SettingsModalComponent', () => {
 
     expect(wrapper.find('select#user-locale-select').props().value).toBe('en-GB');
     expect(wrapper.find('select#since-date-tenor-select').props().value).toBe('1 Day');
-    expect(wrapper.find("div[aria-label='Max Incidents Limit']").prop('aria-valuenow')).toEqual(
-      MAX_INCIDENTS_LIMIT_LOWER,
-    );
     expect(wrapper.find("div[aria-label='Max Rate Limit']").prop('aria-valuenow')).toEqual(
       MAX_RATE_LIMIT_LOWER,
     );

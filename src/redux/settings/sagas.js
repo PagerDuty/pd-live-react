@@ -28,8 +28,6 @@ import {
   SET_RESPONDERS_IN_EP_FILTER_COMPLETED,
   SET_ALERT_CUSTOM_DETAIL_COLUMNS_REQUESTED,
   SET_ALERT_CUSTOM_DETAIL_COLUMNS_COMPLETED,
-  SET_MAX_INCIDENTS_LIMIT_REQUESTED,
-  SET_MAX_INCIDENTS_LIMIT_COMPLETED,
   SET_MAX_RATE_LIMIT_REQUESTED,
   SET_MAX_RATE_LIMIT_COMPLETED,
   SET_AUTO_ACCEPT_INCIDENTS_QUERY_REQUESTED,
@@ -130,20 +128,6 @@ export function* setAlertCustomDetailColumnsImpl(action) {
   yield put({
     type: SET_ALERT_CUSTOM_DETAIL_COLUMNS_COMPLETED,
     alertCustomDetailFields,
-  });
-}
-
-export function* setMaxIncidentsLimit() {
-  yield takeLatest(SET_MAX_INCIDENTS_LIMIT_REQUESTED, setMaxIncidentsLimitImpl);
-}
-
-export function* setMaxIncidentsLimitImpl(action) {
-  const {
-    maxIncidentsLimit,
-  } = action;
-  yield put({
-    type: SET_MAX_INCIDENTS_LIMIT_COMPLETED,
-    maxIncidentsLimit,
   });
 }
 

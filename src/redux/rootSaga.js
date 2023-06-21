@@ -18,8 +18,6 @@ import {
   updateQuerySettingsUsers,
   updateSearchQuery,
   validateIncidentQuery,
-  toggleDisplayConfirmQueryModal,
-  updateTotalIncidentsFromQuery,
   confirmIncidentQuery,
 } from './query_settings/sagas';
 
@@ -120,7 +118,6 @@ import {
   setSearchAllCustomDetails,
   setRespondersInEpFilter,
   setAlertCustomDetailColumns,
-  setMaxIncidentsLimit,
   setMaxRateLimit,
   setAutoAcceptIncidentsQuery,
   setAutoRefreshInterval,
@@ -155,18 +152,12 @@ export default function* rootSaga() {
     updateQuerySettingsUsers(),
     updateSearchQuery(),
     validateIncidentQuery(),
-    toggleDisplayConfirmQueryModal(),
-    updateTotalIncidentsFromQuery(),
     confirmIncidentQuery(),
 
     // Incidents
     getIncidentsAsync(),
-    // refreshIncidentsAsync(),
     getIncidentAlertsAsync(),
     getIncidentNotesAsync(),
-    // getAllIncidentNotesAsync(),
-    // getAllIncidentAlertsAsync(),
-    // updateIncidentsListAsync(),
     processLogEntries(),
     updateIncidents(),
     updateIncidentAlerts(),
@@ -182,7 +173,6 @@ export default function* rootSaga() {
 
     // Log Entries
     getLogEntriesAsync(),
-    // updateRecentLogEntriesAsync(),
     cleanRecentLogEntriesAsync(),
 
     // Incident Table
@@ -249,7 +239,6 @@ export default function* rootSaga() {
     setSearchAllCustomDetails(),
     setRespondersInEpFilter(),
     setAlertCustomDetailColumns(),
-    setMaxIncidentsLimit(),
     setMaxRateLimit(),
     setAutoAcceptIncidentsQuery(),
     setAutoRefreshInterval(),

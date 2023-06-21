@@ -267,18 +267,6 @@ export const updateAutoRefreshInterval = (autoRefreshInterval = 5) => {
   cy.get('.close').click();
 };
 
-export const updateMaxIncidentsLimit = (limit = 200) => {
-  cy.get('.settings-panel-dropdown').click();
-  cy.get('.dropdown-item').contains('Settings').click();
-
-  cy.get('[aria-label="Max Incidents Limit"]').focus().type('{home}');
-  for (let i = 100; i < limit; i += 100) {
-    cy.get('[aria-label="Max Incidents Limit"]').focus().type('{rightArrow}');
-  }
-  cy.get('#save-settings-button').click();
-  checkActionAlertsModalContent('Updated user profile settings');
-};
-
 export const updateMaxRateLimit = (limit = 200) => {
   cy.get('.settings-panel-dropdown').click();
   cy.get('.dropdown-item').contains('Settings').click();

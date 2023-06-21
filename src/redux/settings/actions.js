@@ -18,9 +18,6 @@ export const SET_RESPONDERS_IN_EP_FILTER_COMPLETED = 'SET_RESPONDERS_IN_EP_FILTE
 export const SET_ALERT_CUSTOM_DETAIL_COLUMNS_REQUESTED = 'SET_ALERT_CUSTOM_DETAIL_COLUMNS_REQUESTED';
 export const SET_ALERT_CUSTOM_DETAIL_COLUMNS_COMPLETED = 'SET_ALERT_CUSTOM_DETAIL_COLUMNS_COMPLETED';
 
-export const SET_MAX_INCIDENTS_LIMIT_REQUESTED = 'SET_MAX_INCIDENTS_LIMIT_REQUESTED';
-export const SET_MAX_INCIDENTS_LIMIT_COMPLETED = 'SET_MAX_INCIDENTS_LIMIT_COMPLETED';
-
 export const SET_MAX_RATE_LIMIT_REQUESTED = 'SET_MAX_RATE_LIMIT_REQUESTED';
 export const SET_MAX_RATE_LIMIT_COMPLETED = 'SET_MAX_RATE_LIMIT_COMPLETED';
 
@@ -66,11 +63,6 @@ export const setRespondersInEpFilter = (respondersInEpFilter) => ({
 export const setAlertCustomDetailColumns = (alertCustomDetailFields) => ({
   type: SET_ALERT_CUSTOM_DETAIL_COLUMNS_REQUESTED,
   alertCustomDetailFields,
-});
-
-export const setMaxIncidentsLimit = (maxIncidentsLimit) => ({
-  type: SET_MAX_INCIDENTS_LIMIT_REQUESTED,
-  maxIncidentsLimit,
 });
 
 export const setMaxRateLimit = (maxRateLimit) => ({

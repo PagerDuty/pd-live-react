@@ -33,10 +33,7 @@ import {
 } from '@chakra-ui/react';
 
 import {
-  MAX_INCIDENTS_LIMIT_LOWER,
-  MAX_INCIDENTS_LIMIT_UPPER,
-  MAX_RATE_LIMIT_LOWER,
-  MAX_RATE_LIMIT_UPPER,
+  MAX_RATE_LIMIT_LOWER, MAX_RATE_LIMIT_UPPER,
 } from 'config/constants';
 
 import {
@@ -57,7 +54,6 @@ import {
 import {
   toggleSettingsModal as toggleSettingsModalConnected,
   setDefaultSinceDateTenor as setDefaultSinceDateTenorConnected,
-  setMaxIncidentsLimit as setMaxIncidentsLimitConnected,
   setMaxRateLimit as setMaxRateLimitConnected,
   setServerSideFiltering as setServerSideFilteringConnected,
   setSearchAllCustomDetails as setSearchAllCustomDetailsConnected,
@@ -74,7 +70,6 @@ const SettingsModalComponent = () => {
   const {
     displaySettingsModal,
     defaultSinceDateTenor,
-    maxIncidentsLimit,
     maxRateLimit,
     serverSideFiltering,
     searchAllCustomDetails,
@@ -87,9 +82,6 @@ const SettingsModalComponent = () => {
   const updateUserLocale = (locale) => dispatch(updateUserLocaleConnected(locale));
   const setDefaultSinceDateTenor = (newDefaultSinceDateTenor) => {
     dispatch(setDefaultSinceDateTenorConnected(newDefaultSinceDateTenor));
-  };
-  const setMaxIncidentsLimit = (newMaxIncidentsLimit) => {
-    dispatch(setMaxIncidentsLimitConnected(newMaxIncidentsLimit));
   };
   const setMaxRateLimit = (newMaxRateLimit) => {
     dispatch(setMaxRateLimitConnected(newMaxRateLimit));
@@ -111,7 +103,6 @@ const SettingsModalComponent = () => {
   const [selectedLocale, setSelectedLocale] = useState(currentUserLocale);
   const [tempSinceDateTenor, setTempSinceDateTenor] = useState(defaultSinceDateTenor);
 
-  const [tempMaxIncidentsLimit, setTempMaxIncidentsLimit] = useState(maxIncidentsLimit);
   const [tempMaxRateLimit, setTempMaxRateLimit] = useState(maxRateLimit);
 
   const [tempServerSideFiltering, setTempServerSideFiltering] = useState(serverSideFiltering);
@@ -124,9 +115,6 @@ const SettingsModalComponent = () => {
     }
     if (tempSinceDateTenor !== defaultSinceDateTenor) {
       setDefaultSinceDateTenor(tempSinceDateTenor);
-    }
-    if (tempMaxIncidentsLimit !== maxIncidentsLimit) {
-      setMaxIncidentsLimit(tempMaxIncidentsLimit);
     }
     if (tempMaxRateLimit !== maxRateLimit) {
       setMaxRateLimit(tempMaxRateLimit);
@@ -183,35 +171,6 @@ const SettingsModalComponent = () => {
                   </option>
                 ))}
               </Select>
-            </FormControl>
-            <FormControl>
-              <FormLabel htmlFor="max-incidents-limit-slider">{t('Max Incidents Limit')}</FormLabel>
-              <Box borderWidth="1px" borderRadius="lg">
-                <InputGroup>
-                  <Slider
-                    m="20px"
-                    w="80%"
-                    id="max-incidents-limit-slider"
-                    aria-label="Max Incidents Limit"
-                    min={MAX_INCIDENTS_LIMIT_LOWER}
-                    max={MAX_INCIDENTS_LIMIT_UPPER}
-                    step={100}
-                    defaultValue={tempMaxIncidentsLimit}
-                    onChange={(value) => {
-                      setTempMaxIncidentsLimit(value);
-                    }}
-                  >
-                    <SliderTrack>
-                      <SliderFilledTrack />
-                    </SliderTrack>
-                    <SliderThumb />
-                  </Slider>
-                  <Spacer />
-                  <Text m="auto" w="10%" verticalAlign="middle">
-                    {tempMaxIncidentsLimit}
-                  </Text>
-                </InputGroup>
-              </Box>
             </FormControl>
             <FormControl>
               <FormLabel htmlFor="max-rate-limit-slider">{t('Max API Call Rate')}</FormLabel>

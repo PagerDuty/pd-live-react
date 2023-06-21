@@ -58,8 +58,6 @@ import {
   UPDATE_SEARCH_QUERY_COMPLETED,
   VALIDATE_INCIDENT_QUERY_REQUESTED,
   VALIDATE_INCIDENT_QUERY_COMPLETED,
-  TOGGLE_DISPLAY_CONFIRM_QUERY_MODAL_REQUESTED,
-  TOGGLE_DISPLAY_CONFIRM_QUERY_MODAL_COMPLETED,
   UPDATE_TOTAL_INCIDENTS_FROM_QUERY_REQUESTED,
   UPDATE_TOTAL_INCIDENTS_FROM_QUERY_COMPLETED,
   CONFIRM_INCIDENT_QUERY_REQUESTED,
@@ -318,57 +316,7 @@ export function* validateIncidentQuery() {
 
 export function* validateIncidentQueryImpl() {
   try {
-    // // Find total incidents from data query
-    // const {
-    //   maxIncidentsLimit, autoAcceptIncidentsQuery,
-    // } = yield select(selectSettings);
-
-    // const {
-    //   sinceDate,
-    //   incidentStatus,
-    //   incidentUrgency,
-    //   teamIds,
-    //   serviceIds,
-    //   userIds,
-    //   // incidentPriority, // Unfortunately can't do this pre-API call.
-    // } = yield select(selectQuerySettings);
-
-    // const params = {
-    //   since: DEBUG_SINCE_DATE
-    // ? new Date(DEBUG_SINCE_DATE).toISOString() : sinceDate.toISOString(),
-    //   until: DEBUG_UNTIL_DATE
-    // ? new Date(DEBUG_UNTIL_DATE).toISOString() : new Date().toISOString(),
-    //   limit: 1,
-    //   total: true,
-    // };
-
-    // if (incidentStatus) params['statuses[]'] = incidentStatus;
-    // if (incidentUrgency) params['urgencies[]'] = incidentUrgency;
-    // if (teamIds.length) params['team_ids[]'] = teamIds;
-    // if (serviceIds.length) params['service_ids[]'] = serviceIds;
-    // if (userIds.length) params['user_ids[]'] = userIds;
-
-    // const response = yield call(throttledPdAxiosRequest, 'GET', 'incidents', params);
-    // if (response.status !== 200) {
-    //   throw Error(i18next.t('Unable to fetch incidents'));
-    // }
-
-    // const totalIncidentsFromQuery = response.data.total;
     yield put({ type: VALIDATE_INCIDENT_QUERY_COMPLETED });
-    // yield put({
-    //   type: UPDATE_TOTAL_INCIDENTS_FROM_QUERY_REQUESTED,
-    //   totalIncidentsFromQuery,
-    // });
-
-    // // Determine if Confirm Query Modal component should be rendered
-    // if (totalIncidentsFromQuery > maxIncidentsLimit && !autoAcceptIncidentsQuery) {
-    //   yield put({ type: TOGGLE_DISPLAY_CONFIRM_QUERY_MODAL_REQUESTED });
-    // } else {
-    //   yield put({ type: CONFIRM_INCIDENT_QUERY_REQUESTED, confirm: true });
-    // }
-    // yield put({
-    //   type: FILTER_INCIDENTS_LIST,
-    // });
   } catch (e) {
     // Handle API auth failure
     if (e.status === 401) {
@@ -380,23 +328,6 @@ export function* validateIncidentQueryImpl() {
       connectionStatusMessage: e.message,
     });
   }
-}
-
-export function* toggleDisplayConfirmQueryModal() {
-  yield takeLatest(
-    TOGGLE_DISPLAY_CONFIRM_QUERY_MODAL_REQUESTED,
-    toggleDisplayConfirmQueryModalImpl,
-  );
-}
-
-export function* toggleDisplayConfirmQueryModalImpl() {
-  const {
-    displayConfirmQueryModal,
-  } = yield select(selectQuerySettings);
-  yield put({
-    type: TOGGLE_DISPLAY_CONFIRM_QUERY_MODAL_COMPLETED,
-    displayConfirmQueryModal: !displayConfirmQueryModal,
-  });
 }
 
 export function* updateTotalIncidentsFromQuery() {
