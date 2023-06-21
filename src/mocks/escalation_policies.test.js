@@ -14,6 +14,7 @@ const generateMockEscalationPolicy = () => {
   };
 };
 
+// eslint-disable-next-line max-len
 export const generateMockEscalationPolicies = (num) => Array.from({ length: num }, () => generateMockEscalationPolicy());
 
 export default generateMockEscalationPolicies;

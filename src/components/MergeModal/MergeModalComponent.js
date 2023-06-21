@@ -56,6 +56,7 @@ const MergeModalComponent = () => {
   } = useSelector((state) => state.incidentTable);
   const dispatch = useDispatch();
   const toggleDisplayMergeModal = () => dispatch(toggleDisplayMergeModalConnected());
+  // eslint-disable-next-line max-len
   const merge = (targetIncident, mergedIncidents, displayModal, addToTitleText) => dispatch(mergeConnected(targetIncident, mergedIncidents, displayModal, addToTitleText));
 
   const {

@@ -131,8 +131,10 @@ xdescribe('Sagas: Query Settings', () => {
       ])
       .silentRun()
       .then((result) => {
-        // FIXME: This was previously `expect(result.storeState.status).toEqual(TOGGLE_DISPLAY_CONFIRM_QUERY_MODAL_REQUESTED);`
-        // but changed in https://github.com/giranm/pd-live-react/pull/449 due to introduction of a better implementation with API rate limits
+        // FIXME: This was previously:
+        // `expect(result.storeState.status).toEqual(TOGGLE_DISPLAY_CONFIRM_QUERY_MODAL_REQUESTED);`
+        // but changed in https://github.com/giranm/pd-live-react/pull/449
+        // due to introduction of a better implementation with API rate limits
         expect(result.storeState.status).toEqual(CONFIRM_INCIDENT_QUERY_REQUESTED);
       });
   });

@@ -5,16 +5,7 @@ import {
 } from 'mocks/store.test';
 
 import {
-  defaultSinceDateTenors,
-} from 'util/settings';
-
-import {
-  MAX_INCIDENTS_LIMIT_LOWER,
-  MAX_INCIDENTS_LIMIT_UPPER,
-  MAX_RATE_LIMIT_LOWER,
-  MAX_RATE_LIMIT_UPPER,
-  REFRESH_INTERVAL_LOWER,
-  REFRESH_INTERVAL_UPPER,
+  MAX_INCIDENTS_LIMIT_LOWER, MAX_RATE_LIMIT_LOWER,
 } from 'config/constants';
 
 import SettingsModalComponent from './SettingsModalComponent';

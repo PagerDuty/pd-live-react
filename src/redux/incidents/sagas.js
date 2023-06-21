@@ -451,6 +451,7 @@ export function* filterIncidentsImpl() {
           const responderRequestTargets = incident.responder_requests
             .map((responderRequest) => responderRequest.responder_request_targets
               .filter(
+                // eslint-disable-next-line max-len
                 (responderRequestTarget) => responderRequestTarget.responder_request_target.type === 'escalation_policy',
               )
               .map((responderRequestTarget) => responderRequestTarget.responder_request_target.id)
@@ -511,6 +512,7 @@ export function* filterIncidentsImpl() {
       try {
         const incidentsForSearch = filteredIncidentsByQuery.map((incident) => {
           const incidentNotesForSearch = incidentNotes[incident.id] instanceof Array ? incidentNotes[incident.id] : [];
+          // eslint-disable-next-line max-len
           const incidentAlertsForSearch = incidentAlerts[incident.id] instanceof Array ? incidentAlerts[incident.id] : [];
           const incidentAlertsForSearchWithFlattedCustomDetails = incidentAlertsForSearch.map(
             (alert) => {

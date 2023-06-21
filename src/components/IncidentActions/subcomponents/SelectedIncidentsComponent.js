@@ -106,6 +106,7 @@ const SelectedIncidentsComponent = () => {
     </Flex>
   );
 
+  // eslint-disable-next-line max-len
   const useColorModeToken = (lightColor, darkColor) => useColorModeValue(useToken('colors', lightColor), useToken('colors', darkColor));
   const pieChartColors = {
     fetching: useColorModeToken('blue.300', 'blue.600'),

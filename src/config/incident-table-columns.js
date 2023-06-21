@@ -722,6 +722,7 @@ export const customReactTableColumnSchema = (
           }
         }
       } catch (e) {
+        // eslint-disable-next-line no-console
         console.log(e);
       }
       return <div className="td-wrapper">{valueStr}</div>;

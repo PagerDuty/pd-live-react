@@ -94,6 +94,7 @@ const TableColumnsModalComponent = () => {
   };
 
   const getAllAvailableColumns = () => {
+    // eslint-disable-next-line max-len
     const v = [...defaultColumns(), ...customAlertColumns(alertCustomDetailFields)].sort((a, b) => columnValue(a).localeCompare(columnValue(b)));
     return v;
   };
