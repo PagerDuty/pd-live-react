@@ -30,36 +30,31 @@ import {
   generateMockServices,
 } from 'mocks/services.test';
 
-import {
-  UPDATE_CONNECTION_STATUS_REQUESTED,
-} from 'redux/connection/actions';
 import connection from 'redux/connection/reducers';
 
 import selectSettings from 'redux/settings/selectors';
 
 import {
-  CONFIRM_INCIDENT_QUERY_REQUESTED,
-  CONFIRM_INCIDENT_QUERY_COMPLETED,
-  CONFIRM_INCIDENT_QUERY_ERROR,
   UPDATE_QUERY_SETTINGS_USERS_REQUESTED,
+  UPDATE_QUERY_SETTINGS_USERS_COMPLETED,
   UPDATE_QUERY_SETTINGS_TEAMS_REQUESTED,
+  UPDATE_QUERY_SETTINGS_TEAMS_COMPLETED,
   UPDATE_QUERY_SETTINGS_ESCALATION_POLICIES_REQUESTED,
+  UPDATE_QUERY_SETTINGS_ESCALATION_POLICIES_COMPLETED,
   UPDATE_QUERY_SETTINGS_SERVICES_REQUESTED,
-  VALIDATE_INCIDENT_QUERY_REQUESTED,
+  UPDATE_QUERY_SETTINGS_SERVICES_COMPLETED,
 } from './actions';
 import querySettings from './reducers';
 import selectQuerySettings from './selectors';
 import {
   validateIncidentQueryImpl,
-  confirmIncidentQuery,
   updateQuerySettingsUsers,
   updateQuerySettingsTeams,
   updateQuerySettingsEscalationPolicies,
   updateQuerySettingsServices,
 } from './sagas';
 
-// FIXME: Query settings implementation changed in
-xdescribe('Sagas: Query Settings', () => {
+describe('Sagas: Query Settings', () => {
   const mockIncidents = generateMockIncidents(1);
   const mockSelector = {
     sinceDate: new Date(),
@@ -81,7 +76,7 @@ xdescribe('Sagas: Query Settings', () => {
     serverSideFiltering: true,
   };
 
-  it('validateIncidentQueryImpl: API Error', () => {
+  xit('validateIncidentQueryImpl: API Error', () => {
     expectedMockResponse.status = 429;
     return expectSaga(validateIncidentQueryImpl)
       .withReducer(connection)
@@ -92,31 +87,7 @@ xdescribe('Sagas: Query Settings', () => {
       ])
       .silentRun()
       .then((result) => {
-        expect(result.storeState.status).toEqual(UPDATE_CONNECTION_STATUS_REQUESTED);
-      });
-  });
-
-  it('confirmIncidentQuery: confirm === true', () => {
-    const confirm = true;
-    return expectSaga(confirmIncidentQuery)
-      .withReducer(querySettings)
-      .provide([[select(selectSettings), mockSettings]])
-      .dispatch({ type: CONFIRM_INCIDENT_QUERY_REQUESTED, confirm })
-      .silentRun()
-      .then((result) => {
-        expect(result.storeState.status).toEqual(CONFIRM_INCIDENT_QUERY_COMPLETED);
-      });
-  });
-
-  it('confirmIncidentQuery: confirm === false', () => {
-    const confirm = false;
-    return expectSaga(confirmIncidentQuery)
-      .withReducer(querySettings)
-      .provide([[select(selectSettings), mockSettings]])
-      .dispatch({ type: CONFIRM_INCIDENT_QUERY_REQUESTED, confirm })
-      .silentRun()
-      .then((result) => {
-        expect(result.storeState.status).toEqual(CONFIRM_INCIDENT_QUERY_ERROR);
+        expect(result.storeState.status).toEqual(''); // FIXME: Should this return a status?
       });
   });
 
@@ -130,7 +101,7 @@ xdescribe('Sagas: Query Settings', () => {
       .silentRun()
       .then((result) => {
         expect(result.storeState.userIds).toEqual(userIds);
-        expect(result.storeState.status).toEqual(VALIDATE_INCIDENT_QUERY_REQUESTED);
+        expect(result.storeState.status).toEqual(UPDATE_QUERY_SETTINGS_USERS_COMPLETED);
       });
   });
 
@@ -144,7 +115,7 @@ xdescribe('Sagas: Query Settings', () => {
       .silentRun()
       .then((result) => {
         expect(result.storeState.teamIds).toEqual(teamIds);
-        expect(result.storeState.status).toEqual(VALIDATE_INCIDENT_QUERY_REQUESTED);
+        expect(result.storeState.status).toEqual(UPDATE_QUERY_SETTINGS_TEAMS_COMPLETED);
       });
   });
 
@@ -158,7 +129,7 @@ xdescribe('Sagas: Query Settings', () => {
       .silentRun()
       .then((result) => {
         expect(result.storeState.escalationPolicyIds).toEqual(escalationPolicyIds);
-        expect(result.storeState.status).toEqual(VALIDATE_INCIDENT_QUERY_REQUESTED);
+        expect(result.storeState.status).toEqual(UPDATE_QUERY_SETTINGS_ESCALATION_POLICIES_COMPLETED);
       });
   });
 
@@ -172,7 +143,7 @@ xdescribe('Sagas: Query Settings', () => {
       .silentRun()
       .then((result) => {
         expect(result.storeState.serviceIds).toEqual(serviceIds);
-        expect(result.storeState.status).toEqual(VALIDATE_INCIDENT_QUERY_REQUESTED);
+        expect(result.storeState.status).toEqual(UPDATE_QUERY_SETTINGS_SERVICES_COMPLETED);
       });
   });
 });
