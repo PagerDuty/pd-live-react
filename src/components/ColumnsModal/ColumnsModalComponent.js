@@ -205,7 +205,7 @@ const TableColumnsModalComponent = () => {
                 <Heading size="sm">Selected</Heading>
               </CardHeader>
               <CardBody>
-                <Box ref={drop}>
+                <Box id="selected-columns-card-body" ref={drop}>
                   {selectedColumns.map((column) => (
                     <DraggableColumnsModalItem
                       key={columnValue(column)}
@@ -226,10 +226,10 @@ const TableColumnsModalComponent = () => {
             </Card>
             <Card size="sm">
               <CardHeader>
-                <Heading size="sm">Available</Heading>
+                <Heading size="sm">{t('Available')}</Heading>
               </CardHeader>
               <CardBody>
-                <Box>
+                <Box id="available-columns-card-body">
                   {unselectedColumns.map((column) => (
                     <ColumnsModalItem
                       key={columnValue(column)}
@@ -243,7 +243,7 @@ const TableColumnsModalComponent = () => {
             </Card>
             <Card size="sm">
               <CardHeader>
-                <Heading size="sm">Custom</Heading>
+                <Heading size="sm">{t('Custom')}</Heading>
               </CardHeader>
               <CardBody>
                 <Box id="custom-columns-card-body">
@@ -262,7 +262,7 @@ const TableColumnsModalComponent = () => {
                     onChange={validateInput}
                     m={1}
                     w="30%"
-                    placeholder="Header"
+                    placeholder={t('Header')}
                     size="sm"
                   />
                   <Input
@@ -270,7 +270,7 @@ const TableColumnsModalComponent = () => {
                     onChange={validateInput}
                     m={1}
                     w="60%"
-                    placeholder="Accessor Path"
+                    placeholder={t('Accessor Path')}
                     size="sm"
                   />
                   <Button
@@ -284,7 +284,7 @@ const TableColumnsModalComponent = () => {
                     m={1}
                     variant="solid"
                     colorScheme="blue"
-                    aria-label="Add custom column"
+                    aria-label={t('Add custom column')}
                     rightIcon={<AddIcon />}
                     size="sm"
                   >
@@ -309,10 +309,10 @@ const TableColumnsModalComponent = () => {
               });
             }}
           >
-            OK
+            {t('OK')}
           </Button>
           <Button variant="ghost" onClick={toggleColumnsModal}>
-            Cancel
+            {t('Cancel')}
           </Button>
         </ModalFooter>
       </ModalContent>
