@@ -59,7 +59,6 @@ import {
   setDefaultSinceDateTenor as setDefaultSinceDateTenorConnected,
   setMaxIncidentsLimit as setMaxIncidentsLimitConnected,
   setMaxRateLimit as setMaxRateLimitConnected,
-  // setDarkMode as setDarkModeConnected,
   setServerSideFiltering as setServerSideFilteringConnected,
   setSearchAllCustomDetails as setSearchAllCustomDetailsConnected,
   setRespondersInEpFilter as setRespondersInEpFilterConnected,
@@ -71,17 +70,12 @@ const SettingsModalComponent = () => {
   } = useTranslation();
 
   const toast = useToast();
-  // const {
-  //   colorMode,
-  //   toggleColorMode,
-  // } = useColorMode();
 
   const {
     displaySettingsModal,
     defaultSinceDateTenor,
     maxIncidentsLimit,
     maxRateLimit,
-    // darkMode,
     serverSideFiltering,
     searchAllCustomDetails,
     respondersInEpFilter,

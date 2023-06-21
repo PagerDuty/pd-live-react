@@ -7,10 +7,6 @@
   top: 5px;
 }
 
-body.dark-mode .querying-incidents {
-  color: $pd-brand-gray-light;
-}
-
 /* Empty Incidents */
 .empty-incidents {
   height: 500px;
@@ -23,25 +19,6 @@ body.dark-mode .querying-incidents {
 
 body.dark-mode .empty-incidents-badge {
   color: $pd-brand-gray-light;
-}
-
-/* Table Positioning */
-.incident-table {
-  margin-top: 10px;
-  overflow-x: scroll;
-  overflow-y: scroll;
-}
-
-.incident-table-settings-btn {
-  position: relative;
-  float: right;
-  background-color: $pd-brand-gray-dark;
-}
-
-.incident-table-settings-ctr {
-  position: absolute;
-  width: 100%;
-  right: 10px;
 }
 
 /* Priority Pill */
@@ -61,20 +38,6 @@ body.dark-mode .empty-incidents-badge {
   border-radius: 4px;
   position: relative;
   left: 5px;
-}
-
-.priority-label-dropdown {
-  display: block;
-  position: relative;
-  top: 10px;
-  text-align: center;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  font-weight: 700;
-  font-size: 18px;
-  white-space: nowrap;
-  padding: 5px 10px 3px;
-  border-radius: 5px;
 }
 
 /* Status Badge */

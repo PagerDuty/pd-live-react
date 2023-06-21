@@ -42,8 +42,6 @@ import {
   TRIGGERED, ACKNOWLEDGED, RESOLVED, filterIncidentsByField,
 } from 'util/incidents';
 
-import './MergeModalComponent.scss';
-
 // const animatedComponents = makeAnimated();
 
 const MergeModalComponent = () => {

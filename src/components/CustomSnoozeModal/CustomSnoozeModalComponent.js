@@ -25,8 +25,6 @@ import {
   TRIGGERED, ACKNOWLEDGED, filterIncidentsByField,
 } from 'util/incidents';
 
-import './CustomSnoozeModalComponent.scss';
-
 const CustomSnoozeModalComponent = ({
   toggleDisplayCustomSnoozeModal,
   snooze,

@@ -33,8 +33,6 @@ import {
   getIncidentNotesAsync as getIncidentNotesAsyncConnected,
 } from 'redux/incidents/actions';
 
-import './GlobalSearchComponent.scss';
-
 const GlobalSearchComponent = () => {
   const searchQuery = useSelector((state) => state.querySettings.searchQuery);
   const {
