@@ -58,8 +58,6 @@ import {
   UPDATE_SEARCH_QUERY_COMPLETED,
   VALIDATE_INCIDENT_QUERY_REQUESTED,
   VALIDATE_INCIDENT_QUERY_COMPLETED,
-  UPDATE_TOTAL_INCIDENTS_FROM_QUERY_REQUESTED,
-  UPDATE_TOTAL_INCIDENTS_FROM_QUERY_COMPLETED,
   CONFIRM_INCIDENT_QUERY_REQUESTED,
   CONFIRM_INCIDENT_QUERY_COMPLETED,
   CONFIRM_INCIDENT_QUERY_ERROR,
@@ -328,20 +326,6 @@ export function* validateIncidentQueryImpl() {
       connectionStatusMessage: e.message,
     });
   }
-}
-
-export function* updateTotalIncidentsFromQuery() {
-  yield takeLatest(UPDATE_TOTAL_INCIDENTS_FROM_QUERY_REQUESTED, updateTotalIncidentsFromQueryImpl);
-}
-
-export function* updateTotalIncidentsFromQueryImpl(action) {
-  const {
-    totalIncidentsFromQuery,
-  } = action;
-  yield put({
-    type: UPDATE_TOTAL_INCIDENTS_FROM_QUERY_COMPLETED,
-    totalIncidentsFromQuery,
-  });
 }
 
 export function* confirmIncidentQuery() {

@@ -27,8 +27,6 @@ import {
   UPDATE_SEARCH_QUERY_COMPLETED,
   VALIDATE_INCIDENT_QUERY_REQUESTED,
   VALIDATE_INCIDENT_QUERY_COMPLETED,
-  UPDATE_TOTAL_INCIDENTS_FROM_QUERY_REQUESTED,
-  UPDATE_TOTAL_INCIDENTS_FROM_QUERY_COMPLETED,
   CONFIRM_INCIDENT_QUERY_REQUESTED,
   CONFIRM_INCIDENT_QUERY_COMPLETED,
   CONFIRM_INCIDENT_QUERY_ERROR,
@@ -135,15 +133,6 @@ const querySettings = produce(
         draft.status = VALIDATE_INCIDENT_QUERY_COMPLETED;
         break;
 
-      case UPDATE_TOTAL_INCIDENTS_FROM_QUERY_REQUESTED:
-        draft.status = UPDATE_TOTAL_INCIDENTS_FROM_QUERY_REQUESTED;
-        break;
-
-      case UPDATE_TOTAL_INCIDENTS_FROM_QUERY_COMPLETED:
-        draft.totalIncidentsFromQuery = action.totalIncidentsFromQuery;
-        draft.status = UPDATE_TOTAL_INCIDENTS_FROM_QUERY_COMPLETED;
-        break;
-
       case CONFIRM_INCIDENT_QUERY_REQUESTED:
         draft.status = CONFIRM_INCIDENT_QUERY_REQUESTED;
         draft.error = null;
@@ -177,7 +166,6 @@ const querySettings = produce(
     serviceIds: [],
     userIds: [],
     searchQuery: '',
-    totalIncidentsFromQuery: 0,
     status: null,
     fetchingData: false,
     error: null,
