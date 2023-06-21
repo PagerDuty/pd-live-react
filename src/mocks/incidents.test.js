@@ -99,7 +99,7 @@ export const generateMockNotes = (num) => Array.from({ length: num }, () => gene
 
 const generateMockIncident = () => {
   // Generate Faker stubs for incident (slimmed down)
-  const incidentNumber = Number(faker.random.numeric(5));
+  const incidentNumber = Number(faker.string.numeric(5));
   const title = faker.lorem.words(20);
   const status = INCIDENT_STATES[Math.floor(Math.random() * INCIDENT_STATES.length)];
   const incidentKey = faker.string.alphanumeric(32);
