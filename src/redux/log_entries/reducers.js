@@ -41,10 +41,6 @@ const logEntries = produce(
       case UPDATE_RECENT_LOG_ENTRIES_COMPLETED:
         draft.fetchingData = false;
         draft.status = UPDATE_RECENT_LOG_ENTRIES_COMPLETED;
-        // draft.recentLogEntries = action.recentLogEntries;
-        // draft.addList = action.addList;
-        // draft.updateList = action.updateList;
-        // draft.removeList = action.removeList;
         break;
 
       case UPDATE_RECENT_LOG_ENTRIES_ERROR:

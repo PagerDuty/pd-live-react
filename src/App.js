@@ -39,7 +39,7 @@ import {
 } from 'redux/incidents/actions';
 import {
   getLogEntriesAsync as getLogEntriesAsyncConnected,
-  // cleanRecentLogEntriesAsync as cleanRecentLogEntriesAsyncConnected,
+  cleanRecentLogEntriesAsync as cleanRecentLogEntriesAsyncConnected,
 } from 'redux/log_entries/actions';
 import {
   getServicesAsync as getServicesAsyncConnected,
@@ -103,7 +103,7 @@ const App = () => {
   const getEscalationPoliciesAsync = () => dispatch(getEscalationPoliciesAsyncConnected());
   const getResponsePlaysAsync = () => dispatch(getResponsePlaysAsyncConnected());
   const getLogEntriesAsync = (since) => dispatch(getLogEntriesAsyncConnected(since));
-  // const cleanRecentLogEntriesAsync = () => dispatch(cleanRecentLogEntriesAsyncConnected());
+  const cleanRecentLogEntriesAsync = () => dispatch(cleanRecentLogEntriesAsyncConnected());
   const getIncidentsAsync = () => dispatch(getIncidentsAsyncConnected());
 
   const darkMode = useSelector((state) => state.settings.darkMode);
@@ -195,14 +195,14 @@ const App = () => {
   );
 
   // Setup log entry clearing
-  // useEffect(() => {
-  //   const clearingInterval = setInterval(() => {
-  //     if (userAuthorized) {
-  //       cleanRecentLogEntriesAsync();
-  //     }
-  //   }, LOG_ENTRIES_CLEARING_INTERVAL_SECONDS * 1000);
-  //   return () => clearInterval(clearingInterval);
-  // }, [userAuthorized]);
+  useEffect(() => {
+    const clearingInterval = setInterval(() => {
+      if (userAuthorized) {
+        cleanRecentLogEntriesAsync();
+      }
+    }, 60 * 60 * 1000);
+    return () => clearInterval(clearingInterval);
+  }, [userAuthorized]);
 
   // Setup queue stats update for status beacon tooltip
   useEffect(() => {

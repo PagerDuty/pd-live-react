@@ -122,10 +122,24 @@ export function* cleanRecentLogEntriesAsync() {
 }
 
 export function* cleanRecentLogEntries() {
+  const {
+    recentLogEntries,
+  } = yield select(selectLogEntries);
+
+  // filter recentLogEntries to include only those that are less than 4 hours old
+  // recentLogEntries has the format { logEntryId: date }
+  const recentLogEntriesFiltered = Object.keys(recentLogEntries)
+    .filter((x) => new Date(recentLogEntries[x]) > new Date(new Date() - 4 * 60 * 60 * 1000))
+    .reduce((obj, key) => {
+      // eslint-disable-next-line no-param-reassign
+      obj[key] = recentLogEntries[key];
+      return obj;
+    }, {});
+
   try {
     yield put({
       type: CLEAN_RECENT_LOG_ENTRIES_COMPLETED,
-      recentLogEntries: {},
+      recentLogEntries: recentLogEntriesFiltered,
     });
   } catch (e) {
     yield put({ type: CLEAN_RECENT_LOG_ENTRIES_ERROR, message: e.message });
