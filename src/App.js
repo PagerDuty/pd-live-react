@@ -1,20 +1,29 @@
 import {
-  useEffect,
+  useEffect, useRef,
 } from 'react';
 import {
-  connect,
+  useSelector, useDispatch,
 } from 'react-redux';
+
 import {
-  Container,
-} from 'react-bootstrap';
+  DndProvider,
+} from 'react-dnd';
+import {
+  HTML5Backend,
+} from 'react-dnd-html5-backend';
+
+import {
+  Box, Flex,
+} from '@chakra-ui/react';
+
 import moment from 'moment';
 
 import AuthComponent from 'components/Auth/AuthComponent';
 import UnauthorizedModalComponent from 'components/UnauthorizedModal/UnauthorizedModalComponent';
 import DisclaimerModalComponent from 'components/DisclaimerModal/DisclaimerModalComponent';
 import NavigationBarComponent from 'components/NavigationBar/NavigationBarComponent';
-import QuerySettingsComponent from 'components/QuerySettings/QuerySettingsComponent';
 import SettingsModalComponent from 'components/SettingsModal/SettingsModalComponent';
+import ColumnsModalComponent from 'components/ColumnsModal/ColumnsModalComponent';
 import IncidentTableComponent from 'components/IncidentTable/IncidentTableComponent';
 import IncidentActionsComponent from 'components/IncidentActions/IncidentActionsComponent';
 import ActionAlertsModalComponent from 'components/ActionAlertsModal/ActionAlertsModalComponent';
@@ -23,10 +32,10 @@ import AddNoteModalComponent from 'components/AddNoteModal/AddNoteModalComponent
 import ReassignModalComponent from 'components/ReassignModal/ReassignModalComponent';
 import AddResponderModalComponent from 'components/AddResponderModal/AddResponderModalComponent';
 import MergeModalComponent from 'components/MergeModal/MergeModalComponent';
-import ConfirmQueryModalComponent from 'components/ConfirmQueryModal/ConfirmQueryModalComponent';
 
 import {
-  refreshIncidentsAsync as refreshIncidentsAsyncConnected,
+  getIncidentsAsync as getIncidentsAsyncConnected,
+  // refreshIncidentsAsync as refreshIncidentsAsyncConnected,
 } from 'redux/incidents/actions';
 import {
   getLogEntriesAsync as getLogEntriesAsyncConnected,
@@ -59,11 +68,9 @@ import {
 import {
   startMonitoring as startMonitoringConnected,
 } from 'redux/monitoring/actions';
+
 import {
-  store,
-} from 'redux/store';
-import {
-  limiter,
+  getLimiterStats,
 } from 'util/pd-api-wrapper';
 
 import {
@@ -71,63 +78,54 @@ import {
   PD_OAUTH_CLIENT_SECRET,
   PD_REQUIRED_ABILITY,
   LOG_ENTRIES_POLLING_INTERVAL_SECONDS,
-  LOG_ENTRIES_CLEARING_INTERVAL_SECONDS,
+  // TODO: Implement log entries clearing
+  // LOG_ENTRIES_CLEARING_INTERVAL_SECONDS,
   DEBUG_DISABLE_POLLING,
 } from 'config/constants';
 
 import 'App.scss';
 import 'moment/min/locales.min';
 
-const App = ({
-  state,
-  startMonitoring,
-  userAuthorize,
-  checkAbilities,
-  checkConnectionStatus,
-  updateQueueStats,
-  getServicesAsync,
-  getTeamsAsync,
-  getPrioritiesAsync,
-  getUsersAsync,
-  getEscalationPoliciesAsync,
-  getResponsePlaysAsync,
-  getLogEntriesAsync,
-  cleanRecentLogEntriesAsync,
-  refreshIncidentsAsync,
-}) => {
+const App = () => {
   // Verify if session token is present
   const token = sessionStorage.getItem('pd_access_token');
-  const {
-    autoRefreshInterval, darkMode,
-  } = state.settings;
+
+  const dispatch = useDispatch();
+  const startMonitoring = () => dispatch(startMonitoringConnected());
+  const userAuthorize = () => dispatch(userAuthorizeConnected());
+  const checkAbilities = () => dispatch(checkAbilitiesConnected());
+  const checkConnectionStatus = () => dispatch(checkConnectionStatusConnected());
+  const updateQueueStats = (queueStats) => dispatch(updateQueueStatsConnected(queueStats));
+  const getServicesAsync = (teamIds) => dispatch(getServicesAsyncConnected(teamIds));
+  const getTeamsAsync = () => dispatch(getTeamsAsyncConnected());
+  const getPrioritiesAsync = () => dispatch(getPrioritiesAsyncConnected());
+  const getUsersAsync = (teamIds) => dispatch(getUsersAsyncConnected(teamIds));
+  const getEscalationPoliciesAsync = () => dispatch(getEscalationPoliciesAsyncConnected());
+  const getResponsePlaysAsync = () => dispatch(getResponsePlaysAsyncConnected());
+  const getLogEntriesAsync = (since) => dispatch(getLogEntriesAsyncConnected(since));
+  const cleanRecentLogEntriesAsync = () => dispatch(cleanRecentLogEntriesAsyncConnected());
+  const getIncidentsAsync = () => dispatch(getIncidentsAsyncConnected());
+
+  const darkMode = useSelector((state) => state.settings.darkMode);
+  const abilities = useSelector((state) => state.connection.abilities);
+  const userAuthorized = useSelector((state) => state.users.userAuthorized);
+  const userAcceptedDisclaimer = useSelector((state) => state.users.userAcceptedDisclaimer);
+  const currentUserLocale = useSelector((state) => state.users.currentUserLocale);
+  const fetchingIncidents = useSelector((state) => state.incidents.fetchingIncidents);
+  const fetchingIncidentNotes = useSelector((state) => state.incidents.fetchingIncidentNotes);
+  const fetchingIncidentAlerts = useSelector((state) => state.incidents.fetchingIncidentAlerts);
+  const refreshingIncidents = useSelector((state) => state.incidents.refreshingIncidents);
+  const lastFetchDate = useSelector((state) => state.incidents.lastFetchDate);
+  const queryError = useSelector((state) => state.querySettings.error);
 
   if (darkMode) {
     document.body.classList.add('dark-mode');
   }
 
-  if (!token) {
-    return (
-      <div className="App">
-        <AuthComponent clientId={PD_OAUTH_CLIENT_ID} clientSecret={PD_OAUTH_CLIENT_SECRET} />
-      </div>
-    );
-  }
-
   // Begin monitoring and load core objects from API
-  const {
-    userAuthorized, userAcceptedDisclaimer, currentUserLocale,
-  } = state.users;
-  const {
-    fetchingIncidents,
-    fetchingIncidentNotes,
-    fetchingIncidentAlerts,
-    refreshingIncidents,
-    lastFetchDate,
-  } = state.incidents;
-  const queryError = state.querySettings.error;
   useEffect(() => {
     userAuthorize();
-    if (userAuthorized) {
+    if (token && userAuthorized) {
       startMonitoring();
       checkAbilities();
       getUsersAsync();
@@ -137,6 +135,8 @@ const App = ({
       getResponsePlaysAsync();
       getPrioritiesAsync();
       // NB: Get incidents, notes, and alerts are implicitly done from query now
+      // not anymore
+      getIncidentsAsync();
       checkConnectionStatus();
     }
   }, [userAuthorized]);
@@ -150,12 +150,16 @@ const App = ({
   useEffect(
     () => {
       let useLastFetchDate = true;
-      const pollingInterval = setInterval(() => {
+      setTimeout(() => {
         checkAbilities();
+      }, 10000);
+      const pollingInterval = setInterval(() => {
+        // TODO: check abilities but less frequently
+        // checkAbilities();
         checkConnectionStatus();
-        const {
-          abilities,
-        } = store.getState().connection;
+        // const {
+        //   abilities,
+        // } = state.connection;
         if (userAuthorized && abilities.includes(PD_REQUIRED_ABILITY) && !queryError) {
           // Determine lookback based on last fetch/refresh of incidents
           if (
@@ -196,7 +200,7 @@ const App = ({
       if (userAuthorized) {
         cleanRecentLogEntriesAsync();
       }
-    }, LOG_ENTRIES_CLEARING_INTERVAL_SECONDS * 1000);
+    }, 60 * 60 * 1000);
     return () => clearInterval(clearingInterval);
   }, [userAuthorized]);
 
@@ -204,26 +208,23 @@ const App = ({
   useEffect(() => {
     const queueStateInterval = setInterval(() => {
       if (userAuthorized) {
-        updateQueueStats(limiter.counts());
+        updateQueueStats(getLimiterStats());
       }
-    }, 1000);
+    }, 2000);
     return () => clearInterval(queueStateInterval);
   }, [userAuthorized]);
 
-  // Setup auto-refresh for incidents
-  useEffect(() => {
-    const refreshInterval = setInterval(() => {
-      checkAbilities();
-      checkConnectionStatus();
-      const {
-        abilities,
-      } = store.getState().connection;
-      if (userAuthorized && abilities.includes(PD_REQUIRED_ABILITY) && !queryError) {
-        refreshIncidentsAsync();
-      }
-    }, autoRefreshInterval * 60 * 1000);
-    return () => clearInterval(refreshInterval);
-  }, [userAuthorized, queryError, autoRefreshInterval, fetchingIncidents]);
+  const headerRef = useRef(null);
+  const mainRef = useRef(null);
+  const footerRef = useRef(null);
+
+  if (!token) {
+    return (
+      <div className="App">
+        <AuthComponent clientId={PD_OAUTH_CLIENT_ID} clientSecret={PD_OAUTH_CLIENT_SECRET} />
+      </div>
+    );
+  }
 
   // Display disclaimer modal
   if (!userAcceptedDisclaimer) {
@@ -245,41 +246,29 @@ const App = ({
 
   return (
     <div className="App">
-      <NavigationBarComponent />
-      <Container fluid>
-        <QuerySettingsComponent />
-        <IncidentTableComponent />
-        <SettingsModalComponent />
-        <IncidentActionsComponent />
-        <ActionAlertsModalComponent />
-        <CustomSnoozeModalComponent />
-        <AddNoteModalComponent />
-        <ReassignModalComponent />
-        <AddResponderModalComponent />
-        <MergeModalComponent />
-        <ConfirmQueryModalComponent />
-      </Container>
+      <Box position="fixed" w="100%" h="100%" overflow="hidden">
+        <Box as="header" top={0} w="100%" pb={1} ref={headerRef}>
+          <NavigationBarComponent />
+        </Box>
+        <Box ref={mainRef} as="main" id="main">
+          <IncidentTableComponent headerRef={headerRef} mainRef={mainRef} footerRef={footerRef} />
+          <SettingsModalComponent />
+          <DndProvider backend={HTML5Backend}>
+            <ColumnsModalComponent />
+          </DndProvider>
+          <ActionAlertsModalComponent />
+          <CustomSnoozeModalComponent />
+          <AddNoteModalComponent />
+          <ReassignModalComponent />
+          <AddResponderModalComponent />
+          <MergeModalComponent />
+        </Box>
+        <Flex as="footer" position="fixed" bottom={0} w="100%" zIndex="1" pt={1} ref={footerRef}>
+          <IncidentActionsComponent />
+        </Flex>
+      </Box>
     </div>
   );
 };
 
-const mapStateToProps = (state) => ({ state });
-
-const mapDispatchToProps = (dispatch) => ({
-  startMonitoring: () => dispatch(startMonitoringConnected()),
-  userAuthorize: () => dispatch(userAuthorizeConnected()),
-  checkAbilities: () => dispatch(checkAbilitiesConnected()),
-  checkConnectionStatus: () => dispatch(checkConnectionStatusConnected()),
-  updateQueueStats: (queueStats) => dispatch(updateQueueStatsConnected(queueStats)),
-  getServicesAsync: (teamIds) => dispatch(getServicesAsyncConnected(teamIds)),
-  getTeamsAsync: () => dispatch(getTeamsAsyncConnected()),
-  getPrioritiesAsync: () => dispatch(getPrioritiesAsyncConnected()),
-  getUsersAsync: (teamIds) => dispatch(getUsersAsyncConnected(teamIds)),
-  getEscalationPoliciesAsync: () => dispatch(getEscalationPoliciesAsyncConnected()),
-  getResponsePlaysAsync: () => dispatch(getResponsePlaysAsyncConnected()),
-  getLogEntriesAsync: (since) => dispatch(getLogEntriesAsyncConnected(since)),
-  cleanRecentLogEntriesAsync: () => dispatch(cleanRecentLogEntriesAsyncConnected()),
-  refreshIncidentsAsync: () => dispatch(refreshIncidentsAsyncConnected()),
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(App);
+export default App;

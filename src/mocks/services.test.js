@@ -4,7 +4,7 @@ import {
 
 const generateMockService = () => {
   // Generate Faker stubs for service
-  const id = faker.random.alphaNumeric(7);
+  const id = faker.string.alphanumeric(7);
   const serviceName = faker.commerce.product();
   return {
     id,

@@ -8,14 +8,26 @@ import {
 } from 'redux/store';
 
 import {
+  resetLimiterWithRateLimit,
+} from 'util/pd-api-wrapper';
+
+import {
+  FETCH_INCIDENTS_REQUESTED, FILTER_INCIDENTS_LIST,
+} from 'redux/incidents/actions';
+
+import {
   TOGGLE_SETTINGS_REQUESTED,
   TOGGLE_SETTINGS_COMPLETED,
+  TOGGLE_COLUMNS_REQUESTED,
+  TOGGLE_COLUMNS_COMPLETED,
   SET_DEFAULT_SINCE_DATE_TENOR_REQUESTED,
   SET_DEFAULT_SINCE_DATE_TENOR_COMPLETED,
+  SET_SEARCH_ALL_CUSTOM_DETAILS_REQUESTED,
+  SET_SEARCH_ALL_CUSTOM_DETAILS_COMPLETED,
+  SET_RESPONDERS_IN_EP_FILTER_REQUESTED,
+  SET_RESPONDERS_IN_EP_FILTER_COMPLETED,
   SET_ALERT_CUSTOM_DETAIL_COLUMNS_REQUESTED,
   SET_ALERT_CUSTOM_DETAIL_COLUMNS_COMPLETED,
-  SET_MAX_INCIDENTS_LIMIT_REQUESTED,
-  SET_MAX_INCIDENTS_LIMIT_COMPLETED,
   SET_MAX_RATE_LIMIT_REQUESTED,
   SET_MAX_RATE_LIMIT_COMPLETED,
   SET_AUTO_ACCEPT_INCIDENTS_QUERY_REQUESTED,
@@ -26,6 +38,8 @@ import {
   CLEAR_LOCAL_CACHE_COMPLETED,
   SET_DARK_MODE_REQUESTED,
   SET_DARK_MODE_COMPLETED,
+  SET_SERVER_SIDE_FILTERING_REQUESTED,
+  SET_SERVER_SIDE_FILTERING_COMPLETED,
 } from './actions';
 
 import selectSettings from './selectors';
@@ -44,6 +58,20 @@ export function* toggleSettingsModalImpl() {
   });
 }
 
+export function* toggleColumnsModal() {
+  yield takeLatest(TOGGLE_COLUMNS_REQUESTED, toggleColumnsModalImpl);
+}
+
+export function* toggleColumnsModalImpl() {
+  const {
+    displayColumnsModal,
+  } = yield select(selectSettings);
+  yield put({
+    type: TOGGLE_COLUMNS_COMPLETED,
+    displayColumnsModal: !displayColumnsModal,
+  });
+}
+
 export function* setDefaultSinceDateTenor() {
   yield takeLatest(SET_DEFAULT_SINCE_DATE_TENOR_REQUESTED, setDefaultSinceDateTenorImpl);
 }
@@ -55,6 +83,37 @@ export function* setDefaultSinceDateTenorImpl(action) {
   yield put({
     type: SET_DEFAULT_SINCE_DATE_TENOR_COMPLETED,
     defaultSinceDateTenor,
+  });
+}
+
+export function* setSearchAllCustomDetails() {
+  yield takeLatest(SET_SEARCH_ALL_CUSTOM_DETAILS_REQUESTED, setSearchAllCustomDetailsImpl);
+}
+
+export function* setSearchAllCustomDetailsImpl(action) {
+  const {
+    searchAllCustomDetails,
+  } = action;
+  yield put({
+    type: SET_SEARCH_ALL_CUSTOM_DETAILS_COMPLETED,
+    searchAllCustomDetails,
+  });
+}
+
+export function* setRespondersInEpFilter() {
+  yield takeLatest(SET_RESPONDERS_IN_EP_FILTER_REQUESTED, setRespondersInEpFilterImpl);
+}
+
+export function* setRespondersInEpFilterImpl(action) {
+  const {
+    respondersInEpFilter,
+  } = action;
+  yield put({
+    type: SET_RESPONDERS_IN_EP_FILTER_COMPLETED,
+    respondersInEpFilter,
+  });
+  yield put({
+    type: FILTER_INCIDENTS_LIST,
   });
 }
 
@@ -72,20 +131,6 @@ export function* setAlertCustomDetailColumnsImpl(action) {
   });
 }
 
-export function* setMaxIncidentsLimit() {
-  yield takeLatest(SET_MAX_INCIDENTS_LIMIT_REQUESTED, setMaxIncidentsLimitImpl);
-}
-
-export function* setMaxIncidentsLimitImpl(action) {
-  const {
-    maxIncidentsLimit,
-  } = action;
-  yield put({
-    type: SET_MAX_INCIDENTS_LIMIT_COMPLETED,
-    maxIncidentsLimit,
-  });
-}
-
 export function* setMaxRateLimit() {
   yield takeLatest(SET_MAX_RATE_LIMIT_REQUESTED, setMaxRateLimitImpl);
 }
@@ -94,6 +139,7 @@ export function* setMaxRateLimitImpl(action) {
   const {
     maxRateLimit,
   } = action;
+  resetLimiterWithRateLimit(maxRateLimit);
   yield put({
     type: SET_MAX_RATE_LIMIT_COMPLETED,
     maxRateLimit,
@@ -155,5 +201,22 @@ export function* setDarkModeImpl(action) {
   yield put({
     type: SET_DARK_MODE_COMPLETED,
     darkMode,
+  });
+}
+
+export function* setServerSideFiltering() {
+  yield takeLatest(SET_SERVER_SIDE_FILTERING_REQUESTED, setServerSideFilteringImpl);
+}
+
+export function* setServerSideFilteringImpl(action) {
+  const {
+    serverSideFiltering,
+  } = action;
+  yield put({
+    type: FETCH_INCIDENTS_REQUESTED,
+  });
+  yield put({
+    type: SET_SERVER_SIDE_FILTERING_COMPLETED,
+    serverSideFiltering,
   });
 }

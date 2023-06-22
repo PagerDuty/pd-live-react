@@ -42,7 +42,7 @@ describe('PagerDuty Live', () => {
   });
 
   it('Renders the main application page', () => {
-    cy.get('.navbar-ctr').contains('Live Incidents Console');
+    cy.get('#navbar-ctr').contains('Live Incidents Console');
   });
 
   it('Renders the correct version from package.json', () => {
@@ -62,6 +62,8 @@ describe('PagerDuty Live', () => {
     cy.intercept('https://api.pagerduty.com/abilities', {
       abilities: ['teams', 'read_only_users', 'service_support_hours', 'urgencies'],
     }).as('getAbilities');
+    cy.visit('http://localhost:3000/pd-live-react');
+    acceptDisclaimer();
     cy.wait('@getAbilities', { timeout: 30000 });
 
     // The mock response will render an error in the application
@@ -73,10 +75,12 @@ describe('PagerDuty Live', () => {
   });
 
   it('Application indicates when polling is disabled through url parameter disable-polling', () => {
-    cy.visit('http://localhost:3000/pd-live-react?disable-polling=true');
+    cy.visit('http://localhost:3000/pd-live-react/?disable-polling=true');
+
     cy.get('.modal-title', { timeout: 30000 }).contains('Disclaimer & License');
-    cy.get('#disclaimer-agree-checkbox').click();
-    cy.get('#disclaimer-accept-button').click();
+    cy.get('#disclaimer-agree-checkbox').click({ force: true });
+    cy.get('#disclaimer-accept-button').click({ force: true });
+
     cy.get('.status-beacon-ctr').trigger('mouseover');
     cy.get('.status-beacon-connection').should('be.visible');
     cy.get('.status-beacon-connection').contains('Live updates disabled');
@@ -89,19 +93,22 @@ describe('PagerDuty Live', () => {
       .toISOString();
     const until = moment().set({ hour: 0, minute: 0, second: 0, millisecond: 0 }).toISOString();
     cy.visit(
-      `http://localhost:3000/pd-live-react?disable-polling=true&since=${since}&until=${until}`,
+      `http://localhost:3000/pd-live-react/?disable-polling=true&since=${since}&until=${until}`,
     );
 
     cy.get('.modal-title', { timeout: 30000 }).contains('Disclaimer & License');
-    cy.get('#disclaimer-agree-checkbox').click();
-    cy.get('#disclaimer-accept-button').click();
+    cy.get('#disclaimer-agree-checkbox').click({ force: true });
+    cy.get('#disclaimer-accept-button').click({ force: true });
 
     // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.wait(5000);
     cy.requestsCountByUrl(
       [
-        `https://api.pagerduty.com/incidents?since=${since}&until=${until}`,
-        '&limit=1&total=true&statuses[]=triggered&statuses[]=acknowledged',
+        'https://api.pagerduty.com/incidents',
+        '?limit=100&total=true&offset=0',
+        `&since=${since}&until=${until}`,
+        '&include[]=first_trigger_log_entries&include[]=external_references',
+        '&sort_by=created_at:desc&statuses[]=triggered&statuses[]=acknowledged',
         '&urgencies[]=high&urgencies[]=low',
       ].join(''),
     ).should('eq', 1);

@@ -19,7 +19,7 @@ module.exports = {
   },
   plugins: ['react', 'prettier', 'cypress'],
   rules: {
-    'max-len': [WARN, { code: 100, ignorePattern: '^import\\W.*', ignoreTrailingComments: true }],
+    'max-len': [WARN, { code: 120, ignorePattern: '^import\\W.*', ignoreTrailingComments: true }],
     'object-curly-newline': [
       WARN,
       { ObjectPattern: { multiline: true, minProperties: 1 }, ImportDeclaration: 'always' },

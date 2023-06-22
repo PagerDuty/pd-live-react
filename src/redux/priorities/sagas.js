@@ -10,7 +10,7 @@ import {
   UPDATE_QUERY_SETTING_INCIDENT_PRIORITY_REQUESTED,
 } from 'redux/query_settings/actions';
 import {
-  pd,
+  pdParallelFetch,
 } from 'util/pd-api-wrapper';
 
 import {
@@ -30,12 +30,7 @@ export function* getPrioritiesAsync() {
 
 export function* getPriorities() {
   try {
-    //  Create params and call pd lib
-    const response = yield call(pd.all, 'priorities');
-    if (response.status !== 200) {
-      throw Error(i18next.t('Unable to fetch priorities'));
-    }
-    const tempPriorities = response.resource;
+    const tempPriorities = yield call(pdParallelFetch, 'priorities');
 
     // Push an artificial priority (e.g. empty one)
     tempPriorities.push({ name: '--', id: '--', color: '000000' });

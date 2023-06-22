@@ -1,5 +1,9 @@
 /* eslint-disable max-len */
 // Define Action Types
+export const ACTION_REQUESTED = 'ACTION_REQUESTED';
+export const ACTION_COMPLETED = 'ACTION_COMPLETED';
+export const ACTION_ERROR = 'ACTION_ERROR';
+
 export const ACKNOWLEDGE_REQUESTED = 'ACKNOWLEDGE_REQUESTED';
 export const ACKNOWLEDGE_COMPLETED = 'ACKNOWLEDGE_COMPLETED';
 export const ACKNOWLEDGE_ERROR = 'ACKNOWLEDGE_ERROR';
@@ -59,6 +63,10 @@ export const SYNC_WITH_EXTERNAL_SYSTEM_REQUESTED = 'SYNC_WITH_EXTERNAL_SYSTEM_RE
 export const SYNC_WITH_EXTERNAL_SYSTEM_COMPLETED = 'SYNC_WITH_EXTERNAL_SYSTEM_COMPLETED';
 export const SYNC_WITH_EXTERNAL_SYSTEM_ERROR = 'SYNC_WITH_EXTERNAL_SYSTEM_ERROR';
 
+export const doAction = () => ({
+  type: ACTION_REQUESTED,
+});
+
 export const acknowledge = (incidents, displayModal = true) => ({
   type: ACKNOWLEDGE_REQUESTED,
   incidents,
@@ -113,11 +121,12 @@ export const toggleDisplayCustomSnoozeModal = () => ({
   type: TOGGLE_DISPLAY_CUSTOM_SNOOZE_MODAL_REQUESTED,
 });
 
-export const merge = (targetIncident, incidents, displayModal = true) => ({
+export const merge = (targetIncident, incidents, displayModal = true, addToTitleText) => ({
   type: MERGE_REQUESTED,
   targetIncident,
   incidents,
   displayModal,
+  addToTitleText,
 });
 
 export const toggleDisplayMergeModal = () => ({

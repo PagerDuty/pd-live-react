@@ -1,10 +1,12 @@
 /* eslint-disable no-await-in-loop */
 /* eslint-disable no-loop-func */
 
+// TODO: bubble error state up to UI
 import {
   api,
 } from '@pagerduty/pdjs';
 import axios from 'axios';
+
 import Bottleneck from 'bottleneck';
 
 import {
@@ -30,7 +32,7 @@ export const getPdAccessTokenObject = () => {
     tokenType = 'bearer';
   }
 
-  // Return object neeed for PD API helpers
+  // Return object needed for PD API helpers
   if (tokenType === 'bearer') {
     return {
       token,
@@ -43,10 +45,6 @@ export const getPdAccessTokenObject = () => {
 };
 
 export const pd = api(getPdAccessTokenObject());
-
-/*
-  Throttled version of Axios requests for direct API calls
-*/
 
 export const pdAxiosRequest = async (method, endpoint, params = {}, data = {}) => axios({
   method,
@@ -68,35 +66,45 @@ export const pdAxiosRequest = async (method, endpoint, params = {}, data = {}) =
 
 // Ref: https://www.npmjs.com/package/bottleneck#refresh-interval
 const limiterSettings = {
-  reservoir: 200,
-  reservoirRefreshAmount: 200,
-  reservoirRefreshInterval: 60 * 1000,
   maxConcurrent: 20,
+  minTime: Math.floor((60 / 200) * 1000),
 };
 
-// limiter needs to be a mutable export because we need it to get the
-// queue stats, and we have to reassign it when we clear the queue
+const limiter = new Bottleneck(limiterSettings);
 
-// eslint-disable-next-line import/no-mutable-exports
-export let limiter = new Bottleneck(limiterSettings);
+/*
+  Throttled version of Axios requests for direct API calls
+*/
+export const throttledPdAxiosRequest = (
+  method,
+  endpoint,
+  params = {},
+  data = {},
+  options = {
+    expiration: 60 * 1000,
+    priority: 5,
+  },
+) => limiter.schedule(
+  {
+    expiration: options.expiration || 60 * 1000,
+    priority: options.priority || 5,
+    id: `${method}-${endpoint}-${JSON.stringify(params)}-${Date.now()}`,
+  },
+  () => pdAxiosRequest(method, endpoint, params, data),
+);
 
-// throttledPdAxiosRequest needs to be a mutable export because when we
-// reset the limiter, we have to re-wrap pdAxiosRequest
+export const getLimiterStats = () => limiter.counts();
+export const getLimiter = () => limiter;
 
-// eslint-disable-next-line import/no-mutable-exports
-export let throttledPdAxiosRequest = limiter.wrap(pdAxiosRequest);
-
-// drop all the queued requests in the limiter - needed if we are getting
-// the list of incidents again but there are still outstanding requests
-// for notes, etc.
 export const resetLimiterWithRateLimit = async (limit = 200) => {
-  await limiter.stop({ dropWaitingJobs: true });
-  limiter = new Bottleneck({
+  // eslint-disable-next-line no-console
+  console.log(
+    `updating limiter with rate limit ${limit} => minTime ${Math.floor((60 / limit) * 1000)}`,
+  );
+  limiter.updateSettings({
     ...limiterSettings,
-    reservoir: limit,
-    reservoirRefreshAmount: limit,
+    minTime: Math.floor((60 / limit) * 1000),
   });
-  throttledPdAxiosRequest = limiter.wrap(pdAxiosRequest);
 };
 
 /*
@@ -110,11 +118,23 @@ const endpointIdentifier = (endpoint) => {
   return endpoint.split('/').pop();
 };
 
-export const pdParallelFetch = async (endpoint, params, progressCallback) => {
+export const pdParallelFetch = async (
+  endpoint,
+  params,
+  progressCallback,
+  options = {
+    priority: 5,
+  },
+) => {
   let requestParams = {
     limit: 100,
     total: true,
     offset: 0,
+  };
+
+  const axiosRequestOptions = {
+    expiration: 60 * 1000,
+    priority: options.priority,
   };
 
   if (params) requestParams = { ...requestParams, ...params };
@@ -122,7 +142,9 @@ export const pdParallelFetch = async (endpoint, params, progressCallback) => {
   let reversedSortOrder = false;
   if (endpoint.indexOf('log_entries') > -1) reversedSortOrder = true;
 
-  const firstPage = (await pdAxiosRequest('GET', endpoint, requestParams)).data;
+  const firstPage = (
+    await throttledPdAxiosRequest('GET', endpoint, requestParams, undefined, axiosRequestOptions)
+  ).data;
   const fetchedData = firstPage[endpointIdentifier(endpoint)];
 
   const promises = [];
@@ -132,7 +154,13 @@ export const pdParallelFetch = async (endpoint, params, progressCallback) => {
       offset < firstPage.total;
       offset += requestParams.limit
     ) {
-      const promise = throttledPdAxiosRequest('GET', endpoint, { ...requestParams, offset })
+      const promise = throttledPdAxiosRequest(
+        'GET',
+        endpoint,
+        { ...requestParams, offset },
+        undefined,
+        axiosRequestOptions,
+      )
         .then(({
           data,
         }) => {
@@ -149,7 +177,8 @@ export const pdParallelFetch = async (endpoint, params, progressCallback) => {
     }
   }
   await Promise.all(promises);
-  // eslint-disable-next-line max-len
-  fetchedData.sort((a, b) => (reversedSortOrder ? compareCreatedAt(b, a) : compareCreatedAt(a, b)));
+  if (!options.skipSort) {
+    fetchedData.sort((a, b) => (reversedSortOrder ? compareCreatedAt(b, a) : compareCreatedAt(a, b)));
+  }
   return fetchedData;
 };

@@ -5,7 +5,7 @@ import {
 import i18next from 'i18n';
 
 import {
-  pd,
+  pdParallelFetch,
 } from 'util/pd-api-wrapper';
 import {
   UPDATE_CONNECTION_STATUS_REQUESTED,
@@ -20,15 +20,11 @@ export function* getTeamsAsync() {
 
 export function* getTeams() {
   try {
-    //  Create params and call pd lib
-    const response = yield call(pd.all, 'teams', { data: { limit: 100 } });
-    if (response.status !== 200) {
-      throw Error(i18next.t('Unable to fetch teams'));
-    }
+    const teams = yield call(pdParallelFetch, 'teams');
 
     yield put({
       type: FETCH_TEAMS_COMPLETED,
-      teams: response.resource,
+      teams,
     });
   } catch (e) {
     // Handle API auth failure

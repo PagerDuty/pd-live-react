@@ -1,0 +1,17 @@
+@import 'assets/styles/pagerduty.scss';
+
+.date-picker {
+  background-color: transparent;
+  padding: var(--chakra-space-2);
+  font-size: var(--chakra-fontSizes-sm);
+  font-weight: var(--chakra-fontWeights-normal);
+  line-height: var(--chakra-lineHeights-normal);
+  color: var(--chakra-colors-gray-700);
+  border: 1px;
+  border-radius: var(--chakra-radii-md);
+  width: 8rem;
+}
+
+.react-datepicker-popper {
+  z-index: 2 !important;
+}

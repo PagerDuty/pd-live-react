@@ -20,8 +20,6 @@ import {
   reassign as reassignConnected,
 } from 'redux/incident_actions/actions';
 
-import './ReassignModalComponent.scss';
-
 const animatedComponents = makeAnimated();
 
 const ReassignModalComponent = ({

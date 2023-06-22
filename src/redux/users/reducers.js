@@ -75,6 +75,7 @@ const users = produce(
         draft.users = action.users;
         draft.usersMap = action.usersMap;
         draft.status = GET_USERS_COMPLETED;
+        draft.error = null;
         break;
 
       case GET_USERS_ERROR:
@@ -89,6 +90,7 @@ const users = produce(
       case GET_CURRENT_USER_COMPLETED:
         draft.currentUser = action.currentUser;
         draft.status = GET_CURRENT_USER_COMPLETED;
+        draft.error = null;
         break;
 
       case GET_CURRENT_USER_ERROR:

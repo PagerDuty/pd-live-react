@@ -1,35 +1,5 @@
 @import 'assets/styles/pagerduty.scss';
 
-.incident-actions-ctr {
-  position: absolute;
-  bottom: 0px;
-  width: 99.9%;
-  left: 0px;
-  padding-top: 10px;
-  padding-bottom: 5px;
-  border-top: 1px solid rgba(0, 0, 0, 0.125);
-  background-color: $pd-white;
-}
-
-body.dark-mode .incident-actions-ctr {
-  background-color: $pd-brand-gray-dark;
-  color: $pd-brand-white;
-}
-
-.action-button {
-  margin-right: 10px;
-}
-
-.action-icon {
-  position: relative;
-  display: inline-block;
-  padding-right: 10px;
-}
-
-.response-play-dropdown {
-  min-width: 200px;
-}
-
 .selected-incidents-ctr {
   display: flex;
   justify-content: flex-end;

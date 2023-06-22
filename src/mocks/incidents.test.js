@@ -8,19 +8,19 @@ import {
 
 const generateMockAlert = () => {
   // Generate Faker stubs for alert
-  const title = faker.random.words(20);
-  const alertKey = faker.random.alphaNumeric(32);
-  const alertId = faker.random.alphaNumeric(14);
+  const title = faker.lorem.words(20);
+  const alertKey = faker.string.alphanumeric(32);
+  const alertId = faker.string.alphanumeric(14);
   const createdAt = faker.date
-    .between('2020-01-01T00:00:00.000Z', '2022-01-01T00:00:00.000Z')
+    .between({ from: '2020-01-01T00:00:00.000Z', to: '2022-01-01T00:00:00.000Z' })
     .toISOString();
   const severity = faker.helpers.arrayElement(['info', 'warning', 'error', 'critical']);
   const ipv4 = faker.internet.ipv4();
-  const jobType = faker.name.jobType();
-  const component = faker.random.word();
+  const jobType = faker.person.jobType();
+  const component = faker.lorem.word();
   const quote = faker.commerce.productDescription();
   const message = faker.commerce.productDescription();
-  const uuid = faker.datatype.uuid();
+  const uuid = faker.string.uuid();
   const link = faker.internet.url();
   return {
     type: 'alert',
@@ -71,12 +71,12 @@ export const generateMockAlerts = (num) => Array.from({ length: num }, () => gen
 
 const generateMockNote = () => {
   // Generate Faker stubs for note
-  const noteId = faker.random.alphaNumeric(14);
-  const content = faker.random.words(20);
-  const userName = faker.name.fullName();
-  const userId = faker.random.alphaNumeric(7);
+  const noteId = faker.string.alphanumeric(14);
+  const content = faker.lorem.words(20);
+  const userName = faker.person.fullName();
+  const userId = faker.string.alphanumeric(7);
   const createdAt = faker.date
-    .between('2020-01-01T00:00:00.000Z', '2022-01-01T00:00:00.000Z')
+    .between({ from: '2020-01-01T00:00:00.000Z', to: '2022-01-01T00:00:00.000Z' })
     .toISOString();
   return {
     id: noteId,
@@ -99,15 +99,15 @@ export const generateMockNotes = (num) => Array.from({ length: num }, () => gene
 
 const generateMockIncident = () => {
   // Generate Faker stubs for incident (slimmed down)
-  const incidentNumber = Number(faker.random.numeric(5));
-  const title = faker.random.words(20);
+  const incidentNumber = Number(faker.string.numeric(5));
+  const title = faker.lorem.words(20);
   const status = INCIDENT_STATES[Math.floor(Math.random() * INCIDENT_STATES.length)];
-  const incidentKey = faker.random.alphaNumeric(32);
-  const incidentId = faker.random.alphaNumeric(14);
-  const escalationPolicyId = faker.random.alphaNumeric(7);
-  const serviceId = faker.random.alphaNumeric(7);
+  const incidentKey = faker.string.alphanumeric(32);
+  const incidentId = faker.string.alphanumeric(14);
+  const escalationPolicyId = faker.string.alphanumeric(7);
+  const serviceId = faker.string.alphanumeric(7);
   const createdAt = faker.date
-    .between('2020-01-01T00:00:00.000Z', '2022-01-01T00:00:00.000Z')
+    .between({ from: '2020-01-01T00:00:00.000Z', to: '2022-01-01T00:00:00.000Z' })
     .toISOString();
   return {
     incident_number: incidentNumber,

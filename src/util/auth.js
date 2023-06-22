@@ -75,9 +75,9 @@ export const getAuthURL = async (clientId, clientSecret, redirectURL, codeVerifi
   // base64 encode the challenge
   const challenge = base64Unicode(challengeBuffer);
   // build authUrl
-  const authUrl = 'https://app.pagerduty.com/oauth/authorize?'
+  const authUrl = 'https://identity.pagerduty.com/oauth/authorize?'
     + `client_id=${clientId}&`
-    // + `client_secret=${clientSecret}&`
+    + `client_secret=${clientSecret}&`
     + `redirect_uri=${redirectURL}&`
     + 'response_type=code&'
     + `code_challenge=${encodeURI(challenge)}&`
@@ -101,16 +101,30 @@ export const exchangeCodeForToken = async (
     return json;
   };
 
-  const requestTokenUrl = 'https://app.pagerduty.com/oauth/token?'
+  const requestTokenUrl = 'https://identity.pagerduty.com/oauth/token?'
     + 'grant_type=authorization_code&'
     + `code=${code}&`
     + `redirect_uri=${redirectURL}&`
     + `client_id=${clientId}&`
-    // + `client_secret=${clientSecret}&`
+    + `client_secret=${clientSecret}&`
     + `code_verifier=${codeVerifier}`;
   const data = await postData(requestTokenUrl, {});
   if (data.access_token) {
     return data.access_token;
   }
   return null;
+};
+
+// eslint-disable-next-line no-unused-vars
+export const revokeToken = async (token, clientId, clientSecret) => {
+  const revokeUrl = 'https://identity.pagerduty.com/oauth/revoke?'
+    + `token=${token}`
+    + `&client_id=${clientId}`
+    + `&client_secret=${clientSecret}`;
+  await fetch(revokeUrl, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+    },
+  });
 };

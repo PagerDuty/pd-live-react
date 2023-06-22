@@ -16,7 +16,7 @@ import {
 } from 'redux/incident_table/actions';
 
 import {
-  getIncidentByIdRequest, updateIncidentsList,
+  getIncidentByIdRequest, // updateIncidentsList,
 } from 'redux/incidents/sagas';
 
 import selectPriorities from 'redux/priorities/selectors';
@@ -40,6 +40,8 @@ import {
 } from 'util/pd-api-wrapper';
 import selectIncidentActions from './selectors';
 import {
+  ACTION_REQUESTED,
+  ACTION_COMPLETED,
   ACKNOWLEDGE_REQUESTED,
   ACKNOWLEDGE_COMPLETED,
   ACKNOWLEDGE_ERROR,
@@ -85,6 +87,20 @@ import {
   SYNC_WITH_EXTERNAL_SYSTEM_ERROR,
 } from './actions';
 
+import {
+  PROCESS_LOG_ENTRIES_COMPLETED, UPDATE_INCIDENTS,
+} from '../incidents/actions';
+
+export function* doAction() {
+  yield takeLatest(ACTION_REQUESTED, doActionImpl);
+}
+
+export function* doActionImpl() {
+  yield put({
+    type: ACTION_COMPLETED,
+  });
+}
+
 export function* acknowledgeAsync() {
   yield takeLatest(ACKNOWLEDGE_REQUESTED, acknowledge);
 }
@@ -117,7 +133,11 @@ export function* acknowledge(action) {
     if (response.ok) {
       yield put({
         type: ACKNOWLEDGE_COMPLETED,
-        acknowledgedIncidents: response.resource,
+        acknowledgedIncidents: response.data.incidents,
+      });
+      yield put({
+        type: UPDATE_INCIDENTS,
+        updatedIncidents: response.data.incidents,
       });
       if (displayModal) {
         const {
@@ -164,7 +184,11 @@ export function* escalate(action) {
     if (response.ok) {
       yield put({
         type: ESCALATE_COMPLETED,
-        escalatedIncidents: response.resource,
+        escalatedIncidents: response.data.incidents,
+      });
+      yield put({
+        type: UPDATE_INCIDENTS,
+        updatedIncidents: response.data.incidents,
       });
       if (displayModal) {
         const actionAlertsModalType = 'success';
@@ -227,8 +251,13 @@ export function* reassign(action) {
     if (response.ok) {
       yield put({
         type: REASSIGN_COMPLETED,
-        escalatedIncidents: response.resource,
+        reassignedIncidents: response.data.incidents,
       });
+      yield put({
+        type: UPDATE_INCIDENTS,
+        updatedIncidents: response.data.incidents,
+      });
+
       yield toggleDisplayReassignModalImpl();
       if (displayModal) {
         const actionAlertsModalType = 'success';
@@ -364,6 +393,11 @@ export function* snooze(action) {
         type: SNOOZE_COMPLETED,
         snoozedIncidents: responses,
       });
+      const updatedIncidents = responses.map((response) => response.resource);
+      yield put({
+        type: UPDATE_INCIDENTS,
+        updatedIncidents,
+      });
       if (displayModal) {
         const {
           actionAlertsModalType, actionAlertsModalMessage,
@@ -405,7 +439,7 @@ export function* mergeAsync() {
 export function* merge(action) {
   try {
     const {
-      targetIncident, incidents, displayModal,
+      targetIncident, incidents, displayModal, addToTitleText,
     } = action;
     const incidentsToBeMerged = [...incidents];
 
@@ -429,6 +463,17 @@ export function* merge(action) {
         mergedIncident: response.resource,
       });
       yield toggleDisplayMergeModalImpl();
+
+      const mergedIncident = response.resource;
+      const resolvedIncidents = incidentsToBeMerged.map((incident) => ({
+        id: incident.id,
+        status: RESOLVED,
+      }));
+      yield put({
+        type: UPDATE_INCIDENTS,
+        updatedIncidents: [...resolvedIncidents, mergedIncident],
+      });
+
       if (displayModal) {
         const actionAlertsModalType = 'success';
         const actionAlertsModalMessage = `${i18next.t('Incident')}(s) ${incidentsToBeMerged
@@ -439,6 +484,29 @@ export function* merge(action) {
       }
     } else {
       handleSingleAPIErrorResponse(response);
+    }
+
+    if (addToTitleText) {
+      const titleUpdates = incidentsToBeMerged.map((incident) => call(pd, {
+        method: 'put',
+        endpoint: `incidents/${incident.id}`,
+        data: {
+          incident: {
+            type: 'incident_reference',
+            title: `${addToTitleText} ${incident.title}`,
+          },
+        },
+      }));
+      const titleResponses = yield all(titleUpdates);
+      const successes = titleResponses.filter((r) => r.ok);
+      if (successes.length !== titleResponses.length) {
+        handleMultipleAPIErrorResponses(titleResponses.filter((r) => !r.ok));
+      }
+      const updatedIncidents = successes.map((r) => r.resource);
+      yield put({
+        type: UPDATE_INCIDENTS,
+        updatedIncidents,
+      });
     }
   } catch (e) {
     handleSagaError(MERGE_ERROR, e);
@@ -492,6 +560,10 @@ export function* resolve(action) {
       yield put({
         type: RESOLVE_COMPLETED,
         resolvedIncidents: response.resource,
+      });
+      yield put({
+        type: UPDATE_INCIDENTS,
+        updatedIncidents: response.data.incidents,
       });
       if (displayModal) {
         const {
@@ -554,6 +626,12 @@ export function* updatePriority(action) {
         type: UPDATE_PRIORITY_COMPLETED,
         updatedIncidentPriorities: responses,
       });
+      const updatedIncidents = responses.map((response) => response.resource);
+      yield put({
+        type: UPDATE_INCIDENTS,
+        updatedIncidents,
+      });
+
       if (displayModal) {
         const actionAlertsModalType = 'success';
         const actionAlertsModalMessage = `${i18next.t('Incident')}(s) ${selectedIncidents
@@ -731,15 +809,20 @@ export function* syncWithExternalSystem(action) {
         selectedRows: updatedSelectedRows,
       });
 
-      // Call Saga directly to update list (dispatch didn't work for some reason)
-      yield updateIncidentsList({
-        addList: [],
-        removeList: [],
-        updateList: updatedSelectedRows.map((incident) => ({
-          incident: { ...incident },
+      const incidentUpdatesMap = Object.assign(
+        {},
+        ...updatedSelectedRows.map((incident) => ({
+          [incident.id]: incident,
         })),
+      );
+      yield put({
+        type: PROCESS_LOG_ENTRIES_COMPLETED,
+        incidentUpdatesMap,
+        incidentAlertsMap: {},
+        incidentNotesMap: {},
+        incidentInsertList: [],
+        incidentAlertsUnlinkMap: {},
       });
-
       // Render modal
       yield put({
         type: SYNC_WITH_EXTERNAL_SYSTEM_COMPLETED,

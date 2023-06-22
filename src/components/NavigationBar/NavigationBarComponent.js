@@ -1,24 +1,53 @@
+import React, {
+  useCallback,
+} from 'react';
+
 import {
-  connect,
+  useSelector, useDispatch,
 } from 'react-redux';
-import {
-  Navbar, Nav, NavDropdown, Button,
-} from 'react-bootstrap';
 
 import {
   useTranslation,
 } from 'react-i18next';
 
-import GlobalSearchComponent from 'components/GlobalSearch/GlobalSearchComponent';
-
-import PD_APP_VERSION from 'config/version';
+import {
+  Box,
+  Collapse,
+  Flex,
+  IconButton,
+  Link,
+  Menu,
+  MenuButton,
+  MenuDivider,
+  MenuItem,
+  MenuList,
+  Text,
+  Tooltip,
+  useColorMode,
+  useDisclosure,
+} from '@chakra-ui/react';
 
 import {
-  toggleSettingsModal as toggleSettingsModalConnected,
-} from 'redux/settings/actions';
+  MoonIcon, SunIcon, ViewIcon, ViewOffIcon, HamburgerIcon,
+} from '@chakra-ui/icons';
+
+import {
+  PD_OAUTH_CLIENT_ID, PD_OAUTH_CLIENT_SECRET,
+} from 'config/constants';
+
+import {
+  revokeToken,
+} from 'util/auth';
+
 import {
   toggleDisplayQuerySettings as toggleDisplayQuerySettingsConnected,
 } from 'redux/query_settings/actions';
+import {
+  toggleSettingsModal as toggleSettingsModalConnected,
+  toggleColumnsModal as toggleColumnsModalConnected,
+  clearLocalCache as clearLocalCacheConnected,
+  setDarkMode as setDarkModeConnected,
+} from 'redux/settings/actions';
 import {
   userAcceptDisclaimer as userAcceptDisclaimerConnected,
   userUnauthorize as userUnauthorizeConnected,
@@ -27,103 +56,204 @@ import {
   stopMonitoring as stopMonitoringConnected,
 } from 'redux/monitoring/actions';
 
+import PD_APP_VERSION from 'config/version';
+
+import {
+  ReactComponent as Logo,
+} from 'assets/images/pd_logo_black.svg';
+
+import GlobalSearchComponent from 'components/GlobalSearch/GlobalSearchComponent';
+import QuerySettingsComponent from 'components/QuerySettings/QuerySettingsComponent';
+import DetailedStatusOverlay from 'components/DetailedStatusOverlay/DetailedStatusOverlay';
 import StatusBeaconComponent from './StatusBeaconComponent';
 
-import './NavigationBarComponent.scss';
-
-const NavigationBarComponent = ({
-  displayQuerySettings,
-  toggleSettingsModal,
-  toggleDisplayQuerySettings,
-  userAcceptDisclaimer,
-  userUnauthorize,
-  stopMonitoring,
-  settings,
-}) => {
+const NavigationBarComponent = () => {
   const {
     t,
   } = useTranslation();
+
+  const darkMode = useSelector((state) => state.settings.darkMode);
+  const displayQuerySettings = useSelector((state) => state.querySettings.displayQuerySettings);
+
+  const dispatch = useDispatch();
+  const toggleDisplayQuerySettings = () => dispatch(toggleDisplayQuerySettingsConnected());
+  const setDarkMode = (dark) => dispatch(setDarkModeConnected(dark));
+  const toggleSettingsModal = () => dispatch(toggleSettingsModalConnected());
+  const toggleColumnsModal = () => dispatch(toggleColumnsModalConnected());
+  const clearLocalCache = () => dispatch(clearLocalCacheConnected());
+  const userAcceptDisclaimer = () => dispatch(userAcceptDisclaimerConnected());
+  const userUnauthorize = () => dispatch(userUnauthorizeConnected());
+  const stopMonitoring = () => dispatch(stopMonitoringConnected());
+
   const {
-    darkMode,
-  } = settings;
+    colorMode, toggleColorMode,
+  } = useColorMode();
+
+  const hideQuerySettings = useCallback(() => {
+    if (displayQuerySettings) {
+      toggleDisplayQuerySettings();
+    }
+  }, [displayQuerySettings, toggleDisplayQuerySettings]);
+
+  const showQuerySettings = useCallback(() => {
+    if (!displayQuerySettings) {
+      toggleDisplayQuerySettings();
+    }
+  }, [displayQuerySettings, toggleDisplayQuerySettings]);
+
+  const {
+    isOpen: isDetailedStatusOpen,
+    onOpen: onDetailedStatusOpen,
+    onClose: onDetailedStatusClose,
+  } = useDisclosure();
+  const detailedStatusTriggerRef = React.useRef();
+
+  const syncReduxColorMode = () => {
+    if (colorMode === 'dark' && !darkMode) {
+      setDarkMode(true);
+      document.body.className = 'dark-mode';
+    } else if (colorMode === 'light' && darkMode) {
+      setDarkMode(false);
+      document.body.className = '';
+    }
+  };
+  syncReduxColorMode();
+  const setColorMode = (dark) => {
+    if (dark && colorMode !== 'dark') {
+      toggleColorMode();
+    } else if (!dark && colorMode !== 'light') {
+      toggleColorMode();
+    }
+    syncReduxColorMode();
+  };
+  const DarkModeIconButton = () => (
+    <Tooltip label={colorMode === 'dark' ? t('Light Mode') : t('Dark Mode')}>
+      <IconButton
+        aria-label="Toggle Dark Mode"
+        icon={colorMode === 'dark' ? <SunIcon /> : <MoonIcon />}
+        onClick={() => setColorMode(colorMode !== 'dark')}
+        size="sm"
+      />
+    </Tooltip>
+  );
+
   return (
-    <div className="navbar-ctr">
-      <Navbar bg={darkMode ? 'dark' : 'light'} variant={darkMode ? 'dark' : 'light'}>
-        <Navbar.Brand className="nav-bar-logo-ctr">
-          <div className="nav-bar-logo-black" href="/" alt="PagerDuty home page">
-            PagerDuty
-          </div>
-        </Navbar.Brand>
-        <Navbar.Brand className="font-weight-bold">{t('Live Incidents Console')}</Navbar.Brand>
-        <Navbar.Collapse className="justify-content-end">
-          <Nav>
-            <Nav.Item className="ml-auto">
-              <Button
-                size="sm"
-                className="filters-toggle"
-                variant={displayQuerySettings ? 'success' : 'outline-success'}
-                onClick={() => toggleDisplayQuerySettings()}
-              >
-                {t('Filters')}
-                {`${displayQuerySettings ? ' ▼' : ' ▲'}`}
-              </Button>
-            </Nav.Item>
-            <Nav.Item className="ml-auto">
-              <GlobalSearchComponent />
-            </Nav.Item>
-            <Nav.Item className="ml-auto">
-              <StatusBeaconComponent />
-            </Nav.Item>
-            <Nav.Item className="ml-auto">
-              <NavDropdown
+    <Box as="nav" rounded="md">
+      <Flex align="center" justify="space-between" wrap="wrap" pl="1rem" pr="1rem" pt="1rem">
+        <Flex alt="PagerDuty">
+          <Logo title="PagerDuty" width="112px" fill={colorMode === 'dark' ? '#fff' : '#000'} />
+          <Text
+            id="navbar-ctr"
+            fontSize="xl"
+            display="inline-block"
+            ml={6}
+            my="auto"
+            verticalAlign="middle"
+          >
+            {t('Live Incidents Console')}
+          </Text>
+        </Flex>
+        <Flex alignItems="center">
+          <GlobalSearchComponent />
+          <Tooltip label={displayQuerySettings ? t('Hide filters') : t('Show filters')}>
+            <IconButton
+              aria-label="Toggle filters"
+              icon={displayQuerySettings ? <ViewOffIcon /> : <ViewIcon />}
+              onClick={displayQuerySettings ? hideQuerySettings : showQuerySettings}
+              size="sm"
+              mr={1}
+            />
+          </Tooltip>
+          <DarkModeIconButton mr={2} />
+          <Menu>
+            <Tooltip label={t('Main menu')}>
+              <MenuButton
                 className="settings-panel-dropdown"
-                title={<div className="settings-panel-icon" />}
-                alignRight
+                as={IconButton}
+                size="sm"
+                ml={1}
+                mr={1}
+                aria-label="Settings menu"
+                icon={<HamburgerIcon />}
+              />
+            </Tooltip>
+            <MenuList zIndex="999">
+              <MenuItem className="dropdown-item" onClick={toggleSettingsModal}>
+                {t('Settings')}
+              </MenuItem>
+              <MenuItem className="dropdown-item" onClick={toggleColumnsModal}>
+                {t('Columns')}
+              </MenuItem>
+              <MenuItem
+                className="dropdown-item"
+                onClick={() => {
+                  clearLocalCache();
+                  window.location.reload();
+                }}
               >
-                <NavDropdown.Item className="ml-auto" onClick={() => toggleSettingsModal()}>
-                  {t('Settings')}
-                </NavDropdown.Item>
-                {
-                  // eslint-disable-next-line max-len
-                  <NavDropdown.Item href="https://www.termsfeed.com/live/68d1a0f2-9e68-47d0-9623-68afe0c31f6d">
-                    {t('View Disclaimer')}
-                  </NavDropdown.Item>
-                }
-                <NavDropdown.Item
-                  onClick={() => {
-                    userAcceptDisclaimer();
-                    userUnauthorize();
-                    stopMonitoring();
-                    sessionStorage.removeItem('pd_access_token');
-                    window.location.reload();
+                {t('Clear Local Cache')}
+              </MenuItem>
+              <MenuItem
+                className="dropdown-item"
+                onClick={() => {
+                  const token = sessionStorage.getItem('pd_access_token');
+                  if (token) {
+                    revokeToken(token, PD_OAUTH_CLIENT_ID, PD_OAUTH_CLIENT_SECRET);
+                  }
+                  userAcceptDisclaimer();
+                  userUnauthorize();
+                  stopMonitoring();
+                  sessionStorage.removeItem('pd_access_token');
+                  window.location.reload();
+                }}
+              >
+                {t('Log Out')}
+              </MenuItem>
+              <MenuDivider />
+              <MenuItem className="dropdown-item">
+                <Link
+                  isExternal
+                  _hover={{
+                    textDecoration: 'none',
                   }}
+                  href="https://www.termsfeed.com/live/68d1a0f2-9e68-47d0-9623-68afe0c31f6d"
                 >
-                  {t('Log Out')}
-                </NavDropdown.Item>
-                <NavDropdown.Divider />
-                <NavDropdown.Item className="ml-auto version-info" disabled>
-                  {t('Version')}
-                  {`: ${PD_APP_VERSION}`}
-                </NavDropdown.Item>
-              </NavDropdown>
-            </Nav.Item>
-          </Nav>
-        </Navbar.Collapse>
-      </Navbar>
-    </div>
+                  {t('View Disclaimer')}
+                </Link>
+              </MenuItem>
+              <MenuDivider />
+              <MenuItem className="version-info" disabled>
+                {t('Version')}
+                {`: ${PD_APP_VERSION}`}
+              </MenuItem>
+            </MenuList>
+          </Menu>
+          <Box
+            ref={detailedStatusTriggerRef}
+            p={0}
+            onClick={isDetailedStatusOpen ? onDetailedStatusClose : onDetailedStatusOpen}
+          >
+            <StatusBeaconComponent />
+          </Box>
+        </Flex>
+      </Flex>
+      <Collapse
+        style={{
+          overflow: 'visible',
+        }}
+        in={displayQuerySettings}
+      >
+        <Box onClose={hideQuerySettings}>
+          <QuerySettingsComponent />
+        </Box>
+      </Collapse>
+      <DetailedStatusOverlay
+        isOpen={isDetailedStatusOpen}
+        onClose={onDetailedStatusClose}
+        btnRef={detailedStatusTriggerRef}
+      />
+    </Box>
   );
 };
-const mapStateToProps = (state) => ({
-  displayQuerySettings: state.querySettings.displayQuerySettings,
-  settings: state.settings,
-});
 
-const mapDispatchToProps = (dispatch) => ({
-  toggleSettingsModal: () => dispatch(toggleSettingsModalConnected()),
-  toggleDisplayQuerySettings: () => dispatch(toggleDisplayQuerySettingsConnected()),
-  userAcceptDisclaimer: () => dispatch(userAcceptDisclaimerConnected()),
-  userUnauthorize: () => dispatch(userUnauthorizeConnected()),
-  stopMonitoring: () => dispatch(stopMonitoringConnected()),
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(NavigationBarComponent);
+export default NavigationBarComponent;

@@ -5,11 +5,19 @@ import {
 import i18next from 'i18n';
 
 import {
+  formatError,
+} from 'pretty-print-error';
+
+import {
   PD_SUBDOMAIN_ALLOW_LIST,
 } from 'config/constants';
+
 import {
-  pd,
+  // pd,
+  throttledPdAxiosRequest,
+  pdParallelFetch,
 } from 'util/pd-api-wrapper';
+
 import {
   convertListToMapById, getSubdomainFromUserUrl,
 } from 'util/helpers';
@@ -116,14 +124,11 @@ export function* getUsers(action) {
     const {
       teamIds,
     } = action;
-    const params = { limit: 100 };
+    const params = {};
     if (teamIds.length) params['team_ids[]'] = teamIds;
 
-    const response = yield call(pd.all, 'users', { data: { ...params } });
-    if (response.status !== 200) {
-      throw Error(i18next.t('Unable to fetch users'));
-    }
-    const users = response.resource;
+    const users = yield call(pdParallelFetch, 'users', params);
+
     const usersMap = convertListToMapById(users);
     yield put({
       type: GET_USERS_COMPLETED,
@@ -136,7 +141,7 @@ export function* getUsers(action) {
       e.message = i18next.t('Unauthorized Access');
     }
     yield put({ type: GET_USERS_ERROR, message: e.message });
-    yield updateConnectionStatusRequested('neutral', e.message);
+    yield updateConnectionStatusRequested('neutral', e.message, formatError(e));
   }
 }
 
@@ -146,7 +151,7 @@ export function* getCurrentUserAsync() {
 
 export function* getCurrentUser() {
   try {
-    const response = yield call(pd.get, 'users/me');
+    const response = yield call(throttledPdAxiosRequest, 'GET', 'users/me');
     if (response.status !== 200) {
       throw Error(i18next.t('Unable to fetch current user details'));
     }
@@ -155,12 +160,8 @@ export function* getCurrentUser() {
       currentUser: response.data.user,
     });
   } catch (e) {
-    // Handle API auth failure
-    if (e.status === 401) {
-      e.message = i18next.t('Unauthorized Access');
-    }
     yield put({ type: GET_CURRENT_USER_ERROR, message: e.message });
-    yield updateConnectionStatusRequested('neutral', e.message);
+    yield updateConnectionStatusRequested('neutral', e.message, formatError(e));
   }
 }
 

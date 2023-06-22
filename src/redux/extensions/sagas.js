@@ -10,7 +10,7 @@ import {
   CUSTOM_INCIDENT_ACTION, EXTERNAL_SYSTEM,
 } from 'util/extensions';
 import {
-  pd,
+  pdParallelFetch,
 } from 'util/pd-api-wrapper';
 
 import {
@@ -33,15 +33,11 @@ export function* getExtensionsAsync() {
 
 export function* getExtensions() {
   try {
-    //  Create params and call pd lib
-    const response = yield call(pd.all, 'extensions');
-    if (response.status !== 200) {
-      throw Error(i18next.t('Unable to fetch extensions'));
-    }
+    const extensions = yield call(pdParallelFetch, 'extensions');
 
     yield put({
       type: FETCH_EXTENSIONS_COMPLETED,
-      extensions: response.resource,
+      extensions,
     });
 
     // Perform mapping of services to extensions

@@ -18,8 +18,6 @@ import {
   addNote as addNoteConnected,
 } from 'redux/incident_actions/actions';
 
-import './AddNoteModalComponent.scss';
-
 const AddNoteModalComponent = ({
   incidentActions,
   incidentTable,
