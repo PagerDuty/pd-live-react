@@ -9,7 +9,7 @@ import {
 } from 'util/sagas';
 
 import {
-  pd,
+  pd, pdParallelFetch,
 } from 'util/pd-api-wrapper';
 
 import {
@@ -30,20 +30,14 @@ export function* getResponsePlaysAsync() {
 
 export function* getResponsePlays() {
   try {
-    //  Create params and call pd lib
-    const response = yield call(pd.all, 'response_plays', {
-      data: {
-        // Return response plays that only can be run manually
-        filter_for_manual_run: true,
-      },
-    });
-    if (response.status !== 200) {
-      throw Error(i18next.t('Unable to fetch response plays'));
-    }
+    const params = {
+      filter_for_manual_run: true,
+    };
+    const responsePlays = yield call(pdParallelFetch, 'response_plays', params);
 
     yield put({
       type: FETCH_RESPONSE_PLAYS_COMPLETED,
-      responsePlays: response.resource,
+      responsePlays,
     });
   } catch (e) {
     // Handle API auth failure

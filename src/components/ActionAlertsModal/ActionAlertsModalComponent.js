@@ -1,33 +1,50 @@
+import React, {
+  useEffect,
+} from 'react';
+
 import {
-  connect,
+  connect, useSelector, useDispatch,
 } from 'react-redux';
 
 import {
-  Modal, Alert,
-} from 'react-bootstrap';
+  useToast,
+} from '@chakra-ui/react';
 
 import {
   toggleDisplayActionAlertsModal as toggleDisplayActionAlertsModalConnected,
 } from 'redux/action_alerts/actions';
 
-import './ActionAlertsModelComponent.scss';
-
-const ActionAlertsModalComponent = ({
-  toggleDisplayActionAlertsModal, actionAlertsModalData,
-}) => {
+const ActionAlertsModalComponent = () => {
   const {
     displayActionAlertsModal, actionAlertsModalType, actionAlertsModalMessage,
-  } = actionAlertsModalData;
-
-  return (
-    <div className="action-alerts-modal-ctr">
-      <Modal show={displayActionAlertsModal} onHide={toggleDisplayActionAlertsModal}>
-        <Alert className="action-alerts-modal" variant={actionAlertsModalType}>
-          {actionAlertsModalMessage}
-        </Alert>
-      </Modal>
-    </div>
+  } = useSelector(
+    (state) => state.actionAlertsModalData,
   );
+  const dispatch = useDispatch();
+  const toggleDisplayActionAlertsModal = () => dispatch(toggleDisplayActionAlertsModalConnected());
+
+  const toast = useToast();
+
+  const status = actionAlertsModalType === 'success' ? 'success' : 'error';
+
+  useEffect(() => {
+    let timeout;
+    if (displayActionAlertsModal && !toast.isActive(actionAlertsModalMessage)) {
+      toast({
+        id: actionAlertsModalMessage,
+        title: actionAlertsModalMessage,
+        status,
+      });
+      timeout = setTimeout(() => {
+        toggleDisplayActionAlertsModal();
+      }, 100);
+    }
+    return () => {
+      if (timeout) clearTimeout(timeout);
+    };
+  }, [displayActionAlertsModal, toggleDisplayActionAlertsModal]);
+
+  return <></>;
 };
 
 const mapStateToProps = (state) => ({

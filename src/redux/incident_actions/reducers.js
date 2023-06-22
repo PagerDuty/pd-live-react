@@ -1,6 +1,9 @@
 import produce from 'immer';
 
 import {
+  ACTION_REQUESTED,
+  ACTION_COMPLETED,
+  ACTION_ERROR,
   ACKNOWLEDGE_REQUESTED,
   ACKNOWLEDGE_COMPLETED,
   ACKNOWLEDGE_ERROR,
@@ -49,6 +52,18 @@ import {
 const incidentActions = produce(
   (draft, action) => {
     switch (action.type) {
+      case ACTION_REQUESTED:
+        draft.status = ACTION_REQUESTED;
+        break;
+
+      case ACTION_COMPLETED:
+        draft.status = ACTION_COMPLETED;
+        break;
+
+      case ACTION_ERROR:
+        draft.status = ACTION_ERROR;
+        break;
+
       case ACKNOWLEDGE_REQUESTED:
         draft.status = ACKNOWLEDGE_REQUESTED;
         break;

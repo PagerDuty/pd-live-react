@@ -3,14 +3,20 @@
 export const TOGGLE_SETTINGS_REQUESTED = 'TOGGLE_SETTINGS_REQUESTED';
 export const TOGGLE_SETTINGS_COMPLETED = 'TOGGLE_SETTINGS_COMPLETED';
 
+export const TOGGLE_COLUMNS_REQUESTED = 'TOGGLE_COLUMNS_REQUESTED';
+export const TOGGLE_COLUMNS_COMPLETED = 'TOGGLE_COLUMNS_COMPLETED';
+
 export const SET_DEFAULT_SINCE_DATE_TENOR_REQUESTED = 'SET_DEFAULT_SINCE_DATE_TENOR_REQUESTED';
 export const SET_DEFAULT_SINCE_DATE_TENOR_COMPLETED = 'SET_DEFAULT_SINCE_DATE_TENOR_COMPLETED';
 
+export const SET_SEARCH_ALL_CUSTOM_DETAILS_REQUESTED = 'SET_SEARCH_ALL_CUSTOM_DETAILS_REQUESTED';
+export const SET_SEARCH_ALL_CUSTOM_DETAILS_COMPLETED = 'SET_SEARCH_ALL_CUSTOM_DETAILS_COMPLETED';
+
+export const SET_RESPONDERS_IN_EP_FILTER_REQUESTED = 'SET_RESPONDERS_IN_EP_FILTER_REQUESTED';
+export const SET_RESPONDERS_IN_EP_FILTER_COMPLETED = 'SET_RESPONDERS_IN_EP_FILTER_COMPLETED';
+
 export const SET_ALERT_CUSTOM_DETAIL_COLUMNS_REQUESTED = 'SET_ALERT_CUSTOM_DETAIL_COLUMNS_REQUESTED';
 export const SET_ALERT_CUSTOM_DETAIL_COLUMNS_COMPLETED = 'SET_ALERT_CUSTOM_DETAIL_COLUMNS_COMPLETED';
-
-export const SET_MAX_INCIDENTS_LIMIT_REQUESTED = 'SET_MAX_INCIDENTS_LIMIT_REQUESTED';
-export const SET_MAX_INCIDENTS_LIMIT_COMPLETED = 'SET_MAX_INCIDENTS_LIMIT_COMPLETED';
 
 export const SET_MAX_RATE_LIMIT_REQUESTED = 'SET_MAX_RATE_LIMIT_REQUESTED';
 export const SET_MAX_RATE_LIMIT_COMPLETED = 'SET_MAX_RATE_LIMIT_COMPLETED';
@@ -27,9 +33,16 @@ export const CLEAR_LOCAL_CACHE_COMPLETED = 'CLEAR_LOCAL_CACHE_COMPLETED';
 export const SET_DARK_MODE_REQUESTED = 'SET_DARK_MODE_REQUESTED';
 export const SET_DARK_MODE_COMPLETED = 'SET_DARK_MODE_COMPLETED';
 
+export const SET_SERVER_SIDE_FILTERING_REQUESTED = 'SET_SERVER_SIDE_FILTERING_REQUESTED';
+export const SET_SERVER_SIDE_FILTERING_COMPLETED = 'SET_SERVER_SIDE_FILTERING_COMPLETED';
+
 // Define Actions
 export const toggleSettingsModal = () => ({
   type: TOGGLE_SETTINGS_REQUESTED,
+});
+
+export const toggleColumnsModal = () => ({
+  type: TOGGLE_COLUMNS_REQUESTED,
 });
 
 export const setDefaultSinceDateTenor = (defaultSinceDateTenor) => ({
@@ -37,14 +50,19 @@ export const setDefaultSinceDateTenor = (defaultSinceDateTenor) => ({
   defaultSinceDateTenor,
 });
 
+export const setSearchAllCustomDetails = (searchAllCustomDetails) => ({
+  type: SET_SEARCH_ALL_CUSTOM_DETAILS_REQUESTED,
+  searchAllCustomDetails,
+});
+
+export const setRespondersInEpFilter = (respondersInEpFilter) => ({
+  type: SET_RESPONDERS_IN_EP_FILTER_REQUESTED,
+  respondersInEpFilter,
+});
+
 export const setAlertCustomDetailColumns = (alertCustomDetailFields) => ({
   type: SET_ALERT_CUSTOM_DETAIL_COLUMNS_REQUESTED,
   alertCustomDetailFields,
-});
-
-export const setMaxIncidentsLimit = (maxIncidentsLimit) => ({
-  type: SET_MAX_INCIDENTS_LIMIT_REQUESTED,
-  maxIncidentsLimit,
 });
 
 export const setMaxRateLimit = (maxRateLimit) => ({
@@ -69,4 +87,9 @@ export const clearLocalCache = () => ({
 export const setDarkMode = (darkMode) => ({
   type: SET_DARK_MODE_REQUESTED,
   darkMode,
+});
+
+export const setServerSideFiltering = (serverSideFiltering) => ({
+  type: SET_SERVER_SIDE_FILTERING_REQUESTED,
+  serverSideFiltering,
 });

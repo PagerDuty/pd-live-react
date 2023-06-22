@@ -11,6 +11,8 @@ import {
   CHECK_ABILITIES_REQUESTED,
   CHECK_ABILITIES_COMPLETED,
   CHECK_ABILITIES_ERROR,
+  SAVE_ERROR_REQUESTED,
+  SAVE_ERROR_COMPLETED,
 } from './actions';
 
 const connection = produce(
@@ -24,6 +26,12 @@ const connection = produce(
         draft.status = UPDATE_CONNECTION_STATUS_COMPLETED;
         draft.connectionStatus = action.connectionStatus;
         draft.connectionStatusMessage = action.connectionStatusMessage;
+        if (action.messageDetail) {
+          draft.errors.push(action.messageDetail);
+          if (draft.errors.length > 25) {
+            draft.errors.shift();
+          }
+        }
         break;
 
       case UPDATE_QUEUE_STATS_REQUESTED:
@@ -56,6 +64,18 @@ const connection = produce(
         draft.status = CHECK_ABILITIES_ERROR;
         break;
 
+      case SAVE_ERROR_REQUESTED:
+        draft.status = SAVE_ERROR_REQUESTED;
+        break;
+
+      case SAVE_ERROR_COMPLETED:
+        draft.status = SAVE_ERROR_COMPLETED;
+        draft.errors.push(action.error);
+        if (draft.errors.length > 25) {
+          draft.errors.shift();
+        }
+        break;
+
       default:
         break;
     }
@@ -66,6 +86,7 @@ const connection = produce(
     queueStats: { RECEIVED: 0, QUEUED: 0, RUNNING: 0, EXECUTING: 0 },
     abilities: [],
     status: '',
+    errors: [],
   },
 );
 

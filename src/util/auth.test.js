@@ -23,7 +23,7 @@ describe('Authentication Helper Suite', () => {
   const clientSecret = PD_OAUTH_CLIENT_SECRET;
   const redirectURL = 'http://localhost:3000/';
   const code = 'SOME_REDIRECT_CODE';
-  const mockAccessToken = faker.random.alphaNumeric();
+  const mockAccessToken = faker.string.alphanumeric();
   let codeVerifier;
   let hash;
   let authURL;
@@ -35,7 +35,7 @@ describe('Authentication Helper Suite', () => {
     global.fetch = (url) => Promise.resolve({
       json: () => {
         let response;
-        if (url.includes('https://app.pagerduty.com/oauth/token')) {
+        if (url.includes('https://identity.pagerduty.com/oauth/token')) {
           response = {
             client_info: 'prefix_legacy_app',
             id_token: hash,
@@ -70,7 +70,7 @@ describe('Authentication Helper Suite', () => {
     authURL = await getAuthURL(clientId, clientSecret, redirectURL, codeVerifier);
     expect(authURL).toEqual(
       // eslint-disable-next-line max-len
-      `https://app.pagerduty.com/oauth/authorize?client_id=${clientId}&redirect_uri=${redirectURL}&response_type=code&code_challenge=${codeChallenge}&code_challenge_method=S256`,
+      `https://identity.pagerduty.com/oauth/authorize?client_id=${clientId}&client_secret=${clientSecret}&redirect_uri=${redirectURL}&response_type=code&code_challenge=${codeChallenge}&code_challenge_method=S256`,
     );
   });
 

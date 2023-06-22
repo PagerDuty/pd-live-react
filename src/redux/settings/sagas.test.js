@@ -7,8 +7,6 @@ import {
 } from '@faker-js/faker';
 
 import {
-  MAX_INCIDENTS_LIMIT_LOWER,
-  MAX_INCIDENTS_LIMIT_UPPER,
   MAX_RATE_LIMIT_LOWER,
   MAX_RATE_LIMIT_UPPER,
   REFRESH_INTERVAL_LOWER,
@@ -21,8 +19,6 @@ import {
   SET_DEFAULT_SINCE_DATE_TENOR_COMPLETED,
   SET_ALERT_CUSTOM_DETAIL_COLUMNS_REQUESTED,
   SET_ALERT_CUSTOM_DETAIL_COLUMNS_COMPLETED,
-  SET_MAX_INCIDENTS_LIMIT_REQUESTED,
-  SET_MAX_INCIDENTS_LIMIT_COMPLETED,
   SET_MAX_RATE_LIMIT_REQUESTED,
   SET_MAX_RATE_LIMIT_COMPLETED,
   SET_AUTO_ACCEPT_INCIDENTS_QUERY_REQUESTED,
@@ -35,7 +31,6 @@ import {
 import {
   setDefaultSinceDateTenor,
   setAlertCustomDetailColumns,
-  setMaxIncidentsLimit,
   setMaxRateLimit,
   setAutoAcceptIncidentsQuery,
   setAutoRefreshInterval,
@@ -57,8 +52,8 @@ describe('Sagas: Settings', () => {
       })
       .hasFinalState({
         displaySettingsModal: false,
+        displayColumnsModal: false,
         defaultSinceDateTenor: tenor,
-        maxIncidentsLimit: 200,
         maxRateLimit: 200,
         autoAcceptIncidentsQuery: true,
         autoRefreshInterval: 5,
@@ -67,9 +62,15 @@ describe('Sagas: Settings', () => {
             label: 'Environment:details.env',
             value: 'Environment:details.env',
             columnType: 'alert',
+            Header: 'Environment',
+            accessorPath: 'details.env',
+            aggregator: null,
           },
         ],
         darkMode: false,
+        serverSideFiltering: true,
+        searchAllCustomDetails: false,
+        respondersInEpFilter: false,
         status: SET_DEFAULT_SINCE_DATE_TENOR_COMPLETED,
       })
       .silentRun();
@@ -80,6 +81,9 @@ describe('Sagas: Settings', () => {
         label: faker.git.branch(),
         value: faker.git.branch(),
         columnType: 'alert',
+        Header: 'Environment',
+        accessorPath: 'details.env',
+        aggregator: null,
       },
     ];
     return expectSaga(setAlertCustomDetailColumns)
@@ -94,53 +98,22 @@ describe('Sagas: Settings', () => {
       })
       .hasFinalState({
         displaySettingsModal: false,
+        displayColumnsModal: false,
         defaultSinceDateTenor: '1 Day',
-        maxIncidentsLimit: 200,
         maxRateLimit: 200,
         autoAcceptIncidentsQuery: true,
         autoRefreshInterval: 5,
         alertCustomDetailFields,
         darkMode: false,
+        serverSideFiltering: true,
+        searchAllCustomDetails: false,
+        respondersInEpFilter: false,
         status: SET_ALERT_CUSTOM_DETAIL_COLUMNS_COMPLETED,
       })
       .silentRun();
   });
-  it('setMaxIncidentsLimit', () => {
-    const maxIncidentsLimit = faker.datatype.number({
-      min: MAX_INCIDENTS_LIMIT_LOWER,
-      max: MAX_INCIDENTS_LIMIT_UPPER,
-    });
-    return expectSaga(setMaxIncidentsLimit)
-      .withReducer(settings)
-      .dispatch({
-        type: SET_MAX_INCIDENTS_LIMIT_REQUESTED,
-        maxIncidentsLimit,
-      })
-      .put({
-        type: SET_MAX_INCIDENTS_LIMIT_COMPLETED,
-        maxIncidentsLimit,
-      })
-      .hasFinalState({
-        displaySettingsModal: false,
-        defaultSinceDateTenor: '1 Day',
-        maxIncidentsLimit,
-        maxRateLimit: 200,
-        autoAcceptIncidentsQuery: true,
-        autoRefreshInterval: 5,
-        alertCustomDetailFields: [
-          {
-            label: 'Environment:details.env',
-            value: 'Environment:details.env',
-            columnType: 'alert',
-          },
-        ],
-        darkMode: false,
-        status: SET_MAX_INCIDENTS_LIMIT_COMPLETED,
-      })
-      .silentRun();
-  });
   it('setMaxRateLimit', () => {
-    const maxRateLimit = faker.datatype.number({
+    const maxRateLimit = faker.number.int({
       min: MAX_RATE_LIMIT_LOWER,
       max: MAX_RATE_LIMIT_UPPER,
     });
@@ -156,8 +129,8 @@ describe('Sagas: Settings', () => {
       })
       .hasFinalState({
         displaySettingsModal: false,
+        displayColumnsModal: false,
         defaultSinceDateTenor: '1 Day',
-        maxIncidentsLimit: 200,
         maxRateLimit,
         autoAcceptIncidentsQuery: true,
         autoRefreshInterval: 5,
@@ -166,9 +139,15 @@ describe('Sagas: Settings', () => {
             label: 'Environment:details.env',
             value: 'Environment:details.env',
             columnType: 'alert',
+            Header: 'Environment',
+            accessorPath: 'details.env',
+            aggregator: null,
           },
         ],
         darkMode: false,
+        serverSideFiltering: true,
+        searchAllCustomDetails: false,
+        respondersInEpFilter: false,
         status: SET_MAX_RATE_LIMIT_COMPLETED,
       })
       .silentRun();
@@ -187,8 +166,8 @@ describe('Sagas: Settings', () => {
       })
       .hasFinalState({
         displaySettingsModal: false,
+        displayColumnsModal: false,
         defaultSinceDateTenor: '1 Day',
-        maxIncidentsLimit: 200,
         maxRateLimit: 200,
         autoAcceptIncidentsQuery,
         autoRefreshInterval: 5,
@@ -197,15 +176,21 @@ describe('Sagas: Settings', () => {
             label: 'Environment:details.env',
             value: 'Environment:details.env',
             columnType: 'alert',
+            Header: 'Environment',
+            accessorPath: 'details.env',
+            aggregator: null,
           },
         ],
         darkMode: false,
+        serverSideFiltering: true,
+        searchAllCustomDetails: false,
+        respondersInEpFilter: false,
         status: SET_AUTO_ACCEPT_INCIDENTS_QUERY_COMPLETED,
       })
       .silentRun();
   });
   it('setAutoRefreshInterval', () => {
-    const autoRefreshInterval = faker.datatype.number({
+    const autoRefreshInterval = faker.number.int({
       min: REFRESH_INTERVAL_LOWER,
       max: REFRESH_INTERVAL_UPPER,
     });
@@ -221,8 +206,8 @@ describe('Sagas: Settings', () => {
       })
       .hasFinalState({
         displaySettingsModal: false,
+        displayColumnsModal: false,
         defaultSinceDateTenor: '1 Day',
-        maxIncidentsLimit: 200,
         maxRateLimit: 200,
         autoAcceptIncidentsQuery: true,
         autoRefreshInterval,
@@ -231,9 +216,15 @@ describe('Sagas: Settings', () => {
             label: 'Environment:details.env',
             value: 'Environment:details.env',
             columnType: 'alert',
+            Header: 'Environment',
+            accessorPath: 'details.env',
+            aggregator: null,
           },
         ],
         darkMode: false,
+        serverSideFiltering: true,
+        searchAllCustomDetails: false,
+        respondersInEpFilter: false,
         status: SET_AUTO_REFRESH_INTERVAL_COMPLETED,
       })
       .silentRun();
@@ -252,8 +243,8 @@ describe('Sagas: Settings', () => {
       })
       .hasFinalState({
         displaySettingsModal: false,
+        displayColumnsModal: false,
         defaultSinceDateTenor: '1 Day',
-        maxIncidentsLimit: 200,
         maxRateLimit: 200,
         autoAcceptIncidentsQuery: true,
         autoRefreshInterval: 5,
@@ -262,9 +253,15 @@ describe('Sagas: Settings', () => {
             label: 'Environment:details.env',
             value: 'Environment:details.env',
             columnType: 'alert',
+            Header: 'Environment',
+            accessorPath: 'details.env',
+            aggregator: null,
           },
         ],
         darkMode: true,
+        serverSideFiltering: true,
+        searchAllCustomDetails: false,
+        respondersInEpFilter: false,
         status: SET_DARK_MODE_COMPLETED,
       })
       .silentRun();

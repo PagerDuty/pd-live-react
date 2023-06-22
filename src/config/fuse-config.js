@@ -1,16 +1,16 @@
 // Configuration for Fuse.js (Fuzzy Search)
 
 import {
-  availableIncidentTableColumns,
-  availableAlertTableColumns,
-} from './incident-table-columns';
+  defaultIncidentColumns,
+  defaultAlertsColumns,
+} from './column-generator';
 
 // Docs: https://fusejs.io/api/options.html
 const fuseOptions = {
   threshold: 0.2,
   ignoreLocation: true,
   useExtendedSearch: true,
-  keys: availableIncidentTableColumns
+  keys: defaultIncidentColumns()
     .map((col) => {
       // Handle specific cases for columns with functional accessor
       let key = '';
@@ -36,7 +36,7 @@ const fuseOptions = {
       return key;
     })
     .concat(
-      availableAlertTableColumns.map((col) => {
+      defaultAlertsColumns().map((col) => {
         let key = '';
         switch (col.Header) {
           case 'Severity':

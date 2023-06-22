@@ -65,7 +65,7 @@ The following scripts have been created to run unit, component, and integration 
 
 Please note that running integration tests will require environment variable `REACT_APP_PD_USER_TOKEN` set.
 
-The integration tests also assume the PagerDuty account associated with the above user token has been setup with the following [Terraform environment](https://github.com/giranm/pd-live-integration-test-environment).
+The integration tests also assume the PagerDuty account associated with the above user token has been setup with the following [Terraform environment](https://github.com/pagerduty/pd-live-integration-test-environment).
 
 ## Versioning & Release
 

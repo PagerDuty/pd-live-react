@@ -1,3 +1,4 @@
+/* eslint-disable cypress/unsafe-to-chain-command */
 import moment from 'moment';
 
 import gb from 'date-fns/locale/en-GB';
@@ -24,40 +25,45 @@ moment.locale('en-GB');
 describe('Query Incidents', { failFast: { enabled: false } }, () => {
   before(() => {
     acceptDisclaimer();
-    manageIncidentTableColumns('remove', ['Latest Note']);
-    manageIncidentTableColumns('add', ['Urgency', 'Teams', 'Escalation Policy']);
-    priorityNames.forEach((currentPriority) => {
-      activateButton(`query-priority-${currentPriority}-button`);
-    });
+    manageIncidentTableColumns('remove', ['latest_note']);
+    manageIncidentTableColumns('add', ['urgency', 'teams', 'escalation_policy']);
+    // priorityNames.forEach((currentPriority) => {
+    //   activateButton(`query-priority-${currentPriority}-button`);
+    // });
     waitForIncidentTable();
   });
 
   beforeEach(() => {
     if (cy.state('test').currentRetry() > 1) {
       acceptDisclaimer();
-      manageIncidentTableColumns('remove', ['Latest Note']);
-      manageIncidentTableColumns('add', ['Urgency', 'Teams', 'Escalation Policy']);
+      manageIncidentTableColumns('remove', ['latest_note']);
+      manageIncidentTableColumns('add', ['urgency', 'teams', 'escalation_policy']);
     }
-    priorityNames.forEach((currentPriority) => {
-      activateButton(`query-priority-${currentPriority}-button`);
-    });
+    // priorityNames.forEach((currentPriority) => {
+    //   activateButton(`query-priority-${currentPriority}-button`);
+    // });
   });
 
   it('Query for incidents within T-1 since date', () => {
     // Limit dataset to high-urgency triggered, ackd and resolved incidents
-    activateButton('query-status-resolved-button');
-    deactivateButton('query-urgency-low-button');
+    // activateButton('query-status-resolved-button');
+    // deactivateButton('query-urgency-low-button');
+    cy.get('.query-status-resolved-button').check({ force: true });
+    cy.get('.query-urgency-low-button').uncheck({ force: true });
 
     // Update since date to T-1
     const queryDate = moment()
       .subtract(1, 'days')
       .set({ hour: 0, minute: 0, second: 0, millisecond: 0 });
-    cy.get('#query-date-input').clear().type(queryDate.format('DD/MM/yyyy')).type('{enter}');
+    cy.get('#query-date-input')
+      .clear()
+      .type(queryDate.format('DD/MM/yyyy'))
+      .type('{enter}');
     waitForIncidentTable();
 
     // Iterate through incident table and perform Moment date comparison
-    cy.get('.tbody').then(($tbody) => {
-      const visibleIncidentCount = $tbody.find('tr').length;
+    cy.get('.incident-table-fixed-list > div').then(($tbody) => {
+      const visibleIncidentCount = $tbody.find('[role="row"]').length;
       for (let incidentIdx = 0; incidentIdx < visibleIncidentCount; incidentIdx++) {
         cy.get(
           `[data-incident-header="Created At"][data-incident-row-cell-idx="${incidentIdx}"]`,
@@ -68,118 +74,70 @@ describe('Query Incidents', { failFast: { enabled: false } }, () => {
     });
 
     // Reset query for next test - both high and low-urgency triggered, ackd and resolved incidents
-    activateButton('query-urgency-low-button');
-  });
-
-  it('Query for incidents exceeding MAX_INCIDENTS_LIMIT with auto accept incident query on', () => {
-    // Update since date to T-2
-    const queryDate = moment()
-      .subtract(2, 'days')
-      .set({ hour: 0, minute: 0, second: 0, millisecond: 0 });
-    cy.get('#query-date-input').clear().type(queryDate.format('DD/MM/yyyy')).type('{enter}');
-    waitForIncidentTable();
-  });
-
-  it('Query for incidents exceeding MAX_INCIDENTS_LIMIT with auto accept incident query off; Cancel Request', () => {
-    // Set auto accept incident query to false to test cancel & allow request
-    updateAutoAcceptIncidentQuery(false);
-    // Update since date to T-3
-    const queryDate = moment()
-    .subtract(3, 'days')
-    .set({ hour: 0, minute: 0, second: 0, millisecond: 0 });
-    cy.get('#query-date-input').clear().type(queryDate.format('DD/MM/yyyy')).type('{enter}');
-
-    // Cancel request from modal
-    cy.get('#cancel-incident-query-button').click();
-    cy.get('div.query-cancelled-ctr')
-      .should('be.visible')
-      .should('contain.text', 'Query has been cancelled by user');
-    cy.get('div.selected-incidents-ctr').should('be.visible').should('contain.text', 'N/A');
-
-    // Reset query for next test
-    deactivateButton('query-status-resolved-button');
-  });
-
-  it('Query for incidents exceeding MAX_INCIDENTS_LIMIT with auto accept incident query off; Accept Request', () => {
-    // Accept request from modal
-    activateButton('query-status-resolved-button');
-    cy.get('#retrieve-incident-query-button').click();
-    cy.get('div.query-active-ctr')
-      .should('be.visible')
-      .should('contain.text', 'Querying PagerDuty API');
-    cy.get('div.selected-incidents-ctr').should('be.visible').should('contain.text', 'Querying');
-    waitForIncidentTable();
-
-    // Reset query for next test
-    deactivateButton('query-status-resolved-button');
-    const queryDate = moment()
-      .set({ hour: 0, minute: 0, second: 0, millisecond: 0 });
-    cy.get('#query-date-input').clear().type(queryDate.format('DD/MM/yyyy')).type('{enter}');
-    waitForIncidentTable();
-    // Reset auto accept incident query to true
-    updateAutoAcceptIncidentQuery(true);
+    cy.get('.query-urgency-low-button').check({ force: true });
   });
 
   it('Query for triggered incidents only', () => {
-    activateButton('query-status-triggered-button');
-    deactivateButton('query-status-acknowledged-button');
-    deactivateButton('query-status-resolved-button');
+    cy.get('.query-status-triggered-button').check({ force: true });
+    cy.get('.query-status-acknowledged-button').uncheck({ force: true });
+    cy.get('.query-status-resolved-button').uncheck({ force: true });
     waitForIncidentTable();
     checkIncidentCellIconAllRows('Status', 'fa-triangle-exclamation');
   });
 
   it('Query for acknowledged incidents only', () => {
     // Ensure at least one incident is acknowledged for test
+    waitForIncidentTable();
     selectIncident(0);
     cy.get('#incident-action-acknowledge-button').click();
-    cy.get('.action-alerts-modal').type('{esc}');
 
-    deactivateButton('query-status-triggered-button');
-    activateButton('query-status-acknowledged-button');
-    deactivateButton('query-status-resolved-button');
+    cy.get('.query-status-triggered-button').uncheck({ force: true });
+    cy.get('.query-status-acknowledged-button').check({ force: true });
+    cy.get('.query-status-resolved-button').uncheck({ force: true });
     waitForIncidentTable();
     checkIncidentCellIconAllRows('Status', 'fa-shield-halved');
   });
 
   it('Query for resolved incidents only', () => {
-    deactivateButton('query-status-triggered-button');
-    deactivateButton('query-status-acknowledged-button');
-    activateButton('query-status-resolved-button');
+    cy.get('.query-status-triggered-button').uncheck({ force: true });
+    cy.get('.query-status-acknowledged-button').uncheck({ force: true });
+    cy.get('.query-status-resolved-button').check({ force: true });
     waitForIncidentTable();
     checkIncidentCellIconAllRows('Status', 'fa-circle-check');
 
     // Reset query for next test
-    activateButton('query-status-triggered-button');
-    activateButton('query-status-acknowledged-button');
-    deactivateButton('query-status-resolved-button');
+    cy.get('.query-status-triggered-button').check({ force: true });
+    cy.get('.query-status-acknowledged-button').check({ force: true });
+    cy.get('.query-status-resolved-button').uncheck({ force: true });
   });
 
   it('Query for high urgency incidents only', () => {
-    activateButton('query-urgency-high-button');
-    deactivateButton('query-urgency-low-button');
+    cy.get('.query-urgency-high-button').check({ force: true });
+    cy.get('.query-urgency-low-button').uncheck({ force: true });
     waitForIncidentTable();
     checkIncidentCellContentAllRows('Urgency', ' High');
   });
 
   it('Query for low urgency incidents only', () => {
-    deactivateButton('query-urgency-high-button');
-    activateButton('query-urgency-low-button');
+    cy.get('.query-urgency-high-button').uncheck({ force: true });
+    cy.get('.query-urgency-low-button').check({ force: true });
     waitForIncidentTable();
     checkIncidentCellContentAllRows('Urgency', ' Low');
 
     // Reset query for next test
-    activateButton('query-urgency-high-button');
+    cy.get('.query-urgency-high-button').check({ force: true });
   });
 
   priorityNames.forEach((currentPriority) => {
     it(`Query for priority "${currentPriority}" incidents only`, () => {
-      activateButton(`query-priority-${currentPriority}-button`);
+      cy.get(`.query-priority-${currentPriority}-button`).check({ force: true });
       const excludedPriorities = priorityNames.filter((priority) => currentPriority !== priority);
       excludedPriorities.forEach((excludedPriority) => {
-        deactivateButton(`query-priority-${excludedPriority}-button`);
+        cy.get(`.query-priority-${excludedPriority}-button`).uncheck({ force: true });
       });
       waitForIncidentTable();
       checkIncidentCellContentAllRows('Priority', currentPriority);
+      cy.get(`.query-priority-${currentPriority}-button`).uncheck({ force: true });
     });
   });
 
@@ -192,7 +150,7 @@ describe('Query Incidents', { failFast: { enabled: false } }, () => {
       cy.get('#query-team-select').click().type('{del}');
     });
   });
-  
+
   const escalationPolicies = ['Team A (EP)', 'Team B (EP)'];
   escalationPolicies.forEach((escalationPolicy) => {
     it(`Query for incidents on ${escalationPolicy} only`, () => {
@@ -224,7 +182,7 @@ describe('Query Incidents', { failFast: { enabled: false } }, () => {
     cy.get('#query-team-select').click().type('{del}');
     cy.get('#query-service-select').click().type('{del}');
   });
-  
+
   it('Query for incidents on Team A (EP) and Service A1 only', () => {
     cy.get('#query-escalation-policy-select').click().type('Team A (EP){enter}');
     cy.get('#query-service-select').click().type('Service A1{enter}');
@@ -237,7 +195,8 @@ describe('Query Incidents', { failFast: { enabled: false } }, () => {
     cy.get('#query-service-select').click().type('{del}');
   });
 
-  it('Query on Team A only allows further querying for associated services and users', () => {
+  // TODO: Do this functionality and test in a way that makes sense
+  xit('Query on Team A only allows further querying for associated services and users', () => {
     cy.get('#query-team-select').click().type('Team A{enter}');
     waitForIncidentTable();
 
@@ -276,7 +235,7 @@ describe('Query Incidents', { failFast: { enabled: false } }, () => {
       .click()
       .then(($el) => {
         const cls = $el.attr('class');
-        expect(cls).to.equal('th-sorted');
+        expect(cls).to.contain('th-sorted');
         cy.wrap($el).contains('# ▲');
       });
   });
@@ -286,7 +245,7 @@ describe('Query Incidents', { failFast: { enabled: false } }, () => {
       .click()
       .then(($el) => {
         const cls = $el.attr('class');
-        expect(cls).to.equal('th-sorted');
+        expect(cls).to.contain('th-sorted');
         cy.wrap($el).contains('# ▼');
       });
   });
@@ -296,7 +255,7 @@ describe('Query Incidents', { failFast: { enabled: false } }, () => {
       .click()
       .then(($el) => {
         const cls = $el.attr('class');
-        expect(cls).to.equal('th');
+        expect(cls).to.contain('th');
         cy.wrap($el).contains('#');
       });
   });

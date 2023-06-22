@@ -5,7 +5,7 @@ import {
 import i18next from 'i18n';
 
 import {
-  pd,
+  pdParallelFetch,
 } from 'util/pd-api-wrapper';
 import {
   UPDATE_CONNECTION_STATUS_REQUESTED,
@@ -29,17 +29,14 @@ export function* getServices(action) {
     const {
       teamIds,
     } = action;
-    const params = { limit: 100 };
+    const params = {};
     if (teamIds.length) params['team_ids[]'] = teamIds;
 
-    const response = yield call(pd.all, 'services', { data: { ...params } });
-    if (response.status !== 200) {
-      throw Error(i18next.t('Unable to fetch services'));
-    }
+    const services = yield call(pdParallelFetch, 'services', params);
 
     yield put({
       type: FETCH_SERVICES_COMPLETED,
-      services: response.resource,
+      services,
     });
 
     // We now obtain extensions for mapping once services have been fetched
