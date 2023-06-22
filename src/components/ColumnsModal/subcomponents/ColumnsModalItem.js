@@ -29,6 +29,10 @@ const ColumnsModalItem = ({
     ml: 1,
   };
 
+  if (!column) {
+    // old default example column would give null here
+    return null;
+  }
   const columnId = column.id || column.label || column.accessorPath;
 
   let ariaLabel = '';
