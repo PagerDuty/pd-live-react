@@ -42,7 +42,7 @@
     "node-sass": "^7.0.3",
     "pretty-print-error": "^1.1.1",
     "react": "^18",
-    "react-bootstrap": "^1.6.6",
+    "react-bootstrap": "^2.8.0",
     "react-contextmenu": "^2.14.0",
     "react-datepicker": "^4.10.0",
     "react-dnd": "^16.0.1",
