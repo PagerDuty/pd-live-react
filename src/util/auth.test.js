@@ -4,6 +4,8 @@ import {
   faker,
 } from '@faker-js/faker';
 
+import urlLib from 'url';
+
 import {
   PD_OAUTH_CLIENT_ID, PD_OAUTH_CLIENT_SECRET,
 } from 'config/constants';
@@ -35,7 +37,10 @@ describe('Authentication Helper Suite', () => {
     global.fetch = (url) => Promise.resolve({
       json: () => {
         let response;
-        if (url.includes('https://identity.pagerduty.com/oauth/token')) {
+        const {
+          host, path,
+        } = urlLib.parse(url);
+        if (host === 'identity.pagerduty.com' && path.startsWith('/oauth/token')) {
           response = {
             client_info: 'prefix_legacy_app',
             id_token: hash,
