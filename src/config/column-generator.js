@@ -423,7 +423,7 @@ export const defaultIncidentColumns = () => [
       let elem;
       if (urgency === HIGH) {
         elem = (
-          <Badge className="urgency-badge" variant="primary">
+          <Badge className="urgency-badge" bg="primary" text="light">
             <ChevronUpIcon />
             {' '}
             {i18next.t('High')}
@@ -431,7 +431,7 @@ export const defaultIncidentColumns = () => [
         );
       } else if (urgency === LOW) {
         elem = (
-          <Badge className="urgency-badge" variant="secondary">
+          <Badge className="urgency-badge" bg="secondary" text="dark">
             <ChevronDownIcon />
             {' '}
             {i18next.t('Low')}
@@ -536,12 +536,15 @@ export const defaultAlertsColumns = () => [
       }
       const i18nValue = i18next.t(value);
       let variant;
+      let text = 'dark';
       switch (value) {
         case 'critical':
           variant = 'dark';
+          text = 'light';
           break;
         case 'error':
           variant = 'danger';
+          text = 'light';
           break;
         case 'warning':
           variant = 'warning';
@@ -551,12 +554,14 @@ export const defaultAlertsColumns = () => [
           break;
         case '--':
           variant = null;
+          text = null;
           break;
         default:
           variant = 'secondary';
+          text = 'dark';
       }
       return (
-        <Badge className="severity-badge" variant={variant}>
+        <Badge className="severity-badge" bg={variant} text={text}>
           {i18nValue}
         </Badge>
       );
