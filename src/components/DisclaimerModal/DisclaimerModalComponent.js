@@ -6,12 +6,6 @@ import {
   connect,
 } from 'react-redux';
 
-// import {
-//   Modal,
-//   Form,
-//   Button,
-// } from 'react-bootstrap';
-
 import {
   Button,
   Checkbox,

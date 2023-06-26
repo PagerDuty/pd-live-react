@@ -7,10 +7,6 @@ import {
 } from '@chakra-ui/react';
 
 // import {
-//   OverlayTrigger, Tooltip,
-// } from 'react-bootstrap';
-
-// import {
 //   getInitials,
 // } from 'util/helpers';
 
