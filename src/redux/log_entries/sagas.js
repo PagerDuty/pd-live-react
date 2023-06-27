@@ -22,6 +22,7 @@ import {
   UPDATE_CONNECTION_STATUS_REQUESTED,
 } from 'redux/connection/actions';
 import {
+  FETCH_INCIDENTS_REQUESTED,
   PROCESS_LOG_ENTRIES,
   // UPDATE_INCIDENTS_LIST,
 } from 'redux/incidents/actions';
@@ -63,8 +64,20 @@ export function* getLogEntries(action) {
 
     let logEntries;
     try {
-      logEntries = yield call(pdParallelFetch, 'log_entries', params);
+      logEntries = yield call(pdParallelFetch, 'log_entries', params, null, { priority: 5, maxRecords: 1000 });
     } catch (e) {
+      if (e.message && e.message.startsWith('Too many records')) {
+        // eslint-disable-next-line no-console
+        console.log(`getLogEntries: ${e.message} - fetching incidents instead`);
+        yield put({
+          type: FETCH_LOG_ENTRIES_ERROR,
+          message: e.message,
+        });
+        yield put({
+          type: FETCH_INCIDENTS_REQUESTED,
+        });
+        return;
+      }
       throw Error(i18next.t('Unable to fetch log entries') + e.message ? `: ${e.message}` : '');
     }
 
@@ -85,10 +98,13 @@ export function* getLogEntries(action) {
       ),
     };
 
+    const latestLogEntryDate = logEntries.length > 0 ? new Date(Math.max(...logEntries.map((x) => new Date(x.created_at)))) : undefined;
+
     yield put({
       type: FETCH_LOG_ENTRIES_COMPLETED,
       logEntries,
       recentLogEntries: recentLogEntriesLocal,
+      latestLogEntryDate,
     });
 
     if (logEntries.length === 0) {

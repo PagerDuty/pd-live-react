@@ -499,7 +499,7 @@ const incidents = produce(
     fetchingIncidentNotes: false,
     fetchingIncidentAlerts: false,
     // refreshingIncidents: false,
-    lastFetchDate: new Date(),
+    lastFetchDate: undefined,
     error: null,
   },
 );
