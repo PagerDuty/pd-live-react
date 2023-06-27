@@ -8,13 +8,6 @@ import {
 import i18next from 'i18n';
 
 import {
-  RESOLVE_LOG_ENTRY,
-  TRIGGER_LOG_ENTRY,
-  ANNOTATE_LOG_ENTRY,
-  LINK_LOG_ENTRY,
-  UNLINK_LOG_ENTRY,
-} from 'util/log-entries';
-import {
   pd, pdParallelFetch,
 } from 'util/pd-api-wrapper';
 
@@ -22,20 +15,13 @@ import {
   UPDATE_CONNECTION_STATUS_REQUESTED,
 } from 'redux/connection/actions';
 import {
-  FETCH_INCIDENTS_REQUESTED,
-  PROCESS_LOG_ENTRIES,
-  // UPDATE_INCIDENTS_LIST,
+  FETCH_INCIDENTS_REQUESTED, PROCESS_LOG_ENTRIES,
 } from 'redux/incidents/actions';
-
-import selectIncidents from 'redux/incidents/selectors';
 
 import {
   FETCH_LOG_ENTRIES_REQUESTED,
   FETCH_LOG_ENTRIES_COMPLETED,
   FETCH_LOG_ENTRIES_ERROR,
-  UPDATE_RECENT_LOG_ENTRIES,
-  UPDATE_RECENT_LOG_ENTRIES_COMPLETED,
-  UPDATE_RECENT_LOG_ENTRIES_ERROR,
   CLEAN_RECENT_LOG_ENTRIES,
   CLEAN_RECENT_LOG_ENTRIES_COMPLETED,
   CLEAN_RECENT_LOG_ENTRIES_ERROR,
@@ -64,7 +50,10 @@ export function* getLogEntries(action) {
 
     let logEntries;
     try {
-      logEntries = yield call(pdParallelFetch, 'log_entries', params, null, { priority: 5, maxRecords: 1000 });
+      logEntries = yield call(pdParallelFetch, 'log_entries', params, null, {
+        priority: 5,
+        maxRecords: 1000,
+      });
     } catch (e) {
       if (e.message && e.message.startsWith('Too many records')) {
         // eslint-disable-next-line no-console
@@ -98,7 +87,9 @@ export function* getLogEntries(action) {
       ),
     };
 
-    const latestLogEntryDate = logEntries.length > 0 ? new Date(Math.max(...logEntries.map((x) => new Date(x.created_at)))) : undefined;
+    const latestLogEntryDate = logEntries.length > 0
+      ? new Date(Math.max(...logEntries.map((x) => new Date(x.created_at))))
+      : undefined;
 
     yield put({
       type: FETCH_LOG_ENTRIES_COMPLETED,
