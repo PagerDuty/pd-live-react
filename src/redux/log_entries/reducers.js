@@ -21,10 +21,13 @@ const logEntries = produce(
         break;
 
       case FETCH_LOG_ENTRIES_COMPLETED:
-        draft.fetchingData = false;
-        draft.status = FETCH_LOG_ENTRIES_COMPLETED;
+        if (action.latestLogEntryDate) {
+          draft.latestLogEntryDate = action.latestLogEntryDate;
+        }
         draft.logEntries = action.logEntries;
         draft.recentLogEntries = action.recentLogEntries;
+        draft.fetchingData = false;
+        draft.status = FETCH_LOG_ENTRIES_COMPLETED;
         break;
 
       case FETCH_LOG_ENTRIES_ERROR:
@@ -71,6 +74,7 @@ const logEntries = produce(
     }
   },
   {
+    latestLogEntryDate: null,
     logEntries: [],
     recentLogEntries: {},
     addList: [],

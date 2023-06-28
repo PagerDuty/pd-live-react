@@ -108,15 +108,23 @@ const App = () => {
 
   const darkMode = useSelector((state) => state.settings.darkMode);
   const abilities = useSelector((state) => state.connection.abilities);
-  const userAuthorized = useSelector((state) => state.users.userAuthorized);
-  const userAcceptedDisclaimer = useSelector((state) => state.users.userAcceptedDisclaimer);
-  const currentUserLocale = useSelector((state) => state.users.currentUserLocale);
-  const fetchingIncidents = useSelector((state) => state.incidents.fetchingIncidents);
-  const fetchingIncidentNotes = useSelector((state) => state.incidents.fetchingIncidentNotes);
-  const fetchingIncidentAlerts = useSelector((state) => state.incidents.fetchingIncidentAlerts);
-  const refreshingIncidents = useSelector((state) => state.incidents.refreshingIncidents);
-  const lastFetchDate = useSelector((state) => state.incidents.lastFetchDate);
   const queryError = useSelector((state) => state.querySettings.error);
+  const {
+    fetchingIncidents,
+    fetchingIncidentNotes,
+    fetchingIncidentAlerts,
+    refreshingIncidents,
+    lastFetchDate,
+  } = useSelector((state) => state.incidents);
+  const {
+    userAuthorized,
+    userAcceptedDisclaimer,
+    currentUserLocale,
+  } = useSelector((state) => state.users);
+  const {
+    fetchingData: fetchingLogEntries,
+    latestLogEntryDate,
+  } = useSelector((state) => state.logEntries);
 
   if (darkMode) {
     document.body.classList.add('dark-mode');
@@ -146,22 +154,17 @@ const App = () => {
     moment.locale(currentUserLocale);
   }, [currentUserLocale]);
 
-  // Setup log entry polling
   useEffect(
     () => {
-      let useLastFetchDate = true;
-      setTimeout(() => {
-        checkAbilities();
-      }, 10000);
       const pollingInterval = setInterval(() => {
-        // TODO: check abilities but less frequently
-        // checkAbilities();
         checkConnectionStatus();
-        // const {
-        //   abilities,
-        // } = state.connection;
         if (userAuthorized && abilities.includes(PD_REQUIRED_ABILITY) && !queryError) {
-          // Determine lookback based on last fetch/refresh of incidents
+          if (fetchingLogEntries) {
+            // eslint-disable-next-line no-console
+            console.log('skipping log entries fetch because already fetching');
+            return;
+          }
+
           if (
             !fetchingIncidents
             && !fetchingIncidentNotes
@@ -169,15 +172,18 @@ const App = () => {
             && !refreshingIncidents
             && !DEBUG_DISABLE_POLLING
           ) {
-            if (useLastFetchDate) {
-              getLogEntriesAsync(lastFetchDate);
-            } else {
-              const lastPolledDate = moment()
-                .subtract(2 * LOG_ENTRIES_POLLING_INTERVAL_SECONDS, 'seconds')
-                .toDate();
-              getLogEntriesAsync(lastPolledDate);
+            // Determine lookback based on last fetch/refresh of incidents
+            // 2x polling interval is a good lookback if we don't have a last fetch date
+            let since = new Date(new Date() - 2000 * LOG_ENTRIES_POLLING_INTERVAL_SECONDS);
+            // If we have a last fetch date, use that
+            if (lastFetchDate) {
+              since = new Date(lastFetchDate - 1000);
             }
-            useLastFetchDate = false;
+            // If we have a latest log entry date and it's newer than last fetch date, use that
+            if (latestLogEntryDate && latestLogEntryDate > since) {
+              since = new Date(latestLogEntryDate - 1000);
+            }
+            getLogEntriesAsync(since);
           }
         }
       }, LOG_ENTRIES_POLLING_INTERVAL_SECONDS * 1000);
@@ -191,6 +197,7 @@ const App = () => {
       fetchingIncidentNotes,
       fetchingIncidentAlerts,
       refreshingIncidents,
+      latestLogEntryDate,
     ],
   );
 
