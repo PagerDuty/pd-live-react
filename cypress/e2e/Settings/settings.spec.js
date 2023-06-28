@@ -159,7 +159,19 @@ describe('Manage Settings', { failFast: { enabled: false } }, () => {
   it('Add valid custom alert column to incident table', () => {
     const customAlertColumnDefinitions = ['Quote:details.quote'];
     manageCustomAlertColumnDefinitions(customAlertColumnDefinitions);
-    // manageIncidentTableColumns('add', customAlertColumnDefinitions);
+    customAlertColumnDefinitions.forEach((columnName) => {
+      const header = columnName.split(':')[0];
+      cy.get(`[data-column-name="${header}"]`).scrollIntoView().should('be.visible');
+      cy.get(`[data-incident-header="${header}"][data-incident-row-cell-idx="0"]`).then(($el) => {
+        // eslint-disable-next-line no-unused-expressions
+        expect($el.text()).to.exist;
+      });
+    });
+  });
+
+  it('Add valid custom alert column with JSON path containing spaces to incident table', () => {
+    const customAlertColumnDefinitions = ["Fav Flavour:details.['favorite ice cream flavor']"];
+    manageCustomAlertColumnDefinitions(customAlertColumnDefinitions);
     customAlertColumnDefinitions.forEach((columnName) => {
       const header = columnName.split(':')[0];
       cy.get(`[data-column-name="${header}"]`).scrollIntoView().should('be.visible');
