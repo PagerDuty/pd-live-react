@@ -31,7 +31,7 @@ const PersonInitialsComponent = ({
         // initials: getInitials(user.summary),
         id: user.id,
         html_url: user.html_url,
-        color: CSS.supports('color', color) ? color : 'black',
+        color: CSS.supports && CSS.supports('color', color) ? color : 'black',
       };
     })
     : [];
@@ -44,10 +44,18 @@ const PersonInitialsComponent = ({
             <Avatar
               color="white"
               mr={1}
+              whiteSpace="nowrap"
+              overflow="hidden"
               name={user.summary}
               href={user.html_url}
               size="sm"
               bg={user.color}
+              getInitials={(name) => {
+                const allNames = name.trim().split(' ');
+                const firstInitial = allNames[0].match(/./u);
+                const lastInitial = allNames[allNames.length - 1].match(/./u);
+                return `${firstInitial}${lastInitial}`;
+              }}
             />
           </Link>
         </Tooltip>
