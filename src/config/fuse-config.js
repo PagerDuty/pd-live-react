@@ -1,8 +1,7 @@
 // Configuration for Fuse.js (Fuzzy Search)
 
 import {
-  defaultIncidentColumns,
-  defaultAlertsColumns,
+  defaultIncidentColumns, defaultAlertsColumns,
 } from './column-generator';
 
 // Docs: https://fusejs.io/api/options.html

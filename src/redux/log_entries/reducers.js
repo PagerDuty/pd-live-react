@@ -1,4 +1,6 @@
-import produce from 'immer';
+import {
+  produce,
+} from 'immer';
 
 import {
   FETCH_LOG_ENTRIES_REQUESTED,

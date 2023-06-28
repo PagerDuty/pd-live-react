@@ -1,4 +1,6 @@
-import produce from 'immer';
+import {
+  produce,
+} from 'immer';
 
 import {
   TOGGLE_DISPLAY_ACTION_ALERTS_MODAL_REQUESTED,

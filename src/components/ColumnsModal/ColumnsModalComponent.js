@@ -158,9 +158,7 @@ const TableColumnsModalComponent = () => {
     if (!headerInputRef.current.value || headerInputRef.current.value.match(/:/)) {
       valid = false;
     }
-    if (
-      !accessorPathInputRef.current.value
-    ) {
+    if (!accessorPathInputRef.current.value) {
       valid = false;
     }
     setInputIsValid(valid);
