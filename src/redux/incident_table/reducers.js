@@ -1,4 +1,6 @@
-import produce from 'immer';
+import {
+  produce,
+} from 'immer';
 
 import {
   SAVE_INCIDENT_TABLE_SETTINGS_REQUESTED,

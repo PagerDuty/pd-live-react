@@ -117,14 +117,15 @@ const App = () => {
     lastFetchDate,
   } = useSelector((state) => state.incidents);
   const {
-    userAuthorized,
-    userAcceptedDisclaimer,
-    currentUserLocale,
-  } = useSelector((state) => state.users);
+    userAuthorized, userAcceptedDisclaimer, currentUserLocale,
+  } = useSelector(
+    (state) => state.users,
+  );
   const {
-    fetchingData: fetchingLogEntries,
-    latestLogEntryDate,
-  } = useSelector((state) => state.logEntries);
+    fetchingData: fetchingLogEntries, latestLogEntryDate,
+  } = useSelector(
+    (state) => state.logEntries,
+  );
 
   if (darkMode) {
     document.body.classList.add('dark-mode');

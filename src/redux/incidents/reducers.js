@@ -1,4 +1,6 @@
-import produce from 'immer';
+import {
+  produce,
+} from 'immer';
 
 import {
   UPDATE_INCIDENT_REDUCER_STATUS, UPDATE_INCIDENT_LAST_FETCH_DATE,
