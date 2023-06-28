@@ -155,12 +155,11 @@ const TableColumnsModalComponent = () => {
   const [inputIsValid, setInputIsValid] = useState(false);
   const validateInput = () => {
     let valid = true;
-    if (!headerInputRef.current.value || !headerInputRef.current.value.match(/^[a-zA-Z0-9_.]+$/)) {
+    if (!headerInputRef.current.value || headerInputRef.current.value.match(/:/)) {
       valid = false;
     }
     if (
       !accessorPathInputRef.current.value
-      || !accessorPathInputRef.current.value.match(/^[a-zA-Z0-9_.]+$/)
     ) {
       valid = false;
     }

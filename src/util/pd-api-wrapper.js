@@ -145,6 +145,9 @@ export const pdParallelFetch = async (
   const firstPage = (
     await throttledPdAxiosRequest('GET', endpoint, requestParams, undefined, axiosRequestOptions)
   ).data;
+  if (options.maxRecords && firstPage.total > options.maxRecords) {
+    throw new Error(`Too many records: ${firstPage.total} > ${options.maxRecords}`);
+  }
   const fetchedData = firstPage[endpointIdentifier(endpoint)];
 
   const promises = [];
