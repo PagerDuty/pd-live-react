@@ -31,7 +31,7 @@ const PersonInitialsComponent = ({
         // initials: getInitials(user.summary),
         id: user.id,
         html_url: user.html_url,
-        color: CSS.supports('color', color) ? color : 'black',
+        color: CSS.supports && CSS.supports('color', color) ? color : 'black',
       };
     })
     : [];
