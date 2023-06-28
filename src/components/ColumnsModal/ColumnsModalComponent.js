@@ -160,7 +160,6 @@ const TableColumnsModalComponent = () => {
     }
     if (
       !accessorPathInputRef.current.value
-      || !accessorPathInputRef.current.value.match(/^[a-zA-Z0-9_.]+$/)
     ) {
       valid = false;
     }
