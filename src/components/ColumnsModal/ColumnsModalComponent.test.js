@@ -39,6 +39,14 @@ describe('ColumnsModalComponent', () => {
             accessorPath: 'details.to.some.other.path',
             aggregator: null,
           },
+          {
+            label: "Fav Flavour:details.['favorite ice cream flavor']",
+            value: "Fav Flavour:details.['favorite ice cream flavor']",
+            columnType: 'alert',
+            Header: 'Fav Flavour',
+            accessorPath: "details.['favorite ice cream flavor']",
+            aggregator: null,
+          },
         ],
       },
       incidentTable: {
@@ -46,6 +54,7 @@ describe('ColumnsModalComponent', () => {
           { Header: '#', accessorPath: null, columnType: 'incident' },
           { Header: 'Status', accessorPath: null, columnType: 'incident' },
           { Header: 'CustomField', accessorPath: 'details.to.some.path', columnType: 'incident' },
+          { Header: 'Fav Flavour', accessorPath: "details.['favorite ice cream flavor']", columnType: 'incident' },
         ],
       },
     };
@@ -98,6 +107,19 @@ describe('ColumnsModalComponent', () => {
     ).toBeTruthy();
     expect(selectedColumns.find('span[value="AnotherCustomField"]')).toEqual({});
     expect(availableColumns.find('span[value="AnotherCustomField"]')).toBeTruthy();
+  });
+
+  it('should render an enabled custom column option with JSON path containing spaces', () => {
+    store = mockStore(baseStore);
+    const wrapper = componentWrapper(store, DndColumnsModalComponent);
+    const customColumns = wrapper.find('div#custom-columns-card-body');
+    const selectedColumns = wrapper.find('div#selected-columns-card-body');
+    const availableColumns = wrapper.find('div#available-columns-card-body');
+    expect(
+      customColumns.find('span[value="Fav Flavour:details.[\'favorite ice cream flavor\']"]'),
+    ).toBeTruthy();
+    expect(selectedColumns.find('span[value="Fav Flavour"]')).toEqual({});
+    expect(availableColumns.find('span[value="Fav Flavour"]')).toBeTruthy();
   });
 
   // it('should render a disabled custom column option which has a duplicate header/name', () => {

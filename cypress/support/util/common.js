@@ -223,7 +223,9 @@ export const manageCustomAlertColumnDefinitions = (customAlertColumnDefinitions)
     cy.get('input[placeholder="Header"]').type(header);
     cy.get('input[placeholder="JSON Path"]').type(accessorPath);
     cy.get('button[aria-label="Add custom column"]').click();
-    cy.get(`#column-${accessorPath.replace('.', '\\.')}-add-icon`).click();
+    // Need to escape special characters in accessorPath
+    // https://docs.cypress.io/faq/questions/using-cypress-faq#How-do-I-use-special-characters-with-cyget
+    cy.get(`#column-${Cypress.$.escapeSelector(accessorPath)}-add-icon`).click();
   });
   cy.get('#save-columns-button').click();
   checkActionAlertsModalContent('Incident table columns saved');
