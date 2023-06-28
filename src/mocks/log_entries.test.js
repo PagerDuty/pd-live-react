@@ -1,9 +1,12 @@
 import {
   faker,
 } from '@faker-js/faker';
-import generateMockIncident from './incidents.test';
+import {
+  generateMockIncident,
+} from './incidents.test';
 
 const generateMockLogEntry = () => {
+  const id = faker.string.alphanumeric(7);
   const type = faker.helpers.arrayElement(['notify_log_entry', 'acknowledge_log_entry']);
   const summary = faker.lorem.words(20);
   const createdAt = faker.date
@@ -16,6 +19,7 @@ const generateMockLogEntry = () => {
   const teams = [{ id: faker.string.alphanumeric(7) }];
 
   return {
+    id,
     type,
     summary,
     created_at: createdAt,

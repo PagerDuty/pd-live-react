@@ -97,7 +97,7 @@ const generateMockNote = () => {
 
 export const generateMockNotes = (num) => Array.from({ length: num }, () => generateMockNote());
 
-const generateMockIncident = () => {
+export const generateMockIncident = () => {
   // Generate Faker stubs for incident (slimmed down)
   const incidentNumber = Number(faker.string.numeric(5));
   const title = faker.lorem.words(20);

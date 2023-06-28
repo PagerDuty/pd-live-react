@@ -47,7 +47,6 @@ export function* getLogEntries(action) {
       since: since.toISOString().replace(/\.[\d]{3}/, ''),
       'include[]': ['incidents', 'linked_incidents', 'external_references', 'channels'],
     };
-
     let logEntries;
     try {
       logEntries = yield call(pdParallelFetch, 'log_entries', params, null, {
