@@ -108,12 +108,8 @@ const App = () => {
 
   const darkMode = useSelector((state) => state.settings.darkMode);
   const abilities = useSelector((state) => state.connection.abilities);
-  const queryError = useSelector((state) => state.querySettings.error);
   const {
     fetchingIncidents,
-    fetchingIncidentNotes,
-    fetchingIncidentAlerts,
-    refreshingIncidents,
     lastFetchDate,
   } = useSelector((state) => state.incidents);
   const {
@@ -155,22 +151,35 @@ const App = () => {
     moment.locale(currentUserLocale);
   }, [currentUserLocale]);
 
+  // use these refs in the polling interval to avoid stale values
+  // without having to add them to the dependency array
+  const latestLogEntryDateRef = useRef(latestLogEntryDate);
+  useEffect(() => {
+    latestLogEntryDateRef.current = latestLogEntryDate;
+  }, [latestLogEntryDate]);
+  const fetchingIncidentsRef = useRef(fetchingIncidents);
+  useEffect(() => {
+    fetchingIncidentsRef.current = fetchingIncidents;
+  }, [fetchingIncidents]);
+  const fetchingLogEntriesRef = useRef(fetchingLogEntries);
+  useEffect(() => {
+    fetchingLogEntriesRef.current = fetchingLogEntries;
+  }, [fetchingLogEntries]);
+
+  // Set up log entry polling
   useEffect(
     () => {
       const pollingInterval = setInterval(() => {
         checkConnectionStatus();
-        if (userAuthorized && abilities.includes(PD_REQUIRED_ABILITY) && !queryError) {
-          if (fetchingLogEntries) {
+        if (userAuthorized && abilities.includes(PD_REQUIRED_ABILITY)) {
+          if (fetchingLogEntriesRef.current) {
             // eslint-disable-next-line no-console
-            console.log('skipping log entries fetch because already fetching');
+            console.error('skipping log entries fetch because already fetching log entries');
             return;
           }
 
           if (
-            !fetchingIncidents
-            && !fetchingIncidentNotes
-            && !fetchingIncidentAlerts
-            && !refreshingIncidents
+            !fetchingIncidentsRef.current
             && !DEBUG_DISABLE_POLLING
           ) {
             // Determine lookback based on last fetch/refresh of incidents
@@ -181,24 +190,21 @@ const App = () => {
               since = new Date(lastFetchDate - 1000);
             }
             // If we have a latest log entry date and it's newer than last fetch date, use that
-            if (latestLogEntryDate && latestLogEntryDate > since) {
-              since = new Date(latestLogEntryDate - 1000);
+            if (latestLogEntryDateRef.current && latestLogEntryDateRef.current > since) {
+              since = new Date(latestLogEntryDateRef.current - 1000);
             }
             getLogEntriesAsync(since);
+          } else if (fetchingIncidentsRef.current) {
+            // eslint-disable-next-line no-console
+            console.error('skipping log entries fetch because already fetching incidents');
           }
         }
       }, LOG_ENTRIES_POLLING_INTERVAL_SECONDS * 1000);
       return () => clearInterval(pollingInterval);
     },
-    // Changes to any of these in the store resets log entries timer
     [
       userAuthorized,
-      queryError,
-      fetchingIncidents,
-      fetchingIncidentNotes,
-      fetchingIncidentAlerts,
-      refreshingIncidents,
-      latestLogEntryDate,
+      lastFetchDate,
     ],
   );
 
