@@ -54,7 +54,11 @@ describe('ColumnsModalComponent', () => {
           { Header: '#', accessorPath: null, columnType: 'incident' },
           { Header: 'Status', accessorPath: null, columnType: 'incident' },
           { Header: 'CustomField', accessorPath: 'details.to.some.path', columnType: 'incident' },
-          { Header: 'Fav Flavour', accessorPath: "details.['favorite ice cream flavor']", columnType: 'incident' },
+          {
+            Header: 'Fav Flavour',
+            accessorPath: "details.['favorite ice cream flavor']",
+            columnType: 'incident',
+          },
         ],
       },
     };

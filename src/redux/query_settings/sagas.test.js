@@ -129,7 +129,9 @@ describe('Sagas: Query Settings', () => {
       .silentRun()
       .then((result) => {
         expect(result.storeState.escalationPolicyIds).toEqual(escalationPolicyIds);
-        expect(result.storeState.status).toEqual(UPDATE_QUERY_SETTINGS_ESCALATION_POLICIES_COMPLETED);
+        expect(result.storeState.status).toEqual(
+          UPDATE_QUERY_SETTINGS_ESCALATION_POLICIES_COMPLETED,
+        );
       });
   });
 

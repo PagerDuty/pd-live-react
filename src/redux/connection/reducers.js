@@ -1,4 +1,6 @@
-import produce from 'immer';
+import {
+  produce,
+} from 'immer';
 import i18next from 'i18n';
 
 import {

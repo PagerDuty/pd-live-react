@@ -6,7 +6,9 @@ import {
   expectSaga,
 } from 'redux-saga-test-plan';
 import * as matchers from 'redux-saga-test-plan/matchers';
-import { throwError } from 'redux-saga-test-plan/providers';
+import {
+  throwError,
+} from 'redux-saga-test-plan/providers';
 
 import {
   generateMockLogEntries,
@@ -17,12 +19,13 @@ import {
 } from 'util/pd-api-wrapper';
 
 import {
-  FETCH_LOG_ENTRIES_REQUESTED, FETCH_LOG_ENTRIES_COMPLETED, FETCH_LOG_ENTRIES_ERROR,
+  FETCH_LOG_ENTRIES_REQUESTED,
+  FETCH_LOG_ENTRIES_COMPLETED,
+  FETCH_LOG_ENTRIES_ERROR,
 } from './actions';
 
 import {
-  FETCH_INCIDENTS_REQUESTED,
-  PROCESS_LOG_ENTRIES,
+  FETCH_INCIDENTS_REQUESTED, PROCESS_LOG_ENTRIES,
 } from '../incidents/actions';
 
 import logEntries from './reducers';
@@ -37,18 +40,17 @@ import {
 describe('Sagas: Log Entries', () => {
   const mockLogEntries = generateMockLogEntries(10);
   const mockRecentLogEntries = Object.assign(
-    {}, ...mockLogEntries.map((logEntry) => ({ [logEntry.id]: new Date(logEntry.created_at) })),
+    {},
+    ...mockLogEntries.map((logEntry) => ({ [logEntry.id]: new Date(logEntry.created_at) })),
   );
   const mockLatestLogEntryDate = new Date(Math.max(...Object.values(mockRecentLogEntries)));
 
   it('fetches log entries', () => expectSaga(getLogEntriesAsync)
     .withReducer(logEntries)
-    .provide(
-      [
-        [select(selectLogEntries), { logEntries: [], recentLogEntries: {} }],
-        [matchers.call.fn(pdParallelFetch), mockLogEntries],
-      ],
-    )
+    .provide([
+      [select(selectLogEntries), { logEntries: [], recentLogEntries: {} }],
+      [matchers.call.fn(pdParallelFetch), mockLogEntries],
+    ])
     .dispatch({
       type: FETCH_LOG_ENTRIES_REQUESTED,
       since: new Date(),
@@ -56,8 +58,7 @@ describe('Sagas: Log Entries', () => {
     .run()
     .then((result) => {
       const {
-        storeState,
-        effects,
+        storeState, effects,
       } = result;
       expect(effects.call).toHaveLength(1);
       expect(effects.put).toHaveLength(2);
@@ -71,12 +72,10 @@ describe('Sagas: Log Entries', () => {
 
   it('fetches incidents instead when log entries is too long', () => expectSaga(getLogEntriesAsync)
     .withReducer(logEntries)
-    .provide(
-      [
-        [select(selectLogEntries), { logEntries: [], recentLogEntries: {} }],
-        [matchers.call.fn(pdParallelFetch), throwError(new Error('Too many records: 1001 > 1000'))],
-      ],
-    )
+    .provide([
+      [select(selectLogEntries), { logEntries: [], recentLogEntries: {} }],
+      [matchers.call.fn(pdParallelFetch), throwError(new Error('Too many records: 1001 > 1000'))],
+    ])
     .dispatch({
       type: FETCH_LOG_ENTRIES_REQUESTED,
       since: new Date(),

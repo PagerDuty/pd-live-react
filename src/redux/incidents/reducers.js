@@ -1,4 +1,6 @@
-import produce from 'immer';
+import {
+  produce,
+} from 'immer';
 
 import {
   UPDATE_INCIDENT_REDUCER_STATUS, UPDATE_INCIDENT_LAST_FETCH_DATE,
@@ -60,6 +62,14 @@ import {
   FILTER_INCIDENTS_LIST_BY_QUERY_COMPLETED,
   FILTER_INCIDENTS_LIST_BY_QUERY_ERROR,
 } from './actions';
+
+const uniqOnId = (arr) => {
+  const map = new Map();
+  arr.forEach((item) => {
+    map.set(item.id, item);
+  });
+  return [...map.values()];
+};
 
 const incidents = produce(
   (draft, action) => {
@@ -217,9 +227,9 @@ const incidents = produce(
           if (!draft.incidentAlerts[incidentId]) {
             draft.incidentAlerts[incidentId] = [];
           }
-          draft.incidentAlerts[incidentId] = draft.incidentAlerts[incidentId].concat(
+          draft.incidentAlerts[incidentId] = uniqOnId(draft.incidentAlerts[incidentId].concat(
             action.incidentAlertsMap[incidentId],
-          );
+          ));
         }
         for (let i = 0; i < Object.keys(action.incidentAlertsUnlinkMap).length; i++) {
           const incidentId = Object.keys(action.incidentAlertsUnlinkMap)[i];

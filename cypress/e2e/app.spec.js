@@ -59,7 +59,7 @@ describe('PagerDuty Live', () => {
 
   it('Application indicates when the required ability is missing/disabled on the account', () => {
     // Intercept call to PagerDuty API with mock fixture
-    cy.intercept('https://api.pagerduty.com/abilities', {
+    cy.intercept('https://api.pagerduty.com/abilities*', {
       abilities: ['teams', 'read_only_users', 'service_support_hours', 'urgencies'],
     }).as('getAbilities');
     cy.visit('http://localhost:3000/pd-live-react');
