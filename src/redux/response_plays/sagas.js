@@ -44,6 +44,14 @@ export function* getResponsePlays() {
     if (e.status === 401) {
       e.message = i18next.t('Unauthorized Access');
     }
+    if (e.response.status === 301) {
+      // user just doesn't have response plays
+      yield put({
+        type: FETCH_RESPONSE_PLAYS_COMPLETED,
+        responsePlays: [],
+      });
+      return;
+    }
     yield put({ type: FETCH_RESPONSE_PLAYS_ERROR, message: e.message });
     yield put({
       type: UPDATE_CONNECTION_STATUS_REQUESTED,
