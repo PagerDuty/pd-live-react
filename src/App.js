@@ -202,8 +202,10 @@ const App = () => {
       }, LOG_ENTRIES_POLLING_INTERVAL_SECONDS * 1000);
       return () => clearInterval(pollingInterval);
     },
+    // Changes to any of these in the store resets log entries timer
     [
       userAuthorized,
+      fetchingIncidents,
       lastFetchDate,
     ],
   );
