@@ -58,9 +58,9 @@ export const pdAxiosRequest = async (method, endpoint, params = {}, data = {}) =
       return `Token token=${tokenObj.token}`;
     })(),
     Accept: 'application/vnd.pagerduty+json;version=2',
-    'content-type': 'application/json; charset=utf-8',
+    'Content-Type': 'application/json; charset=utf-8',
   },
-  params,
+  params: { ...params, rand: Math.random().toString(36).substring(2, 7) },
   data,
 });
 
