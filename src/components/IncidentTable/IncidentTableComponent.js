@@ -138,6 +138,9 @@ const IncidentTableComponent = () => {
     status: incidentActionsStatus,
   } = useSelector((state) => state.incidentActions);
   const {
+    status: responsePlaysStatus,
+  } = useSelector((state) => state.responsePlays);
+  const {
     filteredIncidentsByQuery, incidentAlerts, incidentNotes, fetchingIncidents,
   } = useSelector((state) => state.incidents);
   const currentUserLocale = useSelector((state) => state.users.currentUserLocale);
@@ -382,6 +385,16 @@ const IncidentTableComponent = () => {
       toggleAllRowsSelected(false);
     }
   }, [incidentActionsStatus]);
+
+  // deselect rows after response play has completed
+  // not adding this to the above useEffect because I don't want to
+  // take a chance of deselecting too many times
+  useEffect(() => {
+    // TODO: Get user feedback on this workflow
+    if (responsePlaysStatus === 'RUN_RESPONSE_PLAY_COMPLETED') {
+      toggleAllRowsSelected(false);
+    }
+  }, [responsePlaysStatus]);
 
   const [displayGetAllForSortModal, setDisplayGetAllForSortModal] = useState(false);
   const [columnTypeForGetAllModal, setColumnForGetAllModal] = useState(null);
