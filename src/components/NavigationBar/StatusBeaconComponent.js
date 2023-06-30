@@ -20,6 +20,7 @@ const StatusBeaconComponent = ({
   return (
 
     <Tooltip
+      aria-label="status-beacon-connection"
       label={(
         <>
           {i18next.t('Status')}
