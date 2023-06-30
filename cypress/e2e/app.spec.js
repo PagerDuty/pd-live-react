@@ -52,9 +52,9 @@ describe('PagerDuty Live', () => {
   });
 
   it('Application indicates when the required ability is available on the account', () => {
-    cy.get('.status-beacon-ctr').trigger('mouseover');
-    cy.get('.status-beacon-connection').should('be.visible');
-    cy.get('.status-beacon-connection').contains('Connected', { timeout: 30000 });
+    cy.get('.status-beacon-ctr').realHover();
+    cy.get('[data-popper-placement="bottom"]').should('be.visible');
+    cy.get('[data-popper-placement="bottom"]').contains('Connected', { timeout: 30000 });
   });
 
   it('Application indicates when the required ability is missing/disabled on the account', () => {
@@ -67,9 +67,9 @@ describe('PagerDuty Live', () => {
     cy.wait('@getAbilities', { timeout: 30000 });
 
     // The mock response will render an error in the application
-    cy.get('.status-beacon-ctr').trigger('mouseover');
-    cy.get('.status-beacon-connection').should('be.visible');
-    cy.get('.status-beacon-connection').contains(
+    cy.get('.status-beacon-ctr').realHover();
+    cy.get('[data-popper-placement="bottom"]').should('be.visible');
+    cy.get('[data-popper-placement="bottom"]').contains(
       'Current subdomain does not have the correct ability to use PagerDuty Live',
     );
   });
@@ -81,9 +81,9 @@ describe('PagerDuty Live', () => {
     cy.get('#disclaimer-agree-checkbox').click({ force: true });
     cy.get('#disclaimer-accept-button').click({ force: true });
 
-    cy.get('.status-beacon-ctr').trigger('mouseover');
-    cy.get('.status-beacon-connection').should('be.visible');
-    cy.get('.status-beacon-connection').contains('Live updates disabled');
+    cy.get('.status-beacon-ctr').realHover();
+    cy.get('[data-popper-placement="bottom"]').should('be.visible');
+    cy.get('[data-popper-placement="bottom"]').contains('Live updates disabled');
   });
 
   it('Application correctly uses url parameters since & until to query PD API', () => {
