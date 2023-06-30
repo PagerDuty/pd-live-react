@@ -135,7 +135,7 @@ const IncidentTableComponent = () => {
     incidentTableState, incidentTableColumns,
   } = useSelector((state) => state.incidentTable);
   const {
-    status,
+    status: incidentActionsStatus,
   } = useSelector((state) => state.incidentActions);
   const {
     filteredIncidentsByQuery, incidentAlerts, incidentNotes, fetchingIncidents,
@@ -376,12 +376,12 @@ const IncidentTableComponent = () => {
   // Handle deselecting rows after incident action has completed
   useEffect(() => {
     // TODO: Get user feedback on this workflow
-    if (status === 'ACTION_COMPLETED') {
+    if (incidentActionsStatus === 'ACTION_COMPLETED') {
       toggleAllRowsSelected(false);
-    } else if (!status.includes('TOGGLE') && status.includes('COMPLETED')) {
+    } else if (!incidentActionsStatus.includes('TOGGLE') && incidentActionsStatus.includes('COMPLETED')) {
       toggleAllRowsSelected(false);
     }
-  }, [status]);
+  }, [incidentActionsStatus]);
 
   const [displayGetAllForSortModal, setDisplayGetAllForSortModal] = useState(false);
   const [columnTypeForGetAllModal, setColumnForGetAllModal] = useState(null);

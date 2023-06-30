@@ -183,10 +183,6 @@ export function* escalate(action) {
 
     if (response.ok) {
       yield put({
-        type: ESCALATE_COMPLETED,
-        escalatedIncidents: response.data.incidents,
-      });
-      yield put({
         type: UPDATE_INCIDENTS,
         updatedIncidents: response.data.incidents,
       });
@@ -197,6 +193,10 @@ export function* escalate(action) {
           .join(', ')} ${i18next.t('have been manually escalated to level')} ${escalationLevel}`;
         yield displayActionModal(actionAlertsModalType, actionAlertsModalMessage);
       }
+      yield put({
+        type: ESCALATE_COMPLETED,
+        escalatedIncidents: response.data.incidents,
+      });
     } else {
       handleSingleAPIErrorResponse(response);
     }
@@ -250,10 +250,6 @@ export function* reassign(action) {
 
     if (response.ok) {
       yield put({
-        type: REASSIGN_COMPLETED,
-        reassignedIncidents: response.data.incidents,
-      });
-      yield put({
         type: UPDATE_INCIDENTS,
         updatedIncidents: response.data.incidents,
       });
@@ -266,6 +262,10 @@ export function* reassign(action) {
           .join(', ')} ${i18next.t('have been reassigned to')} ${assignment.name}`;
         yield displayActionModal(actionAlertsModalType, actionAlertsModalMessage);
       }
+      yield put({
+        type: REASSIGN_COMPLETED,
+        reassignedIncidents: response.data.incidents,
+      });
     } else {
       handleSingleAPIErrorResponse(response);
     }
@@ -322,10 +322,6 @@ export function* addResponder(action) {
     // Invoke parallel calls for optimal performance
     const responses = yield all(addResponderRequests);
     if (responses.every((response) => response.ok)) {
-      yield put({
-        type: ADD_RESPONDER_COMPLETED,
-        updatedIncidentResponderRequests: responses,
-      });
       yield toggleDisplayAddResponderModalImpl();
       if (displayModal) {
         const actionAlertsModalType = 'success';
@@ -333,6 +329,10 @@ export function* addResponder(action) {
         ${i18next.t('incident')}(s) ${selectedIncidents.map((i) => i.incident_number).join(', ')}.`;
         yield displayActionModal(actionAlertsModalType, actionAlertsModalMessage);
       }
+      yield put({
+        type: ADD_RESPONDER_COMPLETED,
+        updatedIncidentResponderRequests: responses,
+      });
     } else {
       handleMultipleAPIErrorResponses(responses);
     }
@@ -389,10 +389,6 @@ export function* snooze(action) {
     // Invoke parallel calls for optimal performance
     const responses = yield all(snoozeRequests);
     if (responses.every((response) => response.ok)) {
-      yield put({
-        type: SNOOZE_COMPLETED,
-        snoozedIncidents: responses,
-      });
       const updatedIncidents = responses.map((response) => response.resource);
       yield put({
         type: UPDATE_INCIDENTS,
@@ -407,6 +403,10 @@ export function* snooze(action) {
         );
         yield displayActionModal(actionAlertsModalType, actionAlertsModalMessage);
       }
+      yield put({
+        type: SNOOZE_COMPLETED,
+        snoozedIncidents: responses,
+      });
     } else {
       handleMultipleAPIErrorResponses(responses);
     }
@@ -458,10 +458,6 @@ export function* merge(action) {
     });
 
     if (response.ok) {
-      yield put({
-        type: MERGE_COMPLETED,
-        mergedIncident: response.resource,
-      });
       yield toggleDisplayMergeModalImpl();
 
       const mergedIncident = response.resource;
@@ -482,6 +478,10 @@ export function* merge(action) {
           ${targetIncident.incident_number}`;
         yield displayActionModal(actionAlertsModalType, actionAlertsModalMessage);
       }
+      yield put({
+        type: MERGE_COMPLETED,
+        mergedIncident: response.resource,
+      });
     } else {
       handleSingleAPIErrorResponse(response);
     }
@@ -667,10 +667,6 @@ export function* addNote(action) {
     // Invoke parallel calls for optimal performance
     const responses = yield all(addNoteRequests);
     if (responses.every((response) => response.ok)) {
-      yield put({
-        type: ADD_NOTE_COMPLETED,
-        updatedIncidentNotes: responses,
-      });
       yield toggleDisplayAddNoteModalImpl();
       if (displayModal) {
         const actionAlertsModalType = 'success';
@@ -679,6 +675,10 @@ export function* addNote(action) {
           .join(', ')} ${i18next.t('have been updated with a note')}.`;
         yield displayActionModal(actionAlertsModalType, actionAlertsModalMessage);
       }
+      yield put({
+        type: ADD_NOTE_COMPLETED,
+        updatedIncidentNotes: responses,
+      });
     } else {
       handleMultipleAPIErrorResponses(responses);
     }
