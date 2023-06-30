@@ -37,6 +37,14 @@ export const selectAllIncidents = () => {
   cy.get('#select-all', { timeout: 20000 }).click();
 };
 
+export const checkNoIncidentsSelected = () => {
+  cy.get('.selected-incidents-badge').then(($el) => {
+    const text = $el.text();
+    const incidentNumbers = text.split(' ')[0].split('/');
+    expect(incidentNumbers[0]).to.equal('0');
+  });
+};
+
 export const checkActionAlertsModalContent = (content) => {
   cy.wait(2000);
   cy.get('.chakra-alert__title').contains(content, { timeout: 10000 });
