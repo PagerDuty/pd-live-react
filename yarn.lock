@@ -3269,6 +3269,7 @@
   integrity sha512-Cr4OjIkipTtcXKjAsm8agyleBuDHvxzeBoa1v543lbv1YaIwQjESsVcmjiWiPEbC1FIeHOG/Op9kdCmAmiS3Kw==
 
 "@prettier/eslint@npm:prettier-eslint@^15.0.1", prettier-eslint@^15.0.1:
+  name "@prettier/eslint"
   version "15.0.1"
   resolved "https://registry.yarnpkg.com/prettier-eslint/-/prettier-eslint-15.0.1.tgz#2543a43e9acec2a9767ad6458165ce81f353db9c"
   integrity sha512-mGOWVHixSvpZWARqSDXbdtTL54mMBxc5oQYQ6RAqy8jecuNJBgN3t9E5a81G66F8x8fsKNiR1HWaBV66MJDOpg==
@@ -8733,10 +8734,17 @@ i18next-parser@^8.0.0:
     vinyl-fs "^3.0.2"
     vue-template-compiler "^2.6.11"
 
-i18next@^22.0.4, i18next@^22.4.8:
+i18next@^22.0.4:
   version "22.4.15"
   resolved "https://registry.yarnpkg.com/i18next/-/i18next-22.4.15.tgz#951882b751872994f8502b5a6ef6f796e6a7d7f8"
   integrity sha512-yYudtbFrrmWKLEhl6jvKUYyYunj4bTBCe2qIUYAxbXoPusY7YmdwPvOE6fx6UIfWvmlbCWDItr7wIs8KEBZ5Zg==
+  dependencies:
+    "@babel/runtime" "^7.20.6"
+
+i18next@^22.5.1:
+  version "22.5.1"
+  resolved "https://registry.yarnpkg.com/i18next/-/i18next-22.5.1.tgz#99df0b318741a506000c243429a7352e5f44d424"
+  integrity sha512-8TGPgM3pAD+VRsMtUMNknRz3kzqwp/gPALrWMsDnmC1mKqJwpWyooQRLMcbTwq8z8YwSmuj+ZYvc+xCuEpkssA==
   dependencies:
     "@babel/runtime" "^7.20.6"
 
