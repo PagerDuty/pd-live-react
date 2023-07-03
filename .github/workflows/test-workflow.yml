@@ -42,7 +42,7 @@ jobs:
         run: yarn jest
 
   cypress-run:
-    needs: build-id
+    needs: [build-id, jest]
     runs-on: ubuntu-latest
     container:
       image: cypress/browsers:node16.16.0-chrome107-ff107
@@ -62,7 +62,6 @@ jobs:
       REACT_APP_DD_SAMPLE_RATE: ${{ secrets.DD_SAMPLE_RATE }}
       REACT_APP_DD_TRACK_INTERACTIONS: ${{ secrets.DD_TRACK_INTERACTIONS }}
       REACT_APP_DD_DEFAULT_PRIVACY_LEVEL: ${{ secrets.DD_DEFAULT_PRIVACY_LEVEL }}
-      CYPRESS_API_URL: ${{ format('{0}:1234', secrets.CYPRESS_API_URL) }}
       CYPRESS_PROJECT_ID: ${{ secrets.CYPRESS_PROJECT_ID }}
       CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -97,7 +96,7 @@ jobs:
           record: true
           parallel: true # Runs test in parallel using settings above
           # https://github.com/cypress-io/github-action#custom-build-id
-          ci-build-id: ${{ needs.build-id.outputs.uuid }}
+          # ci-build-id: ${{ needs.build-id.outputs.uuid }}
         env:
           # For recording and parallelization to work you must set your CYPRESS_RECORD_KEY
           # in GitHub repo → Settings → Secrets → Actions
