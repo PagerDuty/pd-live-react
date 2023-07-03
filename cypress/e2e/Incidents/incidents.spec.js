@@ -17,6 +17,7 @@ import {
   runResponsePlay,
   checkActionAlertsModalContent,
   checkIncidentCellContent,
+  checkNoIncidentsSelected,
   // activateButton,
   // deactivateButton,
   priorityNames,
@@ -41,6 +42,10 @@ describe('Manage Open Incidents', { failFast: { enabled: false } }, () => {
     //   activateButton(`query-priority-${currentPriority}-button`);
     // });
     waitForIncidentTable();
+  });
+
+  afterEach(() => {
+    checkNoIncidentsSelected();
   });
 
   it('Select all incidents', () => {
