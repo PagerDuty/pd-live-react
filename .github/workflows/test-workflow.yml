@@ -16,10 +16,7 @@ jobs:
     steps:
       - name: Generate unique ID 💎
         id: uuid
-        # take the current commit + timestamp together
-        # the typical value would be something like
-        # "sha-5d3fe...35d3-time-1620841214"
-        run: echo "value=sha-$GITHUB_SHA-time-$(date +"%s")" >> $GITHUB_OUTPUT
+        run: echo "value=sha-$GITHUB_SHA" >> $GITHUB_OUTPUT
 
   jest:
     runs-on: ubuntu-latest
@@ -96,7 +93,7 @@ jobs:
           record: true
           parallel: true # Runs test in parallel using settings above
           # https://github.com/cypress-io/github-action#custom-build-id
-          # ci-build-id: ${{ needs.build-id.outputs.uuid }}
+          ci-build-id: ${{ needs.build-id.outputs.uuid }}
         env:
           # For recording and parallelization to work you must set your CYPRESS_RECORD_KEY
           # in GitHub repo → Settings → Secrets → Actions
