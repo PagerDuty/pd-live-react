@@ -25,6 +25,8 @@ export const waitForIncidentTable = () => {
   // Ref: https://stackoverflow.com/a/60065672/6480733
   cy.wait(3000); // Required for query debounce
   cy.get('#incident-table-ctr', { timeout: 60000 }).should('be.visible');
+  // will move on to next command even if table is not scrollable
+  cy.get('.incident-table-fixed-list').scrollTo('top', { ensureScrollable: false });
 };
 
 export const selectIncident = (incidentIdx = 0) => {
