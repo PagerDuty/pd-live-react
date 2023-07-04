@@ -11,11 +11,10 @@ export const pd = api({ token: Cypress.env('PD_USER_TOKEN') });
   Cypress Helpers
 */
 export const acceptDisclaimer = () => {
-  cy.visit('/', {
-    onBeforeLoad: (win) => {
-      win.sessionStorage.clear();
-    },
-  });
+  cy.clearLocalStorage();
+  cy.clearAllSessionStorage();
+  cy.clearCookies();
+  cy.visit('/');
   cy.get('.modal-title', { timeout: 30000 }).contains('Disclaimer & License');
   cy.get('#disclaimer-agree-checkbox').click({ force: true });
   cy.get('#disclaimer-accept-button').click({ force: true });

@@ -9,37 +9,48 @@ concurrency:
   group: 'develop'
 
 jobs:
-  build-id:
+  install:
     runs-on: ubuntu-latest
-    outputs:
-      uuid: ${{ steps.uuid.outputs.value }}
     steps:
-      - name: 'uuid'
-        id: uuid
-        run: echo "::set-output name=value::$GITHUB_SHA-$(date +"%s")"
+      - uses: actions/checkout@v3
+      - name: Install Yarn
+        run: npm install -g yarn
+      # https://github.com/actions/cache/blob/main/examples.md#node---yarn
+      - name: Get yarn cache directory path
+        id: yarn-cache-dir-path
+        run: echo "dir=$(yarn cache dir)" >> $GITHUB_OUTPUT
+      - uses: actions/cache@v3
+        id: yarn-cache
+        with:
+          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: ${{ runner.os }}-yarn-
+      - name: Install project dependencies (via cache)
+        run: yarn --prefer-offline
 
   jest:
+    needs: install
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Install Yarn
         run: npm install -g yarn
       - name: Get yarn cache directory path
         id: yarn-cache-dir-path
-        run: echo "::set-output name=dir::$(yarn cache dir)"
-      - uses: actions/cache@v2
+        run: echo "dir=$(yarn cache dir)" >> $GITHUB_OUTPUT
+      - uses: actions/cache@v3
         id: yarn-cache
         with:
           path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
-          key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}
-          restore-keys: ${{ runner.os }}-modules-
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: ${{ runner.os }}-yarn-
       - name: Install project dependencies (via cache)
         run: yarn --prefer-offline
       - name: Run Jest Tests
         run: yarn jest
 
   cypress-run:
-    needs: build-id
+    needs: install
     runs-on: ubuntu-latest
     container:
       image: cypress/browsers:node16.16.0-chrome107-ff107
@@ -47,7 +58,12 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        containers: [1, 2, 3, 4, 5]
+        e2e:
+          - Incidents/incidents.spec.js
+          - Query/query.spec.js
+          - Search/search.spec.js
+          - Settings/settings.spec.js
+          - app.spec.js
     env:
       REACT_APP_PD_ENV: 'github-ci'
       REACT_APP_PD_SUBDOMAIN_ALLOW_LIST: '*'
@@ -59,66 +75,41 @@ jobs:
       REACT_APP_DD_SAMPLE_RATE: ${{ secrets.DD_SAMPLE_RATE }}
       REACT_APP_DD_TRACK_INTERACTIONS: ${{ secrets.DD_TRACK_INTERACTIONS }}
       REACT_APP_DD_DEFAULT_PRIVACY_LEVEL: ${{ secrets.DD_DEFAULT_PRIVACY_LEVEL }}
-      CYPRESS_API_URL: ${{ format('{0}:1234', secrets.CYPRESS_API_URL) }}
       CYPRESS_PROJECT_ID: ${{ secrets.CYPRESS_PROJECT_ID }}
       CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
-      GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: Get yarn cache directory path
         id: yarn-cache-dir-path
-        run: echo "::set-output name=dir::$(yarn cache dir)"
-      - name: Cache Yarn Dependencies
-        uses: actions/cache@v2
+        run: echo "dir=$(yarn cache dir)" >> $GITHUB_OUTPUT
+      - uses: actions/cache@v3
         id: yarn-cache
         with:
-          path: |
-            ~/.cache/Cypress
-            ${{ steps.yarn-cache-dir-path.outputs.dir }}
-          key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}
-          restore-keys: ${{ runner.os }}-modules-
+          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: ${{ runner.os }}-yarn-
       - name: Install project dependencies (via cache)
         run: yarn --prefer-offline
-      - name: Run Cypress Tests
-        run: |
-          Xvfb -screen 0 1920x1080x24 :99 & export DISPLAY=:99
-          yarn start &
-          npx wait-on http://localhost:3000 && \
-          npx cy2 run \
-          --group "e2e" \
-          --browser chrome \
-          --headless \
-          --parallel \
-          --record \
-          --key ${CYPRESS_RECORD_KEY} \
-          --ci-build-id ${{ needs.build-id.outputs.uuid }} && \
-          pkill Xvfb
-
-      # Below steps required to pass GitHub status as we are manually running Cypress
-      - name: Cypress tests ✅
-        if: ${{ success() }}
-        run: |
-          curl --request POST \
-          --url https://api.github.com/repos/${{ github.repository }}/statuses/${{ github.sha }} \
-          --header 'authorization: Bearer ${{ secrets.GH_TOKEN }}' \
-          --header 'content-type: application/json' \
-          --data '{
-            "context": "cypress-run",
-            "state": "success",
-            "description": "Cypress tests passed",
-            "target_url": "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
-          }'
-      - name: Cypress tests 🚨
-        if: ${{ failure() }}
-        run: |
-          curl --request POST \
-          --url https://api.github.com/repos/${{ github.repository }}/statuses/${{ github.sha }} \
-          --header 'authorization: Bearer ${{ secrets.GH_TOKEN }}' \
-          --header 'content-type: application/json' \
-          --data '{
-            "context": "cypress-run",
-            "state": "failure",
-            "description": "Cypress tests failed",
-            "target_url": "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
-          }'
+      - name: Cypress run
+        # Uses the official Cypress GitHub action https://github.com/cypress-io/github-action
+        uses: cypress-io/github-action@v4
+        with:
+          # Starts web server for E2E tests - replace with your own server invocation
+          # https://docs.cypress.io/guides/continuous-integration/introduction#Boot-your-server
+          start: yarn start
+          wait-on: 'http://localhost:3000' # Waits for above
+          browser: chrome
+          # Records to Cypress Cloud
+          # https://docs.cypress.io/guides/cloud/projects#Set-up-a-project-to-record
+          record: true
+          # Specify Cypress test spec files in each matrix job to deterministically run tests in parallel
+          spec: cypress/e2e/${{ matrix.e2e }}
+          parallel: false # Don't use Cypress in-built parallelization
+        env:
+          # For recording and parallelization to work you must set your CYPRESS_RECORD_KEY
+          # in GitHub repo → Settings → Secrets → Actions
+          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
+          # Creating a token https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
