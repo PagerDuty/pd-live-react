@@ -9,16 +9,7 @@ concurrency:
   group: 'develop'
 
 jobs:
-  # build-id:
-  #   runs-on: ubuntu-latest
-  #   outputs:
-  #     uuid: ${{ steps.uuid.outputs.value }}
-  #   steps:
-  #     - name: Generate unique ID 💎
-  #       id: uuid
-  #       run: echo "value=sha-$GITHUB_SHA" >> $GITHUB_OUTPUT
-
-  jest:
+  install:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -27,7 +18,27 @@ jobs:
       - name: Get yarn cache directory path
         id: yarn-cache-dir-path
         run: echo "::set-output name=dir::$(yarn cache dir)"
-      - uses: actions/cache@v2
+      - name: Cache Yarn Dependencies
+        uses: actions/cache@v3
+        id: yarn-cache
+        with:
+          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
+          key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: ${{ runner.os }}-modules-
+      - name: Install project dependencies (via cache)
+        run: yarn --prefer-offline
+
+  jest:
+    needs: install
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Install Yarn
+        run: npm install -g yarn
+      - name: Get yarn cache directory path
+        id: yarn-cache-dir-path
+        run: echo "::set-output name=dir::$(yarn cache dir)"
+      - uses: actions/cache@v3
         id: yarn-cache
         with:
           path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
@@ -39,9 +50,7 @@ jobs:
         run: yarn jest
 
   cypress-run:
-    needs:
-      # - build-id
-      - jest
+    needs: install
     runs-on: ubuntu-latest
     container:
       image: cypress/browsers:node16.16.0-chrome107-ff107
@@ -75,8 +84,7 @@ jobs:
       - name: Get yarn cache directory path
         id: yarn-cache-dir-path
         run: echo "::set-output name=dir::$(yarn cache dir)"
-      - name: Cache Yarn Dependencies
-        uses: actions/cache@v2
+      - uses: actions/cache@v3
         id: yarn-cache
         with:
           path: |
@@ -101,8 +109,6 @@ jobs:
           # Specify Cypress test spec files in each matrix job to deterministically run tests in parallel
           spec: cypress/e2e/${{ matrix.e2e }}
           parallel: false # Don't use Cypress in-built parallelization
-          # https://github.com/cypress-io/github-action#custom-build-id
-          # ci-build-id: ${{ needs.build-id.outputs.uuid }}
         env:
           # For recording and parallelization to work you must set your CYPRESS_RECORD_KEY
           # in GitHub repo → Settings → Secrets → Actions
