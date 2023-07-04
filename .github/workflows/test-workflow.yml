@@ -9,14 +9,14 @@ concurrency:
   group: 'develop'
 
 jobs:
-  build-id:
-    runs-on: ubuntu-latest
-    outputs:
-      uuid: ${{ steps.uuid.outputs.value }}
-    steps:
-      - name: Generate unique ID 💎
-        id: uuid
-        run: echo "value=sha-$GITHUB_SHA" >> $GITHUB_OUTPUT
+  # build-id:
+  #   runs-on: ubuntu-latest
+  #   outputs:
+  #     uuid: ${{ steps.uuid.outputs.value }}
+  #   steps:
+  #     - name: Generate unique ID 💎
+  #       id: uuid
+  #       run: echo "value=sha-$GITHUB_SHA" >> $GITHUB_OUTPUT
 
   jest:
     runs-on: ubuntu-latest
@@ -39,7 +39,9 @@ jobs:
         run: yarn jest
 
   cypress-run:
-    needs: [build-id, jest]
+    needs:
+      # - build-id
+      - jest
     runs-on: ubuntu-latest
     container:
       image: cypress/browsers:node16.16.0-chrome107-ff107
@@ -100,7 +102,7 @@ jobs:
           spec: cypress/e2e/${{ matrix.e2e }}
           parallel: false # Don't use Cypress in-built parallelization
           # https://github.com/cypress-io/github-action#custom-build-id
-          ci-build-id: ${{ needs.build-id.outputs.uuid }}
+          # ci-build-id: ${{ needs.build-id.outputs.uuid }}
         env:
           # For recording and parallelization to work you must set your CYPRESS_RECORD_KEY
           # in GitHub repo → Settings → Secrets → Actions
