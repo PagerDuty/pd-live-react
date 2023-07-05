@@ -143,7 +143,7 @@
     "i18next-parser": "^8.0.0",
     "identity-obj-proxy": "^3.0.0",
     "jest-canvas-mock": "^2.4.0",
-    "jest-location-mock": "^1.0.9",
+    "jest-location-mock": "^1.0.10",
     "prettier": "^2.8.0",
     "prettier-eslint": "^15.0.1",
     "prettier-eslint-cli": "^7.1.0",
