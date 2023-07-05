@@ -11,11 +11,10 @@ export const pd = api({ token: Cypress.env('PD_USER_TOKEN') });
   Cypress Helpers
 */
 export const acceptDisclaimer = () => {
-  cy.visit('/', {
-    onBeforeLoad: (win) => {
-      win.sessionStorage.clear();
-    },
-  });
+  cy.clearLocalStorage();
+  cy.clearAllSessionStorage();
+  cy.clearCookies();
+  cy.visit('/');
   cy.get('.modal-title', { timeout: 30000 }).contains('Disclaimer & License');
   cy.get('#disclaimer-agree-checkbox').click({ force: true });
   cy.get('#disclaimer-accept-button').click({ force: true });
@@ -25,6 +24,8 @@ export const waitForIncidentTable = () => {
   // Ref: https://stackoverflow.com/a/60065672/6480733
   cy.wait(3000); // Required for query debounce
   cy.get('#incident-table-ctr', { timeout: 60000 }).should('be.visible');
+  // will move on to next command even if table is not scrollable
+  cy.get('.incident-table-fixed-list').scrollTo('top', { ensureScrollable: false });
 };
 
 export const selectIncident = (incidentIdx = 0) => {
@@ -35,6 +36,14 @@ export const selectIncident = (incidentIdx = 0) => {
 
 export const selectAllIncidents = () => {
   cy.get('#select-all', { timeout: 20000 }).click();
+};
+
+export const checkNoIncidentsSelected = () => {
+  cy.get('.selected-incidents-badge').then(($el) => {
+    const text = $el.text();
+    const incidentNumbers = text.split(' ')[0].split('/');
+    expect(incidentNumbers[0]).to.equal('0');
+  });
 };
 
 export const checkActionAlertsModalContent = (content) => {

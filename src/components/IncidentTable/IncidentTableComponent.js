@@ -39,7 +39,7 @@ import {
 } from 'react-contextmenu';
 
 import {
-  InView,
+  useInView,
 } from 'react-intersection-observer';
 
 import {
@@ -59,7 +59,6 @@ import EmptyIncidentsComponent from './subcomponents/EmptyIncidentsComponent';
 import QueryActiveComponent from './subcomponents/QueryActiveComponent';
 import GetAllModal from './subcomponents/GetAllModal';
 import GetAllForSortModal from './subcomponents/GetAllForSortModal';
-// import IncidentTableRow from './subcomponents/IncidentTableRow';
 
 import './IncidentTableComponent.scss';
 
@@ -92,9 +91,6 @@ const Delayed = ({
   return isShown ? children : null;
 };
 
-// TODO: Make CSV Export work properly
-// (fetch all the notes and alerts for the selected incidents,
-//   warn the user if that will take a long time)
 const doCsvExport = (tableData) => {
   // Create headers from table columns
   const headers = tableData.columns
@@ -135,8 +131,11 @@ const IncidentTableComponent = () => {
     incidentTableState, incidentTableColumns,
   } = useSelector((state) => state.incidentTable);
   const {
-    status,
+    status: incidentActionsStatus,
   } = useSelector((state) => state.incidentActions);
+  const {
+    status: responsePlaysStatus,
+  } = useSelector((state) => state.responsePlays);
   const {
     filteredIncidentsByQuery, incidentAlerts, incidentNotes, fetchingIncidents,
   } = useSelector((state) => state.incidents);
@@ -314,48 +313,49 @@ const IncidentTableComponent = () => {
     ({
       data, index, style,
     }) => {
+      const {
+        ref, inView,
+      } = useInView({
+        threshold: 0.1,
+      });
+
       const row = data[index];
+      useEffect(() => {
+        if (inView) {
+          if (!row.original.alerts) {
+            getIncidentAlerts(row.original.id);
+          }
+          if (!row.original.notes) {
+            getIncidentNotes(row.original.id);
+          }
+        }
+      }, [inView]);
+
       prepareRow(row);
       return (
-        <InView>
-          {({
-            inView, ref,
-          }) => {
-            if (inView) {
-              if (!row.original.alerts) {
-                getIncidentAlerts(row.original.id);
+        <Box
+          {...row.getRowProps({
+            style,
+          })}
+          className={index % 2 === 0 ? 'tr' : 'tr-odd'}
+          ref={ref}
+        >
+          {row.cells.map((cell) => (
+            <Box
+              {...cell.getCellProps()}
+              className="td"
+              data-incident-header={
+                typeof cell.column.Header === 'string'
+                  ? cell.column.Header
+                  : 'incident-header'
               }
-              if (!row.original.notes) {
-                getIncidentNotes(row.original.id);
-              }
-            }
-            return (
-              <Box
-                {...row.getRowProps({
-                  style,
-                })}
-                className={index % 2 === 0 ? 'tr' : 'tr-odd'}
-                ref={ref}
-              >
-                {row.cells.map((cell) => (
-                  <Box
-                    {...cell.getCellProps()}
-                    className="td"
-                    data-incident-header={
-                      typeof cell.column.Header === 'string'
-                        ? cell.column.Header
-                        : 'incident-header'
-                    }
-                    data-incident-row-cell-idx={row.index}
-                    data-incident-cell-id={row.original.id}
-                  >
-                    {cell.render('Cell')}
-                  </Box>
-                ))}
-              </Box>
-            );
-          }}
-        </InView>
+              data-incident-row-cell-idx={row.index}
+              data-incident-cell-id={row.original.id}
+            >
+              {cell.render('Cell')}
+            </Box>
+          ))}
+        </Box>
       );
     },
     [prepareRow, columns],
@@ -376,12 +376,22 @@ const IncidentTableComponent = () => {
   // Handle deselecting rows after incident action has completed
   useEffect(() => {
     // TODO: Get user feedback on this workflow
-    if (status === 'ACTION_COMPLETED') {
+    if (incidentActionsStatus === 'ACTION_COMPLETED') {
       toggleAllRowsSelected(false);
-    } else if (!status.includes('TOGGLE') && status.includes('COMPLETED')) {
+    } else if (!incidentActionsStatus.includes('TOGGLE') && incidentActionsStatus.includes('COMPLETED')) {
       toggleAllRowsSelected(false);
     }
-  }, [status]);
+  }, [incidentActionsStatus]);
+
+  // deselect rows after response play has completed
+  // not adding this to the above useEffect because I don't want to
+  // take a chance of deselecting too many times
+  useEffect(() => {
+    // TODO: Get user feedback on this workflow
+    if (responsePlaysStatus === 'RUN_RESPONSE_PLAY_COMPLETED') {
+      toggleAllRowsSelected(false);
+    }
+  }, [responsePlaysStatus]);
 
   const [displayGetAllForSortModal, setDisplayGetAllForSortModal] = useState(false);
   const [columnTypeForGetAllModal, setColumnForGetAllModal] = useState(null);
