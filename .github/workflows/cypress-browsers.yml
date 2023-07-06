@@ -37,6 +37,11 @@ jobs:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           flavor: |
             latest=true
+          labels: |
+            org.opencontainers.image.title=pd-live-react-cypress-browsers
+            org.opencontainers.image.description=Custom Cypress Browsers image for PD Live React testing
+            org.opencontainers.image.source=https://github.com/PagerDuty/pd-live-react/tree/main/cypress
+            org.opencontainers.image.url=https://github.com/PagerDuty/pd-live-react/tree/main/cypress
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v4
