@@ -10,12 +10,9 @@ FROM cypress/factory
 COPY . /opt/app
 WORKDIR /opt/app
 RUN npm install --save-dev cypress
-# node-sass requires python... remove once it's not needed
-# https://github.com/PagerDuty/pd-live-react/issues/44
+# GitHub Actions requires zstd for actions/cache
 RUN apt-get update && \
   apt-get install --no-install-recommends -y \
-  python3 \
-  build-essential \
   zstd \
   gzip \
   # clean up
