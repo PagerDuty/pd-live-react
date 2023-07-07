@@ -45,9 +45,9 @@ jobs:
 
         # For Snyk Open Source you must first set up the development environment for your application's dependencies
         # For example for Node
-      - uses: actions/setup-node@master
+      - uses: actions/setup-node@v3
         with:
-          node-version: 16
+          node-version-file: .tool-versions
 
         # Runs Snyk Code (SAST) analysis and uploads result into GitHub.
       - name: Run Snyk to check for vulnerabilities

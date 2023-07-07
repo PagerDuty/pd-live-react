@@ -39,11 +39,10 @@ jobs:
       REACT_APP_DD_DEFAULT_PRIVACY_LEVEL: ${{ secrets.DD_DEFAULT_PRIVACY_LEVEL }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
-      - name: Set-up Node
-        uses: actions/setup-node@v1
+        uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
         with:
-          node-version: '16.19.0'
+          node-version-file: .tool-versions
       - name: Install Yarn
         run: npm install -g yarn
       # https://github.com/actions/cache/blob/main/examples.md#node---yarn
@@ -71,7 +70,7 @@ jobs:
   sync-branch:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@master
+      - uses: actions/checkout@v3
       - name: Merge main -> develop
         uses: devmasx/merge-branch@master
         with:
