@@ -84,6 +84,8 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version-file: .tool-versions
+      - name: Node Version
+        run: node -v
       - name: Get yarn cache directory path
         id: yarn-cache-dir-path
         run: echo "dir=$(yarn cache dir)" >> $GITHUB_OUTPUT
