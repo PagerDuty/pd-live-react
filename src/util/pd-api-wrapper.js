@@ -81,12 +81,12 @@ export const throttledPdAxiosRequest = (
   params = {},
   data = {},
   options = {
-    expiration: 10 * 1000,
+    expiration: 30 * 1000,
     priority: 5,
   },
 ) => limiter.schedule(
   {
-    expiration: options?.expiration || 10 * 1000,
+    expiration: options?.expiration || 30 * 1000,
     priority: options.priority || 5,
     id: `${method}-${endpoint}-${JSON.stringify(params)}-${Date.now()}`,
   },
@@ -133,7 +133,7 @@ export const pdParallelFetch = async (
   };
 
   const axiosRequestOptions = {
-    expiration: options?.expiration || 10 * 1000,
+    expiration: options?.expiration || 30 * 1000,
     priority: options.priority,
   };
 
