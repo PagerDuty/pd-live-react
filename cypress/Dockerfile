@@ -16,6 +16,8 @@ RUN apt-get update && \
   apt-get install --no-install-recommends -y \
   python3 \
   build-essential \
+  zstd \
+  gzip \
   # clean up
   && rm -rf /var/lib/apt/lists/* \
   && apt-get clean
