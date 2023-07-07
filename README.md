@@ -29,7 +29,7 @@ If you wish to maintain + deploy your own version of PagerDuty Live, we recommen
 
 #### Local Development
 
-1. Install [NodeJS v16.19](https://nodejs.org/tr/blog/release/v16.19.0/) via [`asdf install`](https://github.com/asdf-vm/asdf) / [`nvm`](https://github.com/nvm-sh/nvm)
+1. Install [NodeJS v18.16.1](https://nodejs.org/en/blog/release/v18.16.1) via [`asdf install`](https://github.com/asdf-vm/asdf) / [`nvm`](https://github.com/nvm-sh/nvm)
 
 2. `$ git clone` repo to desired destination and `$ cd pd-live-react` into directory
 
