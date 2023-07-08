@@ -65,7 +65,7 @@
     "typescript": "^5.0.4",
     "use-debounce": "^9.0.3",
     "validator": "^13.7.0",
-    "web-vitals": "^3.1.0"
+    "web-vitals": "^3.3.2"
   },
   "resolutions": {
     "autoprefixer": "^10.4.5",
