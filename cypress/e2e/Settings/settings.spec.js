@@ -217,7 +217,7 @@ describe('Manage Settings', { failFast: { enabled: false } }, () => {
         ).to.equal(relativeDates));
 
       if (relativeDates) {
-        checkIncidentCellContentAllRows('Created At', 'ago', 'contain.text');
+        checkIncidentCellContentAllRows('Created At', /second[s]? ago|minute[s]? ago|hour[s]? ago/);
       }
     });
   });
@@ -230,6 +230,6 @@ describe('Manage Settings', { failFast: { enabled: false } }, () => {
     columns.map((column) => column[0]).forEach((columnName) => {
       cy.get(`[data-column-name="${columnName}"]`).scrollIntoView().should('be.visible');
     });
-    checkIncidentCellContentAllRows('Age', 'ago', 'contain.text');
+    checkIncidentCellContentAllRows('Age', /second[s]?|minute[s]?|hour[s]?/);
   });
 });

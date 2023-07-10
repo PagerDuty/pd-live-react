@@ -74,7 +74,8 @@ const renderLinkCells = (linkObjs) => {
 
 const renderDateCell = ({
   iso8601Date,
-  overrideRelativeDates,
+  overrideRelativeDates = false,
+  noSuffix = false,
 }) => {
   const {
     relativeDates,
@@ -86,7 +87,7 @@ const renderDateCell = ({
     return (
       <CellDiv>
         <Tooltip label={moment(iso8601Date).format(DATE_FORMAT)}>
-          {moment(iso8601Date).fromNow()}
+          {moment(iso8601Date).fromNow(noSuffix)}
         </Tooltip>
       </CellDiv>
     );
@@ -292,6 +293,7 @@ export const defaultIncidentColumns = () => [
     }) => renderDateCell({
       iso8601Date: value,
       overrideRelativeDates: true,
+      noSuffix: true,
     }),
     sortType: dateValueSortType,
   }),
