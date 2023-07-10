@@ -58,6 +58,7 @@ import {
   setServerSideFiltering as setServerSideFilteringConnected,
   setSearchAllCustomDetails as setSearchAllCustomDetailsConnected,
   setRespondersInEpFilter as setRespondersInEpFilterConnected,
+  setRelativeDates as setRelativeDatesConnected,
 } from 'redux/settings/actions';
 
 const SettingsModalComponent = () => {
@@ -74,6 +75,7 @@ const SettingsModalComponent = () => {
     serverSideFiltering,
     searchAllCustomDetails,
     respondersInEpFilter,
+    relativeDates,
   } = useSelector((state) => state.settings);
   const currentUserLocale = useSelector((state) => state.users.currentUserLocale);
 
@@ -95,6 +97,9 @@ const SettingsModalComponent = () => {
   const setRespondersInEpFilter = (newRespondersInEpFilter) => {
     dispatch(setRespondersInEpFilterConnected(newRespondersInEpFilter));
   };
+  const setRelativeDates = (newRelativeDates) => {
+    dispatch(setRelativeDatesConnected(newRelativeDates));
+  };
 
   const localeOptions = Object.keys(locales).map((locale) => ({
     label: locales[locale],
@@ -108,6 +113,7 @@ const SettingsModalComponent = () => {
   const [tempServerSideFiltering, setTempServerSideFiltering] = useState(serverSideFiltering);
   const [tempSearchAllCustomDetails, setTempSearchAllCustomDetails] = useState(searchAllCustomDetails);
   const [tempRespondersInEpFilter, setTempRespondersInEpFilter] = useState(respondersInEpFilter);
+  const [tempRelativeDates, setTempRelativeDates] = useState(relativeDates);
 
   const saveSettings = () => {
     if (selectedLocale !== currentUserLocale) {
@@ -127,6 +133,9 @@ const SettingsModalComponent = () => {
     }
     if (tempRespondersInEpFilter !== respondersInEpFilter) {
       setRespondersInEpFilter(tempRespondersInEpFilter);
+    }
+    if (tempRelativeDates !== relativeDates) {
+      setRelativeDates(tempRelativeDates);
     }
   };
 
@@ -240,6 +249,19 @@ const SettingsModalComponent = () => {
                 }}
               >
                 {t('Escalation Policy filter searches responders as well as assignees')}
+              </Switch>
+            </FormControl>
+            <FormControl>
+              <FormLabel htmlFor="relative-dates-switch">{t('Relative Dates')}</FormLabel>
+              <Switch
+                id="relative-dates-switch"
+                isChecked={tempRelativeDates}
+                aria-label={t('Date columns are shown relative to the current time')}
+                onChange={(e) => {
+                  setTempRelativeDates(e.target.checked);
+                }}
+              >
+                {t('Date columns are shown relative to the current time')}
               </Switch>
             </FormControl>
           </Stack>

@@ -43,6 +43,10 @@ import StatusComponent from 'components/IncidentTable/subcomponents/StatusCompon
 import NumAlertsComponent from 'components/IncidentTable/subcomponents/NumAlertsComponent';
 import PersonInitialsComponents from 'components/IncidentTable/subcomponents/PersonInitialsComponents';
 
+import {
+  useSelector,
+} from 'react-redux';
+
 const CellDiv = ({
   children,
 }) => <div className="td-wrapper">{children}</div>;
@@ -70,9 +74,24 @@ const renderLinkCells = (linkObjs) => {
 
 const renderDateCell = ({
   iso8601Date,
-}) => (
-  <CellDiv>{moment(iso8601Date).format(DATE_FORMAT)}</CellDiv>
-);
+}) => {
+  const {
+    relativeDates,
+  } = useSelector((state) => state.settings);
+  if (!iso8601Date) {
+    return <CellDiv>--</CellDiv>;
+  }
+  if (relativeDates) {
+    return (
+      <CellDiv>
+        <Tooltip label={moment(iso8601Date).format(DATE_FORMAT)}>
+          {moment(iso8601Date).fromNow()}
+        </Tooltip>
+      </CellDiv>
+    );
+  }
+  return <CellDiv>{moment(iso8601Date).format(DATE_FORMAT)}</CellDiv>;
+};
 
 const renderPlainTextCell = ({
   value,

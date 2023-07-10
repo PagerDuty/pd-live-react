@@ -40,6 +40,8 @@ import {
   SET_DARK_MODE_COMPLETED,
   SET_SERVER_SIDE_FILTERING_REQUESTED,
   SET_SERVER_SIDE_FILTERING_COMPLETED,
+  SET_RELATIVE_DATES_REQUESTED,
+  SET_RELATIVE_DATES_COMPLETED,
 } from './actions';
 
 import selectSettings from './selectors';
@@ -218,5 +220,19 @@ export function* setServerSideFilteringImpl(action) {
   yield put({
     type: SET_SERVER_SIDE_FILTERING_COMPLETED,
     serverSideFiltering,
+  });
+}
+
+export function* setRelativeDates() {
+  yield takeLatest(SET_RELATIVE_DATES_REQUESTED, setRelativeDatesImpl);
+}
+
+export function* setRelativeDatesImpl(action) {
+  const {
+    relativeDates,
+  } = action;
+  yield put({
+    type: SET_RELATIVE_DATES_COMPLETED,
+    relativeDates,
   });
 }

@@ -9,9 +9,6 @@ import {
 import {
   acceptDisclaimer,
   waitForIncidentTable,
-  updateAutoAcceptIncidentQuery,
-  activateButton,
-  deactivateButton,
   checkIncidentCellContentAllRows,
   checkIncidentCellIconAllRows,
   manageIncidentTableColumns,

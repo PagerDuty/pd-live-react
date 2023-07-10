@@ -10,6 +10,7 @@ import {
   updateDefaultSinceDateLookback,
   updateMaxRateLimit,
   updateDarkMode,
+  updateRelativeDates,
   manageIncidentTableColumns,
   manageCustomAlertColumnDefinitions,
   // activateButton,
@@ -204,5 +205,17 @@ describe('Manage Settings', { failFast: { enabled: false } }, () => {
       .then((state) => expect(
         state.settings.darkMode,
       ).to.equal(!currentDarkMode));
+  });
+
+  it('Update relative dates', () => {
+    [false, true].forEach((relativeDates) => {
+      updateRelativeDates(relativeDates);
+      cy.window()
+        .its('store')
+        .invoke('getState')
+        .then((state) => expect(
+          state.settings.relativeDates,
+        ).to.equal(relativeDates));
+    });
   });
 });

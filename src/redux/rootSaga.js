@@ -123,6 +123,7 @@ import {
   setAutoRefreshInterval,
   setDarkMode,
   setServerSideFiltering,
+  setRelativeDates,
   clearLocalCache,
 } from './settings/sagas';
 
@@ -244,6 +245,7 @@ export default function* rootSaga() {
     setAutoRefreshInterval(),
     setDarkMode(),
     setServerSideFiltering(),
+    setRelativeDates(),
     clearLocalCache(),
 
     // Connection

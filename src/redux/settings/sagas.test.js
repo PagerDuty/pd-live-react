@@ -27,6 +27,8 @@ import {
   SET_AUTO_REFRESH_INTERVAL_COMPLETED,
   SET_DARK_MODE_REQUESTED,
   SET_DARK_MODE_COMPLETED,
+  SET_RELATIVE_DATES_REQUESTED,
+  SET_RELATIVE_DATES_COMPLETED,
 } from './actions';
 import {
   setDefaultSinceDateTenor,
@@ -35,6 +37,7 @@ import {
   setAutoAcceptIncidentsQuery,
   setAutoRefreshInterval,
   setDarkMode,
+  setRelativeDates,
 } from './sagas';
 
 describe('Sagas: Settings', () => {
@@ -71,6 +74,7 @@ describe('Sagas: Settings', () => {
         serverSideFiltering: true,
         searchAllCustomDetails: false,
         respondersInEpFilter: false,
+        relativeDates: false,
         status: SET_DEFAULT_SINCE_DATE_TENOR_COMPLETED,
       })
       .silentRun();
@@ -108,6 +112,7 @@ describe('Sagas: Settings', () => {
         serverSideFiltering: true,
         searchAllCustomDetails: false,
         respondersInEpFilter: false,
+        relativeDates: false,
         status: SET_ALERT_CUSTOM_DETAIL_COLUMNS_COMPLETED,
       })
       .silentRun();
@@ -148,6 +153,7 @@ describe('Sagas: Settings', () => {
         serverSideFiltering: true,
         searchAllCustomDetails: false,
         respondersInEpFilter: false,
+        relativeDates: false,
         status: SET_MAX_RATE_LIMIT_COMPLETED,
       })
       .silentRun();
@@ -185,6 +191,7 @@ describe('Sagas: Settings', () => {
         serverSideFiltering: true,
         searchAllCustomDetails: false,
         respondersInEpFilter: false,
+        relativeDates: false,
         status: SET_AUTO_ACCEPT_INCIDENTS_QUERY_COMPLETED,
       })
       .silentRun();
@@ -225,6 +232,7 @@ describe('Sagas: Settings', () => {
         serverSideFiltering: true,
         searchAllCustomDetails: false,
         respondersInEpFilter: false,
+        relativeDates: false,
         status: SET_AUTO_REFRESH_INTERVAL_COMPLETED,
       })
       .silentRun();
@@ -262,7 +270,46 @@ describe('Sagas: Settings', () => {
         serverSideFiltering: true,
         searchAllCustomDetails: false,
         respondersInEpFilter: false,
+        relativeDates: false,
         status: SET_DARK_MODE_COMPLETED,
+      })
+      .silentRun();
+  });
+  it('setRelativeDates', () => {
+    const relativeDates = true;
+    return expectSaga(setRelativeDates)
+      .withReducer(settings)
+      .dispatch({
+        type: SET_RELATIVE_DATES_REQUESTED,
+        relativeDates,
+      })
+      .put({
+        type: SET_RELATIVE_DATES_COMPLETED,
+        relativeDates,
+      })
+      .hasFinalState({
+        displaySettingsModal: false,
+        displayColumnsModal: false,
+        defaultSinceDateTenor: '1 Day',
+        maxRateLimit: 200,
+        autoAcceptIncidentsQuery: true,
+        autoRefreshInterval: 5,
+        alertCustomDetailFields: [
+          {
+            label: 'Environment:details.env',
+            value: 'Environment:details.env',
+            columnType: 'alert',
+            Header: 'Environment',
+            accessorPath: 'details.env',
+            aggregator: null,
+          },
+        ],
+        darkMode: false,
+        serverSideFiltering: true,
+        searchAllCustomDetails: false,
+        respondersInEpFilter: false,
+        relativeDates: true,
+        status: SET_RELATIVE_DATES_COMPLETED,
       })
       .silentRun();
   });
