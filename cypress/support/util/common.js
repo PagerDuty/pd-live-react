@@ -59,7 +59,7 @@ export const checkIncidentCellContent = (incidentId, incidentHeader, content) =>
     .should('have.text', content);
 };
 
-export const checkIncidentCellContentAllRows = (incidentHeader, content) => {
+export const checkIncidentCellContentAllRows = (incidentHeader, content, match = 'have.text') => {
   cy.wait(2000);
   cy.get('.incident-table-fixed-list > div').then(($tbody) => {
     const visibleIncidentCount = $tbody.find('[role="row"]').length;
@@ -69,7 +69,7 @@ export const checkIncidentCellContentAllRows = (incidentHeader, content) => {
       )
         .scrollIntoView()
         .should('be.visible')
-        .should('have.text', content);
+        .should(match, content);
     }
   });
 };

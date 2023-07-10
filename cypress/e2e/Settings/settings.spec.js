@@ -13,8 +13,7 @@ import {
   updateRelativeDates,
   manageIncidentTableColumns,
   manageCustomAlertColumnDefinitions,
-  // activateButton,
-  // priorityNames,
+  checkIncidentCellContentAllRows,
 } from '../../support/util/common';
 
 describe('Manage Settings', { failFast: { enabled: false } }, () => {
@@ -216,6 +215,10 @@ describe('Manage Settings', { failFast: { enabled: false } }, () => {
         .then((state) => expect(
           state.settings.relativeDates,
         ).to.equal(relativeDates));
+
+      if (relativeDates) {
+        checkIncidentCellContentAllRows('Created At', 'ago', 'contain.text');
+      }
     });
   });
 });
