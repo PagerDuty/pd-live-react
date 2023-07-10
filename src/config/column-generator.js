@@ -152,6 +152,25 @@ const alertTextValueSortType = (row1, row2, columnId, descending) => {
   return value1.localeCompare(value2, undefined, { sensitivity: 'accent' });
 };
 
+const dateValueSortType = (row1, row2, columnId, descending) => {
+  const value1 = row1.values[columnId];
+  const value2 = row2.values[columnId];
+  const date1 = moment(value1);
+  const date2 = moment(value2);
+
+  if (date1.isSame(date2) || (!date1.isValid() && !date2.isValid())) {
+    return 0;
+  }
+  if (date1.isValid() && !date2.isValid()) {
+    return descending ? 1 : -1;
+  }
+  if (!date1.isValid() && date2.isValid()) {
+    return descending ? -1 : 1;
+  }
+
+  return date1.isAfter(date2) ? -1 : 1;
+};
+
 export const incidentColumn = ({
   id,
   header,
@@ -260,6 +279,7 @@ export const defaultIncidentColumns = () => [
     }) => renderDateCell({
       iso8601Date: value,
     }),
+    sortType: dateValueSortType,
   }),
   incidentColumn({
     header: 'Updated At',
@@ -270,6 +290,7 @@ export const defaultIncidentColumns = () => [
     }) => renderDateCell({
       iso8601Date: value,
     }),
+    sortType: dateValueSortType,
   }),
   incidentColumn({
     header: 'Status',
@@ -320,6 +341,7 @@ export const defaultIncidentColumns = () => [
     }) => renderDateCell({
       iso8601Date: value,
     }),
+    sortType: dateValueSortType,
   }),
   incidentColumn({
     id: 'num_alerts',
@@ -513,6 +535,7 @@ export const defaultIncidentColumns = () => [
     }) => renderDateCell({
       iso8601Date: value,
     }),
+    sortType: dateValueSortType,
   }),
   incidentColumn({
     id: 'external_references',
