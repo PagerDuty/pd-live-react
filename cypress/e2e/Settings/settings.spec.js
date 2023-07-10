@@ -207,7 +207,7 @@ describe('Manage Settings', { failFast: { enabled: false } }, () => {
   });
 
   it('Update relative dates', () => {
-    [false, true].forEach((relativeDates) => {
+    [true, false].forEach((relativeDates) => {
       updateRelativeDates(relativeDates);
       cy.window()
         .its('store')
@@ -220,5 +220,16 @@ describe('Manage Settings', { failFast: { enabled: false } }, () => {
         checkIncidentCellContentAllRows('Created At', 'ago', 'contain.text');
       }
     });
+  });
+
+  it('Add age column to incident table', () => {
+    const columns = [
+      ['Age', 'age'],
+    ];
+    manageIncidentTableColumns('add', columns.map((column) => column[1]));
+    columns.map((column) => column[0]).forEach((columnName) => {
+      cy.get(`[data-column-name="${columnName}"]`).scrollIntoView().should('be.visible');
+    });
+    checkIncidentCellContentAllRows('Age', 'ago', 'contain.text');
   });
 });

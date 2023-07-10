@@ -74,6 +74,7 @@ const renderLinkCells = (linkObjs) => {
 
 const renderDateCell = ({
   iso8601Date,
+  overrideRelativeDates,
 }) => {
   const {
     relativeDates,
@@ -81,7 +82,7 @@ const renderDateCell = ({
   if (!iso8601Date) {
     return <CellDiv>--</CellDiv>;
   }
-  if (relativeDates) {
+  if (overrideRelativeDates || relativeDates) {
     return (
       <CellDiv>
         <Tooltip label={moment(iso8601Date).format(DATE_FORMAT)}>
@@ -278,6 +279,19 @@ export const defaultIncidentColumns = () => [
       value,
     }) => renderDateCell({
       iso8601Date: value,
+    }),
+    sortType: dateValueSortType,
+  }),
+  incidentColumn({
+    id: 'age',
+    header: 'Age',
+    accessor: 'created_at',
+    minWidth: 200,
+    renderer: ({
+      value,
+    }) => renderDateCell({
+      iso8601Date: value,
+      overrideRelativeDates: true,
     }),
     sortType: dateValueSortType,
   }),
