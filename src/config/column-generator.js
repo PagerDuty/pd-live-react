@@ -39,6 +39,8 @@ import {
   ChevronDownIcon, ChevronUpIcon, NotAllowedIcon,
 } from '@chakra-ui/icons';
 
+import Linkify from 'linkify-react';
+
 import StatusComponent from 'components/IncidentTable/subcomponents/StatusComponent';
 import NumAlertsComponent from 'components/IncidentTable/subcomponents/NumAlertsComponent';
 import PersonInitialsComponents from 'components/IncidentTable/subcomponents/PersonInitialsComponents';
@@ -530,9 +532,11 @@ export const defaultIncidentColumns = () => [
       },
     }) => (
       <CellDiv>
-        {original.notes?.length > 0 && original.notes.slice(-1)[0].content}
-        {original.notes?.length === 0 && '--'}
-        {original.notes?.status === 'fetching' && <Skeleton>fetching</Skeleton>}
+        <Linkify options={{ target: { url: '_blank' } }}>
+          {original.notes?.length > 0 && original.notes.slice(-1)[0].content}
+          {original.notes?.length === 0 && '--'}
+          {original.notes?.status === 'fetching' && <Skeleton>fetching</Skeleton>}
+        </Linkify>
       </CellDiv>
     ),
   }),
