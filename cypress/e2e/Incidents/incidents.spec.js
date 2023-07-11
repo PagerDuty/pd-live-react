@@ -19,6 +19,7 @@ import {
   checkIncidentCellContent,
   checkNoIncidentsSelected,
   checkIncidentCellContentHasLink,
+  manageIncidentTableColumns,
   priorityNames,
 } from '../../support/util/common';
 
@@ -144,11 +145,19 @@ describe('Manage Open Incidents', { failFast: { enabled: false } }, () => {
   });
 
   it('Add responder (User A1) to singular incident', () => {
+    const columns = [
+      ['Responders', 'responders'],
+    ];
+    manageIncidentTableColumns('add', columns.map((column) => column[1]));
     const responders = ['User A1'];
     const message = 'Need help with this incident';
-    selectIncident(0);
+    const incidentIdx = 0;
+    selectIncident(incidentIdx);
     addResponders(responders, message);
     checkActionAlertsModalContent('Requested additional response for incident(s)');
+    cy.get(`@selectedIncidentId_${incidentIdx}`).then((incidentId) => {
+      checkIncidentCellContent(incidentId, 'Responders', 'UA');
+    });
   });
 
   it('Add responder (Team A) to singular incident', () => {
