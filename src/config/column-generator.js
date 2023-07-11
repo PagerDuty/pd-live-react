@@ -532,7 +532,7 @@ export const defaultIncidentColumns = () => [
       },
     }) => (
       <CellDiv>
-        <Linkify options={{ target: { url: '_blank' } }}>
+        <Linkify options={{ target: { url: '_blank' }, rel: 'noopener noreferrer' }}>
           {original.notes?.length > 0 && original.notes.slice(-1)[0].content}
           {original.notes?.length === 0 && '--'}
           {original.notes?.status === 'fetching' && <Skeleton>fetching</Skeleton>}
