@@ -94,11 +94,12 @@ export const checkIncidentCellIconAllRows = (incidentHeader, icon) => {
   });
 };
 
-export const checkIncidentCellContentHasLink = (incidentId, incidentHeader, link) => {
+export const checkIncidentCellContentHasLink = (incidentId, incidentHeader, text, link) => {
   cy.wait(2000);
   cy.get(`[data-incident-header="${incidentHeader}"][data-incident-cell-id="${incidentId}"]`)
     .should('be.visible')
-    .contains('a', link);
+    .contains('a', text)
+    .should('have.attr', 'href', link);
 };
 
 export const deactivateButton = (domId) => {

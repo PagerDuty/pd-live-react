@@ -97,7 +97,20 @@ describe('Manage Open Incidents', { failFast: { enabled: false } }, () => {
       addNote(note);
       checkActionAlertsModalContent('have been updated with a note');
       checkIncidentCellContent(incidentId, 'Latest Note', note);
-      checkIncidentCellContentHasLink(incidentId, 'Latest Note', 'example.com');
+      checkIncidentCellContentHasLink(incidentId, 'Latest Note', 'example.com', 'http://example.com');
+    });
+  });
+
+  it('Add note with email to singular incident', () => {
+    const note = 'This note has an email test@example.com included';
+    const incidentIdx = 3;
+    selectIncident(incidentIdx);
+
+    cy.get(`@selectedIncidentId_${incidentIdx}`).then((incidentId) => {
+      addNote(note);
+      checkActionAlertsModalContent('have been updated with a note');
+      checkIncidentCellContent(incidentId, 'Latest Note', note);
+      checkIncidentCellContentHasLink(incidentId, 'Latest Note', 'test@example.com', 'mailto:test@example.com');
     });
   });
 
