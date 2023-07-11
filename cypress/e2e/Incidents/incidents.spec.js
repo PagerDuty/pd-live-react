@@ -18,8 +18,7 @@ import {
   checkActionAlertsModalContent,
   checkIncidentCellContent,
   checkNoIncidentsSelected,
-  // activateButton,
-  // deactivateButton,
+  checkIncidentCellContentHasLink,
   priorityNames,
 } from '../../support/util/common';
 
@@ -86,6 +85,19 @@ describe('Manage Open Incidents', { failFast: { enabled: false } }, () => {
       addNote(note);
       checkActionAlertsModalContent('have been updated with a note');
       checkIncidentCellContent(incidentId, 'Latest Note', note);
+    });
+  });
+
+  it('Add note with URL to singular incident', () => {
+    const note = 'This note has a URL example.com included';
+    const incidentIdx = 2;
+    selectIncident(incidentIdx);
+
+    cy.get(`@selectedIncidentId_${incidentIdx}`).then((incidentId) => {
+      addNote(note);
+      checkActionAlertsModalContent('have been updated with a note');
+      checkIncidentCellContent(incidentId, 'Latest Note', note);
+      checkIncidentCellContentHasLink(incidentId, 'Latest Note', 'example.com');
     });
   });
 
