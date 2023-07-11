@@ -27,6 +27,8 @@ import {
   SET_DARK_MODE_COMPLETED,
   SET_SERVER_SIDE_FILTERING_REQUESTED,
   SET_SERVER_SIDE_FILTERING_COMPLETED,
+  SET_RELATIVE_DATES_REQUESTED,
+  SET_RELATIVE_DATES_COMPLETED,
 } from './actions';
 
 const settings = produce(
@@ -139,6 +141,15 @@ const settings = produce(
         draft.status = SET_SERVER_SIDE_FILTERING_COMPLETED;
         break;
 
+      case SET_RELATIVE_DATES_REQUESTED:
+        draft.status = SET_RELATIVE_DATES_REQUESTED;
+        break;
+
+      case SET_RELATIVE_DATES_COMPLETED:
+        draft.relativeDates = action.relativeDates;
+        draft.status = SET_RELATIVE_DATES_COMPLETED;
+        break;
+
       default:
         break;
     }
@@ -164,6 +175,7 @@ const settings = produce(
       },
     ],
     darkMode: false,
+    relativeDates: false,
     status: '',
   },
 );

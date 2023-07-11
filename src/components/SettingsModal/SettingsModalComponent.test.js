@@ -20,7 +20,10 @@ describe('SettingsModalComponent', () => {
         displaySettingsModal: true,
         defaultSinceDateTenor: '1 Day',
         maxRateLimit: MAX_RATE_LIMIT_LOWER,
-        darkMode: false,
+        serverSideFiltering: true,
+        searchAllCustomDetails: true,
+        respondersInEpFilter: true,
+        relativeDates: true,
       },
       users: {
         currentUserLocale: 'en-GB',
@@ -44,7 +47,9 @@ describe('SettingsModalComponent', () => {
       MAX_RATE_LIMIT_LOWER,
     );
 
-    expect(wrapper.find('input#server-side-filtering-switch').prop('checked'));
-    expect(wrapper.find('input#search-all-custom-details-switch').prop('checked'));
+    expect(wrapper.find('input#server-side-filtering-switch').prop('checked')).toBeTruthy();
+    expect(wrapper.find('input#search-all-custom-details-switch').prop('checked')).toBeTruthy();
+    expect(wrapper.find('input#responders-in-ep-filter-switch').prop('checked')).toBeTruthy();
+    expect(wrapper.find('input#relative-dates-switch').prop('checked')).toBeTruthy();
   });
 });

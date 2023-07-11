@@ -10,10 +10,10 @@ import {
   updateDefaultSinceDateLookback,
   updateMaxRateLimit,
   updateDarkMode,
+  updateRelativeDates,
   manageIncidentTableColumns,
   manageCustomAlertColumnDefinitions,
-  // activateButton,
-  // priorityNames,
+  checkIncidentCellContentAllRows,
 } from '../../support/util/common';
 
 describe('Manage Settings', { failFast: { enabled: false } }, () => {
@@ -204,5 +204,32 @@ describe('Manage Settings', { failFast: { enabled: false } }, () => {
       .then((state) => expect(
         state.settings.darkMode,
       ).to.equal(!currentDarkMode));
+  });
+
+  it('Update relative dates', () => {
+    [true, false].forEach((relativeDates) => {
+      updateRelativeDates(relativeDates);
+      cy.window()
+        .its('store')
+        .invoke('getState')
+        .then((state) => expect(
+          state.settings.relativeDates,
+        ).to.equal(relativeDates));
+
+      if (relativeDates) {
+        checkIncidentCellContentAllRows('Created At', /second[s]? ago|minute[s]? ago|hour[s]? ago/);
+      }
+    });
+  });
+
+  it('Add age column to incident table', () => {
+    const columns = [
+      ['Age', 'age'],
+    ];
+    manageIncidentTableColumns('add', columns.map((column) => column[1]));
+    columns.map((column) => column[0]).forEach((columnName) => {
+      cy.get(`[data-column-name="${columnName}"]`).scrollIntoView().should('be.visible');
+    });
+    checkIncidentCellContentAllRows('Age', /second[s]?|minute[s]?|hour[s]?/);
   });
 });

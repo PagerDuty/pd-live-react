@@ -43,6 +43,10 @@ import StatusComponent from 'components/IncidentTable/subcomponents/StatusCompon
 import NumAlertsComponent from 'components/IncidentTable/subcomponents/NumAlertsComponent';
 import PersonInitialsComponents from 'components/IncidentTable/subcomponents/PersonInitialsComponents';
 
+import {
+  useSelector,
+} from 'react-redux';
+
 const CellDiv = ({
   children,
 }) => <div className="td-wrapper">{children}</div>;
@@ -70,9 +74,26 @@ const renderLinkCells = (linkObjs) => {
 
 const renderDateCell = ({
   iso8601Date,
-}) => (
-  <CellDiv>{moment(iso8601Date).format(DATE_FORMAT)}</CellDiv>
-);
+  overrideRelativeDates = false,
+  noSuffix = false,
+}) => {
+  const {
+    relativeDates,
+  } = useSelector((state) => state.settings);
+  if (!iso8601Date) {
+    return <CellDiv>--</CellDiv>;
+  }
+  if (overrideRelativeDates || relativeDates) {
+    return (
+      <CellDiv>
+        <Tooltip label={moment(iso8601Date).format(DATE_FORMAT)}>
+          {moment(iso8601Date).fromNow(noSuffix)}
+        </Tooltip>
+      </CellDiv>
+    );
+  }
+  return <CellDiv>{moment(iso8601Date).format(DATE_FORMAT)}</CellDiv>;
+};
 
 const renderPlainTextCell = ({
   value,
@@ -131,6 +152,25 @@ const alertTextValueSortType = (row1, row2, columnId, descending) => {
     return 0;
   }
   return value1.localeCompare(value2, undefined, { sensitivity: 'accent' });
+};
+
+const dateValueSortType = (row1, row2, columnId, descending) => {
+  const value1 = row1.values[columnId];
+  const value2 = row2.values[columnId];
+  const date1 = moment(value1);
+  const date2 = moment(value2);
+
+  if (date1.isSame(date2) || (!date1.isValid() && !date2.isValid())) {
+    return 0;
+  }
+  if (date1.isValid() && !date2.isValid()) {
+    return descending ? 1 : -1;
+  }
+  if (!date1.isValid() && date2.isValid()) {
+    return descending ? -1 : 1;
+  }
+
+  return date1.isAfter(date2) ? -1 : 1;
 };
 
 export const incidentColumn = ({
@@ -241,6 +281,21 @@ export const defaultIncidentColumns = () => [
     }) => renderDateCell({
       iso8601Date: value,
     }),
+    sortType: dateValueSortType,
+  }),
+  incidentColumn({
+    id: 'age',
+    header: 'Age',
+    accessor: 'created_at',
+    minWidth: 200,
+    renderer: ({
+      value,
+    }) => renderDateCell({
+      iso8601Date: value,
+      overrideRelativeDates: true,
+      noSuffix: true,
+    }),
+    sortType: dateValueSortType,
   }),
   incidentColumn({
     header: 'Updated At',
@@ -251,6 +306,7 @@ export const defaultIncidentColumns = () => [
     }) => renderDateCell({
       iso8601Date: value,
     }),
+    sortType: dateValueSortType,
   }),
   incidentColumn({
     header: 'Status',
@@ -301,6 +357,7 @@ export const defaultIncidentColumns = () => [
     }) => renderDateCell({
       iso8601Date: value,
     }),
+    sortType: dateValueSortType,
   }),
   incidentColumn({
     id: 'num_alerts',
@@ -494,6 +551,7 @@ export const defaultIncidentColumns = () => [
     }) => renderDateCell({
       iso8601Date: value,
     }),
+    sortType: dateValueSortType,
   }),
   incidentColumn({
     id: 'external_references',

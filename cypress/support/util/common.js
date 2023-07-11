@@ -69,7 +69,7 @@ export const checkIncidentCellContentAllRows = (incidentHeader, content) => {
       )
         .scrollIntoView()
         .should('be.visible')
-        .should('have.text', content);
+        .contains(content);
     }
   });
 };
@@ -290,20 +290,18 @@ export const updateMaxRateLimit = (limit = 200) => {
   checkActionAlertsModalContent('Updated user profile settings');
 };
 
-export const updateAutoAcceptIncidentQuery = (autoAcceptIncidentsQuery = false) => {
+export const updateRelativeDates = (relativeDates = false) => {
   cy.get('.settings-panel-dropdown').click();
   cy.get('.dropdown-item').contains('Settings').click();
-  cy.get('.nav-item').contains('User Profile').click();
 
-  if (autoAcceptIncidentsQuery) {
-    cy.get('#user-profile-auto-accept-incident-query-checkbox').check({ force: true });
+  if (relativeDates) {
+    cy.get('#relative-dates-switch').check({ force: true });
   } else {
-    cy.get('#user-profile-auto-accept-incident-query-checkbox').uncheck({ force: true });
+    cy.get('#relative-dates-switch').uncheck({ force: true });
   }
 
-  cy.get('.btn').contains('Update User Profile').click();
+  cy.get('#save-settings-button').click();
   checkActionAlertsModalContent('Updated user profile settings');
-  cy.get('.close').click();
 };
 
 export const updateDarkMode = () => {
