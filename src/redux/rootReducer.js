@@ -22,6 +22,7 @@ import users from './users/reducers';
 import escalationPolicies from './escalation_policies/reducers';
 import extensions from './extensions/reducers';
 import responsePlays from './response_plays/reducers';
+import fields from './fields/reducers';
 import persistence from './persistence/reducers';
 import settings from './settings/reducers';
 import connection from './connection/reducers';
@@ -40,6 +41,7 @@ export default combineReducers({
   escalationPolicies,
   extensions,
   responsePlays,
+  fields,
   persistence,
   settings,
   connection,

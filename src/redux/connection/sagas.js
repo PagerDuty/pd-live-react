@@ -95,6 +95,7 @@ export function* checkConnectionStatusImpl() {
     && store.users.status.includes('COMPLETED')
     && store.escalationPolicies.status.includes('COMPLETED')
     && store.extensions.status.includes('COMPLETED')
+    && store.fields.status.includes('COMPLETED')
     // response plays gives an error if incident workflows is enabled
     // && store.responsePlays.status.includes('COMPLETED')
     // && store.connection.status.includes('COMPLETED')

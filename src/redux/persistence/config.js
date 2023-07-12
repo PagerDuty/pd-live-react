@@ -15,6 +15,7 @@ export const persistConfig = {
     'escalationPolicies',
     'extensions',
     'responsePlays',
+    'fields',
     'persistence',
     'connection',
   ],

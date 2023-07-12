@@ -120,7 +120,7 @@ export function* getIncidentsImpl() {
     const baseParams = {
       since: DEBUG_SINCE_DATE ? new Date(DEBUG_SINCE_DATE).toISOString() : sinceDate.toISOString(),
       until: DEBUG_UNTIL_DATE ? new Date(DEBUG_UNTIL_DATE).toISOString() : new Date().toISOString(),
-      include: ['first_trigger_log_entries', 'external_references'],
+      include: ['first_trigger_log_entries', 'external_references', 'custom_fields'],
       limit: INCIDENTS_PAGINATION_LIMIT,
       sort_by: 'created_at:desc',
     };
