@@ -61,6 +61,9 @@ import {
   getResponsePlaysAsync as getResponsePlaysAsyncConnected,
 } from 'redux/response_plays/actions';
 import {
+  getFieldsAsync as getFieldsAsyncConnected,
+} from 'redux/fields/actions';
+import {
   checkConnectionStatus as checkConnectionStatusConnected,
   updateQueueStats as updateQueueStatsConnected,
   checkAbilities as checkAbilitiesConnected,
@@ -102,6 +105,7 @@ const App = () => {
   const getUsersAsync = (teamIds) => dispatch(getUsersAsyncConnected(teamIds));
   const getEscalationPoliciesAsync = () => dispatch(getEscalationPoliciesAsyncConnected());
   const getResponsePlaysAsync = () => dispatch(getResponsePlaysAsyncConnected());
+  const getFieldsAsync = () => dispatch(getFieldsAsyncConnected());
   const getLogEntriesAsync = (since) => dispatch(getLogEntriesAsyncConnected(since));
   const cleanRecentLogEntriesAsync = () => dispatch(cleanRecentLogEntriesAsyncConnected());
   const getIncidentsAsync = () => dispatch(getIncidentsAsyncConnected());
@@ -139,6 +143,7 @@ const App = () => {
       getEscalationPoliciesAsync();
       getResponsePlaysAsync();
       getPrioritiesAsync();
+      getFieldsAsync();
       // NB: Get incidents, notes, and alerts are implicitly done from query now
       // not anymore
       getIncidentsAsync();
