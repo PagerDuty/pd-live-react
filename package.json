@@ -155,6 +155,6 @@
     "string.prototype.replaceall": "^1.0.6",
     "svg-jest": "^1.0.1",
     "wait-on": "^7.0.1",
-    "yarn-audit-fix": "^9.3.6"
+    "yarn-audit-fix": "^9.3.12"
   }
 }
