@@ -9,7 +9,7 @@
     "@chakra-ui/react": "^2.7.1",
     "@craco/craco": "^7.0.0",
     "@datadog/browser-rum": "^4.43.0",
-    "@emotion/react": "^11.10.8",
+    "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.10.8",
     "@fortawesome/fontawesome-svg-core": "^6.2.0",
     "@fortawesome/free-brands-svg-icons": "^6.2.0",
