@@ -31,7 +31,7 @@
     "font-awesome": "^4.7.0",
     "framer-motion": "^10.12.7",
     "fuse.js": "^6.6.2",
-    "i18next": "^22.5.1",
+    "i18next": "^23.2.11",
     "i18next-browser-languagedetector": "^7.0.1",
     "immer": "^10.0.2",
     "jsonpath-plus": "^7.2.0",
