@@ -58,15 +58,23 @@ export const generateIncidentActionModal = (incidents, action) => {
   if (action === SNOOZED) {
     i18nAction = i18next.t('snoozed');
   }
-  let primaryIncidentList = unresolvedIncidents.slice(0, 100).map((i) => i.incident_number).join(', ');
+  let primaryIncidentList = unresolvedIncidents
+    .slice(0, 100)
+    .map((i) => i.incident_number)
+    .join(', ');
   if (unresolvedIncidents.length > 100) {
-    primaryIncidentList += ` ${i18next.t('and')} ${unresolvedIncidents.length - 100} ${i18next.t('more')}`;
+    primaryIncidentList += ` ${i18next.t('and X more', {
+      excessIncidents: unresolvedIncidents.length - 100,
+    })}`;
   }
-  const primaryMessage = `${i18next.t('Incidents')} ${primaryIncidentList} ${i18next.t('have been')} ${i18nAction}.`;
-  const secondaryMessage = `(${resolvedIncidents.length} ${i18next.t('Incidents')} ${i18next.t(
-    'were not',
-  )} ${action} 
-  ${i18next.t('because they have already been suppressed or resolved')})`;
+  const primaryMessage = `${i18next.t('Incidents X have been ACTIONED', {
+    primaryIncidentList,
+    i18nAction,
+  })}.`;
+  const secondaryMessage = `(${i18next.t(
+    'X incidents were not ACTIONED because they have already been suppressed or resolved',
+    { resolvedIncidents: resolvedIncidents.length, i18nAction },
+  )})`;
 
   if (unresolvedIncidents.length > 0 && resolvedIncidents.length === 0) {
     message = primaryMessage;

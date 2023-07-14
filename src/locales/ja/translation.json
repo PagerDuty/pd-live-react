@@ -18,6 +18,7 @@
   "Add Responders": "レスポンダーを追加",
   "Add text to merged incident titles": "マージされたインシデントタイトルにテキストを追加",
   "and their alerts have been merged onto incident": "そして該当アラートはインシデントにマージされました",
+  "and X more": "とその他{{excessIncidents}}件",
   "Assignees": "アサイン先",
   "Available": "選択可能",
   "because they have already been suppressed or resolved": "既に抑制したか解決済みになったからです",
@@ -79,6 +80,7 @@
   "Incident Key": "インシデントキー",
   "Incident Table": "インシデントテーブル",
   "Incidents": "インシデント",
+  "Incidents X have been ACTIONED": "インシデント {{primaryIncidentList}} は {{i18nAction}} になりました",
   "incidents need notes/alerts fetched": "インシデントにメモ/アラートを取得する必要があります",
   "info": "info",
   "Invalid JSON Path": "無効なJSONパス",
@@ -175,5 +177,6 @@
   "waiting": "待機中",
   "warning": "warning",
   "were not": "はスキップされ、",
+  "X incidents were not ACTIONED because they have already been suppressed or resolved": "{{resolvedIncidents}}件のインシデントは、既に抑止されているか、{{i18nAction}}のため解決されませんでした",
   "You cannot merge open incidents into a resolved incident": "解決済みのインシデントにオープンインシデントをマージすることはできません"
 }

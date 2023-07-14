@@ -18,6 +18,7 @@
   "Add Responders": "Adicionar Respondentes",
   "Add text to merged incident titles": "Adicionar texto aos títulos de incidentes combinados",
   "and their alerts have been merged onto incident": "e os seus alertas foram combinados no incidente",
+  "and X more": "e mais {{excessIncidents}}",
   "Assignees": "Detentores",
   "Available": "Disponível",
   "because they have already been suppressed or resolved": "porque já foram eliminados ou resolvidos",
@@ -79,6 +80,7 @@
   "Incident Key": "Chave do Incidente",
   "Incident Table": "Tabela de Incidentes",
   "Incidents": "Incidentes",
+  "Incidents X have been ACTIONED": "Incidentes {{primaryIncidentList}} foram {{i18nAction}}",
   "incidents need notes/alerts fetched": "incidentes precisam de anotações/alertas buscados",
   "info": "informação",
   "Invalid JSON Path": "Caminho JSON inválido",
@@ -175,5 +177,6 @@
   "waiting": "aguardando",
   "warning": "aviso",
   "were not": "não eram",
+  "X incidents were not ACTIONED because they have already been suppressed or resolved": "Os incidentes {{resolvedIncidents}} não foram {{i18nAction}} porque já foram suprimidos ou resolvidos",
   "You cannot merge open incidents into a resolved incident": "Você não pode combinar incidentes abertos em um incidente resolvido"
 }
