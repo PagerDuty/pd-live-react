@@ -29,7 +29,7 @@
     "date-fns": "^2.29.3",
     "enzyme": "^3.11.0",
     "font-awesome": "^4.7.0",
-    "framer-motion": "^10.12.7",
+    "framer-motion": "^10.12.17",
     "fuse.js": "^6.6.2",
     "i18next": "^22.5.1",
     "i18next-browser-languagedetector": "^7.0.1",
