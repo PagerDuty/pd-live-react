@@ -16,6 +16,7 @@ import {
   runExternalSystemSync,
   runResponsePlay,
   checkActionAlertsModalContent,
+  checkPopoverContent,
   checkIncidentCellContent,
   checkNoIncidentsSelected,
   checkIncidentCellContentHasLink,
@@ -157,6 +158,7 @@ describe('Manage Open Incidents', { failFast: { enabled: false } }, () => {
     checkActionAlertsModalContent('Requested additional response for incident(s)');
     cy.get(`@selectedIncidentId_${incidentIdx}`).then((incidentId) => {
       checkIncidentCellContent(incidentId, 'Responders', 'UA');
+      checkPopoverContent(incidentId, 'Responders', 'user_a1@example.com');
     });
   });
 
