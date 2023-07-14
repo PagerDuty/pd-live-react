@@ -804,3 +804,11 @@ export const incidentColumnsTranslations = [
   i18next.t('Class'),
   i18next.t('Group'),
 ];
+
+// List of severity names for i18next-parser
+export const severityTranslations = [
+  i18next.t('critical'),
+  i18next.t('error'),
+  i18next.t('warning'),
+  i18next.t('info'),
+];
