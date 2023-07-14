@@ -137,7 +137,7 @@ const IncidentTableComponent = () => {
     status: responsePlaysStatus,
   } = useSelector((state) => state.responsePlays);
   const {
-    filteredIncidentsByQuery, incidentAlerts, incidentNotes, fetchingIncidents,
+    filteredIncidentsByQuery, incidents, incidentAlerts, incidentNotes, fetchingIncidents, error: incidentsError,
   } = useSelector((state) => state.incidents);
   const currentUserLocale = useSelector((state) => state.users.currentUserLocale);
 
@@ -420,6 +420,15 @@ const IncidentTableComponent = () => {
   // Render components based on application state
   if (fetchingIncidents) {
     return <QueryActiveComponent />;
+  }
+
+  if (!fetchingIncidents && incidents.length === 0 && incidentsError?.startsWith('Too many records')) {
+    const numIncidents = incidentsError.match(/\d+/)[0];
+    return (
+      <EmptyIncidentsComponent
+        message={t('Too many records to display (X). Please narrow your search criteria.', { numIncidents })}
+      />
+    );
   }
 
   // TODO: Find a better way to prevent Empty Incidents from being shown during render

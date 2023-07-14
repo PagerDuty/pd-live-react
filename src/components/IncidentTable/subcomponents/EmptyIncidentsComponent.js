@@ -10,15 +10,18 @@ import {
   ReactComponent as EmptyIncidents,
 } from 'assets/images/empty_incidents.svg';
 
-const EmptyIncidentsComponent = () => {
+const EmptyIncidentsComponent = ({
+  message,
+}) => {
   const {
     t,
   } = useTranslation();
+  const badgeMessage = message || t('No Incidents Found');
   return (
     <div className="empty-incidents">
       <EmptyIncidents />
       <h1 className="empty-incidents-badge">
-        <Badge bg="primary">{t('No Incidents Found')}</Badge>
+        <Badge bg="none">{badgeMessage}</Badge>
       </h1>
     </div>
   );

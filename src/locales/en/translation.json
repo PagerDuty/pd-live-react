@@ -158,6 +158,7 @@
   "The alerts of the selected incidents will be merged into a single incident": "The alerts of the selected incidents will be merged into a single incident",
   "The remaining selected incidents will be resolved after the merge is complete": "The remaining selected incidents will be resolved after the merge is complete",
   "Title": "Title",
+  "Too many records to display (X). Please narrow your search criteria.": "Too many records to display ({{numIncidents}}). Please narrow your search criteria.",
   "Triggered": "Triggered",
   "triggered for": "triggered for",
   "Unable to fetch account abilities": "Unable to fetch account abilities",

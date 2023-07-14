@@ -158,6 +158,7 @@
   "The alerts of the selected incidents will be merged into a single incident": "選択したインシデントのアラートはのインシデントにマージされます",
   "The remaining selected incidents will be resolved after the merge is complete": "残りの選択中のインシデントはマージが完了したら、解決済みになります",
   "Title": "件名",
+  "Too many records to display (X). Please narrow your search criteria.": "表示するレコードが多すぎます（{{numIncidents}}）。検索条件を絞ってください。",
   "Triggered": "トリガー済み",
   "triggered for": "トリガー対象",
   "Unable to fetch account abilities": "アカウント権限を取得できません",

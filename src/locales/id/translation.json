@@ -158,6 +158,7 @@
   "The alerts of the selected incidents will be merged into a single incident": "Peringatan dari insiden yang dipilih akan digabungkan menjadi satu insiden tunggal",
   "The remaining selected incidents will be resolved after the merge is complete": "Insiden terpilih yang tersisa akan diselesaikan setelah penggabungan selesai",
   "Title": "Judul",
+  "Too many records to display (X). Please narrow your search criteria.": "Terlalu banyak catatan untuk ditampilkan ({{numIncidents}}). Silakan perkecil kriteria pencarian Anda.",
   "Triggered": "Terpicu",
   "triggered for": "terpicu untuk",
   "Unable to fetch account abilities": "Tidak dapat mengambil kemampuan akun",
