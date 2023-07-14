@@ -49,14 +49,21 @@ export const checkNoIncidentsSelected = () => {
 export const checkActionAlertsModalContent = (content) => {
   cy.wait(2000);
   cy.get('.chakra-alert__title').contains(content, { timeout: 10000 });
-  // cy.get('.action-alerts-modal').type('{esc}');
+};
+
+export const checkPopoverContent = (incidentId, incidentHeader, content) => {
+  cy.wait(2000);
+  cy.get(`[data-incident-header="${incidentHeader}"][data-incident-cell-id="${incidentId}"]`).within(() => {
+    cy.get('.chakra-avatar__group').realHover();
+    cy.get('.chakra-popover__popper').should('be.visible').contains(content, { timeout: 10000 });
+  });
 };
 
 export const checkIncidentCellContent = (incidentId, incidentHeader, content) => {
   cy.wait(2000);
   cy.get(`[data-incident-header="${incidentHeader}"][data-incident-cell-id="${incidentId}"]`)
     .should('be.visible')
-    .should('have.text', content);
+    .contains(content);
 };
 
 export const checkIncidentCellContentAllRows = (incidentHeader, content) => {
