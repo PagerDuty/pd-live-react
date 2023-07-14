@@ -29,6 +29,9 @@ const fuseOptions = {
         case 'Latest Note':
           key = 'notes.content';
           break;
+        case 'Responders':
+          key = 'incidents_responders.user.summary';
+          break;
         default:
           key = col.accessor;
       }

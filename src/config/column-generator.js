@@ -581,6 +581,21 @@ export const defaultIncidentColumns = () => [
       return '--';
     },
   }),
+  incidentColumn({
+    id: 'responders',
+    header: 'Responders',
+    accessor: (incident) => incident.incidents_responders.map((responder) => responder.user.summary).join(', '),
+    minWidth: 160,
+    renderer: ({
+      row,
+    }) => (
+      <PersonInitialsComponents
+        displayedUsers={row.original.incidents_responders.map((responder) => ({
+          user: responder.user,
+        }))}
+      />
+    ),
+  }),
 ];
 
 export const defaultAlertsColumns = () => [
