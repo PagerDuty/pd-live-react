@@ -83,7 +83,6 @@ const PersonInitialsComponent = ({
               // <Tooltip key={user.id} label={user.summary} aria-label={user.summary}>
               <Link isExternal href={user.html_url}>
                 <Avatar
-                  showBorder
                   color="white"
                   mr={1}
                   whiteSpace="nowrap"
