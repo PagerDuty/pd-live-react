@@ -58,9 +58,11 @@ export const generateIncidentActionModal = (incidents, action) => {
   if (action === SNOOZED) {
     i18nAction = i18next.t('snoozed');
   }
-  const primaryMessage = `${i18next.t('Incidents')}(s) ${unresolvedIncidents
-    .map((i) => i.incident_number)
-    .join(', ')} ${i18next.t('have been')} ${i18nAction}.`;
+  let primaryIncidentList = unresolvedIncidents.slice(0, 100).map((i) => i.incident_number).join(', ');
+  if (unresolvedIncidents.length > 100) {
+    primaryIncidentList += ` ${i18next.t('and')} ${unresolvedIncidents.length - 100} ${i18next.t('more')}`;
+  }
+  const primaryMessage = `${i18next.t('Incidents')} ${primaryIncidentList} ${i18next.t('have been')} ${i18nAction}.`;
   const secondaryMessage = `(${resolvedIncidents.length} ${i18next.t('Incidents')} ${i18next.t(
     'were not',
   )} ${action} 
