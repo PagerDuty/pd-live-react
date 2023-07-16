@@ -55,7 +55,6 @@ import {
   toggleSettingsModal as toggleSettingsModalConnected,
   setDefaultSinceDateTenor as setDefaultSinceDateTenorConnected,
   setMaxRateLimit as setMaxRateLimitConnected,
-  setServerSideFiltering as setServerSideFilteringConnected,
   setSearchAllCustomDetails as setSearchAllCustomDetailsConnected,
   setRespondersInEpFilter as setRespondersInEpFilterConnected,
   setRelativeDates as setRelativeDatesConnected,
@@ -72,7 +71,6 @@ const SettingsModalComponent = () => {
     displaySettingsModal,
     defaultSinceDateTenor,
     maxRateLimit,
-    serverSideFiltering,
     searchAllCustomDetails,
     respondersInEpFilter,
     relativeDates,
@@ -87,9 +85,6 @@ const SettingsModalComponent = () => {
   };
   const setMaxRateLimit = (newMaxRateLimit) => {
     dispatch(setMaxRateLimitConnected(newMaxRateLimit));
-  };
-  const setServerSideFiltering = (newServerSideFiltering) => {
-    dispatch(setServerSideFilteringConnected(newServerSideFiltering));
   };
   const setSearchAllCustomDetails = (newSearchAllCustomDetails) => {
     dispatch(setSearchAllCustomDetailsConnected(newSearchAllCustomDetails));
@@ -110,7 +105,6 @@ const SettingsModalComponent = () => {
 
   const [tempMaxRateLimit, setTempMaxRateLimit] = useState(maxRateLimit);
 
-  const [tempServerSideFiltering, setTempServerSideFiltering] = useState(serverSideFiltering);
   const [tempSearchAllCustomDetails, setTempSearchAllCustomDetails] = useState(searchAllCustomDetails);
   const [tempRespondersInEpFilter, setTempRespondersInEpFilter] = useState(respondersInEpFilter);
   const [tempRelativeDates, setTempRelativeDates] = useState(relativeDates);
@@ -124,9 +118,6 @@ const SettingsModalComponent = () => {
     }
     if (tempMaxRateLimit !== maxRateLimit) {
       setMaxRateLimit(tempMaxRateLimit);
-    }
-    if (tempServerSideFiltering !== serverSideFiltering) {
-      setServerSideFiltering(tempServerSideFiltering);
     }
     if (tempSearchAllCustomDetails !== searchAllCustomDetails) {
       setSearchAllCustomDetails(tempSearchAllCustomDetails);
@@ -211,26 +202,11 @@ const SettingsModalComponent = () => {
               </Box>
             </FormControl>
             <FormControl>
-              <FormLabel htmlFor="server-side-filtering-switch">
-                {t('Server Side Filtering')}
-              </FormLabel>
-              <Switch
-                id="server-side-filtering-switch"
-                isChecked={tempServerSideFiltering}
-                aria-label={t('Server Side Filtering')}
-                onChange={(e) => {
-                  setTempServerSideFiltering(e.target.checked);
-                }}
-              >
-                {t('Server Side Filtering')}
-              </Switch>
-            </FormControl>
-            <FormControl>
               <FormLabel htmlFor="search-all-custom-details-switch">{t('Global Search')}</FormLabel>
               <Switch
                 id="search-all-custom-details-switch"
                 isChecked={tempSearchAllCustomDetails}
-                aria-label={t('Server Side Filtering')}
+                aria-label={t('Search all alert custom details in global search')}
                 onChange={(e) => {
                   setTempSearchAllCustomDetails(e.target.checked);
                 }}
