@@ -18,6 +18,7 @@
   "Add Responders": "Add Responders",
   "Add text to merged incident titles": "Add text to merged incident titles",
   "and their alerts have been merged onto incident": "and their alerts have been merged onto incident",
+  "and X more": "and {{excessIncidents}} more",
   "Assignees": "Assignees",
   "Available": "Available",
   "because they have already been suppressed or resolved": "because they have already been suppressed or resolved",
@@ -79,6 +80,7 @@
   "Incident Key": "Incident Key",
   "Incident Table": "Incident Table",
   "Incidents": "Incidents",
+  "Incidents X have been ACTIONED": "Incidents {{primaryIncidentList}} have been {{i18nAction}}",
   "incidents need notes/alerts fetched": "incidents need notes/alerts fetched",
   "info": "info",
   "Invalid JSON Path": "Invalid JSON Path",
@@ -175,5 +177,6 @@
   "waiting": "waiting",
   "warning": "warning",
   "were not": "were not",
+  "X incidents were not ACTIONED because they have already been suppressed or resolved": "{{resolvedIncidents}} incidents were not {{i18nAction}} because they have already been suppressed or resolved",
   "You cannot merge open incidents into a resolved incident": "You cannot merge open incidents into a resolved incident"
 }

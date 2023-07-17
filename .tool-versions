@@ -1,2 +1,3 @@
 # MUST match .node-version
 nodejs 18.16.1
+yarn 1.22.19

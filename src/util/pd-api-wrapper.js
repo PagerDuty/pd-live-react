@@ -62,6 +62,7 @@ export const pdAxiosRequest = async (method, endpoint, params = {}, data = {}) =
   },
   params: { ...params, rand: Math.random().toString(36).substring(2, 7) },
   data,
+  validateStatus: () => true,
 });
 
 // Ref: https://www.npmjs.com/package/bottleneck#refresh-interval
@@ -88,7 +89,7 @@ export const throttledPdAxiosRequest = (
   {
     expiration: options?.expiration || 30 * 1000,
     priority: options.priority || 5,
-    id: `${method}-${endpoint}-${JSON.stringify(params)}-${Date.now()}`,
+    id: `${method}-${endpoint}-${JSON.stringify(params)}-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`,
   },
   () => pdAxiosRequest(method, endpoint, params, data),
 );
