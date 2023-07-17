@@ -772,3 +772,43 @@ export const columnsForSavedColumns = (savedColumns) => {
     .filter((c) => !!c);
   return columns;
 };
+
+// List of column headers for i18next-parser
+export const incidentColumnsTranslations = [
+  i18next.t('Title'),
+  i18next.t('Description'),
+  i18next.t('Created At'),
+  i18next.t('Age'),
+  i18next.t('Updated At'),
+  i18next.t('Status'),
+  i18next.t('Incident Key'),
+  i18next.t('Service'),
+  i18next.t('Assignees'),
+  i18next.t('Last Status Change At'),
+  i18next.t('Num Alerts'),
+  i18next.t('Escalation Policy'),
+  i18next.t('Teams'),
+  i18next.t('Acknowledgements'),
+  i18next.t('Last Status Change By'),
+  i18next.t('Priority'),
+  i18next.t('Urgency'),
+  i18next.t('Incident ID'),
+  i18next.t('Summary'),
+  i18next.t('Latest Note'),
+  i18next.t('Latest Note At'),
+  i18next.t('External References'),
+  i18next.t('Responders'),
+  i18next.t('Severity'),
+  i18next.t('Component'),
+  i18next.t('Source'),
+  i18next.t('Class'),
+  i18next.t('Group'),
+];
+
+// List of severity names for i18next-parser
+export const severityTranslations = [
+  i18next.t('critical'),
+  i18next.t('error'),
+  i18next.t('warning'),
+  i18next.t('info'),
+];

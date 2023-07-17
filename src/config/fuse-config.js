@@ -20,7 +20,7 @@ const fuseOptions = {
         case 'Teams':
           key = 'teams.summary';
           break;
-        case 'Acknowledgments':
+        case 'Acknowledgements':
           key = 'acknowledgements.summary';
           break;
         case 'Priority':
