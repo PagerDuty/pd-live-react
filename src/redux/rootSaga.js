@@ -122,7 +122,6 @@ import {
   setAutoAcceptIncidentsQuery,
   setAutoRefreshInterval,
   setDarkMode,
-  setServerSideFiltering,
   setRelativeDates,
   clearLocalCache,
 } from './settings/sagas';
@@ -244,7 +243,6 @@ export default function* rootSaga() {
     setAutoAcceptIncidentsQuery(),
     setAutoRefreshInterval(),
     setDarkMode(),
-    setServerSideFiltering(),
     setRelativeDates(),
     clearLocalCache(),
 
