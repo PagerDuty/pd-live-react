@@ -124,7 +124,7 @@
     "@welldone-software/why-did-you-render": "^7.0.1",
     "@wojtekmaj/enzyme-adapter-react-17": "^0.8.0",
     "cy2": "^3.4.3",
-    "cypress": "^12.15.0",
+    "cypress": "^12.17.1",
     "cypress-fail-fast": "^7.0.0",
     "cypress-real-events": "^1.8.1",
     "eslint": "^8.43.0",
