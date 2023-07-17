@@ -33,8 +33,8 @@ export const CLEAR_LOCAL_CACHE_COMPLETED = 'CLEAR_LOCAL_CACHE_COMPLETED';
 export const SET_DARK_MODE_REQUESTED = 'SET_DARK_MODE_REQUESTED';
 export const SET_DARK_MODE_COMPLETED = 'SET_DARK_MODE_COMPLETED';
 
-export const SET_SERVER_SIDE_FILTERING_REQUESTED = 'SET_SERVER_SIDE_FILTERING_REQUESTED';
-export const SET_SERVER_SIDE_FILTERING_COMPLETED = 'SET_SERVER_SIDE_FILTERING_COMPLETED';
+export const SET_RELATIVE_DATES_REQUESTED = 'SET_RELATIVE_DATES_REQUESTED';
+export const SET_RELATIVE_DATES_COMPLETED = 'SET_RELATIVE_DATES_COMPLETED';
 
 // Define Actions
 export const toggleSettingsModal = () => ({
@@ -89,7 +89,7 @@ export const setDarkMode = (darkMode) => ({
   darkMode,
 });
 
-export const setServerSideFiltering = (serverSideFiltering) => ({
-  type: SET_SERVER_SIDE_FILTERING_REQUESTED,
-  serverSideFiltering,
+export const setRelativeDates = (relativeDates) => ({
+  type: SET_RELATIVE_DATES_REQUESTED,
+  relativeDates,
 });

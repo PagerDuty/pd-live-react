@@ -73,7 +73,6 @@ describe('Sagas: Query Settings', () => {
   };
   const mockSettings = {
     autoAcceptIncidentsQuery: true,
-    serverSideFiltering: true,
   };
 
   xit('validateIncidentQueryImpl: API Error', () => {

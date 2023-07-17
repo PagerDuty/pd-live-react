@@ -9,8 +9,6 @@ import i18next from 'i18n';
 //   throttledPdAxiosRequest,
 // } from 'util/pd-api-wrapper';
 
-import selectSettings from 'redux/settings/selectors';
-
 import {
   UPDATE_CONNECTION_STATUS_REQUESTED,
 } from 'redux/connection/actions';
@@ -112,20 +110,14 @@ export function* updateQuerySettingsIncidentStatusImpl(action) {
     incidentStatus,
   } = action;
 
-  const {
-    serverSideFiltering,
-  } = yield select(selectSettings);
-
   yield put({
     type: UPDATE_QUERY_SETTING_INCIDENT_STATUS_COMPLETED,
     incidentStatus,
   });
 
-  if (serverSideFiltering) {
-    yield put({
-      type: FETCH_INCIDENTS_REQUESTED,
-    });
-  }
+  yield put({
+    type: FETCH_INCIDENTS_REQUESTED,
+  });
 
   yield put({
     type: FILTER_INCIDENTS_LIST,
@@ -145,20 +137,14 @@ export function* updateQuerySettingsIncidentUrgencyImpl(action) {
     incidentUrgency,
   } = action;
 
-  const {
-    serverSideFiltering,
-  } = yield select(selectSettings);
-
   yield put({
     type: UPDATE_QUERY_SETTING_INCIDENT_URGENCY_COMPLETED,
     incidentUrgency,
   });
 
-  if (serverSideFiltering) {
-    yield put({
-      type: FETCH_INCIDENTS_REQUESTED,
-    });
-  }
+  yield put({
+    type: FETCH_INCIDENTS_REQUESTED,
+  });
 
   yield put({
     type: FILTER_INCIDENTS_LIST,
@@ -197,19 +183,13 @@ export function* updateQuerySettingsTeamsImpl(action) {
     teamIds,
   } = action;
 
-  const {
-    serverSideFiltering,
-  } = yield select(selectSettings);
-
   // yield put({ type: FETCH_SERVICES_REQUESTED, teamIds });
   // yield put({ type: GET_USERS_REQUESTED, teamIds });
   yield put({ type: UPDATE_QUERY_SETTINGS_TEAMS_COMPLETED, teamIds });
 
-  if (serverSideFiltering) {
-    yield put({
-      type: FETCH_INCIDENTS_REQUESTED,
-    });
-  }
+  yield put({
+    type: FETCH_INCIDENTS_REQUESTED,
+  });
 
   yield put({
     type: FILTER_INCIDENTS_LIST,
@@ -246,17 +226,11 @@ export function* updateQuerySettingsServicesImpl(action) {
     serviceIds,
   } = action;
 
-  const {
-    serverSideFiltering,
-  } = yield select(selectSettings);
-
   yield put({ type: UPDATE_QUERY_SETTINGS_SERVICES_COMPLETED, serviceIds });
 
-  if (serverSideFiltering) {
-    yield put({
-      type: FETCH_INCIDENTS_REQUESTED,
-    });
-  }
+  yield put({
+    type: FETCH_INCIDENTS_REQUESTED,
+  });
 
   yield put({
     type: FILTER_INCIDENTS_LIST,
@@ -274,17 +248,11 @@ export function* updateQuerySettingsUsersImpl(action) {
     userIds,
   } = action;
 
-  const {
-    serverSideFiltering,
-  } = yield select(selectSettings);
-
   yield put({ type: UPDATE_QUERY_SETTINGS_USERS_COMPLETED, userIds });
 
-  if (serverSideFiltering) {
-    yield put({
-      type: FETCH_INCIDENTS_REQUESTED,
-    });
-  }
+  yield put({
+    type: FETCH_INCIDENTS_REQUESTED,
+  });
 
   yield put({
     type: FILTER_INCIDENTS_LIST,

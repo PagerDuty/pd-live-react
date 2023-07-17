@@ -3,6 +3,7 @@ import {
   initReactI18next,
 } from 'react-i18next';
 import LanguageDetector from 'i18next-browser-languagedetector';
+import moment from 'moment';
 
 import gb from 'date-fns/locale/en-GB';
 import us from 'date-fns/locale/en-US';
@@ -77,6 +78,114 @@ export const lngs = {
     nativeName: 'Português (Brasil)',
   },
 };
+
+moment.locale('fr', {
+  relativeTime: {
+    future: 'dans %s',
+    past: 'il y a %s',
+    s: 'quelques secondes',
+    m: 'une minute',
+    mm: '%d minutes',
+    h: 'une heure',
+    hh: '%d heures',
+    d: 'un jour',
+    dd: '%d jours',
+    M: 'un mois',
+    MM: '%d mois',
+    y: 'un an',
+    yy: '%d ans',
+  },
+});
+
+moment.locale('es', {
+  relativeTime: {
+    future: 'en %s',
+    past: 'hace %s',
+    s: 'unos segundos',
+    m: 'un minuto',
+    mm: '%d minutos',
+    h: 'una hora',
+    hh: '%d horas',
+    d: 'un día',
+    dd: '%d días',
+    M: 'un mes',
+    MM: '%d meses',
+    y: 'un año',
+    yy: '%d años',
+  },
+});
+
+moment.locale('de', {
+  relativeTime: {
+    future: 'in %s',
+    past: 'vor %s',
+    s: 'ein paar Sekunden',
+    m: 'einer Minute',
+    mm: '%d Minuten',
+    h: 'einer Stunde',
+    hh: '%d Stunden',
+    d: 'einem Tag',
+    dd: '%d Tagen',
+    M: 'einem Monat',
+    MM: '%d Monaten',
+    y: 'einem Jahr',
+    yy: '%d Jahren',
+  },
+});
+
+moment.locale('ja', {
+  relativeTime: {
+    future: '%s後',
+    past: '%s前',
+    s: '数秒',
+    m: '1分',
+    mm: '%d分',
+    h: '1時間',
+    hh: '%d時間',
+    d: '1日',
+    dd: '%d日',
+    M: '1ヶ月',
+    MM: '%dヶ月',
+    y: '1年',
+    yy: '%d年',
+  },
+});
+
+moment.locale('id', {
+  relativeTime: {
+    future: 'dalam %s',
+    past: '%s yang lalu',
+    s: 'beberapa detik',
+    m: 'semenit',
+    mm: '%d menit',
+    h: 'sejam',
+    hh: '%d jam',
+    d: 'sehari',
+    dd: '%d hari',
+    M: 'sebulan',
+    MM: '%d bulan',
+    y: 'setahun',
+    yy: '%d tahun',
+  },
+});
+
+moment.locale('pt', {
+  relativeTime: {
+    future: 'em %s',
+    past: 'há %s',
+    s: 'alguns segundos',
+    m: 'um minuto',
+    mm: '%d minutos',
+    h: 'uma hora',
+    hh: '%d horas',
+    d: 'um dia',
+    dd: '%d dias',
+    M: 'um mês',
+    MM: '%d meses',
+    y: 'um ano',
+    yy: '%d anos',
+  },
+});
 
 // locales is generated from the lngs object for compatibility with original locales implementation
 /* eslint-disable no-param-reassign */

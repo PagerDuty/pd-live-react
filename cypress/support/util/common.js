@@ -49,14 +49,21 @@ export const checkNoIncidentsSelected = () => {
 export const checkActionAlertsModalContent = (content) => {
   cy.wait(2000);
   cy.get('.chakra-alert__title').contains(content, { timeout: 10000 });
-  // cy.get('.action-alerts-modal').type('{esc}');
+};
+
+export const checkPopoverContent = (incidentId, incidentHeader, content) => {
+  cy.wait(2000);
+  cy.get(`[data-incident-header="${incidentHeader}"][data-incident-cell-id="${incidentId}"]`).within(() => {
+    cy.get('.chakra-avatar__group').realHover();
+    cy.get('.chakra-popover__popper').should('be.visible').contains(content, { timeout: 10000 });
+  });
 };
 
 export const checkIncidentCellContent = (incidentId, incidentHeader, content) => {
   cy.wait(2000);
   cy.get(`[data-incident-header="${incidentHeader}"][data-incident-cell-id="${incidentId}"]`)
     .should('be.visible')
-    .should('have.text', content);
+    .contains(content);
 };
 
 export const checkIncidentCellContentAllRows = (incidentHeader, content) => {
@@ -69,7 +76,7 @@ export const checkIncidentCellContentAllRows = (incidentHeader, content) => {
       )
         .scrollIntoView()
         .should('be.visible')
-        .should('have.text', content);
+        .contains(content);
     }
   });
 };
@@ -92,6 +99,14 @@ export const checkIncidentCellIconAllRows = (incidentHeader, icon) => {
       checkIncidentCellIcon(incidentIdx, incidentHeader, icon);
     }
   });
+};
+
+export const checkIncidentCellContentHasLink = (incidentId, incidentHeader, text, link) => {
+  cy.wait(2000);
+  cy.get(`[data-incident-header="${incidentHeader}"][data-incident-cell-id="${incidentId}"]`)
+    .should('be.visible')
+    .contains('a', text)
+    .should('have.attr', 'href', link);
 };
 
 export const deactivateButton = (domId) => {
@@ -290,20 +305,18 @@ export const updateMaxRateLimit = (limit = 200) => {
   checkActionAlertsModalContent('Updated user profile settings');
 };
 
-export const updateAutoAcceptIncidentQuery = (autoAcceptIncidentsQuery = false) => {
+export const updateRelativeDates = (relativeDates = false) => {
   cy.get('.settings-panel-dropdown').click();
   cy.get('.dropdown-item').contains('Settings').click();
-  cy.get('.nav-item').contains('User Profile').click();
 
-  if (autoAcceptIncidentsQuery) {
-    cy.get('#user-profile-auto-accept-incident-query-checkbox').check({ force: true });
+  if (relativeDates) {
+    cy.get('#relative-dates-switch').check({ force: true });
   } else {
-    cy.get('#user-profile-auto-accept-incident-query-checkbox').uncheck({ force: true });
+    cy.get('#relative-dates-switch').uncheck({ force: true });
   }
 
-  cy.get('.btn').contains('Update User Profile').click();
+  cy.get('#save-settings-button').click();
   checkActionAlertsModalContent('Updated user profile settings');
-  cy.get('.close').click();
 };
 
 export const updateDarkMode = () => {

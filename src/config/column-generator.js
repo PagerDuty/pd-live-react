@@ -39,9 +39,15 @@ import {
   ChevronDownIcon, ChevronUpIcon, NotAllowedIcon,
 } from '@chakra-ui/icons';
 
+import Linkify from 'linkify-react';
+
 import StatusComponent from 'components/IncidentTable/subcomponents/StatusComponent';
 import NumAlertsComponent from 'components/IncidentTable/subcomponents/NumAlertsComponent';
 import PersonInitialsComponents from 'components/IncidentTable/subcomponents/PersonInitialsComponents';
+
+import {
+  useSelector,
+} from 'react-redux';
 
 const CellDiv = ({
   children,
@@ -70,9 +76,26 @@ const renderLinkCells = (linkObjs) => {
 
 const renderDateCell = ({
   iso8601Date,
-}) => (
-  <CellDiv>{moment(iso8601Date).format(DATE_FORMAT)}</CellDiv>
-);
+  overrideRelativeDates = false,
+  noSuffix = false,
+}) => {
+  const {
+    relativeDates,
+  } = useSelector((state) => state.settings);
+  if (!iso8601Date) {
+    return <CellDiv>--</CellDiv>;
+  }
+  if (overrideRelativeDates || relativeDates) {
+    return (
+      <CellDiv>
+        <Tooltip label={moment(iso8601Date).format(DATE_FORMAT)}>
+          {moment(iso8601Date).fromNow(noSuffix)}
+        </Tooltip>
+      </CellDiv>
+    );
+  }
+  return <CellDiv>{moment(iso8601Date).format(DATE_FORMAT)}</CellDiv>;
+};
 
 const renderPlainTextCell = ({
   value,
@@ -131,6 +154,25 @@ const alertTextValueSortType = (row1, row2, columnId, descending) => {
     return 0;
   }
   return value1.localeCompare(value2, undefined, { sensitivity: 'accent' });
+};
+
+const dateValueSortType = (row1, row2, columnId, descending) => {
+  const value1 = row1.values[columnId];
+  const value2 = row2.values[columnId];
+  const date1 = moment(value1);
+  const date2 = moment(value2);
+
+  if (date1.isSame(date2) || (!date1.isValid() && !date2.isValid())) {
+    return 0;
+  }
+  if (date1.isValid() && !date2.isValid()) {
+    return descending ? 1 : -1;
+  }
+  if (!date1.isValid() && date2.isValid()) {
+    return descending ? -1 : 1;
+  }
+
+  return date1.isAfter(date2) ? -1 : 1;
 };
 
 export const incidentColumn = ({
@@ -241,6 +283,21 @@ export const defaultIncidentColumns = () => [
     }) => renderDateCell({
       iso8601Date: value,
     }),
+    sortType: dateValueSortType,
+  }),
+  incidentColumn({
+    id: 'age',
+    header: 'Age',
+    accessor: 'created_at',
+    minWidth: 200,
+    renderer: ({
+      value,
+    }) => renderDateCell({
+      iso8601Date: value,
+      overrideRelativeDates: true,
+      noSuffix: true,
+    }),
+    sortType: dateValueSortType,
   }),
   incidentColumn({
     header: 'Updated At',
@@ -251,6 +308,7 @@ export const defaultIncidentColumns = () => [
     }) => renderDateCell({
       iso8601Date: value,
     }),
+    sortType: dateValueSortType,
   }),
   incidentColumn({
     header: 'Status',
@@ -301,6 +359,7 @@ export const defaultIncidentColumns = () => [
     }) => renderDateCell({
       iso8601Date: value,
     }),
+    sortType: dateValueSortType,
   }),
   incidentColumn({
     id: 'num_alerts',
@@ -473,9 +532,11 @@ export const defaultIncidentColumns = () => [
       },
     }) => (
       <CellDiv>
-        {original.notes?.length > 0 && original.notes.slice(-1)[0].content}
-        {original.notes?.length === 0 && '--'}
-        {original.notes?.status === 'fetching' && <Skeleton>fetching</Skeleton>}
+        <Linkify options={{ target: { url: '_blank' }, rel: 'noopener noreferrer' }}>
+          {original.notes?.length > 0 && original.notes.slice(-1)[0].content}
+          {original.notes?.length === 0 && '--'}
+          {original.notes?.status === 'fetching' && <Skeleton>fetching</Skeleton>}
+        </Linkify>
       </CellDiv>
     ),
   }),
@@ -494,6 +555,7 @@ export const defaultIncidentColumns = () => [
     }) => renderDateCell({
       iso8601Date: value,
     }),
+    sortType: dateValueSortType,
   }),
   incidentColumn({
     id: 'external_references',
@@ -518,6 +580,21 @@ export const defaultIncidentColumns = () => [
       }
       return '--';
     },
+  }),
+  incidentColumn({
+    id: 'responders',
+    header: 'Responders',
+    accessor: (incident) => incident.incidents_responders.map((responder) => responder.user.summary).join(', '),
+    minWidth: 160,
+    renderer: ({
+      row,
+    }) => (
+      <PersonInitialsComponents
+        displayedUsers={row.original.incidents_responders.map((responder) => ({
+          user: responder.user,
+        }))}
+      />
+    ),
   }),
 ];
 
@@ -695,3 +772,43 @@ export const columnsForSavedColumns = (savedColumns) => {
     .filter((c) => !!c);
   return columns;
 };
+
+// List of column headers for i18next-parser
+export const incidentColumnsTranslations = [
+  i18next.t('Title'),
+  i18next.t('Description'),
+  i18next.t('Created At'),
+  i18next.t('Age'),
+  i18next.t('Updated At'),
+  i18next.t('Status'),
+  i18next.t('Incident Key'),
+  i18next.t('Service'),
+  i18next.t('Assignees'),
+  i18next.t('Last Status Change At'),
+  i18next.t('Num Alerts'),
+  i18next.t('Escalation Policy'),
+  i18next.t('Teams'),
+  i18next.t('Acknowledgements'),
+  i18next.t('Last Status Change By'),
+  i18next.t('Priority'),
+  i18next.t('Urgency'),
+  i18next.t('Incident ID'),
+  i18next.t('Summary'),
+  i18next.t('Latest Note'),
+  i18next.t('Latest Note At'),
+  i18next.t('External References'),
+  i18next.t('Responders'),
+  i18next.t('Severity'),
+  i18next.t('Component'),
+  i18next.t('Source'),
+  i18next.t('Class'),
+  i18next.t('Group'),
+];
+
+// List of severity names for i18next-parser
+export const severityTranslations = [
+  i18next.t('critical'),
+  i18next.t('error'),
+  i18next.t('warning'),
+  i18next.t('info'),
+];

@@ -113,9 +113,6 @@ export function* getIncidentsImpl() {
     const {
       sinceDate, incidentStatus, incidentUrgency, teamIds, serviceIds, userIds,
     } = yield select(selectQuerySettings);
-    const {
-      serverSideFiltering,
-    } = yield select(selectSettings);
 
     const baseParams = {
       since: DEBUG_SINCE_DATE ? new Date(DEBUG_SINCE_DATE).toISOString() : sinceDate.toISOString(),
@@ -125,17 +122,16 @@ export function* getIncidentsImpl() {
       sort_by: 'created_at:desc',
     };
 
-    if (serverSideFiltering) {
-      if (incidentStatus) baseParams.statuses = incidentStatus;
-      if (incidentUrgency) baseParams.urgencies = incidentUrgency;
-      if (teamIds.length) baseParams.team_ids = teamIds;
-      if (serviceIds.length) baseParams.service_ids = serviceIds;
-      if (userIds.length) baseParams.user_ids = userIds;
-    }
+    if (incidentStatus) baseParams.statuses = incidentStatus;
+    if (incidentUrgency) baseParams.urgencies = incidentUrgency;
+    if (teamIds.length) baseParams.team_ids = teamIds;
+    if (serviceIds.length) baseParams.service_ids = serviceIds;
+    if (userIds.length) baseParams.user_ids = userIds;
 
     incidents = yield call(pdParallelFetch, 'incidents', baseParams, null, {
       priority: 5,
       skipSort: true,
+      maxRecords: 10000,
     });
   } catch (e) {
     yield put({ type: FETCH_INCIDENTS_ERROR, message: e.message });

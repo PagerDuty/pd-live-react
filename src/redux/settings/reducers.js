@@ -25,8 +25,8 @@ import {
   CLEAR_LOCAL_CACHE_COMPLETED,
   SET_DARK_MODE_REQUESTED,
   SET_DARK_MODE_COMPLETED,
-  SET_SERVER_SIDE_FILTERING_REQUESTED,
-  SET_SERVER_SIDE_FILTERING_COMPLETED,
+  SET_RELATIVE_DATES_REQUESTED,
+  SET_RELATIVE_DATES_COMPLETED,
 } from './actions';
 
 const settings = produce(
@@ -130,13 +130,13 @@ const settings = produce(
         draft.status = SET_DARK_MODE_COMPLETED;
         break;
 
-      case SET_SERVER_SIDE_FILTERING_REQUESTED:
-        draft.status = SET_SERVER_SIDE_FILTERING_REQUESTED;
+      case SET_RELATIVE_DATES_REQUESTED:
+        draft.status = SET_RELATIVE_DATES_REQUESTED;
         break;
 
-      case SET_SERVER_SIDE_FILTERING_COMPLETED:
-        draft.serverSideFiltering = action.serverSideFiltering;
-        draft.status = SET_SERVER_SIDE_FILTERING_COMPLETED;
+      case SET_RELATIVE_DATES_COMPLETED:
+        draft.relativeDates = action.relativeDates;
+        draft.status = SET_RELATIVE_DATES_COMPLETED;
         break;
 
       default:
@@ -150,7 +150,6 @@ const settings = produce(
     maxRateLimit: 200,
     autoAcceptIncidentsQuery: true,
     autoRefreshInterval: 5,
-    serverSideFiltering: true,
     searchAllCustomDetails: false,
     respondersInEpFilter: false,
     alertCustomDetailFields: [
@@ -164,6 +163,7 @@ const settings = produce(
       },
     ],
     darkMode: false,
+    relativeDates: false,
     status: '',
   },
 );

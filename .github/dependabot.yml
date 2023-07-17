@@ -11,3 +11,13 @@ updates:
     labels:
       - 'npm'
       - 'dependencies'
+  - package-ecosystem: 'github-actions'
+    directory: '/'
+    schedule:
+      interval: 'daily'
+     # Raise pull requests for version updates on github-actions against the `develop` branch
+    target-branch: 'develop'
+    # Labels on pull requests for version updates only
+    labels:
+      - 'github-actions'
+      - 'dependencies'

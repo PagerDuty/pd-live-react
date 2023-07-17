@@ -34,9 +34,10 @@ import {
 
 import {
   getObjectsFromList,
+  chunkArray,
 } from 'util/helpers';
 import {
-  pd,
+  throttledPdAxiosRequest,
 } from 'util/pd-api-wrapper';
 import selectIncidentActions from './selectors';
 import {
@@ -91,6 +92,29 @@ import {
   PROCESS_LOG_ENTRIES_COMPLETED, UPDATE_INCIDENTS,
 } from '../incidents/actions';
 
+const chunkedPdAxiosRequestCalls = (
+  incidentBodies,
+  method = 'PUT',
+  endpoint = 'incidents',
+  chunkSize = 25,
+) => {
+  const incidentBodyChunks = chunkArray(incidentBodies, chunkSize);
+  const calls = incidentBodyChunks.map((incidentBodyChunk) => call(
+    throttledPdAxiosRequest,
+    method,
+    endpoint,
+    null,
+    {
+      incidents: incidentBodyChunk,
+    },
+    {
+      expiration: 5 * 60 * 1000,
+      priority: 1,
+    },
+  ));
+  return calls;
+};
+
 export function* doAction() {
   yield takeLatest(ACTION_REQUESTED, doActionImpl);
 }
@@ -115,29 +139,33 @@ export function* acknowledge(action) {
       ACKNOWLEDGED,
     ]);
 
-    // Build request manually given PUT
-    const data = {
-      incidents: incidentsToBeAcknowledged.map((incident) => ({
-        id: incident.id,
-        type: 'incident_reference',
-        status: ACKNOWLEDGED,
-      })),
-    };
+    const incidentBodies = incidentsToBeAcknowledged.map((incident) => ({
+      id: incident.id,
+      type: 'incident_reference',
+      status: ACKNOWLEDGED,
+    }));
 
-    const response = yield call(pd, {
-      method: 'put',
-      endpoint: 'incidents',
-      data,
-    });
+    const calls = chunkedPdAxiosRequestCalls(incidentBodies);
 
-    if (response.ok) {
+    const responses = yield all(calls);
+
+    const acknowledgedIncidents = responses.map(
+      (response) => (response.status === 200 ? response.data.incidents : []),
+    ).flat();
+    const errors = responses.filter((response) => response.status !== 200);
+
+    if (errors.length > 0) {
+      handleMultipleAPIErrorResponses(errors);
+    }
+
+    if (acknowledgedIncidents.length > 0) {
       yield put({
         type: ACKNOWLEDGE_COMPLETED,
-        acknowledgedIncidents: response.data.incidents,
+        acknowledgedIncidents,
       });
       yield put({
         type: UPDATE_INCIDENTS,
-        updatedIncidents: response.data.incidents,
+        updatedIncidents: acknowledgedIncidents,
       });
       if (displayModal) {
         const {
@@ -148,11 +176,9 @@ export function* acknowledge(action) {
         );
         yield displayActionModal(actionAlertsModalType, actionAlertsModalMessage);
       }
-    } else {
-      handleSingleAPIErrorResponse(response);
     }
   } catch (e) {
-    handleSagaError(ACKNOWLEDGE_ERROR, e);
+    yield call(handleSagaError, ACKNOWLEDGE_ERROR, e);
   }
 }
 
@@ -167,24 +193,28 @@ export function* escalate(action) {
     } = action;
 
     // Build request manually given PUT
-    const data = {
-      incidents: selectedIncidents.map((incident) => ({
-        id: incident.id,
-        type: 'incident_reference',
-        escalation_level: escalationLevel,
-      })),
-    };
+    const incidentBodies = selectedIncidents.map((incident) => ({
+      id: incident.id,
+      type: 'incident_reference',
+      escalation_level: escalationLevel,
+    }));
 
-    const response = yield call(pd, {
-      method: 'put',
-      endpoint: 'incidents',
-      data,
-    });
+    const calls = chunkedPdAxiosRequestCalls(incidentBodies);
+    const responses = yield all(calls);
 
-    if (response.ok) {
+    const escalatedIncidents = responses.map(
+      (response) => (response.status === 200 ? response.data.incidents : []),
+    ).flat();
+    const errors = responses.filter((response) => response.status !== 200);
+
+    if (errors.length > 0) {
+      handleMultipleAPIErrorResponses(errors);
+    }
+
+    if (escalatedIncidents.length > 0) {
       yield put({
         type: UPDATE_INCIDENTS,
-        updatedIncidents: response.data.incidents,
+        updatedIncidents: escalatedIncidents,
       });
       if (displayModal) {
         const actionAlertsModalType = 'success';
@@ -195,13 +225,11 @@ export function* escalate(action) {
       }
       yield put({
         type: ESCALATE_COMPLETED,
-        escalatedIncidents: response.data.incidents,
+        escalatedIncidents,
       });
-    } else {
-      handleSingleAPIErrorResponse(response);
     }
   } catch (e) {
-    handleSagaError(ESCALATE_ERROR, e);
+    yield call(handleSagaError, ESCALATE_ERROR, e);
   }
 }
 
@@ -216,42 +244,46 @@ export function* reassign(action) {
     } = action;
 
     // Build request manually given PUT
-    const data = {
-      incidents: selectedIncidents.map((incident) => {
-        const updatedIncident = {
-          id: incident.id,
-          type: 'incident_reference',
+    const incidentBodies = selectedIncidents.map((incident) => {
+      const updatedIncident = {
+        id: incident.id,
+        type: 'incident_reference',
+      };
+      // Determine if EP or User Assignment
+      if (assignment.type === 'escalation_policy') {
+        updatedIncident.escalation_policy = {
+          id: assignment.value,
+          type: 'escalation_policy',
         };
-        // Determine if EP or User Assignment
-        if (assignment.type === 'escalation_policy') {
-          updatedIncident.escalation_policy = {
-            id: assignment.value,
-            type: 'escalation_policy',
-          };
-        } else if (assignment.type === 'user') {
-          updatedIncident.assignments = [
-            {
-              assignee: {
-                id: assignment.value,
-                type: 'user',
-              },
+      } else if (assignment.type === 'user') {
+        updatedIncident.assignments = [
+          {
+            assignee: {
+              id: assignment.value,
+              type: 'user',
             },
-          ];
-        }
-        return updatedIncident;
-      }),
-    };
-
-    const response = yield call(pd, {
-      method: 'put',
-      endpoint: 'incidents',
-      data,
+          },
+        ];
+      }
+      return updatedIncident;
     });
 
-    if (response.ok) {
+    const calls = chunkedPdAxiosRequestCalls(incidentBodies);
+    const responses = yield all(calls);
+
+    const reassignedIncidents = responses.map(
+      (response) => (response.status === 200 ? response.data.incidents : []),
+    ).flat();
+    const errors = responses.filter((response) => response.status !== 200);
+
+    if (errors.length > 0) {
+      handleMultipleAPIErrorResponses(errors);
+    }
+
+    if (reassignedIncidents.length > 0) {
       yield put({
         type: UPDATE_INCIDENTS,
-        updatedIncidents: response.data.incidents,
+        updatedIncidents: reassignedIncidents,
       });
 
       yield toggleDisplayReassignModalImpl();
@@ -264,13 +296,11 @@ export function* reassign(action) {
       }
       yield put({
         type: REASSIGN_COMPLETED,
-        reassignedIncidents: response.data.incidents,
+        reassignedIncidents,
       });
-    } else {
-      handleSingleAPIErrorResponse(response);
     }
   } catch (e) {
-    handleSagaError(REASSIGN_ERROR, e);
+    yield call(handleSagaError, REASSIGN_ERROR, e);
   }
 }
 
@@ -303,10 +333,12 @@ export function* addResponder(action) {
     } = action;
 
     // Build individual requests as the endpoint supports singular POST
-    const addResponderRequests = selectedIncidents.map((incident) => call(pd, {
-      method: 'post',
-      endpoint: `incidents/${incident.id}/responder_requests`,
-      data: {
+    const addResponderRequests = selectedIncidents.map((incident) => call(
+      throttledPdAxiosRequest,
+      'POST',
+      `incidents/${incident.id}/responder_requests`,
+      null,
+      {
         requester_id: requesterId,
         message,
         responder_request_targets: responderRequestTargets.map((target) => ({
@@ -317,11 +349,15 @@ export function* addResponder(action) {
           },
         })),
       },
-    }));
+      {
+        priority: 1,
+        expiration: 5 * 60 * 1000,
+      },
+    ));
 
     // Invoke parallel calls for optimal performance
     const responses = yield all(addResponderRequests);
-    if (responses.every((response) => response.ok)) {
+    if (responses.every((response) => response.status >= 200 && response.status < 300)) {
       yield toggleDisplayAddResponderModalImpl();
       if (displayModal) {
         const actionAlertsModalType = 'success';
@@ -337,7 +373,7 @@ export function* addResponder(action) {
       handleMultipleAPIErrorResponses(responses);
     }
   } catch (e) {
-    handleSagaError(ADD_RESPONDER_ERROR, e);
+    yield call(handleSagaError, ADD_RESPONDER_ERROR, e);
   }
 }
 
@@ -377,19 +413,25 @@ export function* snooze(action) {
     yield put({ type: ACKNOWLEDGE_REQUESTED, incidents, displayModal: false });
 
     // Build individual requests as the endpoint supports singular POST
-    const snoozeRequests = incidentsToBeSnoozed.map((incident) => call(pd, {
-      method: 'post',
-      endpoint: `incidents/${incident.id}/snooze`,
-      data: {
+    const snoozeRequests = incidentsToBeSnoozed.map((incident) => call(
+      throttledPdAxiosRequest,
+      'POST',
+      `incidents/${incident.id}/snooze`,
+      null,
+      {
         // Handle pre-built snoozes as well as custom durations
         duration: snoozeTimes[duration] ? snoozeTimes[duration].seconds : duration,
       },
-    }));
+      {
+        priority: 1,
+        expiration: 5 * 60 * 1000,
+      },
+    ));
 
     // Invoke parallel calls for optimal performance
     const responses = yield all(snoozeRequests);
-    if (responses.every((response) => response.ok)) {
-      const updatedIncidents = responses.map((response) => response.resource);
+    if (responses.every((response) => response.status >= 200 && response.status < 300)) {
+      const updatedIncidents = responses.map((response) => response.data.incident);
       yield put({
         type: UPDATE_INCIDENTS,
         updatedIncidents,
@@ -405,13 +447,13 @@ export function* snooze(action) {
       }
       yield put({
         type: SNOOZE_COMPLETED,
-        snoozedIncidents: responses,
+        snoozedIncidents: updatedIncidents,
       });
     } else {
       handleMultipleAPIErrorResponses(responses);
     }
   } catch (e) {
-    handleSagaError(SNOOZE_ERROR, e);
+    yield call(handleSagaError, SNOOZE_ERROR, e);
   }
 }
 
@@ -451,16 +493,22 @@ export function* merge(action) {
       })),
     };
 
-    const response = yield call(pd, {
-      method: 'put',
-      endpoint: `incidents/${targetIncident.id}/merge`,
+    const response = yield call(
+      throttledPdAxiosRequest,
+      'PUT',
+      `incidents/${targetIncident.id}/merge`,
+      null,
       data,
-    });
+      {
+        priority: 1,
+        expiration: 5 * 60 * 1000,
+      },
+    );
 
-    if (response.ok) {
+    if (response.status >= 200 && response.status < 300) {
       yield toggleDisplayMergeModalImpl();
 
-      const mergedIncident = response.resource;
+      const mergedIncident = response.data.incident;
       const resolvedIncidents = incidentsToBeMerged.map((incident) => ({
         id: incident.id,
         status: RESOLVED,
@@ -480,36 +528,42 @@ export function* merge(action) {
       }
       yield put({
         type: MERGE_COMPLETED,
-        mergedIncident: response.resource,
+        mergedIncident,
       });
     } else {
       handleSingleAPIErrorResponse(response);
     }
 
     if (addToTitleText) {
-      const titleUpdates = incidentsToBeMerged.map((incident) => call(pd, {
-        method: 'put',
-        endpoint: `incidents/${incident.id}`,
-        data: {
+      const titleUpdates = incidentsToBeMerged.map((incident) => call(
+        throttledPdAxiosRequest,
+        'PUT',
+        `incidents/${incident.id}`,
+        null,
+        {
           incident: {
             type: 'incident_reference',
             title: `${addToTitleText} ${incident.title}`,
           },
         },
-      }));
+        {
+          priority: 1,
+          expiration: 5 * 60 * 1000,
+        },
+      ));
       const titleResponses = yield all(titleUpdates);
-      const successes = titleResponses.filter((r) => r.ok);
+      const successes = titleResponses.filter((r) => r.status >= 200 && r.status < 300);
       if (successes.length !== titleResponses.length) {
-        handleMultipleAPIErrorResponses(titleResponses.filter((r) => !r.ok));
+        handleMultipleAPIErrorResponses(titleResponses.filter((r) => !(r.status >= 200 && r.status < 300)));
       }
-      const updatedIncidents = successes.map((r) => r.resource);
+      const updatedIncidents = successes.map((r) => r.data.incident);
       yield put({
         type: UPDATE_INCIDENTS,
         updatedIncidents,
       });
     }
   } catch (e) {
-    handleSagaError(MERGE_ERROR, e);
+    yield call(handleSagaError, MERGE_ERROR, e);
   }
 }
 
@@ -541,29 +595,33 @@ export function* resolve(action) {
       ACKNOWLEDGED,
     ]);
 
-    // Build request manually given PUT
-    const data = {
-      incidents: incidentsToBeResolved.map((incident) => ({
-        id: incident.id,
-        type: 'incident_reference',
-        status: RESOLVED,
-      })),
-    };
+    const incidentBodies = incidentsToBeResolved.map((incident) => ({
+      id: incident.id,
+      type: 'incident_reference',
+      status: RESOLVED,
+    }));
 
-    const response = yield call(pd, {
-      method: 'put',
-      endpoint: 'incidents',
-      data,
-    });
+    const calls = chunkedPdAxiosRequestCalls(incidentBodies);
 
-    if (response.ok) {
+    const responses = yield all(calls);
+
+    const resolvedIncidents = responses.map(
+      (response) => (response.status === 200 ? response.data.incidents : []),
+    ).flat();
+    const errors = responses.filter((response) => response.status !== 200);
+
+    if (errors.length > 0) {
+      handleMultipleAPIErrorResponses(errors);
+    }
+
+    if (resolvedIncidents.length > 0) {
       yield put({
         type: RESOLVE_COMPLETED,
-        resolvedIncidents: response.resource,
+        resolvedIncidents,
       });
       yield put({
         type: UPDATE_INCIDENTS,
-        updatedIncidents: response.data.incidents,
+        updatedIncidents: resolvedIncidents,
       });
       if (displayModal) {
         const {
@@ -574,11 +632,9 @@ export function* resolve(action) {
         );
         yield displayActionModal(actionAlertsModalType, actionAlertsModalMessage);
       }
-    } else {
-      handleSingleAPIErrorResponse(response);
     }
   } catch (e) {
-    handleSagaError(RESOLVE_ERROR, e);
+    yield call(handleSagaError, RESOLVE_ERROR, e);
   }
 }
 
@@ -608,25 +664,31 @@ export function* updatePriority(action) {
     }
 
     // Build individual requests as the endpoint supports singular PUT
-    const updatePriorityRequests = selectedIncidents.map((incident) => call(pd, {
-      method: 'put',
-      endpoint: `incidents/${incident.id}`,
-      data: {
+    const updatePriorityRequests = selectedIncidents.map((incident) => call(
+      throttledPdAxiosRequest,
+      'PUT',
+      `incidents/${incident.id}`,
+      null,
+      {
         incident: {
           type: 'incident',
           priority: priorityData,
         },
       },
-    }));
+      {
+        priority: 1,
+        expiration: 5 * 60 * 1000,
+      },
+    ));
 
     // Invoke parallel calls for optimal performance
     const responses = yield all(updatePriorityRequests);
-    if (responses.every((response) => response.ok)) {
+    if (responses.every((response) => response.status >= 200 && response.status < 300)) {
       yield put({
         type: UPDATE_PRIORITY_COMPLETED,
         updatedIncidentPriorities: responses,
       });
-      const updatedIncidents = responses.map((response) => response.resource);
+      const updatedIncidents = responses.map((response) => response.data.incident);
       yield put({
         type: UPDATE_INCIDENTS,
         updatedIncidents,
@@ -643,7 +705,7 @@ export function* updatePriority(action) {
       handleMultipleAPIErrorResponses(responses);
     }
   } catch (e) {
-    handleSagaError(UPDATE_PRIORITY_ERROR, e);
+    yield call(handleSagaError, UPDATE_PRIORITY_ERROR, e);
   }
 }
 
@@ -658,15 +720,25 @@ export function* addNote(action) {
     } = action;
 
     // Build individual requests as the endpoint supports singular POST
-    const addNoteRequests = selectedIncidents.map((incident) => call(pd, {
-      method: 'post',
-      endpoint: `incidents/${incident.id}/notes`,
-      data: { note: { content: note } },
-    }));
+    const addNoteRequests = selectedIncidents.map((incident) => call(
+      throttledPdAxiosRequest,
+      'POST',
+      `incidents/${incident.id}/notes`,
+      null,
+      {
+        note: {
+          content: note,
+        },
+      },
+      {
+        priority: 1,
+        expiration: 5 * 60 * 1000,
+      },
+    ));
 
     // Invoke parallel calls for optimal performance
     const responses = yield all(addNoteRequests);
-    if (responses.every((response) => response.ok)) {
+    if (responses.every((response) => response.status >= 200 && response.status < 300)) {
       yield toggleDisplayAddNoteModalImpl();
       if (displayModal) {
         const actionAlertsModalType = 'success';
@@ -683,7 +755,7 @@ export function* addNote(action) {
       handleMultipleAPIErrorResponses(responses);
     }
   } catch (e) {
-    handleSagaError(ADD_NOTE_ERROR, e);
+    yield call(handleSagaError, ADD_NOTE_ERROR, e);
   }
 }
 
@@ -712,10 +784,12 @@ export function* runCustomIncidentAction(action) {
     } = action;
 
     // Build individual requests as the endpoint supports singular POST
-    const customIncidentActionRequests = selectedIncidents.map((incident) => call(pd, {
-      method: 'post',
-      endpoint: `incidents/${incident.id}/custom_action`,
-      data: {
+    const customIncidentActionRequests = selectedIncidents.map((incident) => call(
+      throttledPdAxiosRequest,
+      'POST',
+      `incidents/${incident.id}/custom_action`,
+      null,
+      {
         custom_action: {
           webhook: {
             id: webhook.id,
@@ -723,11 +797,15 @@ export function* runCustomIncidentAction(action) {
           },
         },
       },
-    }));
+      {
+        priority: 1,
+        expiration: 5 * 60 * 1000,
+      },
+    ));
 
     // Invoke parallel calls for optimal performance
     const responses = yield all(customIncidentActionRequests);
-    if (responses.every((response) => response.ok)) {
+    if (responses.every((response) => response.status >= 200 && response.status < 300)) {
       yield put({
         type: RUN_CUSTOM_INCIDENT_ACTION_COMPLETED,
         customIncidentActionRequests: responses,
@@ -735,8 +813,7 @@ export function* runCustomIncidentAction(action) {
       if (displayModal) {
         const actionAlertsModalType = 'success';
         const actionAlertsModalMessage = `${i18next.t('Custom Incident Action')} "${
-          webhook.name
-        }" ${i18next.t('triggered for')} ${i18next.t('incident')}(s) ${selectedIncidents
+          webhook.name}" ${i18next.t('triggered for')} ${i18next.t('incident')}(s) ${selectedIncidents
           .map((i) => i.incident_number)
           .join(', ')}.`;
         yield displayActionModal(actionAlertsModalType, actionAlertsModalMessage);
@@ -745,7 +822,7 @@ export function* runCustomIncidentAction(action) {
       handleMultipleAPIErrorResponses(responses);
     }
   } catch (e) {
-    handleSagaError(RUN_CUSTOM_INCIDENT_ACTION_ERROR, e);
+    yield call(handleSagaError, RUN_CUSTOM_INCIDENT_ACTION_ERROR, e);
   }
 }
 
@@ -774,22 +851,28 @@ export function* syncWithExternalSystem(action) {
         },
         sync: true,
       });
-      return call(pd, {
-        method: 'put',
-        endpoint: `incidents/${incident.id}`,
-        data: {
+      return call(
+        throttledPdAxiosRequest,
+        'PUT',
+        `incidents/${incident.id}`,
+        null,
+        {
           incident: {
             id: incident.id,
             type: 'incident',
             external_references: tempExternalReferences,
           },
         },
-      });
+        {
+          priority: 1,
+          expiration: 5 * 60 * 1000,
+        },
+      );
     });
 
     // Invoke parallel calls for optimal performance
     const responses = yield all(externalSystemSyncRequests);
-    if (responses.every((response) => response.ok)) {
+    if (responses.every((response) => response.status >= 200 && response.status < 300)) {
       // Re-request incident data as external_reference is not available under ILE
       // eslint-disable-next-line max-len
       const updatedIncidentRequests = selectedIncidents.map((incident) => getIncidentByIdRequest(incident.id));
@@ -841,6 +924,6 @@ export function* syncWithExternalSystem(action) {
       handleMultipleAPIErrorResponses(responses);
     }
   } catch (e) {
-    handleSagaError(SYNC_WITH_EXTERNAL_SYSTEM_ERROR, e);
+    yield call(handleSagaError, SYNC_WITH_EXTERNAL_SYSTEM_ERROR, e);
   }
 }

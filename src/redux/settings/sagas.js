@@ -12,7 +12,7 @@ import {
 } from 'util/pd-api-wrapper';
 
 import {
-  FETCH_INCIDENTS_REQUESTED, FILTER_INCIDENTS_LIST,
+  FILTER_INCIDENTS_LIST,
 } from 'redux/incidents/actions';
 
 import {
@@ -38,8 +38,8 @@ import {
   CLEAR_LOCAL_CACHE_COMPLETED,
   SET_DARK_MODE_REQUESTED,
   SET_DARK_MODE_COMPLETED,
-  SET_SERVER_SIDE_FILTERING_REQUESTED,
-  SET_SERVER_SIDE_FILTERING_COMPLETED,
+  SET_RELATIVE_DATES_REQUESTED,
+  SET_RELATIVE_DATES_COMPLETED,
 } from './actions';
 
 import selectSettings from './selectors';
@@ -204,19 +204,16 @@ export function* setDarkModeImpl(action) {
   });
 }
 
-export function* setServerSideFiltering() {
-  yield takeLatest(SET_SERVER_SIDE_FILTERING_REQUESTED, setServerSideFilteringImpl);
+export function* setRelativeDates() {
+  yield takeLatest(SET_RELATIVE_DATES_REQUESTED, setRelativeDatesImpl);
 }
 
-export function* setServerSideFilteringImpl(action) {
+export function* setRelativeDatesImpl(action) {
   const {
-    serverSideFiltering,
+    relativeDates,
   } = action;
   yield put({
-    type: FETCH_INCIDENTS_REQUESTED,
-  });
-  yield put({
-    type: SET_SERVER_SIDE_FILTERING_COMPLETED,
-    serverSideFiltering,
+    type: SET_RELATIVE_DATES_COMPLETED,
+    relativeDates,
   });
 }

@@ -16,10 +16,11 @@ import {
   runExternalSystemSync,
   runResponsePlay,
   checkActionAlertsModalContent,
+  checkPopoverContent,
   checkIncidentCellContent,
   checkNoIncidentsSelected,
-  // activateButton,
-  // deactivateButton,
+  checkIncidentCellContentHasLink,
+  manageIncidentTableColumns,
   priorityNames,
 } from '../../support/util/common';
 
@@ -89,6 +90,32 @@ describe('Manage Open Incidents', { failFast: { enabled: false } }, () => {
     });
   });
 
+  it('Add note with URL to singular incident', () => {
+    const note = 'This note has a URL example.com included';
+    const incidentIdx = 2;
+    selectIncident(incidentIdx);
+
+    cy.get(`@selectedIncidentId_${incidentIdx}`).then((incidentId) => {
+      addNote(note);
+      checkActionAlertsModalContent('have been updated with a note');
+      checkIncidentCellContent(incidentId, 'Latest Note', note);
+      checkIncidentCellContentHasLink(incidentId, 'Latest Note', 'example.com', 'http://example.com');
+    });
+  });
+
+  it('Add note with email to singular incident', () => {
+    const note = 'This note has an email test@example.com included';
+    const incidentIdx = 3;
+    selectIncident(incidentIdx);
+
+    cy.get(`@selectedIncidentId_${incidentIdx}`).then((incidentId) => {
+      addNote(note);
+      checkActionAlertsModalContent('have been updated with a note');
+      checkIncidentCellContent(incidentId, 'Latest Note', note);
+      checkIncidentCellContentHasLink(incidentId, 'Latest Note', 'test@example.com', 'mailto:test@example.com');
+    });
+  });
+
   // Assumed environment has 3 levels on escalation policy
   for (let escalationLevel = 1; escalationLevel < 4; escalationLevel++) {
     it(`Escalate singular incident to level: ${escalationLevel}`, () => {
@@ -119,11 +146,20 @@ describe('Manage Open Incidents', { failFast: { enabled: false } }, () => {
   });
 
   it('Add responder (User A1) to singular incident', () => {
+    const columns = [
+      ['Responders', 'responders'],
+    ];
+    manageIncidentTableColumns('add', columns.map((column) => column[1]));
     const responders = ['User A1'];
     const message = 'Need help with this incident';
-    selectIncident(0);
+    const incidentIdx = 0;
+    selectIncident(incidentIdx);
     addResponders(responders, message);
     checkActionAlertsModalContent('Requested additional response for incident(s)');
+    cy.get(`@selectedIncidentId_${incidentIdx}`).then((incidentId) => {
+      checkIncidentCellContent(incidentId, 'Responders', 'UA');
+      checkPopoverContent(incidentId, 'Responders', 'user_a1@example.com');
+    });
   });
 
   it('Add responder (Team A) to singular incident', () => {

@@ -20,7 +20,7 @@ const fuseOptions = {
         case 'Teams':
           key = 'teams.summary';
           break;
-        case 'Acknowledgments':
+        case 'Acknowledgements':
           key = 'acknowledgements.summary';
           break;
         case 'Priority':
@@ -28,6 +28,9 @@ const fuseOptions = {
           break;
         case 'Latest Note':
           key = 'notes.content';
+          break;
+        case 'Responders':
+          key = 'incidents_responders.user.summary';
           break;
         default:
           key = col.accessor;
