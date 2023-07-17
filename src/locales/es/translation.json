@@ -160,6 +160,7 @@
   "The alerts of the selected incidents will be merged into a single incident": "Las alertas de los incidentes seleccionados se combinarán en un solo incidente",
   "The remaining selected incidents will be resolved after the merge is complete": "Los incidentes seleccionados restantes se resolverán después de que se complete la combinación",
   "Title": "Título",
+  "Too many records to display (X). Please narrow your search criteria.": "Demasiados registros para mostrar ({{numIncidents}}). Por favor, refina tus criterios de búsqueda.",
   "Triggered": "Iniciado",
   "triggered for": "iniciado para",
   "Unable to fetch account abilities": "No se pueden recuperar las capacidades de la cuenta",

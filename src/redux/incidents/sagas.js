@@ -136,6 +136,7 @@ export function* getIncidentsImpl() {
     incidents = yield call(pdParallelFetch, 'incidents', baseParams, null, {
       priority: 5,
       skipSort: true,
+      maxRecords: 10000,
     });
   } catch (e) {
     yield put({ type: FETCH_INCIDENTS_ERROR, message: e.message });
