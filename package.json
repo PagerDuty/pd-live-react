@@ -32,7 +32,7 @@
     "framer-motion": "^10.12.20",
     "fuse.js": "^6.6.2",
     "i18next": "^23.2.11",
-    "i18next-browser-languagedetector": "^7.0.1",
+    "i18next-browser-languagedetector": "^7.1.0",
     "immer": "^10.0.2",
     "jsonpath-plus": "^7.2.0",
     "linkify-react": "^4.1.1",
