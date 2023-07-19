@@ -251,6 +251,13 @@ const incidents = produce(
             action.incidentNotesMap[incidentId],
           );
         }
+        if (action.incidentLatestLogEntryMap) {
+          draft.incidentLatestLogEntries = {
+            ...draft.incidentLatestLogEntries,
+            ...action.incidentLatestLogEntryMap,
+          };
+        }
+
         draft.status = PROCESS_LOG_ENTRIES_COMPLETED;
         break;
 
@@ -502,6 +509,7 @@ const incidents = produce(
     incidentAlerts: {},
     incidentAlertsCalls: 0,
     incidentNotes: {},
+    incidentLatestLogEntries: {},
     filteredIncidentsByQuery: [],
     status: '',
     fetchingData: false,

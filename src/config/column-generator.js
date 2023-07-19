@@ -596,6 +596,37 @@ export const defaultIncidentColumns = () => [
       />
     ),
   }),
+  incidentColumn({
+    id: 'latest_log_entry_at',
+    header: 'Latest Log Entry At',
+    accessor: (incident) => (
+      incident.latest_log_entry?.created_at
+      || incident.updated_at
+      || incident.created_at
+    ),
+    minWidth: 200,
+    renderer: ({
+      value,
+    }) => renderDateCell({
+      iso8601Date: value,
+    }),
+    sortType: dateValueSortType,
+  }),
+  incidentColumn({
+    id: 'latest_log_entry_type',
+    header: 'Latest Log Entry Type',
+    accessor: (incident) => {
+      if (incident.latest_log_entry) {
+        const m = incident.latest_log_entry.type.match(/^(.+?)_log_entry$/);
+        if (m && m.length > 1) {
+          return m[1];
+        }
+        return incident.latest_log_entry.type;
+      }
+      return '';
+    },
+    minWidth: 120,
+  }),
 ];
 
 export const defaultAlertsColumns = () => [

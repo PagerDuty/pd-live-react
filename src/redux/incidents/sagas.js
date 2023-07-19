@@ -271,9 +271,16 @@ export function* processLogEntriesImpl(action) {
   const incidentNotesMap = {};
   const incidentAlertsMap = {};
   const incidentAlertsUnlinkMap = {};
+  const incidentLatestLogEntryMap = {};
 
   for (let i = 0; i < logEntries.length; i += 1) {
     const logEntry = logEntries[i];
+
+    // update latest log entry
+    if (!incidentLatestLogEntryMap[logEntry.incident.id]
+      || incidentLatestLogEntryMap[logEntry.incident.id].created_at < logEntry.created_at) {
+      incidentLatestLogEntryMap[logEntry.incident.id] = logEntry;
+    }
 
     if (logEntry.type === 'trigger_log_entry') {
       // add new incident
@@ -323,6 +330,7 @@ export function* processLogEntriesImpl(action) {
     incidentNotesMap,
     incidentAlertsMap,
     incidentAlertsUnlinkMap,
+    incidentLatestLogEntryMap,
   });
   yield call(filterIncidentsImpl);
 }
