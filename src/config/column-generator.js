@@ -627,6 +627,25 @@ export const defaultIncidentColumns = () => [
     },
     minWidth: 120,
   }),
+  incidentColumn({
+    id: 'latest_alert_at',
+    header: 'Latest Alert At',
+    accessor: (incident) => {
+      if (incident.alerts && incident.alerts instanceof Array && incident.alerts.length > 0) {
+        const alertDates = incident.alerts.map((x) => new Date(x.created_at));
+        const maxAlertDate = new Date(Math.max(...alertDates));
+        return maxAlertDate.toISOString();
+      }
+      return '';
+    },
+    minWidth: 200,
+    renderer: ({
+      value,
+    }) => renderDateCell({
+      iso8601Date: value,
+    }),
+    sortType: dateValueSortType,
+  }),
 ];
 
 export const defaultAlertsColumns = () => [
@@ -829,6 +848,9 @@ export const incidentColumnsTranslations = [
   i18next.t('Latest Note At'),
   i18next.t('External References'),
   i18next.t('Responders'),
+  i18next.t('Latest Log Entry At'),
+  i18next.t('Latest Log Entry Type'),
+  i18next.t('Latest Alert At'),
   i18next.t('Severity'),
   i18next.t('Component'),
   i18next.t('Source'),

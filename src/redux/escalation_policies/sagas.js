@@ -30,7 +30,7 @@ export function* getEscalationPolicies() {
     });
   } catch (e) {
     // Handle API auth failure
-    if (e.status === 401) {
+    if (e.response?.status === 401) {
       e.message = i18next.t('Unauthorized Access');
     }
     yield put({ type: FETCH_ESCALATION_POLICIES_ERROR, message: e.message });
