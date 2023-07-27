@@ -111,12 +111,22 @@ export function* getIncidentsImpl() {
       type: UPDATE_INCIDENT_LAST_FETCH_DATE,
     });
     const {
-      sinceDate, incidentStatus, incidentUrgency, teamIds, serviceIds, userIds,
+      sinceDate, untilDate, incidentStatus, incidentUrgency, teamIds, serviceIds, userIds,
     } = yield select(selectQuerySettings);
 
+    const since = DEBUG_SINCE_DATE ? new Date(DEBUG_SINCE_DATE).toISOString() : sinceDate.toISOString();
+    let until;
+    if (DEBUG_UNTIL_DATE) {
+      until = new Date(DEBUG_UNTIL_DATE).toISOString();
+    } else if (untilDate) {
+      until = untilDate.toISOString();
+    } else {
+      until = new Date().toISOString();
+    }
+
     const baseParams = {
-      since: DEBUG_SINCE_DATE ? new Date(DEBUG_SINCE_DATE).toISOString() : sinceDate.toISOString(),
-      until: DEBUG_UNTIL_DATE ? new Date(DEBUG_UNTIL_DATE).toISOString() : new Date().toISOString(),
+      since,
+      until,
       include: ['first_trigger_log_entries', 'external_references'],
       limit: INCIDENTS_PAGINATION_LIMIT,
       sort_by: 'created_at:desc',

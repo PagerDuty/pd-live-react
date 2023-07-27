@@ -38,6 +38,8 @@ import {
   TOGGLE_DISPLAY_QUERY_SETTINGS_COMPLETED,
   UPDATE_QUERY_SETTING_SINCE_DATE_REQUESTED,
   UPDATE_QUERY_SETTING_SINCE_DATE_COMPLETED,
+  UPDATE_QUERY_SETTING_UNTIL_DATE_REQUESTED,
+  UPDATE_QUERY_SETTING_UNTIL_DATE_COMPLETED,
   UPDATE_QUERY_SETTING_INCIDENT_STATUS_REQUESTED,
   UPDATE_QUERY_SETTING_INCIDENT_STATUS_COMPLETED,
   UPDATE_QUERY_SETTING_INCIDENT_URGENCY_REQUESTED,
@@ -91,6 +93,22 @@ export function* updateQuerySettingsSinceDateImpl(action) {
     sinceDate,
   } = action;
   yield put({ type: UPDATE_QUERY_SETTING_SINCE_DATE_COMPLETED, sinceDate });
+  yield put({
+    type: FETCH_INCIDENTS_REQUESTED,
+  });
+  yield put({ type: VALIDATE_INCIDENT_QUERY_REQUESTED });
+}
+
+export function* updateQuerySettingsUntilDate() {
+  yield takeLatest(UPDATE_QUERY_SETTING_UNTIL_DATE_REQUESTED, updateQuerySettingsUntilDateImpl);
+}
+
+export function* updateQuerySettingsUntilDateImpl(action) {
+  // Update since date and re-request incidents list + notes
+  const {
+    untilDate,
+  } = action;
+  yield put({ type: UPDATE_QUERY_SETTING_UNTIL_DATE_COMPLETED, untilDate });
   yield put({
     type: FETCH_INCIDENTS_REQUESTED,
   });
