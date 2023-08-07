@@ -30,17 +30,20 @@ const PersonInitialsComponent = ({
       user,
     }) => {
       let color;
+      let email;
       if (usersMap[user.id]) {
         color = usersMap[user.id].color.replace('-', '');
+        email = usersMap[user.id].email;
       } else {
         color = 'black';
+        email = '';
       }
       return {
         summary: user.summary,
         // initials: getInitials(user.summary),
         id: user.id,
         html_url: user.html_url,
-        email: usersMap[user.id].email,
+        email,
         color: CSS.supports && CSS.supports('color', color) ? color : 'black',
       };
     })
