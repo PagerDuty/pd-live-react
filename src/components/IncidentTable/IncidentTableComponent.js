@@ -137,7 +137,13 @@ const IncidentTableComponent = () => {
     status: responsePlaysStatus,
   } = useSelector((state) => state.responsePlays);
   const {
-    filteredIncidentsByQuery, incidents, incidentAlerts, incidentNotes, fetchingIncidents, error: incidentsError,
+    filteredIncidentsByQuery,
+    incidents,
+    incidentAlerts,
+    incidentNotes,
+    incidentLatestLogEntries,
+    fetchingIncidents,
+    error: incidentsError,
   } = useSelector((state) => state.incidents);
   const currentUserLocale = useSelector((state) => state.users.currentUserLocale);
 
@@ -191,6 +197,7 @@ const IncidentTableComponent = () => {
       ...incident,
       alerts: incidentAlerts[incident.id],
       notes: incidentNotes[incident.id],
+      latest_log_entry: incidentLatestLogEntries[incident.id],
     })),
     [filteredIncidentsByQuery, incidentAlerts, incidentNotes],
   );

@@ -62,6 +62,7 @@ export const pdAxiosRequest = async (method, endpoint, params = {}, data = {}) =
   },
   params: { ...params, rand: Math.random().toString(36).substring(2, 7) },
   data,
+  // never throw, just return the error
   validateStatus: () => true,
 });
 
@@ -143,12 +144,25 @@ export const pdParallelFetch = async (
   let reversedSortOrder = false;
   if (endpoint.indexOf('log_entries') > -1) reversedSortOrder = true;
 
-  const firstPage = (
-    await throttledPdAxiosRequest('GET', endpoint, requestParams, undefined, axiosRequestOptions)
-  ).data;
+  const firstPageResponse = await throttledPdAxiosRequest(
+    'GET',
+    endpoint,
+    requestParams,
+    undefined,
+    axiosRequestOptions,
+  );
+
+  if (!(firstPageResponse.status >= 200 && firstPageResponse.status < 300)) {
+    const e = new Error(`Error fetching ${endpoint}: ${firstPageResponse.status}`
+      + `${firstPageResponse.data ? `: ${firstPageResponse.data}` : ''}`);
+    e.response = firstPageResponse;
+    throw e;
+  }
+  const firstPage = firstPageResponse.data;
   if (options.maxRecords && firstPage.total > options.maxRecords) {
     throw new Error(`Too many records: ${firstPage.total} > ${options.maxRecords}`);
   }
+
   const fetchedData = firstPage[endpointIdentifier(endpoint)];
 
   const promises = [];
@@ -181,7 +195,7 @@ export const pdParallelFetch = async (
     }
   }
   await Promise.all(promises);
-  if (!options.skipSort) {
+  if (!options.skipSort && fetchedData.length > 0) {
     fetchedData.sort((a, b) => (reversedSortOrder ? compareCreatedAt(b, a) : compareCreatedAt(a, b)));
   }
   return fetchedData;

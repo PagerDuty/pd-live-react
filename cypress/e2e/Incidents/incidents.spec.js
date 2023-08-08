@@ -27,9 +27,11 @@ import {
 describe('Manage Open Incidents', { failFast: { enabled: false } }, () => {
   before(() => {
     acceptDisclaimer();
-    // priorityNames.forEach((currentPriority) => {
-    //   activateButton(`query-priority-${currentPriority}-button`);
-    // });
+    const columns = [
+      ['Responders', 'responders'],
+      ['Latest Log Entry Type', 'latest_log_entry_type'],
+    ];
+    manageIncidentTableColumns('add', columns.map((column) => column[1]));
     waitForIncidentTable();
   });
 
@@ -38,10 +40,12 @@ describe('Manage Open Incidents', { failFast: { enabled: false } }, () => {
     // Handle failing tests by clearing cache
     if (cy.state('test').currentRetry() > 1) {
       acceptDisclaimer();
+      const columns = [
+        ['Responders', 'responders'],
+        ['Latest Log Entry Type', 'latest_log_entry_type'],
+      ];
+      manageIncidentTableColumns('add', columns.map((column) => column[1]));
     }
-    // priorityNames.forEach((currentPriority) => {
-    //   activateButton(`query-priority-${currentPriority}-button`);
-    // });
     waitForIncidentTable();
   });
 
@@ -61,9 +65,14 @@ describe('Manage Open Incidents', { failFast: { enabled: false } }, () => {
   });
 
   it('Acknowledge singular incident', () => {
-    selectIncident(0);
-    cy.get('#incident-action-acknowledge-button').click();
-    checkActionAlertsModalContent('have been acknowledged');
+    const incidentIdx = 0;
+    selectIncident(incidentIdx);
+
+    cy.get(`@selectedIncidentId_${incidentIdx}`).then((incidentId) => {
+      cy.get('#incident-action-acknowledge-button').click();
+      checkActionAlertsModalContent('have been acknowledged');
+      checkIncidentCellContent(incidentId, 'Latest Log Entry Type', 'acknowledge');
+    });
   });
 
   it('Add note to singular incident', () => {
@@ -75,6 +84,7 @@ describe('Manage Open Incidents', { failFast: { enabled: false } }, () => {
       addNote(note);
       checkActionAlertsModalContent('have been updated with a note');
       checkIncidentCellContent(incidentId, 'Latest Note', note);
+      checkIncidentCellContent(incidentId, 'Latest Log Entry Type', 'annotate');
     });
   });
 
@@ -87,6 +97,7 @@ describe('Manage Open Incidents', { failFast: { enabled: false } }, () => {
       addNote(note);
       checkActionAlertsModalContent('have been updated with a note');
       checkIncidentCellContent(incidentId, 'Latest Note', note);
+      checkIncidentCellContent(incidentId, 'Latest Log Entry Type', 'annotate');
     });
   });
 
@@ -123,9 +134,13 @@ describe('Manage Open Incidents', { failFast: { enabled: false } }, () => {
       // deactivateButton('query-urgency-low-button');
       cy.get('.query-urgency-low-button').uncheck({ force: true });
       waitForIncidentTable();
-      selectIncident(0);
-      escalate(escalationLevel);
-      checkActionAlertsModalContent(`have been manually escalated to level ${escalationLevel}`);
+      const incidentIdx = 0;
+      selectIncident(incidentIdx);
+      cy.get(`@selectedIncidentId_${incidentIdx}`).then((incidentId) => {
+        escalate(escalationLevel);
+        checkActionAlertsModalContent(`have been manually escalated to level ${escalationLevel}`);
+        checkIncidentCellContent(incidentId, 'Latest Log Entry Type', /escalate|notify/);
+      });
     });
   }
 
@@ -146,10 +161,6 @@ describe('Manage Open Incidents', { failFast: { enabled: false } }, () => {
   });
 
   it('Add responder (User A1) to singular incident', () => {
-    const columns = [
-      ['Responders', 'responders'],
-    ];
-    manageIncidentTableColumns('add', columns.map((column) => column[1]));
     const responders = ['User A1'];
     const message = 'Need help with this incident';
     const incidentIdx = 0;
@@ -159,6 +170,7 @@ describe('Manage Open Incidents', { failFast: { enabled: false } }, () => {
     cy.get(`@selectedIncidentId_${incidentIdx}`).then((incidentId) => {
       checkIncidentCellContent(incidentId, 'Responders', 'UA');
       checkPopoverContent(incidentId, 'Responders', 'user_a1@example.com');
+      checkIncidentCellContent(incidentId, 'Latest Log Entry Type', 'responder_request');
     });
   });
 
