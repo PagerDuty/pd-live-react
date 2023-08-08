@@ -100,6 +100,7 @@ jobs:
           # Specify Cypress test spec files in each matrix job to deterministically run tests in parallel
           spec: cypress/e2e/${{ matrix.e2e }}
           parallel: false # Don't use Cypress in-built parallelization
+          install: true
           cache-key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
         env:
           # For recording and parallelization to work you must set your CYPRESS_RECORD_KEY
