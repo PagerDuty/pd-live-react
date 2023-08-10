@@ -12,7 +12,7 @@ import DatePicker from 'react-datepicker';
 
 import {
   DEBUG_SINCE_DATE,
-  // DEBUG_UNTIL_DATE,
+  DEBUG_UNTIL_DATE,
 } from 'config/constants';
 
 import {
@@ -67,18 +67,25 @@ const DatePickerComponent = () => {
     : ['1', 'Day'];
   const sinceDateCalc = DEBUG_SINCE_DATE
     ? new Date(DEBUG_SINCE_DATE)
-    : today.subtract(Number(sinceDateNum), sinceDateTenor).toDate();
+    : today.subtract(Number(sinceDateNum), sinceDateTenor)
+      .set({ hour: 0, minute: 0, second: 0, millisecond: 0 }).toDate();
   const [sinceDate, setSinceDate] = useState(sinceDateCalc);
 
+  // Generate until date
+  const untilDateCalc = DEBUG_UNTIL_DATE
+    ? new Date(DEBUG_UNTIL_DATE)
+    : untilDateFromStore;
+  const [untilDate, setUntilDate] = useState(untilDateCalc);
+
   useEffect(() => {
-    const flattedSinceDate = moment(sinceDate)
-      .set({ hour: 0, minute: 0, second: 0, millisecond: 0 })
-      .toDate();
-    updateQuerySettingsSinceDate(flattedSinceDate);
-  }, [sinceDate]);
+    updateQuerySettingsSinceDate(sinceDate);
+    if (untilDate) {
+      updateQuerySettingsUntilDate(untilDate);
+    }
+  }, [sinceDate, untilDate]);
 
   // const [sinceDate, setSinceDate] = useState(sinceDateFromStore);
-  const [untilDate, setUntilDate] = useState(untilDateFromStore);
+  // const [untilDate, setUntilDate] = useState(untilDateFromStore);
 
   const validateSinceTime = (date) => {
     const now = new Date();
@@ -129,12 +136,12 @@ const DatePickerComponent = () => {
   return (
     <Flex borderWidth="1px" rounded="md" mb={2} p={0} justifyContent="center" alignItems="stretch">
       <Button size="sm" fontWeight={400} border="none" onClick={onOpen} id="query-date-input">
-        {`${moment(sinceDateFromStore).format('L')} ${moment(sinceDateFromStore).format('LT')}`}
+        {`${moment(sinceDate).format('L')} ${moment(sinceDate).format('LT')}`}
         {}
         {' - '}
         {
-          untilDateFromStore
-            ? `${moment(untilDateFromStore).format('L')} ${moment(untilDateFromStore).format('LT')}`
+          untilDate
+            ? `${moment(untilDate).format('L')} ${moment(untilDate).format('LT')}`
             : t('Now')
         }
       </Button>
