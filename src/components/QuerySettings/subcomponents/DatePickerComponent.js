@@ -98,8 +98,8 @@ const DatePickerComponent = () => {
     return true;
   };
 
-  // Only allow 180 days of data to be queried, but not in the future.
-  const maxDuration = moment(sinceDate).add(180, 'days').toDate();
+  // Only allow 6 months of data to be queried, but don't allow until date in the future.
+  const maxDuration = moment(sinceDate).add(6, 'months').toDate();
   const maxUntilDate = maxDuration < new Date() ? maxDuration : new Date();
 
   const validateUntilTime = (date) => {
