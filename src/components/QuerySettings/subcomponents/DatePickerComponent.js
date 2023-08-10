@@ -6,7 +6,7 @@ import {
   useSelector, useDispatch,
 } from 'react-redux';
 
-// import moment from 'moment';
+import moment from 'moment';
 
 import DatePicker from 'react-datepicker';
 
@@ -98,12 +98,13 @@ const DatePickerComponent = () => {
 
   return (
     <Flex borderWidth="1px" rounded="md" mb={2} p={0} justifyContent="center" alignItems="stretch">
-      <Button size="sm" fontWeight={400} border="none" onClick={onOpen}>
-        {sinceDateFromStore.toLocaleString(currentUserLocale, { dateStyle: 'short', timeStyle: 'short' })}
+      <Button size="sm" fontWeight={400} border="none" onClick={onOpen} id="query-date-input">
+        {`${moment(sinceDateFromStore).format('L')} ${moment(sinceDateFromStore).format('LT')}`}
+        {}
         {' - '}
         {
           untilDateFromStore
-            ? untilDateFromStore.toLocaleString(currentUserLocale, { dateStyle: 'short', timeStyle: 'short' })
+            ? `${moment(untilDateFromStore).format('L')} ${moment(untilDateFromStore).format('LT')}`
             : t('Now')
         }
       </Button>
