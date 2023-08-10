@@ -1,5 +1,5 @@
 import React, {
-  useState,
+  useState, useEffect,
 } from 'react';
 
 import {
@@ -9,6 +9,11 @@ import {
 import moment from 'moment';
 
 import DatePicker from 'react-datepicker';
+
+import {
+  DEBUG_SINCE_DATE,
+  // DEBUG_UNTIL_DATE,
+} from 'config/constants';
 
 import {
   useTranslation,
@@ -41,6 +46,7 @@ const DatePickerComponent = () => {
     t,
   } = useTranslation();
   const currentUserLocale = useSelector((state) => state.users.currentUserLocale);
+  const defaultSinceDateTenor = useSelector((state) => state.settings.defaultSinceDateTenor);
   const {
     sinceDate: sinceDateFromStore,
     untilDate: untilDateFromStore,
@@ -54,7 +60,24 @@ const DatePickerComponent = () => {
     dispatch(updateQuerySettingsUntilDateConnected(untilDate));
   };
 
-  const [sinceDate, setSinceDate] = useState(sinceDateFromStore);
+  // Generate since date based on configured default and dispatch action for query.
+  const today = moment();
+  const [sinceDateNum, sinceDateTenor] = defaultSinceDateTenor
+    ? defaultSinceDateTenor.split(' ')
+    : ['1', 'Day'];
+  const sinceDateCalc = DEBUG_SINCE_DATE
+    ? new Date(DEBUG_SINCE_DATE)
+    : today.subtract(Number(sinceDateNum), sinceDateTenor).toDate();
+  const [sinceDate, setSinceDate] = useState(sinceDateCalc);
+
+  useEffect(() => {
+    const flattedSinceDate = moment(sinceDate)
+      .set({ hour: 0, minute: 0, second: 0, millisecond: 0 })
+      .toDate();
+    updateQuerySettingsSinceDate(flattedSinceDate);
+  }, [sinceDate]);
+
+  // const [sinceDate, setSinceDate] = useState(sinceDateFromStore);
   const [untilDate, setUntilDate] = useState(untilDateFromStore);
 
   const validateSinceTime = (date) => {
