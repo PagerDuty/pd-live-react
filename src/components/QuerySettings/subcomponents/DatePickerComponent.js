@@ -205,6 +205,7 @@ const DatePickerComponent = () => {
           </ModalBody>
           <ModalFooter>
             <Button
+              id="query-date-submit"
               colorScheme="blue"
               mr={3}
               onClick={handleSubmit}
