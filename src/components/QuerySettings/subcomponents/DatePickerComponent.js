@@ -1,5 +1,5 @@
 import React, {
-  useState, useEffect,
+  useState, useEffect, useMemo,
 } from 'react';
 
 import {
@@ -92,15 +92,28 @@ const DatePickerComponent = () => {
     if (date > now) {
       return false;
     }
-    if (untilDate && date >= untilDate) {
+    if (untilDate) {
+      if (date >= untilDate) {
+        return false;
+      }
+      // if since is more than 6 months before until, don't allow
+      const sixMonthsBeforeUntil = moment(untilDate).subtract(180, 'days').toDate();
+      if (date < sixMonthsBeforeUntil) {
+        return false;
+      }
+    }
+    // if since is more than 6 months before now, don't allow
+    const sixMonthsBeforeNow = moment().subtract(180, 'days').toDate();
+    if (date < sixMonthsBeforeNow) {
       return false;
     }
     return true;
   };
 
-  // Only allow 6 months of data to be queried, but don't allow until date in the future.
-  const maxDuration = moment(sinceDate).add(6, 'months').toDate();
-  const maxUntilDate = maxDuration < new Date() ? maxDuration : new Date();
+  const maxUntilDate = useMemo(() => {
+    const maxDuration = moment(sinceDate).add(180, 'days').toDate();
+    return maxDuration < new Date() ? maxDuration : new Date();
+  }, [sinceDate]);
 
   const validateUntilTime = (date) => {
     if (!date) {
@@ -113,11 +126,18 @@ const DatePickerComponent = () => {
     if (date <= sinceDate) {
       return false;
     }
-    if (date > maxDuration) {
+    if (date > maxUntilDate) {
       return false;
     }
     return true;
   };
+
+  const isValid = useMemo(() => {
+    if (validateSinceTime(sinceDate) && validateUntilTime(untilDate)) {
+      return true;
+    }
+    return false;
+  }, [sinceDate, untilDate]);
 
   const {
     isOpen, onOpen, onClose,
@@ -196,7 +216,7 @@ const DatePickerComponent = () => {
                   startDate={sinceDate}
                   endDate={untilDate}
                   minDate={sinceDate}
-                  maxDate={maxUntilDate || new Date()}
+                  maxDate={maxUntilDate}
                   filterTime={validateUntilTime}
                   onChange={(date) => setUntilDate(date)}
                 />
@@ -209,6 +229,7 @@ const DatePickerComponent = () => {
               colorScheme="blue"
               mr={3}
               onClick={handleSubmit}
+              isDisabled={!isValid}
             >
               OK
             </Button>
