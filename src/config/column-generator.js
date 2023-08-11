@@ -49,6 +49,8 @@ import {
   useSelector,
 } from 'react-redux';
 
+const linkifyOptions = { target: { url: '_blank' }, rel: 'noopener noreferrer' };
+
 const CellDiv = ({
   children,
 }) => <div className="td-wrapper">{children}</div>;
@@ -99,19 +101,11 @@ const renderDateCell = ({
 
 const renderPlainTextCell = ({
   value,
-}) => {
-  try {
-    return (
-      <CellDiv>
-        <a href={new URL(value).href} target="_blank" rel="noopener noreferrer">
-          {value}
-        </a>
-      </CellDiv>
-    );
-  } catch (e) {
-    return <CellDiv>{value || '--'}</CellDiv>;
-  }
-};
+}) => (
+  <CellDiv>
+    <Linkify options={linkifyOptions}>{value || '--'}</Linkify>
+  </CellDiv>
+);
 
 const renderPlainTextAlertCell = ({
   value, cell,
@@ -126,17 +120,11 @@ const renderPlainTextAlertCell = ({
       </CellDiv>
     );
   }
-  try {
-    return (
-      <CellDiv>
-        <a href={new URL(value).href} target="_blank" rel="noopener noreferrer">
-          {value}
-        </a>
-      </CellDiv>
-    );
-  } catch (e) {
-    return <CellDiv>{value || '--'}</CellDiv>;
-  }
+  return (
+    <CellDiv>
+      <Linkify options={linkifyOptions}>{value || '--'}</Linkify>
+    </CellDiv>
+  );
 };
 
 const alertTextValueSortType = (row1, row2, columnId, descending) => {
@@ -532,7 +520,7 @@ export const defaultIncidentColumns = () => [
       },
     }) => (
       <CellDiv>
-        <Linkify options={{ target: { url: '_blank' }, rel: 'noopener noreferrer' }}>
+        <Linkify options={linkifyOptions}>
           {original.notes?.length > 0 && original.notes.slice(-1)[0].content}
           {original.notes?.length === 0 && '--'}
           {original.notes?.status === 'fetching' && <Skeleton>fetching</Skeleton>}
