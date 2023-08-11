@@ -127,23 +127,6 @@ const renderPlainTextAlertCell = ({
   );
 };
 
-const alertTextValueSortType = (row1, row2, columnId, descending) => {
-  const value1 = row1.values[columnId];
-  const value2 = row2.values[columnId];
-
-  const isLast = (row) => row.original.alerts?.status || row.original.alerts === undefined;
-  if (isLast(row1) && !isLast(row2)) {
-    return descending ? -1 : 1;
-  }
-  if (!isLast(row1) && isLast(row2)) {
-    return descending ? 1 : -1;
-  }
-  if (value1 === value2) {
-    return 0;
-  }
-  return value1.localeCompare(value2, undefined, { sensitivity: 'accent' });
-};
-
 const dateValueSortType = (row1, row2, columnId, descending) => {
   const value1 = row1.values[columnId];
   const value2 = row2.values[columnId];
@@ -715,7 +698,6 @@ export const defaultAlertsColumns = () => [
     accessor: (incident) => incident.alerts?.[0]?.body?.cef_details?.source_origin || '',
     minWidth: 100,
     renderer: renderPlainTextAlertCell,
-    sortType: alertTextValueSortType,
   }),
   incidentColumn({
     id: 'event_class',
