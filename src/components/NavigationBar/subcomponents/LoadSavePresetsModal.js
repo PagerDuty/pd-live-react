@@ -248,6 +248,7 @@ const SettingsModalComponent = () => {
   return (
     <Modal isOpen={displayLoadSavePresetsModal} onClose={toggleLoadSavePresetsModal} size="xl">
       <input
+        id="load-presets-file"
         style={{ display: 'none' }}
         accept=".json,application/json"
         ref={inputFile}
