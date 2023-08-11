@@ -183,10 +183,7 @@ const NavigationBarComponent = () => {
               <MenuItem className="dropdown-item" onClick={toggleSettingsModal}>
                 {t('Settings')}
               </MenuItem>
-              <MenuItem
-                className="dropdown-item"
-                onClick={toggleLoadSavePresetsModal}
-              >
+              <MenuItem className="dropdown-item" onClick={toggleLoadSavePresetsModal}>
                 {t('Load/Save Presets')}
               </MenuItem>
               <MenuItem className="dropdown-item" onClick={toggleColumnsModal}>

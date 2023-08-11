@@ -1,15 +1,14 @@
 import '@testing-library/jest-dom';
 
 import {
-  mockStore, componentWrapper,
-} from 'mocks/store.test';
-
-import {
   DndProvider,
 } from 'react-dnd';
 import {
   HTML5Backend,
 } from 'react-dnd-html5-backend';
+import {
+  mockStore, componentWrapper,
+} from 'mocks/store.test';
 
 import ColumnsModalComponent from './ColumnsModalComponent';
 

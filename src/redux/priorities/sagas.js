@@ -2,9 +2,8 @@ import {
   put, call, select, takeLatest,
 } from 'redux-saga/effects';
 
-import i18next from 'i18n';
-
 import _ from 'lodash';
+import i18next from 'i18n';
 
 import {
   UPDATE_QUERY_SETTING_INCIDENT_PRIORITY_REQUESTED,

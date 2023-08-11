@@ -11,11 +11,6 @@ import moment from 'moment';
 import DatePicker from 'react-datepicker';
 
 import {
-  DEBUG_SINCE_DATE,
-  DEBUG_UNTIL_DATE,
-} from 'config/constants';
-
-import {
   useTranslation,
 } from 'react-i18next';
 
@@ -35,6 +30,10 @@ import {
 } from '@chakra-ui/react';
 
 import {
+  DEBUG_SINCE_DATE, DEBUG_UNTIL_DATE,
+} from 'config/constants';
+
+import {
   updateQuerySettingsSinceDate as updateQuerySettingsSinceDateConnected,
   updateQuerySettingsUntilDate as updateQuerySettingsUntilDateConnected,
 } from 'redux/query_settings/actions';
@@ -48,9 +47,10 @@ const DatePickerComponent = () => {
   const currentUserLocale = useSelector((state) => state.users.currentUserLocale);
   const defaultSinceDateTenor = useSelector((state) => state.settings.defaultSinceDateTenor);
   const {
-    sinceDate: sinceDateFromStore,
-    untilDate: untilDateFromStore,
-  } = useSelector((state) => state.querySettings);
+    sinceDate: sinceDateFromStore, untilDate: untilDateFromStore,
+  } = useSelector(
+    (state) => state.querySettings,
+  );
 
   const dispatch = useDispatch();
   const updateQuerySettingsSinceDate = (sinceDate) => {
@@ -67,14 +67,14 @@ const DatePickerComponent = () => {
     : ['1', 'Day'];
   const sinceDateCalc = DEBUG_SINCE_DATE
     ? new Date(DEBUG_SINCE_DATE)
-    : today.subtract(Number(sinceDateNum), sinceDateTenor)
-      .set({ hour: 0, minute: 0, second: 0, millisecond: 0 }).toDate();
+    : today
+      .subtract(Number(sinceDateNum), sinceDateTenor)
+      .set({ hour: 0, minute: 0, second: 0, millisecond: 0 })
+      .toDate();
   const [sinceDate, setSinceDate] = useState(sinceDateCalc);
 
   // Generate until date
-  const untilDateCalc = DEBUG_UNTIL_DATE
-    ? new Date(DEBUG_UNTIL_DATE)
-    : untilDateFromStore;
+  const untilDateCalc = DEBUG_UNTIL_DATE ? new Date(DEBUG_UNTIL_DATE) : untilDateFromStore;
   const [untilDate, setUntilDate] = useState(untilDateCalc);
 
   useEffect(() => {
@@ -160,28 +160,20 @@ const DatePickerComponent = () => {
         {`${moment(sinceDate).format('L')} ${moment(sinceDate).format('LT')}`}
         {}
         {' - '}
-        {
-          untilDate
-            ? `${moment(untilDate).format('L')} ${moment(untilDate).format('LT')}`
-            : t('Now')
-        }
+        {untilDate
+          ? `${moment(untilDate).format('L')} ${moment(untilDate).format('LT')}`
+          : t('Now')}
       </Button>
 
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>
-            {t('Select Date Range')}
-          </ModalHeader>
+          <ModalHeader>{t('Select Date Range')}</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
             <Flex>
-              <FormControl
-                mb={4}
-              >
-                <FormLabel>
-                  {t('Since')}
-                </FormLabel>
+              <FormControl mb={4}>
+                <FormLabel>{t('Since')}</FormLabel>
                 <DatePicker
                   id="since-date-input"
                   className="date-picker"
@@ -201,9 +193,7 @@ const DatePickerComponent = () => {
                 />
               </FormControl>
               <FormControl>
-                <FormLabel>
-                  {t('Until')}
-                </FormLabel>
+                <FormLabel>{t('Until')}</FormLabel>
                 <DatePicker
                   id="until-date-input"
                   className="date-picker"
@@ -237,7 +227,9 @@ const DatePickerComponent = () => {
             >
               OK
             </Button>
-            <Button variant="ghost" onClick={onClose}>Cancel</Button>
+            <Button variant="ghost" onClick={onClose}>
+              Cancel
+            </Button>
           </ModalFooter>
         </ModalContent>
       </Modal>

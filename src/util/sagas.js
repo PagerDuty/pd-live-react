@@ -28,7 +28,8 @@ export function* handleSagaError(action, exception) {
 export const handleSingleAPIErrorResponse = (response) => {
   if (response?.data?.error) {
     throw Error(
-      response.data.error.message + (response.data.error.errors ? `: ${response.data.error.errors.join(', ')}` : ''),
+      response.data.error.message
+        + (response.data.error.errors ? `: ${response.data.error.errors.join(', ')}` : ''),
     );
   } else {
     throw Error(i18next.t('Unknown error while using PD API'));
@@ -39,9 +40,8 @@ export const handleMultipleAPIErrorResponses = (responses) => {
   const errors = responses
     .filter((response) => response?.data?.error)
     .map(
-      (response) => (
-        response.data.error.message + (response.data.error.errors ? `: ${response.data.error.errors.join(', ')}` : '')
-      ),
+      (response) => response.data.error.message
+        + (response.data.error.errors ? `: ${response.data.error.errors.join(', ')}` : ''),
     );
   if (errors.length) {
     throw Error(errors);

@@ -227,9 +227,9 @@ const incidents = produce(
           if (!draft.incidentAlerts[incidentId]) {
             draft.incidentAlerts[incidentId] = [];
           }
-          draft.incidentAlerts[incidentId] = uniqOnId(draft.incidentAlerts[incidentId].concat(
-            action.incidentAlertsMap[incidentId],
-          ));
+          draft.incidentAlerts[incidentId] = uniqOnId(
+            draft.incidentAlerts[incidentId].concat(action.incidentAlertsMap[incidentId]),
+          );
         }
         for (let i = 0; i < Object.keys(action.incidentAlertsUnlinkMap).length; i++) {
           const incidentId = Object.keys(action.incidentAlertsUnlinkMap)[i];

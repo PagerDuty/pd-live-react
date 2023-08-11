@@ -18,6 +18,19 @@ import {
   formatError,
 } from 'pretty-print-error';
 
+import {
+  Badge,
+} from 'react-bootstrap';
+import {
+  Box, Link, Skeleton, Tooltip,
+} from '@chakra-ui/react';
+import {
+  ChevronDownIcon, ChevronUpIcon, NotAllowedIcon,
+} from '@chakra-ui/icons';
+import Linkify from 'linkify-react';
+import {
+  useSelector,
+} from 'react-redux';
 import i18next from 'i18n';
 
 import {
@@ -27,27 +40,9 @@ import {
   DATE_FORMAT,
 } from 'config/constants';
 
-import {
-  Badge,
-} from 'react-bootstrap';
-
-import {
-  Box, Link, Skeleton, Tooltip,
-} from '@chakra-ui/react';
-
-import {
-  ChevronDownIcon, ChevronUpIcon, NotAllowedIcon,
-} from '@chakra-ui/icons';
-
-import Linkify from 'linkify-react';
-
 import StatusComponent from 'components/IncidentTable/subcomponents/StatusComponent';
 import NumAlertsComponent from 'components/IncidentTable/subcomponents/NumAlertsComponent';
 import PersonInitialsComponents from 'components/IncidentTable/subcomponents/PersonInitialsComponents';
-
-import {
-  useSelector,
-} from 'react-redux';
 
 const linkifyOptions = { target: { url: '_blank' }, rel: 'noopener noreferrer' };
 
@@ -77,9 +72,7 @@ const renderLinkCells = (linkObjs) => {
 };
 
 const renderDateCell = ({
-  iso8601Date,
-  overrideRelativeDates = false,
-  noSuffix = false,
+  iso8601Date, overrideRelativeDates = false, noSuffix = false,
 }) => {
   const {
     relativeDates,
@@ -570,11 +563,7 @@ export const defaultIncidentColumns = () => [
   incidentColumn({
     id: 'latest_log_entry_at',
     header: 'Latest Log Entry At',
-    accessor: (incident) => (
-      incident.latest_log_entry?.created_at
-      || incident.updated_at
-      || incident.created_at
-    ),
+    accessor: (incident) => incident.latest_log_entry?.created_at || incident.updated_at || incident.created_at,
     minWidth: 200,
     renderer: ({
       value,

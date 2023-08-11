@@ -1,10 +1,9 @@
 import 'mocks/pdoauth';
 
+import urlLib from 'url';
 import {
   faker,
 } from '@faker-js/faker';
-
-import urlLib from 'url';
 
 import {
   PD_OAUTH_CLIENT_ID, PD_OAUTH_CLIENT_SECRET,

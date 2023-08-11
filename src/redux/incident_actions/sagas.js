@@ -33,8 +33,7 @@ import {
 } from 'util/incidents';
 
 import {
-  getObjectsFromList,
-  chunkArray,
+  getObjectsFromList, chunkArray,
 } from 'util/helpers';
 import {
   throttledPdAxiosRequest,
@@ -149,9 +148,9 @@ export function* acknowledge(action) {
 
     const responses = yield all(calls);
 
-    const acknowledgedIncidents = responses.map(
-      (response) => (response.status === 200 ? response.data.incidents : []),
-    ).flat();
+    const acknowledgedIncidents = responses
+      .map((response) => (response.status === 200 ? response.data.incidents : []))
+      .flat();
     const errors = responses.filter((response) => response.status !== 200);
 
     if (errors.length > 0) {
@@ -202,9 +201,9 @@ export function* escalate(action) {
     const calls = chunkedPdAxiosRequestCalls(incidentBodies);
     const responses = yield all(calls);
 
-    const escalatedIncidents = responses.map(
-      (response) => (response.status === 200 ? response.data.incidents : []),
-    ).flat();
+    const escalatedIncidents = responses
+      .map((response) => (response.status === 200 ? response.data.incidents : []))
+      .flat();
     const errors = responses.filter((response) => response.status !== 200);
 
     if (errors.length > 0) {
@@ -271,9 +270,9 @@ export function* reassign(action) {
     const calls = chunkedPdAxiosRequestCalls(incidentBodies);
     const responses = yield all(calls);
 
-    const reassignedIncidents = responses.map(
-      (response) => (response.status === 200 ? response.data.incidents : []),
-    ).flat();
+    const reassignedIncidents = responses
+      .map((response) => (response.status === 200 ? response.data.incidents : []))
+      .flat();
     const errors = responses.filter((response) => response.status !== 200);
 
     if (errors.length > 0) {
@@ -554,7 +553,9 @@ export function* merge(action) {
       const titleResponses = yield all(titleUpdates);
       const successes = titleResponses.filter((r) => r.status >= 200 && r.status < 300);
       if (successes.length !== titleResponses.length) {
-        handleMultipleAPIErrorResponses(titleResponses.filter((r) => !(r.status >= 200 && r.status < 300)));
+        handleMultipleAPIErrorResponses(
+          titleResponses.filter((r) => !(r.status >= 200 && r.status < 300)),
+        );
       }
       const updatedIncidents = successes.map((r) => r.data.incident);
       yield put({
@@ -605,9 +606,9 @@ export function* resolve(action) {
 
     const responses = yield all(calls);
 
-    const resolvedIncidents = responses.map(
-      (response) => (response.status === 200 ? response.data.incidents : []),
-    ).flat();
+    const resolvedIncidents = responses
+      .map((response) => (response.status === 200 ? response.data.incidents : []))
+      .flat();
     const errors = responses.filter((response) => response.status !== 200);
 
     if (errors.length > 0) {
@@ -813,7 +814,8 @@ export function* runCustomIncidentAction(action) {
       if (displayModal) {
         const actionAlertsModalType = 'success';
         const actionAlertsModalMessage = `${i18next.t('Custom Incident Action')} "${
-          webhook.name}" ${i18next.t('triggered for')} ${i18next.t('incident')}(s) ${selectedIncidents
+          webhook.name
+        }" ${i18next.t('triggered for')} ${i18next.t('incident')}(s) ${selectedIncidents
           .map((i) => i.incident_number)
           .join(', ')}.`;
         yield displayActionModal(actionAlertsModalType, actionAlertsModalMessage);

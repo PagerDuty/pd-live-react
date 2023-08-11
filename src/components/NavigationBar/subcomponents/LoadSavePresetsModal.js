@@ -84,8 +84,7 @@ const SettingsModalComponent = () => {
   } = useSelector((state) => state.querySettings);
 
   const {
-    subdomain,
-    currentUserLocale,
+    subdomain, currentUserLocale,
   } = useSelector((state) => state.users);
 
   const {
@@ -148,7 +147,9 @@ const SettingsModalComponent = () => {
     };
 
     // Download JSON file
-    const blob = new Blob([JSON.stringify(presets, null, 2)], { type: 'application/json;charset=utf-8;' });
+    const blob = new Blob([JSON.stringify(presets, null, 2)], {
+      type: 'application/json;charset=utf-8;',
+    });
     const link = document.createElement('a');
     const url = URL.createObjectURL(blob);
     link.setAttribute('href', url);
@@ -194,13 +195,15 @@ const SettingsModalComponent = () => {
     reader.onload = (evt) => {
       try {
         const presets = JSON.parse(evt.target.result);
-        if (!([
-          'subdomain',
-          'currentUserLocale',
-          'settings',
-          'querySettings',
-          'incidentTableColumns',
-        ].every((key) => presets[key] !== undefined))) {
+        if (
+          ![
+            'subdomain',
+            'currentUserLocale',
+            'settings',
+            'querySettings',
+            'incidentTableColumns',
+          ].every((key) => presets[key] !== undefined)
+        ) {
           toast({
             title: t('Error'),
             description: t('Invalid presets file'),
