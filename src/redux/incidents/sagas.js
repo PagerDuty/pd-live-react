@@ -114,7 +114,9 @@ export function* getIncidentsImpl() {
       sinceDate, untilDate, incidentStatus, incidentUrgency, teamIds, serviceIds, userIds,
     } = yield select(selectQuerySettings);
 
-    const since = DEBUG_SINCE_DATE ? new Date(DEBUG_SINCE_DATE).toISOString() : sinceDate.toISOString();
+    const since = DEBUG_SINCE_DATE
+      ? new Date(DEBUG_SINCE_DATE).toISOString()
+      : sinceDate.toISOString();
     let until;
     if (DEBUG_UNTIL_DATE) {
       until = new Date(DEBUG_UNTIL_DATE).toISOString();
@@ -287,8 +289,10 @@ export function* processLogEntriesImpl(action) {
     const logEntry = logEntries[i];
 
     // update latest log entry
-    if (!incidentLatestLogEntryMap[logEntry.incident.id]
-      || incidentLatestLogEntryMap[logEntry.incident.id].created_at < logEntry.created_at) {
+    if (
+      !incidentLatestLogEntryMap[logEntry.incident.id]
+      || incidentLatestLogEntryMap[logEntry.incident.id].created_at < logEntry.created_at
+    ) {
       incidentLatestLogEntryMap[logEntry.incident.id] = logEntry;
     }
 

@@ -2,11 +2,10 @@ import {
   put, call, select, takeLatest, take,
 } from 'redux-saga/effects';
 
-import i18next from 'i18n';
-
 import {
   formatError,
 } from 'pretty-print-error';
+import i18next from 'i18n';
 
 import {
   PD_SUBDOMAIN_ALLOW_LIST,

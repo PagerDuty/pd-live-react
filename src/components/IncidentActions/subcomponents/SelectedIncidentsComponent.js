@@ -192,11 +192,9 @@ const SelectedIncidentsComponent = () => {
     <div className="selected-incidents-ctr">
       {queryError}
       {fetchingIncidents && fetchingDataRender('success', t('Querying'))}
-      {(
-        incidentActionsStatus.endsWith('_REQUESTED')
+      {incidentActionsStatus.endsWith('_REQUESTED')
         && !!textForActionInProgress(incidentActionsStatus)
-        && fetchingDataRender('success', textForActionInProgress(incidentActionsStatus))
-      )}
+        && fetchingDataRender('success', textForActionInProgress(incidentActionsStatus))}
       {fetchingIncidentNotes && fetchingDataRender('primary', t('Fetching Notes'))}
       {fetchingIncidentAlerts && fetchingDataRender('info', t('Fetching Alerts'))}
       {refreshingIncidents && fetchingDataRender('success', t('Refreshing'))}

@@ -90,7 +90,9 @@ export const throttledPdAxiosRequest = (
   {
     expiration: options?.expiration || 30 * 1000,
     priority: options.priority || 5,
-    id: `${method}-${endpoint}-${JSON.stringify(params)}-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`,
+    id: `${method}-${endpoint}-${JSON.stringify(params)}-${Date.now()}-${Math.random()
+      .toString(36)
+      .substring(2, 7)}`,
   },
   () => pdAxiosRequest(method, endpoint, params, data),
 );
@@ -153,8 +155,10 @@ export const pdParallelFetch = async (
   );
 
   if (!(firstPageResponse.status >= 200 && firstPageResponse.status < 300)) {
-    const e = new Error(`Error fetching ${endpoint}: ${firstPageResponse.status}`
-      + `${firstPageResponse.data ? `: ${firstPageResponse.data}` : ''}`);
+    const e = new Error(
+      `Error fetching ${endpoint}: ${firstPageResponse.status}`
+        + `${firstPageResponse.data ? `: ${firstPageResponse.data}` : ''}`,
+    );
     e.response = firstPageResponse;
     throw e;
   }

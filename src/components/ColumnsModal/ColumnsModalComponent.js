@@ -15,21 +15,6 @@ import {
 } from 'react-dnd';
 
 import {
-  defaultColumns,
-  customAlertColumns,
-  columnsForSavedColumns,
-} from 'config/column-generator';
-
-import {
-  saveIncidentTable as saveIncidentTableConnected,
-} from 'redux/incident_table/actions';
-
-import {
-  toggleColumnsModal as toggleColumnsModalConnected,
-  setAlertCustomDetailColumns as setAlertCustomDetailColumnsConnected,
-} from 'redux/settings/actions';
-
-import {
   Button,
   Modal,
   ModalOverlay,
@@ -50,10 +35,23 @@ import {
   Text,
   useToast,
 } from '@chakra-ui/react';
-
 import {
   AddIcon,
 } from '@chakra-ui/icons';
+import {
+  defaultColumns,
+  customAlertColumns,
+  columnsForSavedColumns,
+} from 'config/column-generator';
+
+import {
+  saveIncidentTable as saveIncidentTableConnected,
+} from 'redux/incident_table/actions';
+
+import {
+  toggleColumnsModal as toggleColumnsModalConnected,
+  setAlertCustomDetailColumns as setAlertCustomDetailColumnsConnected,
+} from 'redux/settings/actions';
 
 import ColumnsModalItem from './subcomponents/ColumnsModalItem';
 import DraggableColumnsModalItem from './subcomponents/DraggableColumnsModalItem';

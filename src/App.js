@@ -110,8 +110,7 @@ const App = () => {
   const darkMode = useSelector((state) => state.settings.darkMode);
   const abilities = useSelector((state) => state.connection.abilities);
   const {
-    fetchingIncidents,
-    lastFetchDate,
+    fetchingIncidents, lastFetchDate,
   } = useSelector((state) => state.incidents);
   const {
     userAuthorized, userAcceptedDisclaimer, currentUserLocale,
@@ -179,10 +178,7 @@ const App = () => {
             return;
           }
 
-          if (
-            !fetchingIncidentsRef.current
-            && !DEBUG_DISABLE_POLLING
-          ) {
+          if (!fetchingIncidentsRef.current && !DEBUG_DISABLE_POLLING) {
             // Determine lookback based on last fetch/refresh of incidents
             // 2x polling interval is a good lookback if we don't have a last fetch date
             let since = new Date(new Date() - 2000 * LOG_ENTRIES_POLLING_INTERVAL_SECONDS);
@@ -204,11 +200,7 @@ const App = () => {
       return () => clearInterval(pollingInterval);
     },
     // Changes to any of these in the store resets log entries timer
-    [
-      userAuthorized,
-      fetchingIncidents,
-      lastFetchDate,
-    ],
+    [userAuthorized, fetchingIncidents, lastFetchDate],
   );
 
   // Setup log entry clearing
