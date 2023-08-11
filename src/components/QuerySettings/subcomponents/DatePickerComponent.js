@@ -87,6 +87,8 @@ const DatePickerComponent = () => {
   // const [sinceDate, setSinceDate] = useState(sinceDateFromStore);
   // const [untilDate, setUntilDate] = useState(untilDateFromStore);
 
+  const sixMonthsBeforeNow = moment().subtract(180, 'days').toDate();
+
   const validateSinceTime = (date) => {
     const now = new Date();
     if (date > now) {
@@ -103,7 +105,6 @@ const DatePickerComponent = () => {
       }
     }
     // if since is more than 6 months before now, don't allow
-    const sixMonthsBeforeNow = moment().subtract(180, 'days').toDate();
     if (date < sixMonthsBeforeNow) {
       return false;
     }
@@ -192,6 +193,7 @@ const DatePickerComponent = () => {
                   showTimeSelect
                   selected={sinceDate}
                   startDate={sinceDate}
+                  minDate={sixMonthsBeforeNow}
                   maxDate={untilDate || new Date()}
                   filterTime={validateSinceTime}
                   onChange={(date) => setSinceDate(date)}
