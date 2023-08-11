@@ -23,6 +23,7 @@ import UnauthorizedModalComponent from 'components/UnauthorizedModal/Unauthorize
 import DisclaimerModalComponent from 'components/DisclaimerModal/DisclaimerModalComponent';
 import NavigationBarComponent from 'components/NavigationBar/NavigationBarComponent';
 import SettingsModalComponent from 'components/SettingsModal/SettingsModalComponent';
+import LoadSavePresetsModal from 'components/NavigationBar/subcomponents/LoadSavePresetsModal';
 import ColumnsModalComponent from 'components/ColumnsModal/ColumnsModalComponent';
 import IncidentTableComponent from 'components/IncidentTable/IncidentTableComponent';
 import IncidentActionsComponent from 'components/IncidentActions/IncidentActionsComponent';
@@ -269,6 +270,7 @@ const App = () => {
         <Box ref={mainRef} as="main" id="main">
           <IncidentTableComponent headerRef={headerRef} mainRef={mainRef} footerRef={footerRef} />
           <SettingsModalComponent />
+          <LoadSavePresetsModal />
           <DndProvider backend={HTML5Backend}>
             <ColumnsModalComponent />
           </DndProvider>
