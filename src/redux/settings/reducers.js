@@ -5,6 +5,8 @@ import {
 import {
   TOGGLE_SETTINGS_REQUESTED,
   TOGGLE_SETTINGS_COMPLETED,
+  TOGGLE_LOAD_SAVE_PRESETS_REQUESTED,
+  TOGGLE_LOAD_SAVE_PRESETS_COMPLETED,
   TOGGLE_COLUMNS_REQUESTED,
   TOGGLE_COLUMNS_COMPLETED,
   SET_DEFAULT_SINCE_DATE_TENOR_REQUESTED,
@@ -39,6 +41,15 @@ const settings = produce(
       case TOGGLE_SETTINGS_COMPLETED:
         draft.displaySettingsModal = action.displaySettingsModal;
         draft.status = TOGGLE_SETTINGS_COMPLETED;
+        break;
+
+      case TOGGLE_LOAD_SAVE_PRESETS_REQUESTED:
+        draft.status = TOGGLE_LOAD_SAVE_PRESETS_REQUESTED;
+        break;
+
+      case TOGGLE_LOAD_SAVE_PRESETS_COMPLETED:
+        draft.displayLoadSavePresetsModal = action.displayLoadSavePresetsModal;
+        draft.status = TOGGLE_LOAD_SAVE_PRESETS_COMPLETED;
         break;
 
       case TOGGLE_COLUMNS_REQUESTED:
@@ -145,6 +156,7 @@ const settings = produce(
   },
   {
     displaySettingsModal: false,
+    displayLoadSavePresetsModal: false,
     displayColumnsModal: false,
     defaultSinceDateTenor: '1 Day',
     maxRateLimit: 200,

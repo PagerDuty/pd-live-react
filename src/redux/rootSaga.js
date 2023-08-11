@@ -113,6 +113,7 @@ import {
 // eslint-disable-next-line import/no-cycle
 import {
   toggleSettingsModal,
+  toggleLoadSavePresetsModal,
   toggleColumnsModal,
   setDefaultSinceDateTenor,
   setSearchAllCustomDetails,
@@ -234,6 +235,7 @@ export default function* rootSaga() {
 
     // Settings
     toggleSettingsModal(),
+    toggleLoadSavePresetsModal(),
     toggleColumnsModal(),
     setDefaultSinceDateTenor(),
     setSearchAllCustomDetails(),
