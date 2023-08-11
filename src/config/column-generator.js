@@ -723,9 +723,7 @@ export const defaultAlertsColumns = () => [
     columnType: 'alert',
     accessor: (incident) => incident.alerts?.[0]?.body?.cef_details?.event_class || '',
     minWidth: 100,
-    renderer: ({
-      value,
-    }) => value || '--',
+    renderer: renderPlainTextAlertCell,
   }),
   incidentColumn({
     id: 'service_group',
