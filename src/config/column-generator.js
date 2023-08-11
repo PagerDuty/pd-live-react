@@ -49,6 +49,8 @@ import {
   useSelector,
 } from 'react-redux';
 
+const linkifyOptions = { target: { url: '_blank' }, rel: 'noopener noreferrer' };
+
 const CellDiv = ({
   children,
 }) => <div className="td-wrapper">{children}</div>;
@@ -99,19 +101,11 @@ const renderDateCell = ({
 
 const renderPlainTextCell = ({
   value,
-}) => {
-  try {
-    return (
-      <CellDiv>
-        <a href={new URL(value).href} target="_blank" rel="noopener noreferrer">
-          {value}
-        </a>
-      </CellDiv>
-    );
-  } catch (e) {
-    return <CellDiv>{value || '--'}</CellDiv>;
-  }
-};
+}) => (
+  <CellDiv>
+    <Linkify options={linkifyOptions}>{value || '--'}</Linkify>
+  </CellDiv>
+);
 
 const renderPlainTextAlertCell = ({
   value, cell,
@@ -126,34 +120,11 @@ const renderPlainTextAlertCell = ({
       </CellDiv>
     );
   }
-  try {
-    return (
-      <CellDiv>
-        <a href={new URL(value).href} target="_blank" rel="noopener noreferrer">
-          {value}
-        </a>
-      </CellDiv>
-    );
-  } catch (e) {
-    return <CellDiv>{value || '--'}</CellDiv>;
-  }
-};
-
-const alertTextValueSortType = (row1, row2, columnId, descending) => {
-  const value1 = row1.values[columnId];
-  const value2 = row2.values[columnId];
-
-  const isLast = (row) => row.original.alerts?.status || row.original.alerts === undefined;
-  if (isLast(row1) && !isLast(row2)) {
-    return descending ? -1 : 1;
-  }
-  if (!isLast(row1) && isLast(row2)) {
-    return descending ? 1 : -1;
-  }
-  if (value1 === value2) {
-    return 0;
-  }
-  return value1.localeCompare(value2, undefined, { sensitivity: 'accent' });
+  return (
+    <CellDiv>
+      <Linkify options={linkifyOptions}>{value || '--'}</Linkify>
+    </CellDiv>
+  );
 };
 
 const dateValueSortType = (row1, row2, columnId, descending) => {
@@ -532,7 +503,7 @@ export const defaultIncidentColumns = () => [
       },
     }) => (
       <CellDiv>
-        <Linkify options={{ target: { url: '_blank' }, rel: 'noopener noreferrer' }}>
+        <Linkify options={linkifyOptions}>
           {original.notes?.length > 0 && original.notes.slice(-1)[0].content}
           {original.notes?.length === 0 && '--'}
           {original.notes?.status === 'fetching' && <Skeleton>fetching</Skeleton>}
@@ -727,7 +698,6 @@ export const defaultAlertsColumns = () => [
     accessor: (incident) => incident.alerts?.[0]?.body?.cef_details?.source_origin || '',
     minWidth: 100,
     renderer: renderPlainTextAlertCell,
-    sortType: alertTextValueSortType,
   }),
   incidentColumn({
     id: 'event_class',
@@ -735,9 +705,7 @@ export const defaultAlertsColumns = () => [
     columnType: 'alert',
     accessor: (incident) => incident.alerts?.[0]?.body?.cef_details?.event_class || '',
     minWidth: 100,
-    renderer: ({
-      value,
-    }) => value || '--',
+    renderer: renderPlainTextAlertCell,
   }),
   incidentColumn({
     id: 'service_group',
