@@ -105,5 +105,10 @@ describe('PagerDuty Live', () => {
     // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.wait(5000);
     cy.get('@getUrl.all').should('have.length', 1);
+
+    cy.get('#query-date-input').click();
+    // if since/until are set, the date picker should be disabled
+    cy.get('#since-date-input').should('be.disabled');
+    cy.get('#until-date-input').should('be.disabled');
   });
 });

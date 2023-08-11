@@ -11,6 +11,8 @@ import {
   TOGGLE_DISPLAY_QUERY_SETTINGS_COMPLETED,
   UPDATE_QUERY_SETTING_SINCE_DATE_REQUESTED,
   UPDATE_QUERY_SETTING_SINCE_DATE_COMPLETED,
+  UPDATE_QUERY_SETTING_UNTIL_DATE_REQUESTED,
+  UPDATE_QUERY_SETTING_UNTIL_DATE_COMPLETED,
   UPDATE_QUERY_SETTING_INCIDENT_STATUS_REQUESTED,
   UPDATE_QUERY_SETTING_INCIDENT_STATUS_COMPLETED,
   UPDATE_QUERY_SETTING_INCIDENT_URGENCY_REQUESTED,
@@ -53,6 +55,15 @@ const querySettings = produce(
       case UPDATE_QUERY_SETTING_SINCE_DATE_COMPLETED:
         draft.sinceDate = action.sinceDate;
         draft.status = UPDATE_QUERY_SETTING_SINCE_DATE_COMPLETED;
+        break;
+
+      case UPDATE_QUERY_SETTING_UNTIL_DATE_REQUESTED:
+        draft.status = UPDATE_QUERY_SETTING_UNTIL_DATE_REQUESTED;
+        break;
+
+      case UPDATE_QUERY_SETTING_UNTIL_DATE_COMPLETED:
+        draft.untilDate = action.untilDate;
+        draft.status = UPDATE_QUERY_SETTING_UNTIL_DATE_COMPLETED;
         break;
 
       case UPDATE_QUERY_SETTING_INCIDENT_STATUS_REQUESTED:
@@ -160,6 +171,7 @@ const querySettings = produce(
       .subtract(1, 'days')
       .set({ hour: 0, minute: 0, second: 0, millisecond: 0 })
       .toDate(),
+    untilDate: null,
     incidentStatus: [TRIGGERED, ACKNOWLEDGED],
     incidentUrgency: [HIGH, LOW],
     incidentPriority: [],

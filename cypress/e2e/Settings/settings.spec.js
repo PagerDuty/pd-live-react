@@ -59,7 +59,7 @@ describe('Manage Settings', { failFast: { enabled: false } }, () => {
       'Paramètres',
       'Updated user profile settings',
     );
-    cy.get('#query-date-input').should('have.value', expectedSinceDateFormat);
+    cy.get('#query-date-input').should('contain', expectedSinceDateFormat);
     cy.get('[data-incident-header="Created At"][data-incident-row-cell-idx="0"]')
       .should('be.visible')
       .should('contain', expectedIncidentDateFormat);
@@ -83,7 +83,7 @@ describe('Manage Settings', { failFast: { enabled: false } }, () => {
         'Settings',
         'Updated user profile settings',
       );
-      cy.get('#query-date-input').should('have.value', expectedDate);
+      cy.get('#query-date-input').should('contain', expectedDate);
     });
   });
 

@@ -7,9 +7,8 @@
   font-weight: var(--chakra-fontWeights-normal);
   line-height: var(--chakra-lineHeights-normal);
   color: var(--chakra-colors-gray-700);
-  border: 1px;
+  border: 1px solid var(--chakra-colors-gray-300);
   border-radius: var(--chakra-radii-md);
-  width: 8rem;
 }
 
 .react-datepicker-popper {

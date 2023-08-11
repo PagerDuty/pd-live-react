@@ -9,6 +9,7 @@ import {
 import {
   toggleDisplayQuerySettings,
   updateQuerySettingsSinceDate,
+  updateQuerySettingsUntilDate,
   updateQuerySettingsIncidentStatus,
   updateQuerySettingsIncidentUrgency,
   updateQuerySettingsIncidentPriority,
@@ -144,6 +145,7 @@ export default function* rootSaga() {
     // Query Settings
     toggleDisplayQuerySettings(),
     updateQuerySettingsSinceDate(),
+    updateQuerySettingsUntilDate(),
     updateQuerySettingsIncidentStatus(),
     updateQuerySettingsIncidentUrgency(),
     updateQuerySettingsIncidentPriority(),
