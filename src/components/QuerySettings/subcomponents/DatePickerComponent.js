@@ -196,6 +196,7 @@ const DatePickerComponent = () => {
                   minDate={sixMonthsBeforeNow}
                   maxDate={untilDate || new Date()}
                   filterTime={validateSinceTime}
+                  disabled={DEBUG_SINCE_DATE}
                   onChange={(date) => setSinceDate(date)}
                 />
               </FormControl>
@@ -220,6 +221,7 @@ const DatePickerComponent = () => {
                   minDate={sinceDate}
                   maxDate={maxUntilDate}
                   filterTime={validateUntilTime}
+                  disabled={DEBUG_UNTIL_DATE}
                   onChange={(date) => setUntilDate(date)}
                 />
               </FormControl>
