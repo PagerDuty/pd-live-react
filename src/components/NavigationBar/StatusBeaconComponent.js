@@ -18,7 +18,6 @@ const StatusBeaconComponent = ({
 
   const queueStatsStr = `${waiting} ${i18next.t('waiting')}, ${running} ${i18next.t('running')}`;
   return (
-
     <Tooltip
       aria-label="status-beacon-connection"
       label={(

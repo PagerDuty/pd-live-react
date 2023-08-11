@@ -18,6 +18,19 @@ import {
   formatError,
 } from 'pretty-print-error';
 
+import {
+  Badge,
+} from 'react-bootstrap';
+import {
+  Box, Link, Skeleton, Tooltip,
+} from '@chakra-ui/react';
+import {
+  ChevronDownIcon, ChevronUpIcon, NotAllowedIcon,
+} from '@chakra-ui/icons';
+import Linkify from 'linkify-react';
+import {
+  useSelector,
+} from 'react-redux';
 import i18next from 'i18n';
 
 import {
@@ -27,27 +40,11 @@ import {
   DATE_FORMAT,
 } from 'config/constants';
 
-import {
-  Badge,
-} from 'react-bootstrap';
-
-import {
-  Box, Link, Skeleton, Tooltip,
-} from '@chakra-ui/react';
-
-import {
-  ChevronDownIcon, ChevronUpIcon, NotAllowedIcon,
-} from '@chakra-ui/icons';
-
-import Linkify from 'linkify-react';
-
 import StatusComponent from 'components/IncidentTable/subcomponents/StatusComponent';
 import NumAlertsComponent from 'components/IncidentTable/subcomponents/NumAlertsComponent';
 import PersonInitialsComponents from 'components/IncidentTable/subcomponents/PersonInitialsComponents';
 
-import {
-  useSelector,
-} from 'react-redux';
+const linkifyOptions = { target: { url: '_blank' }, rel: 'noopener noreferrer' };
 
 const CellDiv = ({
   children,
@@ -75,9 +72,7 @@ const renderLinkCells = (linkObjs) => {
 };
 
 const renderDateCell = ({
-  iso8601Date,
-  overrideRelativeDates = false,
-  noSuffix = false,
+  iso8601Date, overrideRelativeDates = false, noSuffix = false,
 }) => {
   const {
     relativeDates,
@@ -99,19 +94,11 @@ const renderDateCell = ({
 
 const renderPlainTextCell = ({
   value,
-}) => {
-  try {
-    return (
-      <CellDiv>
-        <a href={new URL(value).href} target="_blank" rel="noopener noreferrer">
-          {value}
-        </a>
-      </CellDiv>
-    );
-  } catch (e) {
-    return <CellDiv>{value || '--'}</CellDiv>;
-  }
-};
+}) => (
+  <CellDiv>
+    <Linkify options={linkifyOptions}>{value || '--'}</Linkify>
+  </CellDiv>
+);
 
 const renderPlainTextAlertCell = ({
   value, cell,
@@ -126,34 +113,11 @@ const renderPlainTextAlertCell = ({
       </CellDiv>
     );
   }
-  try {
-    return (
-      <CellDiv>
-        <a href={new URL(value).href} target="_blank" rel="noopener noreferrer">
-          {value}
-        </a>
-      </CellDiv>
-    );
-  } catch (e) {
-    return <CellDiv>{value || '--'}</CellDiv>;
-  }
-};
-
-const alertTextValueSortType = (row1, row2, columnId, descending) => {
-  const value1 = row1.values[columnId];
-  const value2 = row2.values[columnId];
-
-  const isLast = (row) => row.original.alerts?.status || row.original.alerts === undefined;
-  if (isLast(row1) && !isLast(row2)) {
-    return descending ? -1 : 1;
-  }
-  if (!isLast(row1) && isLast(row2)) {
-    return descending ? 1 : -1;
-  }
-  if (value1 === value2) {
-    return 0;
-  }
-  return value1.localeCompare(value2, undefined, { sensitivity: 'accent' });
+  return (
+    <CellDiv>
+      <Linkify options={linkifyOptions}>{value || '--'}</Linkify>
+    </CellDiv>
+  );
 };
 
 const dateValueSortType = (row1, row2, columnId, descending) => {
@@ -532,7 +496,7 @@ export const defaultIncidentColumns = () => [
       },
     }) => (
       <CellDiv>
-        <Linkify options={{ target: { url: '_blank' }, rel: 'noopener noreferrer' }}>
+        <Linkify options={linkifyOptions}>
           {original.notes?.length > 0 && original.notes.slice(-1)[0].content}
           {original.notes?.length === 0 && '--'}
           {original.notes?.status === 'fetching' && <Skeleton>fetching</Skeleton>}
@@ -595,6 +559,52 @@ export const defaultIncidentColumns = () => [
         }))}
       />
     ),
+  }),
+  incidentColumn({
+    id: 'latest_log_entry_at',
+    header: 'Latest Log Entry At',
+    accessor: (incident) => incident.latest_log_entry?.created_at || incident.updated_at || incident.created_at,
+    minWidth: 200,
+    renderer: ({
+      value,
+    }) => renderDateCell({
+      iso8601Date: value,
+    }),
+    sortType: dateValueSortType,
+  }),
+  incidentColumn({
+    id: 'latest_log_entry_type',
+    header: 'Latest Log Entry Type',
+    accessor: (incident) => {
+      if (incident.latest_log_entry) {
+        const m = incident.latest_log_entry.type.match(/^(.+?)_log_entry$/);
+        if (m && m.length > 1) {
+          return m[1];
+        }
+        return incident.latest_log_entry.type;
+      }
+      return '';
+    },
+    minWidth: 120,
+  }),
+  incidentColumn({
+    id: 'latest_alert_at',
+    header: 'Latest Alert At',
+    accessor: (incident) => {
+      if (incident.alerts && incident.alerts instanceof Array && incident.alerts.length > 0) {
+        const alertDates = incident.alerts.map((x) => new Date(x.created_at));
+        const maxAlertDate = new Date(Math.max(...alertDates));
+        return maxAlertDate.toISOString();
+      }
+      return '';
+    },
+    minWidth: 200,
+    renderer: ({
+      value,
+    }) => renderDateCell({
+      iso8601Date: value,
+    }),
+    sortType: dateValueSortType,
   }),
 ];
 
@@ -677,7 +687,6 @@ export const defaultAlertsColumns = () => [
     accessor: (incident) => incident.alerts?.[0]?.body?.cef_details?.source_origin || '',
     minWidth: 100,
     renderer: renderPlainTextAlertCell,
-    sortType: alertTextValueSortType,
   }),
   incidentColumn({
     id: 'event_class',
@@ -685,9 +694,7 @@ export const defaultAlertsColumns = () => [
     columnType: 'alert',
     accessor: (incident) => incident.alerts?.[0]?.body?.cef_details?.event_class || '',
     minWidth: 100,
-    renderer: ({
-      value,
-    }) => value || '--',
+    renderer: renderPlainTextAlertCell,
   }),
   incidentColumn({
     id: 'service_group',
@@ -798,6 +805,9 @@ export const incidentColumnsTranslations = [
   i18next.t('Latest Note At'),
   i18next.t('External References'),
   i18next.t('Responders'),
+  i18next.t('Latest Log Entry At'),
+  i18next.t('Latest Log Entry Type'),
+  i18next.t('Latest Alert At'),
   i18next.t('Severity'),
   i18next.t('Component'),
   i18next.t('Source'),

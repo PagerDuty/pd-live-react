@@ -44,7 +44,7 @@ export function* getExtensions() {
     yield put({ type: MAP_SERVICES_TO_EXTENSIONS_REQUESTED });
   } catch (e) {
     // Handle API auth failure
-    if (e.status === 401) {
+    if (e.response?.status === 401) {
       e.message = i18next.t('Unauthorized Access');
     }
     yield put({ type: FETCH_EXTENSIONS_ERROR, message: e.message });

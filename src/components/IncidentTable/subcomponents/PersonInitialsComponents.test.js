@@ -3,16 +3,15 @@ import {
 } from 'react-redux';
 
 import {
+  mount,
+} from 'enzyme';
+import {
   mockStore,
 } from 'mocks/store.test';
 
 import {
   generateMockUsers,
 } from 'mocks/users.test';
-
-import {
-  mount,
-} from 'enzyme';
 
 import PersonInitialsComponents from './PersonInitialsComponents';
 

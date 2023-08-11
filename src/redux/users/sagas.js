@@ -2,11 +2,10 @@ import {
   put, call, select, takeLatest, take,
 } from 'redux-saga/effects';
 
-import i18next from 'i18n';
-
 import {
   formatError,
 } from 'pretty-print-error';
+import i18next from 'i18n';
 
 import {
   PD_SUBDOMAIN_ALLOW_LIST,
@@ -137,7 +136,7 @@ export function* getUsers(action) {
     });
   } catch (e) {
     // Handle API auth failure
-    if (e.status === 401) {
+    if (e.response?.status === 401) {
       e.message = i18next.t('Unauthorized Access');
     }
     yield put({ type: GET_USERS_ERROR, message: e.message });

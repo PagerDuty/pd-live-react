@@ -55,6 +55,7 @@ describe('Sagas: Settings', () => {
       })
       .hasFinalState({
         displaySettingsModal: false,
+        displayLoadSavePresetsModal: false,
         displayColumnsModal: false,
         defaultSinceDateTenor: tenor,
         maxRateLimit: 200,
@@ -101,6 +102,7 @@ describe('Sagas: Settings', () => {
       })
       .hasFinalState({
         displaySettingsModal: false,
+        displayLoadSavePresetsModal: false,
         displayColumnsModal: false,
         defaultSinceDateTenor: '1 Day',
         maxRateLimit: 200,
@@ -132,6 +134,7 @@ describe('Sagas: Settings', () => {
       })
       .hasFinalState({
         displaySettingsModal: false,
+        displayLoadSavePresetsModal: false,
         displayColumnsModal: false,
         defaultSinceDateTenor: '1 Day',
         maxRateLimit,
@@ -169,6 +172,7 @@ describe('Sagas: Settings', () => {
       })
       .hasFinalState({
         displaySettingsModal: false,
+        displayLoadSavePresetsModal: false,
         displayColumnsModal: false,
         defaultSinceDateTenor: '1 Day',
         maxRateLimit: 200,
@@ -209,6 +213,7 @@ describe('Sagas: Settings', () => {
       })
       .hasFinalState({
         displaySettingsModal: false,
+        displayLoadSavePresetsModal: false,
         displayColumnsModal: false,
         defaultSinceDateTenor: '1 Day',
         maxRateLimit: 200,
@@ -246,6 +251,7 @@ describe('Sagas: Settings', () => {
       })
       .hasFinalState({
         displaySettingsModal: false,
+        displayLoadSavePresetsModal: false,
         displayColumnsModal: false,
         defaultSinceDateTenor: '1 Day',
         maxRateLimit: 200,
@@ -283,6 +289,7 @@ describe('Sagas: Settings', () => {
       })
       .hasFinalState({
         displaySettingsModal: false,
+        displayLoadSavePresetsModal: false,
         displayColumnsModal: false,
         defaultSinceDateTenor: '1 Day',
         maxRateLimit: 200,

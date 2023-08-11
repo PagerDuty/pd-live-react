@@ -25,16 +25,6 @@ import {
 } from 'react-table';
 
 import {
-  selectIncidentTableRows as selectIncidentTableRowsConnected,
-  updateIncidentTableState as updateIncidentTableStateConnected,
-} from 'redux/incident_table/actions';
-
-import {
-  getIncidentAlertsAsync as getIncidentAlertsAsyncConnected,
-  getIncidentNotesAsync as getIncidentNotesAsyncConnected,
-} from 'redux/incidents/actions';
-
-import {
   ContextMenu, MenuItem, ContextMenuTrigger,
 } from 'react-contextmenu';
 
@@ -43,16 +33,23 @@ import {
 } from 'react-intersection-observer';
 
 import {
-  columnsForSavedColumns,
-} from 'config/column-generator';
-
-import {
   Box, Text,
 } from '@chakra-ui/react';
 
 import {
   useTranslation,
 } from 'react-i18next';
+import {
+  columnsForSavedColumns,
+} from 'config/column-generator';
+import {
+  getIncidentAlertsAsync as getIncidentAlertsAsyncConnected,
+  getIncidentNotesAsync as getIncidentNotesAsyncConnected,
+} from 'redux/incidents/actions';
+import {
+  selectIncidentTableRows as selectIncidentTableRowsConnected,
+  updateIncidentTableState as updateIncidentTableStateConnected,
+} from 'redux/incident_table/actions';
 
 import CheckboxComponent from './subcomponents/CheckboxComponent';
 import EmptyIncidentsComponent from './subcomponents/EmptyIncidentsComponent';
@@ -137,7 +134,13 @@ const IncidentTableComponent = () => {
     status: responsePlaysStatus,
   } = useSelector((state) => state.responsePlays);
   const {
-    filteredIncidentsByQuery, incidents, incidentAlerts, incidentNotes, fetchingIncidents, error: incidentsError,
+    filteredIncidentsByQuery,
+    incidents,
+    incidentAlerts,
+    incidentNotes,
+    incidentLatestLogEntries,
+    fetchingIncidents,
+    error: incidentsError,
   } = useSelector((state) => state.incidents);
   const currentUserLocale = useSelector((state) => state.users.currentUserLocale);
 
@@ -191,6 +194,7 @@ const IncidentTableComponent = () => {
       ...incident,
       alerts: incidentAlerts[incident.id],
       notes: incidentNotes[incident.id],
+      latest_log_entry: incidentLatestLogEntries[incident.id],
     })),
     [filteredIncidentsByQuery, incidentAlerts, incidentNotes],
   );
@@ -345,9 +349,7 @@ const IncidentTableComponent = () => {
               {...cell.getCellProps()}
               className="td"
               data-incident-header={
-                typeof cell.column.Header === 'string'
-                  ? cell.column.Header
-                  : 'incident-header'
+                typeof cell.column.Header === 'string' ? cell.column.Header : 'incident-header'
               }
               data-incident-row-cell-idx={row.index}
               data-incident-cell-id={row.original.id}
@@ -378,7 +380,10 @@ const IncidentTableComponent = () => {
     // TODO: Get user feedback on this workflow
     if (incidentActionsStatus === 'ACTION_COMPLETED') {
       toggleAllRowsSelected(false);
-    } else if (!incidentActionsStatus.includes('TOGGLE') && incidentActionsStatus.includes('COMPLETED')) {
+    } else if (
+      !incidentActionsStatus.includes('TOGGLE')
+      && incidentActionsStatus.includes('COMPLETED')
+    ) {
       toggleAllRowsSelected(false);
     }
   }, [incidentActionsStatus]);
@@ -422,11 +427,17 @@ const IncidentTableComponent = () => {
     return <QueryActiveComponent />;
   }
 
-  if (!fetchingIncidents && incidents.length === 0 && incidentsError?.startsWith('Too many records')) {
+  if (
+    !fetchingIncidents
+    && incidents.length === 0
+    && incidentsError?.startsWith('Too many records')
+  ) {
     const numIncidents = incidentsError.match(/\d+/)[0];
     return (
       <EmptyIncidentsComponent
-        message={t('Too many records to display (X). Please narrow your search criteria.', { numIncidents })}
+        message={t('Too many records to display (X). Please narrow your search criteria.', {
+          numIncidents,
+        })}
       />
     );
   }
