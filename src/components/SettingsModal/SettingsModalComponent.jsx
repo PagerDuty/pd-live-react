@@ -37,19 +37,19 @@ import {
 } from 'react-i18next';
 import {
   MAX_RATE_LIMIT_LOWER, MAX_RATE_LIMIT_UPPER,
-} from 'config/constants';
+} from 'src/config/constants';
 
 import {
   defaultSinceDateTenors,
-} from 'util/settings';
+} from 'src/util/settings';
 
 import {
   locales,
-} from 'i18n.js';
+} from 'src/i18n';
 
 import {
   updateUserLocale as updateUserLocaleConnected,
-} from 'redux/users/actions';
+} from 'src/redux/users/actions';
 import {
   toggleSettingsModal as toggleSettingsModalConnected,
   setDefaultSinceDateTenor as setDefaultSinceDateTenorConnected,
@@ -57,7 +57,7 @@ import {
   setSearchAllCustomDetails as setSearchAllCustomDetailsConnected,
   setRespondersInEpFilter as setRespondersInEpFilterConnected,
   setRelativeDates as setRelativeDatesConnected,
-} from 'redux/settings/actions';
+} from 'src/redux/settings/actions';
 
 const SettingsModalComponent = () => {
   const {

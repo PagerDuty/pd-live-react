@@ -5,7 +5,7 @@ import moment from 'moment';
 
 import {
   TRIGGERED, ACKNOWLEDGED, HIGH, LOW,
-} from 'util/incidents';
+} from 'src/util/incidents';
 import {
   TOGGLE_DISPLAY_QUERY_SETTINGS_REQUESTED,
   TOGGLE_DISPLAY_QUERY_SETTINGS_COMPLETED,

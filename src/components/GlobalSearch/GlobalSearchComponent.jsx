@@ -26,12 +26,12 @@ import {
 
 import {
   updateSearchQuery as updateSearchQueryConnected,
-} from 'redux/query_settings/actions';
+} from 'src/redux/query_settings/actions';
 
 import {
   getIncidentAlertsAsync as getIncidentAlertsAsyncConnected,
   getIncidentNotesAsync as getIncidentNotesAsyncConnected,
-} from 'redux/incidents/actions';
+} from 'src/redux/incidents/actions';
 
 const GlobalSearchComponent = () => {
   const searchQuery = useSelector((state) => state.querySettings.searchQuery);

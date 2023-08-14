@@ -18,7 +18,7 @@ import {
 import {
   toggleDisplayAddResponderModal as toggleDisplayAddResponderModalConnected,
   addResponder as addResponderConnected,
-} from 'redux/incident_actions/actions';
+} from 'src/redux/incident_actions/actions';
 
 import './AddResponderModalComponent.scss';
 

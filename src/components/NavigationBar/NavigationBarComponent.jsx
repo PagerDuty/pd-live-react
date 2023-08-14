@@ -33,39 +33,39 @@ import {
 
 import {
   PD_OAUTH_CLIENT_ID, PD_OAUTH_CLIENT_SECRET,
-} from 'config/constants';
+} from 'src/config/constants';
 
 import {
   revokeToken,
-} from 'util/auth';
+} from 'src/util/auth';
 
 import {
   toggleDisplayQuerySettings as toggleDisplayQuerySettingsConnected,
-} from 'redux/query_settings/actions';
+} from 'src/redux/query_settings/actions';
 import {
   toggleSettingsModal as toggleSettingsModalConnected,
   toggleLoadSavePresetsModal as toggleLoadSavePresetsModalConnected,
   toggleColumnsModal as toggleColumnsModalConnected,
   clearLocalCache as clearLocalCacheConnected,
   setDarkMode as setDarkModeConnected,
-} from 'redux/settings/actions';
+} from 'src/redux/settings/actions';
 import {
   userAcceptDisclaimer as userAcceptDisclaimerConnected,
   userUnauthorize as userUnauthorizeConnected,
-} from 'redux/users/actions';
+} from 'src/redux/users/actions';
 import {
   stopMonitoring as stopMonitoringConnected,
-} from 'redux/monitoring/actions';
+} from 'src/redux/monitoring/actions';
 
-import PD_APP_VERSION from 'config/version';
+import PD_APP_VERSION from 'src/config/version';
 
 import {
   ReactComponent as Logo,
-} from 'assets/images/pd_logo_black.svg';
+} from 'src/assets/images/pd_logo_black.svg';
 
-import GlobalSearchComponent from './components/GlobalSearch/GlobalSearchComponent';
-import QuerySettingsComponent from './components/QuerySettings/QuerySettingsComponent';
-import DetailedStatusOverlay from './components/DetailedStatusOverlay/DetailedStatusOverlay';
+import GlobalSearchComponent from 'src/components/GlobalSearch/GlobalSearchComponent';
+import QuerySettingsComponent from 'src/components/QuerySettings/QuerySettingsComponent';
+import DetailedStatusOverlay from 'src/components/DetailedStatusOverlay/DetailedStatusOverlay';
 import StatusBeaconComponent from './StatusBeaconComponent';
 
 const NavigationBarComponent = () => {

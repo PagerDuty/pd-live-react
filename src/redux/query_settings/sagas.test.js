@@ -8,7 +8,7 @@ import * as matchers from 'redux-saga-test-plan/matchers';
 
 import {
   pd,
-} from 'util/pd-api-wrapper';
+} from 'src/util/pd-api-wrapper';
 
 import {
   generateMockIncidents,
@@ -30,9 +30,9 @@ import {
   generateMockServices,
 } from 'mocks/services.test';
 
-import connection from 'redux/connection/reducers';
+import connection from 'src/redux/connection/reducers';
 
-import selectSettings from 'redux/settings/selectors';
+import selectSettings from 'src/redux/settings/selectors';
 
 import {
   UPDATE_QUERY_SETTINGS_USERS_REQUESTED,

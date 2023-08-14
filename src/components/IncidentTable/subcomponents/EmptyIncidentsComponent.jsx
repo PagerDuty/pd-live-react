@@ -8,7 +8,7 @@ import {
 
 import {
   ReactComponent as EmptyIncidents,
-} from 'assets/images/empty_incidents.svg';
+} from 'src/assets/images/empty_incidents.svg';
 
 const EmptyIncidentsComponent = ({
   message,

@@ -19,11 +19,11 @@ import {
 import {
   toggleDisplayCustomSnoozeModal as toggleDisplayCustomSnoozeModalConnected,
   snooze as snoozeConnected,
-} from 'redux/incident_actions/actions';
+} from 'src/redux/incident_actions/actions';
 
 import {
   TRIGGERED, ACKNOWLEDGED, filterIncidentsByField,
-} from 'util/incidents';
+} from 'src/util/incidents';
 
 const CustomSnoozeModalComponent = ({
   toggleDisplayCustomSnoozeModal,

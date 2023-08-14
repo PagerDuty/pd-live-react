@@ -37,7 +37,7 @@ import {
   getIncidentsAsync as getIncidentsAsyncAction,
   UPDATE_INCIDENT_ALERTS,
   UPDATE_INCIDENT_NOTES,
-} from 'redux/incidents/actions';
+} from 'src/redux/incidents/actions';
 
 const DetailedStatusOverlay = ({
   btnRef, isOpen, onOpen, onClose,

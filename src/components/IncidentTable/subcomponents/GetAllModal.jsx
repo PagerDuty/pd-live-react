@@ -22,7 +22,7 @@ import {
 
 import {
   getIncidentAlertsAsync, getIncidentNotesAsync,
-} from 'redux/incidents/actions';
+} from 'src/redux/incidents/actions';
 
 const GetAllModal = ({
   isOpen, onClose, exportCsv,

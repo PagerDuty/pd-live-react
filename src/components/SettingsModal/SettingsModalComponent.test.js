@@ -6,7 +6,7 @@ import {
 
 import {
   MAX_RATE_LIMIT_LOWER,
-} from 'config/constants';
+} from 'src/config/constants';
 
 import SettingsModalComponent from './SettingsModalComponent';
 

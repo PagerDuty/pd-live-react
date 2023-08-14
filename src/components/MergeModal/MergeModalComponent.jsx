@@ -36,11 +36,11 @@ import {
 import {
   toggleDisplayMergeModal as toggleDisplayMergeModalConnected,
   merge as mergeConnected,
-} from 'redux/incident_actions/actions';
+} from 'src/redux/incident_actions/actions';
 
 import {
   TRIGGERED, ACKNOWLEDGED, RESOLVED, filterIncidentsByField,
-} from 'util/incidents';
+} from 'src/util/incidents';
 
 // const animatedComponents = makeAnimated();
 

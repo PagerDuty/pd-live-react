@@ -12,11 +12,11 @@ import {
 
 import {
   generateRandomInteger,
-} from 'util/helpers';
+} from 'src/util/helpers';
 
 import {
   TRIGGERED, RESOLVED,
-} from 'util/incidents';
+} from 'src/util/incidents';
 
 import IncidentActionsComponent from './IncidentActionsComponent';
 

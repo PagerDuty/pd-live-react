@@ -7,11 +7,11 @@ import i18next from 'src/i18n';
 import {
   TOGGLE_DISPLAY_ACTION_ALERTS_MODAL_REQUESTED,
   UPDATE_ACTION_ALERTS_MODAL_REQUESTED,
-} from 'redux/action_alerts/actions';
+} from 'src/redux/action_alerts/actions';
 
 import {
   UPDATE_CONNECTION_STATUS_REQUESTED,
-} from 'redux/connection/actions';
+} from 'src/redux/connection/actions';
 
 // eslint-disable-next-line max-len
 export const MISSING_ABILITY_ERROR = i18next.t(

@@ -16,7 +16,7 @@ import {
 
 import {
   createCodeVerifier, getAuthURL, exchangeCodeForToken,
-} from 'util/auth';
+} from 'src/util/auth';
 
 import './AuthComponent.scss';
 

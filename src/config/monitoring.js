@@ -12,9 +12,9 @@ import {
   DD_SAMPLE_RATE,
   DD_TRACK_INTERACTIONS,
   DD_DEFAULT_PRIVACY_LEVEL,
-} from 'config/constants';
+} from './constants';
 
-import PD_APP_VERSION from 'config/version';
+import PD_APP_VERSION from './version';
 
 class RealUserMonitoring {
   static init() {

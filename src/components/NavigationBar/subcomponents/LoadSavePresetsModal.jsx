@@ -34,7 +34,7 @@ import {
   setAlertCustomDetailColumns as setAlertCustomDetailColumnsConnected,
   setDarkMode as setDarkModeConnected,
   setRelativeDates as setRelativeDatesConnected,
-} from 'redux/settings/actions';
+} from 'src/redux/settings/actions';
 
 import {
   toggleDisplayQuerySettings as toggleDisplayQuerySettingsConnected,
@@ -45,15 +45,15 @@ import {
   updateQuerySettingsEscalationPolicies as updateQuerySettingsEscalationPoliciesConnected,
   updateQuerySettingsServices as updateQuerySettingsServicesConnected,
   updateQuerySettingsUsers as updateQuerySettingsUsersConnected,
-} from 'redux/query_settings/actions';
+} from 'src/redux/query_settings/actions';
 
 import {
   updateIncidentTableColumns as updateIncidentTableColumnsConnected,
-} from 'redux/incident_table/actions';
+} from 'src/redux/incident_table/actions';
 
 import {
   updateUserLocale as updateUserLocaleConnected,
-} from 'redux/users/actions';
+} from 'src/redux/users/actions';
 
 const SettingsModalComponent = () => {
   const {

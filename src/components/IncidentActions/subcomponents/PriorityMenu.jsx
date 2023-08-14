@@ -26,7 +26,7 @@ import {
 
 import {
   updatePriority as updatePriorityConnected,
-} from 'redux/incident_actions/actions';
+} from 'src/redux/incident_actions/actions';
 
 const PriorityMenu = () => {
   const {

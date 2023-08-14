@@ -5,15 +5,15 @@ import {
 // eslint-disable-next-line import/no-cycle
 import {
   persistor,
-} from 'redux/store';
+} from 'src/redux/store';
 
 import {
   resetLimiterWithRateLimit,
-} from 'util/pd-api-wrapper';
+} from 'src/util/pd-api-wrapper';
 
 import {
   FILTER_INCIDENTS_LIST,
-} from 'redux/incidents/actions';
+} from 'src/redux/incidents/actions';
 
 import {
   TOGGLE_SETTINGS_REQUESTED,

@@ -35,14 +35,14 @@ import i18next from 'src/i18n';
 
 import {
   HIGH, LOW,
-} from 'util/incidents';
+} from 'src/util/incidents';
 import {
   DATE_FORMAT,
-} from 'config/constants';
+} from 'src/config/constants';
 
-import StatusComponent from './components/IncidentTable/subcomponents/StatusComponent';
-import NumAlertsComponent from './components/IncidentTable/subcomponents/NumAlertsComponent';
-import PersonInitialsComponents from './components/IncidentTable/subcomponents/PersonInitialsComponents';
+import StatusComponent from 'src/components/IncidentTable/subcomponents/StatusComponent';
+import NumAlertsComponent from 'src/components/IncidentTable/subcomponents/NumAlertsComponent';
+import PersonInitialsComponents from 'src/components/IncidentTable/subcomponents/PersonInitialsComponents';
 
 const linkifyOptions = { target: { url: '_blank' }, rel: 'noopener noreferrer' };
 

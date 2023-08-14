@@ -42,16 +42,16 @@ import {
   defaultColumns,
   customAlertColumns,
   columnsForSavedColumns,
-} from 'config/column-generator';
+} from 'src/config/column-generator';
 
 import {
   saveIncidentTable as saveIncidentTableConnected,
-} from 'redux/incident_table/actions';
+} from 'src/redux/incident_table/actions';
 
 import {
   toggleColumnsModal as toggleColumnsModalConnected,
   setAlertCustomDetailColumns as setAlertCustomDetailColumnsConnected,
-} from 'redux/settings/actions';
+} from 'src/redux/settings/actions';
 
 import ColumnsModalItem from './subcomponents/ColumnsModalItem';
 import DraggableColumnsModalItem from './subcomponents/DraggableColumnsModalItem';

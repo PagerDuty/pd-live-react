@@ -20,11 +20,11 @@ import {
 
 import {
   TRIGGERED, ACKNOWLEDGED, filterIncidentsByField,
-} from 'util/incidents';
+} from 'src/util/incidents';
 
 import {
   toggleDisplayAddResponderModal as toggleDisplayAddResponderModalConnected,
-} from 'redux/incident_actions/actions';
+} from 'src/redux/incident_actions/actions';
 
 const AddRespondersButton = () => {
   const {

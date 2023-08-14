@@ -15,7 +15,7 @@ import {
 
 import {
   updateQuerySettingsIncidentPriority as updateQuerySettingsIncidentPriorityConnected,
-} from 'redux/query_settings/actions';
+} from 'src/redux/query_settings/actions';
 
 import QuerySettingsCheckbox from './QuerySettingsCheckbox';
 

@@ -7,31 +7,31 @@ import i18next from 'src/i18n';
 // import {
 //   // pd,
 //   throttledPdAxiosRequest,
-// } from 'util/pd-api-wrapper';
+// } from 'src/util/pd-api-wrapper';
 
 import {
   UPDATE_CONNECTION_STATUS_REQUESTED,
-} from 'redux/connection/actions';
+} from 'src/redux/connection/actions';
 import {
   FETCH_INCIDENTS_REQUESTED,
   // FILTER_INCIDENTS_LIST_BY_QUERY,
-} from 'redux/incidents/actions';
+} from 'src/redux/incidents/actions';
 
 import {
   getIncidents, // getAllIncidentNotes, // getAllIncidentAlerts,
-} from 'redux/incidents/sagas';
+} from 'src/redux/incidents/sagas';
 
 // import {
 //   FETCH_SERVICES_REQUESTED,
-// } from 'redux/services/actions';
+// } from 'src/redux/services/actions';
 
 // import {
 //   GET_USERS_REQUESTED,
-// } from 'redux/users/actions';
+// } from 'src/redux/users/actions';
 
 // import {
 //   DEBUG_SINCE_DATE, DEBUG_UNTIL_DATE,
-// } from 'config/constants';
+// } from 'src/config/constants';
 
 import {
   TOGGLE_DISPLAY_QUERY_SETTINGS_REQUESTED,

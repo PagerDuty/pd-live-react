@@ -16,11 +16,11 @@ import {
 
 import {
   getObjectsFromList,
-} from 'util/helpers';
+} from 'src/util/helpers';
 
 import {
   updateQuerySettingsUsers as updateQuerySettingsUsersConnected,
-} from 'redux/query_settings/actions';
+} from 'src/redux/query_settings/actions';
 
 const UsersQueryComponent = () => {
   const {

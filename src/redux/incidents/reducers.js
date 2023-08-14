@@ -4,7 +4,7 @@ import {
 
 import {
   UPDATE_INCIDENT_REDUCER_STATUS, UPDATE_INCIDENT_LAST_FETCH_DATE,
-} from 'util/incidents';
+} from 'src/util/incidents';
 
 import {
   FETCH_INCIDENTS_REQUESTED,

@@ -11,10 +11,10 @@ import Bottleneck from 'bottleneck';
 
 import {
   PD_USER_TOKEN,
-} from 'config/constants';
+} from 'src/config/constants';
 import {
   compareCreatedAt,
-} from 'util/helpers';
+} from 'src/util/helpers';
 
 /*
   PDJS Wrapper

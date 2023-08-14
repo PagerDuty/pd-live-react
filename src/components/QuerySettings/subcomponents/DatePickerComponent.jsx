@@ -31,12 +31,12 @@ import {
 
 import {
   DEBUG_SINCE_DATE, DEBUG_UNTIL_DATE,
-} from 'config/constants';
+} from 'src/config/constants';
 
 import {
   updateQuerySettingsSinceDate as updateQuerySettingsSinceDateConnected,
   updateQuerySettingsUntilDate as updateQuerySettingsUntilDateConnected,
-} from 'redux/query_settings/actions';
+} from 'src/redux/query_settings/actions';
 
 import './DatePickerComponent.scss';
 

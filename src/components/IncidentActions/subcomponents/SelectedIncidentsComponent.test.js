@@ -10,7 +10,7 @@ import {
 
 import {
   generateRandomInteger,
-} from 'util/helpers';
+} from 'src/util/helpers';
 
 import SelectedIncidentsComponent from './SelectedIncidentsComponent';
 

@@ -30,7 +30,7 @@ import {
   ADD_NOTE_REQUESTED,
   RUN_CUSTOM_INCIDENT_ACTION_REQUESTED,
   SYNC_WITH_EXTERNAL_SYSTEM_REQUESTED,
-} from 'redux/incident_actions/actions';
+} from 'src/redux/incident_actions/actions';
 
 const SelectedIncidentsComponent = () => {
   const {

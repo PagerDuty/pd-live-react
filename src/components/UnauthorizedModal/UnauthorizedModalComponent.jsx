@@ -12,7 +12,7 @@ import {
 
 import {
   userAcceptDisclaimer as userAcceptDisclaimerConnected,
-} from 'redux/users/actions';
+} from 'src/redux/users/actions';
 
 const UnauthorizedModalComponent = ({
   users, userAcceptDisclaimer,

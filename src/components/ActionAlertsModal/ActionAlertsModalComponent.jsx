@@ -12,7 +12,7 @@ import {
 
 import {
   toggleDisplayActionAlertsModal as toggleDisplayActionAlertsModalConnected,
-} from 'redux/action_alerts/actions';
+} from 'src/redux/action_alerts/actions';
 
 const ActionAlertsModalComponent = () => {
   const {

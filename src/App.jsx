@@ -18,61 +18,61 @@ import {
 
 import moment from 'moment';
 
-import AuthComponent from './components/Auth/AuthComponent';
-import UnauthorizedModalComponent from './components/UnauthorizedModal/UnauthorizedModalComponent';
-import DisclaimerModalComponent from './components/DisclaimerModal/DisclaimerModalComponent';
-import NavigationBarComponent from './components/NavigationBar/NavigationBarComponent';
-import SettingsModalComponent from './components/SettingsModal/SettingsModalComponent';
-import LoadSavePresetsModal from './components/NavigationBar/subcomponents/LoadSavePresetsModal';
-import ColumnsModalComponent from './components/ColumnsModal/ColumnsModalComponent';
-import IncidentTableComponent from './components/IncidentTable/IncidentTableComponent';
-import IncidentActionsComponent from './components/IncidentActions/IncidentActionsComponent';
-import ActionAlertsModalComponent from './components/ActionAlertsModal/ActionAlertsModalComponent';
-import CustomSnoozeModalComponent from './components/CustomSnoozeModal/CustomSnoozeModalComponent';
-import AddNoteModalComponent from './components/AddNoteModal/AddNoteModalComponent';
-import ReassignModalComponent from './components/ReassignModal/ReassignModalComponent';
-import AddResponderModalComponent from './components/AddResponderModal/AddResponderModalComponent';
-import MergeModalComponent from './components/MergeModal/MergeModalComponent';
+import AuthComponent from 'src/components/Auth/AuthComponent';
+import UnauthorizedModalComponent from 'src/components/UnauthorizedModal/UnauthorizedModalComponent';
+import DisclaimerModalComponent from 'src/components/DisclaimerModal/DisclaimerModalComponent';
+import NavigationBarComponent from 'src/components/NavigationBar/NavigationBarComponent';
+import SettingsModalComponent from 'src/components/SettingsModal/SettingsModalComponent';
+import LoadSavePresetsModal from 'src/components/NavigationBar/subcomponents/LoadSavePresetsModal';
+import ColumnsModalComponent from 'src/components/ColumnsModal/ColumnsModalComponent';
+import IncidentTableComponent from 'src/components/IncidentTable/IncidentTableComponent';
+import IncidentActionsComponent from 'src/components/IncidentActions/IncidentActionsComponent';
+import ActionAlertsModalComponent from 'src/components/ActionAlertsModal/ActionAlertsModalComponent';
+import CustomSnoozeModalComponent from 'src/components/CustomSnoozeModal/CustomSnoozeModalComponent';
+import AddNoteModalComponent from 'src/components/AddNoteModal/AddNoteModalComponent';
+import ReassignModalComponent from 'src/components/ReassignModal/ReassignModalComponent';
+import AddResponderModalComponent from 'src/components/AddResponderModal/AddResponderModalComponent';
+import MergeModalComponent from 'src/components/MergeModal/MergeModalComponent';
 
 import {
   getIncidentsAsync as getIncidentsAsyncConnected,
   // refreshIncidentsAsync as refreshIncidentsAsyncConnected,
-} from 'redux/incidents/actions';
+} from 'src/redux/incidents/actions';
 import {
   getLogEntriesAsync as getLogEntriesAsyncConnected,
   cleanRecentLogEntriesAsync as cleanRecentLogEntriesAsyncConnected,
-} from 'redux/log_entries/actions';
+} from 'src/redux/log_entries/actions';
 import {
   getServicesAsync as getServicesAsyncConnected,
-} from 'redux/services/actions';
+} from 'src/redux/services/actions';
 import {
   getTeamsAsync as getTeamsAsyncConnected,
-} from 'redux/teams/actions';
+} from 'src/redux/teams/actions';
 import {
   getPrioritiesAsync as getPrioritiesAsyncConnected,
-} from 'redux/priorities/actions';
+} from 'src/redux/priorities/actions';
 import {
   userAuthorize as userAuthorizeConnected,
   getUsersAsync as getUsersAsyncConnected,
-} from 'redux/users/actions';
+} from 'src/redux/users/actions';
 import {
   getEscalationPoliciesAsync as getEscalationPoliciesAsyncConnected,
-} from 'redux/escalation_policies/actions';
+} from 'src/redux/escalation_policies/actions';
 import {
   getResponsePlaysAsync as getResponsePlaysAsyncConnected,
-} from 'redux/response_plays/actions';
+} from 'src/redux/response_plays/actions';
 import {
   checkConnectionStatus as checkConnectionStatusConnected,
   updateQueueStats as updateQueueStatsConnected,
   checkAbilities as checkAbilitiesConnected,
-} from 'redux/connection/actions';
+} from 'src/redux/connection/actions';
 import {
   startMonitoring as startMonitoringConnected,
-} from 'redux/monitoring/actions';
+} from 'src/redux/monitoring/actions';
 
 import {
   getLimiterStats,
-} from 'util/pd-api-wrapper';
+} from 'src/util/pd-api-wrapper';
 
 import {
   PD_OAUTH_CLIENT_ID,
@@ -82,9 +82,9 @@ import {
   // TODO: Implement log entries clearing
   // LOG_ENTRIES_CLEARING_INTERVAL_SECONDS,
   DEBUG_DISABLE_POLLING,
-} from 'config/constants';
+} from 'src/config/constants';
 
-import 'App.scss';
+import 'src/App.scss';
 import 'moment/min/locales.min';
 
 const App = () => {

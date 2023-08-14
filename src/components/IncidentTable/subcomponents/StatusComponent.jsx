@@ -18,7 +18,7 @@ import {
 
 import {
   TRIGGERED, ACKNOWLEDGED, RESOLVED,
-} from 'util/incidents';
+} from 'src/util/incidents';
 
 const InternalStatusComponent = (tooltip, variant, icon) => (
   <OverlayTrigger placement="top" overlay={<Tooltip>{tooltip}</Tooltip>}>

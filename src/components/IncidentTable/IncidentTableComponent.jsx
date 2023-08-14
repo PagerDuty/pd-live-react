@@ -41,15 +41,15 @@ import {
 } from 'react-i18next';
 import {
   columnsForSavedColumns,
-} from 'config/column-generator';
+} from 'src/config/column-generator';
 import {
   getIncidentAlertsAsync as getIncidentAlertsAsyncConnected,
   getIncidentNotesAsync as getIncidentNotesAsyncConnected,
-} from 'redux/incidents/actions';
+} from 'src/redux/incidents/actions';
 import {
   selectIncidentTableRows as selectIncidentTableRowsConnected,
   updateIncidentTableState as updateIncidentTableStateConnected,
-} from 'redux/incident_table/actions';
+} from 'src/redux/incident_table/actions';
 
 import CheckboxComponent from './subcomponents/CheckboxComponent';
 import EmptyIncidentsComponent from './subcomponents/EmptyIncidentsComponent';

@@ -19,11 +19,11 @@ import {
 
 import {
   TRIGGERED, ACKNOWLEDGED, RESOLVED,
-} from 'util/incidents';
+} from 'src/util/incidents';
 
 import {
   updateQuerySettingsIncidentStatus as updateQuerySettingsIncidentStatusConnected,
-} from 'redux/query_settings/actions';
+} from 'src/redux/query_settings/actions';
 
 import QuerySettingsCheckbox from './QuerySettingsCheckbox';
 

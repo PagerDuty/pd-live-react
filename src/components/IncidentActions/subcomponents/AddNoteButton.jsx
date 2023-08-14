@@ -20,7 +20,7 @@ import {
 
 import {
   toggleDisplayAddNoteModal as toggleDisplayAddNoteModalConnected,
-} from 'redux/incident_actions/actions';
+} from 'src/redux/incident_actions/actions';
 
 const AddNoteButton = () => {
   const {

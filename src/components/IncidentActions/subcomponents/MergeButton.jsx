@@ -20,7 +20,7 @@ import {
 
 import {
   toggleDisplayMergeModal as toggleDisplayMergeModalConnected,
-} from 'redux/incident_actions/actions';
+} from 'src/redux/incident_actions/actions';
 
 const MergeButton = () => {
   const {

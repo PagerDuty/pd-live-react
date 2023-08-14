@@ -19,11 +19,11 @@ import {
 
 import {
   HIGH, LOW,
-} from 'util/incidents';
+} from 'src/util/incidents';
 
 import {
   updateQuerySettingsIncidentUrgency as updateQuerySettingsIncidentUrgencyConnected,
-} from 'redux/query_settings/actions';
+} from 'src/redux/query_settings/actions';
 
 import QuerySettingsCheckbox from './QuerySettingsCheckbox';
 

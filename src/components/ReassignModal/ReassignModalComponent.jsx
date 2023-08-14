@@ -18,7 +18,7 @@ import {
 import {
   toggleDisplayReassignModal as toggleDisplayReassignModalConnected,
   reassign as reassignConnected,
-} from 'redux/incident_actions/actions';
+} from 'src/redux/incident_actions/actions';
 
 const animatedComponents = makeAnimated();
 

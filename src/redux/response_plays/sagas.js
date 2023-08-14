@@ -6,15 +6,15 @@ import i18next from 'src/i18n';
 
 import {
   handleSagaError, handleMultipleAPIErrorResponses, displayActionModal,
-} from 'util/sagas';
+} from 'src/util/sagas';
 
 import {
   pd, pdParallelFetch,
-} from 'util/pd-api-wrapper';
+} from 'src/util/pd-api-wrapper';
 
 import {
   UPDATE_CONNECTION_STATUS_REQUESTED,
-} from 'redux/connection/actions';
+} from 'src/redux/connection/actions';
 import {
   FETCH_RESPONSE_PLAYS_REQUESTED,
   FETCH_RESPONSE_PLAYS_COMPLETED,

@@ -4,7 +4,7 @@ import {
 
 import {
   HIGH, INCIDENT_STATES,
-} from 'util/incidents';
+} from 'src/util/incidents';
 
 const generateMockAlert = () => {
   // Generate Faker stubs for alert

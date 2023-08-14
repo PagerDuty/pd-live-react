@@ -26,16 +26,16 @@ import {
 
 import {
   CUSTOM_INCIDENT_ACTION, EXTERNAL_SYSTEM,
-} from 'util/extensions';
+} from 'src/util/extensions';
 
 import {
   runCustomIncidentAction as runCustomIncidentActionConnected,
   syncWithExternalSystem as syncWithExternalSystemConnected,
-} from 'redux/incident_actions/actions';
+} from 'src/redux/incident_actions/actions';
 
 import {
   runResponsePlayAsync as runResponsePlayAsyncConnected,
-} from 'redux/response_plays/actions';
+} from 'src/redux/response_plays/actions';
 
 const RunActionMenu = () => {
   const {

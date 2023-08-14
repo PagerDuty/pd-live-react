@@ -25,15 +25,15 @@ import {
 
 import {
   RESOLVED, HIGH,
-} from 'util/incidents';
+} from 'src/util/incidents';
 
 import {
   getObjectsFromListbyKey,
-} from 'util/helpers';
+} from 'src/util/helpers';
 
 import {
   escalate as escalateConnected,
-} from 'redux/incident_actions/actions';
+} from 'src/redux/incident_actions/actions';
 
 const EscalateMenu = () => {
   const {

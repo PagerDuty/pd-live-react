@@ -20,11 +20,11 @@ import {
 
 import {
   TRIGGERED, ACKNOWLEDGED, filterIncidentsByField,
-} from 'util/incidents';
+} from 'src/util/incidents';
 
 import {
   resolve as resolveConnected,
-} from 'redux/incident_actions/actions';
+} from 'src/redux/incident_actions/actions';
 
 const ResolveButton = () => {
   const {

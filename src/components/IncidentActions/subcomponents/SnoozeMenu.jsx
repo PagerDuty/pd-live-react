@@ -26,12 +26,12 @@ import {
 
 import {
   TRIGGERED, ACKNOWLEDGED, filterIncidentsByField, getSnoozeTimes,
-} from 'util/incidents';
+} from 'src/util/incidents';
 
 import {
   snooze as snoozeConnected,
   toggleDisplayCustomSnoozeModal as toggleDisplayCustomSnoozeModalConnected,
-} from 'redux/incident_actions/actions';
+} from 'src/redux/incident_actions/actions';
 
 const SnoozeMenu = () => {
   const {
