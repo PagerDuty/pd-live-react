@@ -25,7 +25,10 @@ import {
 } from 'react-i18next';
 
 import {
-  TRIGGERED, ACKNOWLEDGED, filterIncidentsByField, getSnoozeTimes,
+  TRIGGERED,
+  ACKNOWLEDGED,
+  filterIncidentsByField,
+  getSnoozeTimes,
 } from 'src/util/incidents';
 
 import {

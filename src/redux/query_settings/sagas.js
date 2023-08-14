@@ -14,6 +14,7 @@ import {
 } from 'src/redux/connection/actions';
 import {
   FETCH_INCIDENTS_REQUESTED,
+  FILTER_INCIDENTS_LIST,
   // FILTER_INCIDENTS_LIST_BY_QUERY,
 } from 'src/redux/incidents/actions';
 
@@ -62,10 +63,6 @@ import {
   CONFIRM_INCIDENT_QUERY_COMPLETED,
   CONFIRM_INCIDENT_QUERY_ERROR,
 } from './actions';
-
-import {
-  FILTER_INCIDENTS_LIST,
-} from '../incidents/actions';
 
 import selectQuerySettings from './selectors';
 

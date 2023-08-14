@@ -37,7 +37,9 @@ import {
 } from 'src/redux/log_entries/actions';
 
 import {
-  INCIDENTS_PAGINATION_LIMIT, DEBUG_SINCE_DATE, DEBUG_UNTIL_DATE,
+  INCIDENTS_PAGINATION_LIMIT,
+  DEBUG_SINCE_DATE,
+  DEBUG_UNTIL_DATE,
 } from 'src/config/constants';
 
 import {

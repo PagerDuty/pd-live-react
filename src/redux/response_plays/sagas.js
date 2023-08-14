@@ -5,7 +5,9 @@ import {
 import i18next from 'src/i18n';
 
 import {
-  handleSagaError, handleMultipleAPIErrorResponses, displayActionModal,
+  handleSagaError,
+  handleMultipleAPIErrorResponses,
+  displayActionModal,
 } from 'src/util/sagas';
 
 import {

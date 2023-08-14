@@ -9,7 +9,8 @@ import {
 } from 'src/util/pd-api-wrapper';
 
 import {
-  FETCH_LOG_ENTRIES_COMPLETED, FETCH_LOG_ENTRIES_ERROR,
+  FETCH_LOG_ENTRIES_COMPLETED,
+  FETCH_LOG_ENTRIES_ERROR,
 } from 'src/redux/log_entries/actions';
 
 import {

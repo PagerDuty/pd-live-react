@@ -16,7 +16,7 @@ import {
 } from 'redux-persist/integration/react';
 import {
   store, persistor,
-} from './redux/store.js';
+} from './redux/store';
 
 import App from './App';
 import reportWebVitals from './reportWebVitals';

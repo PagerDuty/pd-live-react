@@ -1,3 +1,5 @@
+/* eslint-disable import/no-cycle */
+
 import {
   createStore,
   applyMiddleware, // compose,
@@ -9,7 +11,7 @@ import {
 } from 'redux-persist';
 import {
   persistConfig,
-} from './persistence/config';
+} from 'src/redux/persistence/config';
 
 import rootReducer from './rootReducer';
 import rootSaga from './rootSaga';

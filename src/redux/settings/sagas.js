@@ -1,8 +1,9 @@
+/* eslint-disable import/no-cycle */
+
 import {
   put, select, takeLatest,
 } from 'redux-saga/effects';
 
-// eslint-disable-next-line import/no-cycle
 import {
   persistor,
 } from 'src/redux/store';

@@ -17,7 +17,7 @@ module.exports = {
     ecmaVersion: 12,
     sourceType: 'module',
   },
-  plugins: ['react', 'prettier', 'cypress'],
+  plugins: ['react', 'prettier', 'cypress', 'jsx'],
   rules: {
     'max-len': [WARN, { code: 120, ignorePattern: '^import\\W.*', ignoreTrailingComments: true }],
     'object-curly-newline': [
@@ -47,6 +47,12 @@ module.exports = {
   ],
   settings: {
     'import/resolver': {
+      alias: {
+        map: [
+          ['src', './src'],
+        ],
+        extensions: ['.ts', '.js', '.jsx', '.json']
+      },
       node: {
         extensions: ['.ts', '.js', '.jsx', '.json'],
         paths: ['node_modules/', 'node_modules/@types', 'src/'],

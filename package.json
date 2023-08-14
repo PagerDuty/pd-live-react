@@ -130,8 +130,10 @@
     "eslint-config-airbnb": "^18.2.1",
     "eslint-config-prettier": "^8.8.0",
     "eslint-config-react-app": "^7.0.1",
+    "eslint-import-resolver-alias": "^1.1.2",
     "eslint-plugin-cypress": "^2.14.0",
     "eslint-plugin-import": "^2.28.0",
+    "eslint-plugin-jsx": "^0.1.0",
     "eslint-plugin-jsx-a11y": "^6.7.1",
     "eslint-plugin-prettier": "^4.2.1",
     "eslint-plugin-react": "^7.32.2",
@@ -154,6 +156,7 @@
     "string.prototype.replaceall": "^1.0.6",
     "svg-jest": "^1.0.1",
     "vite": "^4.4.9",
+    "vite-plugin-eslint": "^1.8.1",
     "vite-plugin-svgr": "^3.2.0",
     "wait-on": "^7.0.1",
     "yarn-audit-fix": "^9.3.12"
