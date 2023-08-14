@@ -5,7 +5,7 @@ import {
 import {
   formatError,
 } from 'pretty-print-error';
-import i18next from 'i18n';
+import i18next from 'src/i18n';
 
 import {
   PD_SUBDOMAIN_ALLOW_LIST,

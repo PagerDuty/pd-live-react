@@ -5,7 +5,7 @@ import {
   put, call, select, takeLatest, take,
 } from 'redux-saga/effects';
 
-import i18next from 'i18n';
+import i18next from 'src/i18n';
 
 import {
   pd, pdParallelFetch,

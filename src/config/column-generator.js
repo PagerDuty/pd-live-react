@@ -31,7 +31,7 @@ import Linkify from 'linkify-react';
 import {
   useSelector,
 } from 'react-redux';
-import i18next from 'i18n';
+import i18next from 'src/i18n';
 
 import {
   HIGH, LOW,
@@ -40,9 +40,9 @@ import {
   DATE_FORMAT,
 } from 'config/constants';
 
-import StatusComponent from 'components/IncidentTable/subcomponents/StatusComponent';
-import NumAlertsComponent from 'components/IncidentTable/subcomponents/NumAlertsComponent';
-import PersonInitialsComponents from 'components/IncidentTable/subcomponents/PersonInitialsComponents';
+import StatusComponent from './components/IncidentTable/subcomponents/StatusComponent';
+import NumAlertsComponent from './components/IncidentTable/subcomponents/NumAlertsComponent';
+import PersonInitialsComponents from './components/IncidentTable/subcomponents/PersonInitialsComponents';
 
 const linkifyOptions = { target: { url: '_blank' }, rel: 'noopener noreferrer' };
 

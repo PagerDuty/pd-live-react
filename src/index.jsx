@@ -16,13 +16,13 @@ import {
 } from 'redux-persist/integration/react';
 import {
   store, persistor,
-} from 'redux/store';
+} from './redux/store.js';
 
-import App from 'App';
-import reportWebVitals from 'reportWebVitals';
+import App from './App';
+import reportWebVitals from './reportWebVitals';
 
 import theme from './theme';
-import 'index.scss';
+import './index.scss';
 import 'react-datepicker/dist/react-datepicker.css';
 
 const toastOptions = {

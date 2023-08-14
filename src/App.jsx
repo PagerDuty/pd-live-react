@@ -18,21 +18,21 @@ import {
 
 import moment from 'moment';
 
-import AuthComponent from 'components/Auth/AuthComponent';
-import UnauthorizedModalComponent from 'components/UnauthorizedModal/UnauthorizedModalComponent';
-import DisclaimerModalComponent from 'components/DisclaimerModal/DisclaimerModalComponent';
-import NavigationBarComponent from 'components/NavigationBar/NavigationBarComponent';
-import SettingsModalComponent from 'components/SettingsModal/SettingsModalComponent';
-import LoadSavePresetsModal from 'components/NavigationBar/subcomponents/LoadSavePresetsModal';
-import ColumnsModalComponent from 'components/ColumnsModal/ColumnsModalComponent';
-import IncidentTableComponent from 'components/IncidentTable/IncidentTableComponent';
-import IncidentActionsComponent from 'components/IncidentActions/IncidentActionsComponent';
-import ActionAlertsModalComponent from 'components/ActionAlertsModal/ActionAlertsModalComponent';
-import CustomSnoozeModalComponent from 'components/CustomSnoozeModal/CustomSnoozeModalComponent';
-import AddNoteModalComponent from 'components/AddNoteModal/AddNoteModalComponent';
-import ReassignModalComponent from 'components/ReassignModal/ReassignModalComponent';
-import AddResponderModalComponent from 'components/AddResponderModal/AddResponderModalComponent';
-import MergeModalComponent from 'components/MergeModal/MergeModalComponent';
+import AuthComponent from './components/Auth/AuthComponent';
+import UnauthorizedModalComponent from './components/UnauthorizedModal/UnauthorizedModalComponent';
+import DisclaimerModalComponent from './components/DisclaimerModal/DisclaimerModalComponent';
+import NavigationBarComponent from './components/NavigationBar/NavigationBarComponent';
+import SettingsModalComponent from './components/SettingsModal/SettingsModalComponent';
+import LoadSavePresetsModal from './components/NavigationBar/subcomponents/LoadSavePresetsModal';
+import ColumnsModalComponent from './components/ColumnsModal/ColumnsModalComponent';
+import IncidentTableComponent from './components/IncidentTable/IncidentTableComponent';
+import IncidentActionsComponent from './components/IncidentActions/IncidentActionsComponent';
+import ActionAlertsModalComponent from './components/ActionAlertsModal/ActionAlertsModalComponent';
+import CustomSnoozeModalComponent from './components/CustomSnoozeModal/CustomSnoozeModalComponent';
+import AddNoteModalComponent from './components/AddNoteModal/AddNoteModalComponent';
+import ReassignModalComponent from './components/ReassignModal/ReassignModalComponent';
+import AddResponderModalComponent from './components/AddResponderModal/AddResponderModalComponent';
+import MergeModalComponent from './components/MergeModal/MergeModalComponent';
 
 import {
   getIncidentsAsync as getIncidentsAsyncConnected,

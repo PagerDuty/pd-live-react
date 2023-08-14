@@ -1,4 +1,4 @@
-import i18next from 'i18next';
+import i18next from 'src/i18n';
 
 /* eslint-disable consistent-return */
 /* eslint-disable array-callback-return */

@@ -6,7 +6,7 @@ import {
   Tooltip,
 } from '@chakra-ui/react';
 
-import i18next from 'i18n';
+import i18next from 'src/i18n';
 
 import Beacon from './subcomponents/Beacon';
 

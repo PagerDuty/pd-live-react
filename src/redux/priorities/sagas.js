@@ -3,7 +3,7 @@ import {
 } from 'redux-saga/effects';
 
 import _ from 'lodash';
-import i18next from 'i18n';
+import i18next from 'src/i18n';
 
 import {
   UPDATE_QUERY_SETTING_INCIDENT_PRIORITY_REQUESTED,

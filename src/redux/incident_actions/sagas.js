@@ -2,7 +2,7 @@ import {
   put, call, select, takeLatest, all,
 } from 'redux-saga/effects';
 
-import i18next from 'i18next';
+import i18next from 'src/i18n';
 
 import {
   handleSagaError,
