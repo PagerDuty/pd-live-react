@@ -13,7 +13,7 @@ module.exports = defineConfig({
     setupNodeEvents(on, config) {
       dotenv.config();
       cypressFailFast(on, config);
-      config.env.PD_USER_TOKEN = import.meta.env.VITE_PD_USER_TOKEN;
+      config.env.PD_USER_TOKEN = process.env.VITE_PD_USER_TOKEN;
       return config;
     },
     baseUrl: "http://localhost:3000/pd-live-react",
