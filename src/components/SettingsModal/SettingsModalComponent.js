@@ -33,16 +33,15 @@ import {
 } from '@chakra-ui/react';
 
 import {
+  useTranslation,
+} from 'react-i18next';
+import {
   MAX_RATE_LIMIT_LOWER, MAX_RATE_LIMIT_UPPER,
 } from 'config/constants';
 
 import {
   defaultSinceDateTenors,
 } from 'util/settings';
-
-import {
-  useTranslation,
-} from 'react-i18next';
 
 import {
   locales,

@@ -111,12 +111,24 @@ export function* getIncidentsImpl() {
       type: UPDATE_INCIDENT_LAST_FETCH_DATE,
     });
     const {
-      sinceDate, incidentStatus, incidentUrgency, teamIds, serviceIds, userIds,
+      sinceDate, untilDate, incidentStatus, incidentUrgency, teamIds, serviceIds, userIds,
     } = yield select(selectQuerySettings);
 
+    const since = DEBUG_SINCE_DATE
+      ? new Date(DEBUG_SINCE_DATE).toISOString()
+      : sinceDate.toISOString();
+    let until;
+    if (DEBUG_UNTIL_DATE) {
+      until = new Date(DEBUG_UNTIL_DATE).toISOString();
+    } else if (untilDate) {
+      until = untilDate.toISOString();
+    } else {
+      until = new Date().toISOString();
+    }
+
     const baseParams = {
-      since: DEBUG_SINCE_DATE ? new Date(DEBUG_SINCE_DATE).toISOString() : sinceDate.toISOString(),
-      until: DEBUG_UNTIL_DATE ? new Date(DEBUG_UNTIL_DATE).toISOString() : new Date().toISOString(),
+      since,
+      until,
       include: ['first_trigger_log_entries', 'external_references'],
       limit: INCIDENTS_PAGINATION_LIMIT,
       sort_by: 'created_at:desc',
@@ -271,9 +283,18 @@ export function* processLogEntriesImpl(action) {
   const incidentNotesMap = {};
   const incidentAlertsMap = {};
   const incidentAlertsUnlinkMap = {};
+  const incidentLatestLogEntryMap = {};
 
   for (let i = 0; i < logEntries.length; i += 1) {
     const logEntry = logEntries[i];
+
+    // update latest log entry
+    if (
+      !incidentLatestLogEntryMap[logEntry.incident.id]
+      || incidentLatestLogEntryMap[logEntry.incident.id].created_at < logEntry.created_at
+    ) {
+      incidentLatestLogEntryMap[logEntry.incident.id] = logEntry;
+    }
 
     if (logEntry.type === 'trigger_log_entry') {
       // add new incident
@@ -323,6 +344,7 @@ export function* processLogEntriesImpl(action) {
     incidentNotesMap,
     incidentAlertsMap,
     incidentAlertsUnlinkMap,
+    incidentLatestLogEntryMap,
   });
   yield call(filterIncidentsImpl);
 }

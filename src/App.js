@@ -23,6 +23,7 @@ import UnauthorizedModalComponent from 'components/UnauthorizedModal/Unauthorize
 import DisclaimerModalComponent from 'components/DisclaimerModal/DisclaimerModalComponent';
 import NavigationBarComponent from 'components/NavigationBar/NavigationBarComponent';
 import SettingsModalComponent from 'components/SettingsModal/SettingsModalComponent';
+import LoadSavePresetsModal from 'components/NavigationBar/subcomponents/LoadSavePresetsModal';
 import ColumnsModalComponent from 'components/ColumnsModal/ColumnsModalComponent';
 import IncidentTableComponent from 'components/IncidentTable/IncidentTableComponent';
 import IncidentActionsComponent from 'components/IncidentActions/IncidentActionsComponent';
@@ -109,8 +110,7 @@ const App = () => {
   const darkMode = useSelector((state) => state.settings.darkMode);
   const abilities = useSelector((state) => state.connection.abilities);
   const {
-    fetchingIncidents,
-    lastFetchDate,
+    fetchingIncidents, lastFetchDate,
   } = useSelector((state) => state.incidents);
   const {
     userAuthorized, userAcceptedDisclaimer, currentUserLocale,
@@ -178,10 +178,7 @@ const App = () => {
             return;
           }
 
-          if (
-            !fetchingIncidentsRef.current
-            && !DEBUG_DISABLE_POLLING
-          ) {
+          if (!fetchingIncidentsRef.current && !DEBUG_DISABLE_POLLING) {
             // Determine lookback based on last fetch/refresh of incidents
             // 2x polling interval is a good lookback if we don't have a last fetch date
             let since = new Date(new Date() - 2000 * LOG_ENTRIES_POLLING_INTERVAL_SECONDS);
@@ -203,11 +200,7 @@ const App = () => {
       return () => clearInterval(pollingInterval);
     },
     // Changes to any of these in the store resets log entries timer
-    [
-      userAuthorized,
-      fetchingIncidents,
-      lastFetchDate,
-    ],
+    [userAuthorized, fetchingIncidents, lastFetchDate],
   );
 
   // Setup log entry clearing
@@ -269,6 +262,7 @@ const App = () => {
         <Box ref={mainRef} as="main" id="main">
           <IncidentTableComponent headerRef={headerRef} mainRef={mainRef} footerRef={footerRef} />
           <SettingsModalComponent />
+          <LoadSavePresetsModal />
           <DndProvider backend={HTML5Backend}>
             <ColumnsModalComponent />
           </DndProvider>

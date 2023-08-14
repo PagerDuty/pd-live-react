@@ -2,9 +2,8 @@ import {
   put, call, select, takeLatest,
 } from 'redux-saga/effects';
 
-import i18next from 'i18n';
-
 import _ from 'lodash';
+import i18next from 'i18n';
 
 import {
   UPDATE_QUERY_SETTING_INCIDENT_PRIORITY_REQUESTED,
@@ -54,7 +53,7 @@ export function* getPriorities() {
     }
   } catch (e) {
     // Handle API auth failure
-    if (e.status === 401) {
+    if (e.response?.status === 401) {
       e.message = i18next.t('Unauthorized Access');
     }
     yield put({ type: FETCH_PRIORITIES_ERROR, message: e.message });

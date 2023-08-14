@@ -44,6 +44,7 @@ import {
 } from 'redux/query_settings/actions';
 import {
   toggleSettingsModal as toggleSettingsModalConnected,
+  toggleLoadSavePresetsModal as toggleLoadSavePresetsModalConnected,
   toggleColumnsModal as toggleColumnsModalConnected,
   clearLocalCache as clearLocalCacheConnected,
   setDarkMode as setDarkModeConnected,
@@ -79,6 +80,7 @@ const NavigationBarComponent = () => {
   const toggleDisplayQuerySettings = () => dispatch(toggleDisplayQuerySettingsConnected());
   const setDarkMode = (dark) => dispatch(setDarkModeConnected(dark));
   const toggleSettingsModal = () => dispatch(toggleSettingsModalConnected());
+  const toggleLoadSavePresetsModal = () => dispatch(toggleLoadSavePresetsModalConnected());
   const toggleColumnsModal = () => dispatch(toggleColumnsModalConnected());
   const clearLocalCache = () => dispatch(clearLocalCacheConnected());
   const userAcceptDisclaimer = () => dispatch(userAcceptDisclaimerConnected());
@@ -180,6 +182,9 @@ const NavigationBarComponent = () => {
             <MenuList zIndex="999">
               <MenuItem className="dropdown-item" onClick={toggleSettingsModal}>
                 {t('Settings')}
+              </MenuItem>
+              <MenuItem className="dropdown-item" onClick={toggleLoadSavePresetsModal}>
+                {t('Load/Save Presets')}
               </MenuItem>
               <MenuItem className="dropdown-item" onClick={toggleColumnsModal}>
                 {t('Columns')}

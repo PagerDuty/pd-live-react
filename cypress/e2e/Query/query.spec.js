@@ -52,10 +52,12 @@ describe('Query Incidents', { failFast: { enabled: false } }, () => {
     const queryDate = moment()
       .subtract(1, 'days')
       .set({ hour: 0, minute: 0, second: 0, millisecond: 0 });
-    cy.get('#query-date-input')
+    cy.get('#query-date-input').click();
+    cy.get('#since-date-input')
       .clear()
       .type(queryDate.format('DD/MM/yyyy'))
       .type('{enter}');
+    cy.get('#query-date-submit').click();
     waitForIncidentTable();
 
     // Iterate through incident table and perform Moment date comparison

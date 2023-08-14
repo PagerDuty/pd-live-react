@@ -8,8 +8,6 @@ import {
   useTranslation,
 } from 'react-i18next';
 
-// TODO: add back global search component
-// import GlobalSearchComponent from 'components/GlobalSearch/GlobalSearchComponent';
 import DatePickerComponent from './subcomponents/DatePickerComponent';
 import StatusQueryComponent from './subcomponents/StatusQueryComponent';
 import UrgencyQueryComponent from './subcomponents/UrgencyQueryComponent';
@@ -44,7 +42,7 @@ const QuerySettingsComponent = () => {
         alignItems="stretch"
         flexWrap="wrap"
       >
-        <BoxForInput label={`${t('Since')}:`}>
+        <BoxForInput label={`${t('Created At')}:`}>
           <DatePickerComponent />
         </BoxForInput>
         <BoxForInput label={`${t('Status')}:`}>

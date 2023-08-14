@@ -18,6 +18,8 @@ import {
 import {
   TOGGLE_SETTINGS_REQUESTED,
   TOGGLE_SETTINGS_COMPLETED,
+  TOGGLE_LOAD_SAVE_PRESETS_REQUESTED,
+  TOGGLE_LOAD_SAVE_PRESETS_COMPLETED,
   TOGGLE_COLUMNS_REQUESTED,
   TOGGLE_COLUMNS_COMPLETED,
   SET_DEFAULT_SINCE_DATE_TENOR_REQUESTED,
@@ -55,6 +57,20 @@ export function* toggleSettingsModalImpl() {
   yield put({
     type: TOGGLE_SETTINGS_COMPLETED,
     displaySettingsModal: !displaySettingsModal,
+  });
+}
+
+export function* toggleLoadSavePresetsModal() {
+  yield takeLatest(TOGGLE_LOAD_SAVE_PRESETS_REQUESTED, toggleLoadSavePresetsModalImpl);
+}
+
+export function* toggleLoadSavePresetsModalImpl() {
+  const {
+    displayLoadSavePresetsModal,
+  } = yield select(selectSettings);
+  yield put({
+    type: TOGGLE_LOAD_SAVE_PRESETS_COMPLETED,
+    displayLoadSavePresetsModal: !displayLoadSavePresetsModal,
   });
 }
 

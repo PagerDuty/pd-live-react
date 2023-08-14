@@ -14,6 +14,7 @@ import {
   manageIncidentTableColumns,
   manageCustomAlertColumnDefinitions,
   checkIncidentCellContentAllRows,
+  checkActionAlertsModalContent,
 } from '../../support/util/common';
 
 describe('Manage Settings', { failFast: { enabled: false } }, () => {
@@ -58,7 +59,7 @@ describe('Manage Settings', { failFast: { enabled: false } }, () => {
       'Paramètres',
       'Updated user profile settings',
     );
-    cy.get('#query-date-input').should('have.value', expectedSinceDateFormat);
+    cy.get('#query-date-input').should('contain', expectedSinceDateFormat);
     cy.get('[data-incident-header="Created At"][data-incident-row-cell-idx="0"]')
       .should('be.visible')
       .should('contain', expectedIncidentDateFormat);
@@ -82,7 +83,7 @@ describe('Manage Settings', { failFast: { enabled: false } }, () => {
         'Settings',
         'Updated user profile settings',
       );
-      cy.get('#query-date-input').should('have.value', expectedDate);
+      cy.get('#query-date-input').should('contain', expectedDate);
     });
   });
 
@@ -182,13 +183,6 @@ describe('Manage Settings', { failFast: { enabled: false } }, () => {
     });
   });
 
-  it('Clear local cache', () => {
-    cy.get('.settings-panel-dropdown').click();
-    cy.get('.dropdown-item').contains('Clear Local Cache').click();
-    cy.get('.modal-title').contains('Disclaimer & License').should('be.visible');
-    acceptDisclaimer();
-  });
-
   it('Update dark mode', () => {
     let currentDarkMode;
     cy.window()
@@ -231,5 +225,45 @@ describe('Manage Settings', { failFast: { enabled: false } }, () => {
       cy.get(`[data-column-name="${columnName}"]`).scrollIntoView().should('be.visible');
     });
     checkIncidentCellContentAllRows('Age', /second[s]?|minute[s]?|hour[s]?/);
+  });
+
+  it('Save presets', () => {
+    cy.get('.settings-panel-dropdown').click();
+    cy.get('.dropdown-item').contains('Load/Save Presets').click();
+    cy.get('#save-presets-button').click();
+    cy.readFile('cypress/downloads/presets.json');
+    cy.get('#close-button').click();
+  });
+
+  it('Clear local cache', () => {
+    cy.get('.settings-panel-dropdown').click();
+    cy.get('.dropdown-item').contains('Clear Local Cache').click();
+    cy.get('.modal-title').contains('Disclaimer & License').should('be.visible');
+    acceptDisclaimer();
+  });
+
+  it('Load presets', () => {
+    cy.get('.settings-panel-dropdown').click();
+    cy.get('.dropdown-item').contains('Load/Save Presets').click();
+    // cy.get('#load-presets-button').click();
+    cy.get('input[type=file]#load-presets-file').selectFile('cypress/downloads/presets.json', { force: true });
+    checkActionAlertsModalContent('Presets loaded');
+    waitForIncidentTable();
+    // Check some settings configured above have been restored
+    const columns = [
+      ['Teams', 'teams'],
+      ['Num Alerts', 'num_alerts'],
+      ['Group', 'service_group'],
+      ['Component', 'source_component'],
+    ];
+    columns.map((column) => column[0]).forEach((columnName) => {
+      cy.get(`[data-column-name="${columnName}"]`).scrollIntoView().should('be.visible');
+    });
+    cy.window()
+      .its('store')
+      .invoke('getState')
+      .then((state) => expect(
+        state.settings.darkMode,
+      ).to.equal(true));
   });
 });
