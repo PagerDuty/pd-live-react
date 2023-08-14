@@ -57,7 +57,9 @@ import {
   stopMonitoring as stopMonitoringConnected,
 } from 'src/redux/monitoring/actions';
 
-import PD_APP_VERSION from 'src/config/version';
+import {
+  version as PD_APP_VERSION,
+} from 'src/config/version';
 
 import {
   ReactComponent as Logo,

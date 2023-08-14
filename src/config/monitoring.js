@@ -14,7 +14,9 @@ import {
   DD_DEFAULT_PRIVACY_LEVEL,
 } from './constants';
 
-import PD_APP_VERSION from './version';
+import {
+  version as PD_APP_VERSION,
+} from './version';
 
 class RealUserMonitoring {
   static init() {

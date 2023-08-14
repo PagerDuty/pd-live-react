@@ -73,7 +73,7 @@
   "scripts": {
     "start": "vite",
     "build": "npx genversion src/config/version.js --semi && vite build",
-    "genversion": "npx genversion src/config/version.js --semi",
+    "genversion": "npx genversion src/config/version.js --semi --es6",
     "jest": "npx jest",
     "cypress:open": "npx cypress open",
     "cypress:run:local": "npx cypress run",
@@ -81,8 +81,8 @@
     "cypress:run:ci": "npx cypress run --group 'e2e' --browser chrome --headless --parallel --record --key ${CYPRESS_RECORD_KEY} --ci-build-id $(date +'%s')",
     "preview": "vite preview",
     "lint": "npx eslint src --ext .js,.jsx,.ts,.tsx --exit-on-fatal-error",
-    "format": "npx prettier-eslint --write \"src/**/*.js\"",
-    "locales": "npx i18next 'src/**/*.js'",
+    "format": "npx prettier-eslint --write 'src/**/*.js' 'src/**/*.jsx'",
+    "locales": "npx i18next 'src/**/*.js' 'src/**/*.jsx'",
     "audit:fix": "npx yarn-audit-fix",
     "predeploy": "vite build",
     "deploy": "gh-pages -d build"
