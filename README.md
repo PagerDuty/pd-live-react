@@ -43,18 +43,18 @@ If you wish to maintain + deploy your own version of PagerDuty Live, we recommen
 The following _optional_ parameters can be used in a `.env` file to override PagerDuty Live during `$ yarn start`:  
 | Parameter | Usage |
 | ----------- | ----------- |
-| `REACT_APP_PD_ENV` | PagerDuty Live Environment Tag; defaults to `localhost-dev` if not set |
-| `REACT_APP_PD_OAUTH_CLIENT_ID` | PagerDuty OAuth App client ID (created upon registering app) |
-| `REACT_APP_PD_OAUTH_CLIENT_SECRET` | PagerDuty OAuth App client secret (created upon registering app) |
-| `REACT_APP_PD_USER_TOKEN` | PagerDuty [Personal API Token](https://support.pagerduty.com/docs/generating-api-keys#generating-a-personal-rest-api-key); this will override OAuth login workflow if set and should be used for integration tests|
-| `REACT_APP_PD_SUBDOMAIN_ALLOW_LIST` | Comma separated list of allowed subdomains (e.g. `acme-prod,acme-dev`) |
-| `REACT_APP_PD_REQUIRED_ABILITY` | PagerDuty account-level [ability](https://developer.pagerduty.com/api-reference/b3A6Mjc0ODEwMg-list-abilities) required to use application |
-| `REACT_APP_DD_APPLICATION_ID` | Datadog [RUM Application ID](https://docs.datadoghq.com/real_user_monitoring/browser/#setup) |
-| `REACT_APP_DD_CLIENT_TOKEN` | Datadog [RUM Client Token](https://docs.datadoghq.com/account_management/api-app-keys/#client-tokens) |
-| `REACT_APP_DD_SITE` | Datadog [site](https://docs.datadoghq.com/agent/basic_agent_usage/?tab=agentv6v7#datadog-site) (e.g. `datadoghq.com`) |
-| `REACT_APP_DD_SAMPLE_RATE` | Datadog [RUM Sample Rate](https://docs.datadoghq.com/real_user_monitoring/browser/#browser-and-session-replay-sampling-configuration) (e.g. `100`) |
-| `REACT_APP_DD_TRACK_INTERACTIONS` | Datadog [RUM Track Interactions](https://docs.datadoghq.com/real_user_monitoring/browser/tracking_user_actions/?tab=npm) (e.g. `true`) |
-| `REACT_APP_DD_DEFAULT_PRIVACY_LEVEL` | Datadog [RUM Default Privacy Level](https://docs.datadoghq.com/real_user_monitoring/session_replay/privacy_options/?tab=maskuserinput) (e.g. `mask-user-input`) |
+| `VITE_PD_ENV` | PagerDuty Live Environment Tag; defaults to `localhost-dev` if not set |
+| `VITE_PD_OAUTH_CLIENT_ID` | PagerDuty OAuth App client ID (created upon registering app) |
+| `VITE_PD_OAUTH_CLIENT_SECRET` | PagerDuty OAuth App client secret (created upon registering app) |
+| `VITE_PD_USER_TOKEN` | PagerDuty [Personal API Token](https://support.pagerduty.com/docs/generating-api-keys#generating-a-personal-rest-api-key); this will override OAuth login workflow if set and should be used for integration tests|
+| `VITE_PD_SUBDOMAIN_ALLOW_LIST` | Comma separated list of allowed subdomains (e.g. `acme-prod,acme-dev`) |
+| `VITE_PD_REQUIRED_ABILITY` | PagerDuty account-level [ability](https://developer.pagerduty.com/api-reference/b3A6Mjc0ODEwMg-list-abilities) required to use application |
+| `VITE_DD_APPLICATION_ID` | Datadog [RUM Application ID](https://docs.datadoghq.com/real_user_monitoring/browser/#setup) |
+| `VITE_DD_CLIENT_TOKEN` | Datadog [RUM Client Token](https://docs.datadoghq.com/account_management/api-app-keys/#client-tokens) |
+| `VITE_DD_SITE` | Datadog [site](https://docs.datadoghq.com/agent/basic_agent_usage/?tab=agentv6v7#datadog-site) (e.g. `datadoghq.com`) |
+| `VITE_DD_SAMPLE_RATE` | Datadog [RUM Sample Rate](https://docs.datadoghq.com/real_user_monitoring/browser/#browser-and-session-replay-sampling-configuration) (e.g. `100`) |
+| `VITE_DD_TRACK_INTERACTIONS` | Datadog [RUM Track Interactions](https://docs.datadoghq.com/real_user_monitoring/browser/tracking_user_actions/?tab=npm) (e.g. `true`) |
+| `VITE_DD_DEFAULT_PRIVACY_LEVEL` | Datadog [RUM Default Privacy Level](https://docs.datadoghq.com/real_user_monitoring/session_replay/privacy_options/?tab=maskuserinput) (e.g. `mask-user-input`) |
 
 ## Testing
 
@@ -63,7 +63,7 @@ The following scripts have been created to run unit, component, and integration 
 - `$ yarn jest` (Jest Unit/Component)
 - `$ yarn cypress:run:local` (Cypress Integration with headless Chromedriver)
 
-Please note that running integration tests will require environment variable `REACT_APP_PD_USER_TOKEN` set.
+Please note that running integration tests will require environment variable `VITE_PD_USER_TOKEN` set.
 
 The integration tests also assume the PagerDuty account associated with the above user token has been setup with the following [Terraform environment](https://github.com/pagerduty/pd-live-integration-test-environment).
 
