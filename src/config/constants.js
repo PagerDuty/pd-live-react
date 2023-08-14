@@ -1,5 +1,5 @@
 // Hosts App Constants
-export const env = { ...process.env, ...window.env };
+export const env = { ...import.meta.env, ...window.env };
 export const debugParams = new URLSearchParams(window.location.search);
 
 // Application Details
