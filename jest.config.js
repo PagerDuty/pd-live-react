@@ -9,7 +9,7 @@ module.exports = {
     '^axios$': require.resolve('axios'),
   },
   transform: {
-    '^.+\\.[t|j]sx?$': 'babel-jest',
+    '^.+\\.(js|jsx|ts|tsx|mjs)$': 'babel-jest',
     '^.+\\.svg$': 'svg-jest',
   },
   transformIgnorePatterns: [`/node_modules/(?!(somePkg)|react-dnd|dnd-core|@react-dnd)`],
