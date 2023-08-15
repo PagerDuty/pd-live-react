@@ -7,7 +7,6 @@ import eslint from 'vite-plugin-eslint';
 export default defineConfig(() => {
   return {
     server: {
-      open: true,
       port: 3000,
     },
     build: {
