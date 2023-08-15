@@ -4,6 +4,20 @@ import react from '@vitejs/plugin-react';
 import svgr from 'vite-plugin-svgr';
 import eslint from 'vite-plugin-eslint';
 
+function fixAcceptHeader404() {
+  return {
+      name: 'fix-accept-header-404', // issue with vite dev server: https://github.com/vitejs/vite/issues/9520
+      configureServer(server) {
+          server.middlewares.use((req, _res, next) => {
+              if (req.headers.accept == 'application/json, text/plain, */*') {
+                  req.headers.accept = '*/*';
+              }
+              next();
+          });
+      },
+  };
+}
+
 export default defineConfig(() => {
   return {
     server: {
@@ -32,6 +46,7 @@ export default defineConfig(() => {
       // svgr options: https://react-svgr.com/docs/options/
       svgr(),
       eslint(),
+      fixAcceptHeader404(),
     ],
   };
 });
