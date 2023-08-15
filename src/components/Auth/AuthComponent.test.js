@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-filename-extension */
 import 'jest-location-mock';
 import React from 'react';
 import {
