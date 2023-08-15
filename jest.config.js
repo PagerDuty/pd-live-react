@@ -5,6 +5,7 @@ module.exports = {
   setupFilesAfterEnv: ['./setupTests.js'],
   moduleDirectories: ['node_modules', 'src'],
   moduleNameMapper: {
+    "^src(.*)$": "<rootDir>/src$1",
     '\\.(css|less|scss|sass)$': 'identity-obj-proxy',
     '^axios$': require.resolve('axios'),
   },
