@@ -21,10 +21,12 @@ export default defineConfig(() => {
     plugins: [
       react({
         babel: {
-          // Use .babelrc files
-          babelrc: true,
-          // Use babel.config.js files
-          configFile: true,
+          // Don't use .babelrc or babel.config.js files
+          babelrc: false,
+          configFile: false,
+          // preset-env won't work with Vite, so configure babel here
+          presets: [["@babel/preset-react", { "runtime": "automatic" }]],
+          plugins: ["@babel/plugin-transform-runtime"]
         },
       }),
       EnvironmentPlugin('all', { loadEnvFiles: true }),
