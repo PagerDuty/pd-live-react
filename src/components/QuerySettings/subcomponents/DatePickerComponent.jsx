@@ -6,7 +6,7 @@ import {
   useSelector, useDispatch,
 } from 'react-redux';
 
-import moment from 'moment';
+import moment from 'moment/min/moment-with-locales';
 
 import DatePicker from 'react-datepicker';
 

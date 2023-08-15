@@ -4,7 +4,7 @@ import React, {
 import {
   connect,
 } from 'react-redux';
-import moment from 'moment';
+import moment from 'moment/min/moment-with-locales';
 
 import {
   Modal, Form, Button, Row, Col,

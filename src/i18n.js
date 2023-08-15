@@ -3,7 +3,7 @@ import {
   initReactI18next,
 } from 'react-i18next';
 import LanguageDetector from 'i18next-browser-languagedetector';
-import moment from 'moment';
+import moment from 'moment/min/moment-with-locales';
 
 import gb from 'date-fns/locale/en-GB';
 import us from 'date-fns/locale/en-US';
