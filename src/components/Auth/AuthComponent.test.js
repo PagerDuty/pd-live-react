@@ -1,5 +1,5 @@
 import 'jest-location-mock';
-
+import React from 'react';
 import {
   mount,
 } from 'enzyme';

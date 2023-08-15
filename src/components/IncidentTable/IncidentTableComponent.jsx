@@ -4,7 +4,7 @@
 /* eslint-disable consistent-return */
 /* eslint-disable no-nested-ternary */
 
-import {
+import React, {
   useEffect, useMemo, useCallback, useState,
 } from 'react';
 

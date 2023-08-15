@@ -1,4 +1,5 @@
 /* eslint-disable consistent-return */
+import React from 'react';
 import {
   Badge, OverlayTrigger, Tooltip,
 } from 'react-bootstrap';
