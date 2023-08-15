@@ -20,6 +20,7 @@ function fixAcceptHeader404() {
 
 export default defineConfig(() => {
   return {
+    base: '/pd-live-react',
     server: {
       port: 3000,
     },
