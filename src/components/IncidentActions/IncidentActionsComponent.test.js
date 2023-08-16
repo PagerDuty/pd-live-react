@@ -20,8 +20,7 @@ import {
 
 import IncidentActionsComponent from './IncidentActionsComponent';
 
-// FIXME: incident state
-xdescribe('IncidentActionsComponent', () => {
+describe('IncidentActionsComponent', () => {
   const randomIncidentCount = generateRandomInteger(1, 100);
   const mockIncidents = generateMockIncidents(randomIncidentCount);
 
@@ -34,6 +33,10 @@ xdescribe('IncidentActionsComponent', () => {
       fetchingIncidentAlerts: false,
       refreshingIncidents: false,
       filteredIncidentsByQuery: mockIncidents,
+      incidents: mockIncidents,
+      incidentAlerts: {},
+      incidentNotes: {},
+      incidentLatestLogEntries: {},
     },
     querySettings: [],
     priorities: { priorities: [] },
@@ -41,7 +44,13 @@ xdescribe('IncidentActionsComponent', () => {
     extensions: {
       serviceExtensionMap: {},
     },
-    responsePlays: { responsePlays: [] },
+    incidentActions: {
+      status: '',
+    },
+    responsePlays: {
+      responsePlays: [],
+      status: '',
+    },
     settings: {
       darkMode: false,
     },
@@ -62,35 +71,33 @@ xdescribe('IncidentActionsComponent', () => {
     store = mockStore(tempStoreMap);
     const wrapper = componentWrapper(store, IncidentActionsComponent);
 
-    expect(wrapper.find('button#incident-action-acknowledge-button').prop('className')).toEqual(
-      'action-button btn btn-light',
+    expect(wrapper.find('button#incident-action-acknowledge-button').prop('disabled')).toEqual(
+      undefined,
     );
-    expect(wrapper.find('button#incident-action-escalate-button').prop('className')).toEqual(
-      'dropdown-toggle btn btn-light',
+    expect(wrapper.find('button.incident-action-escalate-button').prop('disabled')).toEqual(
+      undefined,
     );
-    expect(wrapper.find('button#incident-action-reassign-button').prop('className')).toEqual(
-      'action-button btn btn-light',
+    expect(wrapper.find('button#incident-action-reassign-button').prop('disabled')).toEqual(
+      undefined,
     );
-    expect(wrapper.find('button#incident-action-add-responders-button').prop('className')).toEqual(
-      'action-button btn btn-light',
+    expect(wrapper.find('button#incident-action-add-responders-button').prop('disabled')).toEqual(
+      undefined,
     );
-    expect(wrapper.find('button#incident-action-snooze-button').prop('className')).toEqual(
-      'dropdown-toggle btn btn-light',
+    expect(wrapper.find('button.incident-action-snooze-button').prop('disabled')).toEqual(
+      undefined,
     );
-    expect(wrapper.find('button#incident-action-merge-button').prop('className')).toEqual(
-      'action-button btn btn-light',
+    expect(wrapper.find('button#incident-action-merge-button').prop('disabled')).toEqual(undefined);
+    expect(wrapper.find('button#incident-action-resolve-button').prop('disabled')).toEqual(
+      undefined,
     );
-    expect(wrapper.find('button#incident-action-resolve-button').prop('className')).toEqual(
-      'action-button btn btn-light',
+    expect(wrapper.find('button.incident-action-update-priority-button').prop('disabled')).toEqual(
+      undefined,
     );
-    expect(wrapper.find('button#incident-action-update-priority-button').prop('className')).toEqual(
-      'dropdown-toggle btn btn-light',
+    expect(wrapper.find('button#incident-action-add-note-button').prop('disabled')).toEqual(
+      undefined,
     );
-    expect(wrapper.find('button#incident-action-add-note-button').prop('className')).toEqual(
-      'action-button btn btn-light',
-    );
-    expect(wrapper.find('button#incident-action-run-action-button').prop('className')).toEqual(
-      'dropdown-toggle btn btn-light',
+    expect(wrapper.find('button.incident-action-run-action-button').prop('disabled')).toEqual(
+      undefined,
     );
   });
 
@@ -100,8 +107,8 @@ xdescribe('IncidentActionsComponent', () => {
     store = mockStore(tempStoreMap);
     const wrapper = componentWrapper(store, IncidentActionsComponent);
 
-    expect(wrapper.find('button#incident-action-acknowledge-button').prop('className')).toEqual(
-      'action-button btn btn-outline-secondary',
+    expect(wrapper.find('button#incident-action-acknowledge-button').prop('disabled')).toEqual(
+      true,
     );
   });
 
@@ -111,8 +118,6 @@ xdescribe('IncidentActionsComponent', () => {
     store = mockStore(tempStoreMap);
     const wrapper = componentWrapper(store, IncidentActionsComponent);
 
-    expect(wrapper.find('button#incident-action-merge-button').prop('className')).toEqual(
-      'action-button btn btn-light',
-    );
+    expect(wrapper.find('button#incident-action-merge-button').prop('disabled')).toEqual(undefined);
   });
 });

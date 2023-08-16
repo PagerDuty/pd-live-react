@@ -14,19 +14,28 @@ import {
 
 import SelectedIncidentsComponent from './SelectedIncidentsComponent';
 
-// FIXME: incident state
-xdescribe('SelectedIncidentsComponent', () => {
+describe('SelectedIncidentsComponent', () => {
   const randomIncidentCount = generateRandomInteger(1, 100);
   const mockIncidents = generateMockIncidents(randomIncidentCount);
 
   it('should render querying spinner', () => {
     const store = mockStore({
+      incidentActions: {
+        status: '',
+      },
+      responsePlays: {
+        status: '',
+      },
       incidents: {
         fetchingIncidents: true,
         fetchingIncidentNotes: false,
         fetchingIncidentAlerts: false,
         refreshingIncidents: false,
         filteredIncidentsByQuery: [],
+        incidents: [],
+        incidentAlerts: {},
+        incidentNotes: {},
+        incidentLatestLogEntries: {},
       },
       incidentTable: {
         selectedCount: 0,
@@ -37,18 +46,27 @@ xdescribe('SelectedIncidentsComponent', () => {
     });
 
     const wrapper = componentWrapper(store, SelectedIncidentsComponent);
-    expect(wrapper.find('div.spinner-border').hasClass('text-success')).toBeTruthy();
-    expect(wrapper.contains('Querying')).toBeTruthy();
+    expect(wrapper.find('div.selected-incidents-ctr').contains('Querying')).toBeTruthy();
   });
 
   it('should render fetching notes spinner', () => {
     const store = mockStore({
+      incidentActions: {
+        status: '',
+      },
+      responsePlays: {
+        status: '',
+      },
       incidents: {
         fetchingIncidents: false,
         fetchingIncidentNotes: true,
         fetchingIncidentAlerts: false,
         refreshingIncidents: false,
         filteredIncidentsByQuery: [],
+        incidents: [],
+        incidentAlerts: {},
+        incidentNotes: {},
+        incidentLatestLogEntries: {},
       },
       incidentTable: {
         selectedCount: 0,
@@ -59,18 +77,27 @@ xdescribe('SelectedIncidentsComponent', () => {
     });
 
     const wrapper = componentWrapper(store, SelectedIncidentsComponent);
-    expect(wrapper.find('div.spinner-border').hasClass('text-primary')).toBeTruthy();
-    expect(wrapper.contains('Fetching Notes')).toBeTruthy();
+    expect(wrapper.find('div.selected-incidents-ctr').contains('Fetching Notes')).toBeTruthy();
   });
 
   it('should render fetching alerts spinner', () => {
     const store = mockStore({
+      incidentActions: {
+        status: '',
+      },
+      responsePlays: {
+        status: '',
+      },
       incidents: {
         fetchingIncidents: false,
         fetchingIncidentNotes: false,
         fetchingIncidentAlerts: true,
         refreshingIncidents: false,
         filteredIncidentsByQuery: [],
+        incidents: [],
+        incidentAlerts: {},
+        incidentNotes: {},
+        incidentLatestLogEntries: {},
       },
       incidentTable: {
         selectedCount: 0,
@@ -81,18 +108,27 @@ xdescribe('SelectedIncidentsComponent', () => {
     });
 
     const wrapper = componentWrapper(store, SelectedIncidentsComponent);
-    expect(wrapper.find('div.spinner-border').hasClass('text-info')).toBeTruthy();
-    expect(wrapper.contains('Fetching Alerts')).toBeTruthy();
+    expect(wrapper.find('div.selected-incidents-ctr').contains('Fetching Alerts')).toBeTruthy();
   });
 
   it('should render refreshing spinner', () => {
     const store = mockStore({
+      incidentActions: {
+        status: '',
+      },
+      responsePlays: {
+        status: '',
+      },
       incidents: {
         fetchingIncidents: false,
         fetchingIncidentNotes: false,
         fetchingIncidentAlerts: false,
         refreshingIncidents: true,
         filteredIncidentsByQuery: [],
+        incidents: [],
+        incidentAlerts: {},
+        incidentNotes: {},
+        incidentLatestLogEntries: {},
       },
       incidentTable: {
         selectedCount: 0,
@@ -103,19 +139,28 @@ xdescribe('SelectedIncidentsComponent', () => {
     });
 
     const wrapper = componentWrapper(store, SelectedIncidentsComponent);
-    expect(wrapper.find('div.spinner-border').hasClass('text-success')).toBeTruthy();
-    expect(wrapper.contains('Refreshing')).toBeTruthy();
+    expect(wrapper.find('div.selected-incidents-ctr').contains('Refreshing')).toBeTruthy();
   });
 
   it('should render selected incidents information', () => {
-    const randomSelectedIncidentCount = generateRandomInteger(0, 100);
+    const randomSelectedIncidentCount = generateRandomInteger(0, mockIncidents.length);
     const store = mockStore({
+      incidentActions: {
+        status: '',
+      },
+      responsePlays: {
+        status: '',
+      },
       incidents: {
         fetchingIncidents: false,
         fetchingIncidentNotes: false,
         fetchingIncidentAlerts: false,
         refreshingIncidents: false,
         filteredIncidentsByQuery: mockIncidents,
+        incidents: mockIncidents,
+        incidentAlerts: {},
+        incidentNotes: {},
+        incidentLatestLogEntries: {},
       },
       incidentTable: {
         selectedCount: randomSelectedIncidentCount,
@@ -126,10 +171,8 @@ xdescribe('SelectedIncidentsComponent', () => {
     });
 
     const wrapper = componentWrapper(store, SelectedIncidentsComponent);
-    expect(wrapper.find('span.selected-incidents-badge').hasClass('badge-primary')).toBeTruthy();
     expect(wrapper.find('span.selected-incidents-badge').text()).toEqual(
-      `${randomSelectedIncidentCount}/${mockIncidents.length}`,
+      `${randomSelectedIncidentCount}/${mockIncidents.length} Selected`,
     );
-    expect(wrapper.contains('Selected')).toBeTruthy();
   });
 });

@@ -1,8 +1,5 @@
 import '@testing-library/jest-dom';
 
-import {
-  sanitizeUrl,
-} from '@braintree/sanitize-url';
 import validator from 'validator';
 
 import 'i18n.js';
@@ -17,14 +14,23 @@ import {
 
 import IncidentTableComponent from './IncidentTableComponent';
 
-// FIXME: Tests need reworked with the incident and alerts state
-xdescribe('IncidentTableComponent', () => {
+describe('IncidentTableComponent', () => {
   let baseStore;
   let store;
   // FIXME: Jest can only render max of 3 incidents for some reason?
   const mockIncidents = generateMockIncidents(3);
 
   beforeEach(() => {
+    // incidentAlerts is an map of alerts grouped by incident.id
+    const incidentAlerts = mockIncidents.reduce((acc, incident) => {
+      acc[incident.id] = incident.alerts;
+      return acc;
+    }, {});
+    // incidentNotes is an map of notes grouped by incident.id
+    const incidentNotes = mockIncidents.reduce((acc, incident) => {
+      acc[incident.id] = incident.notes;
+      return acc;
+    }, {});
     baseStore = {
       incidentTable: {
         incidentTableState: {},
@@ -70,12 +76,22 @@ xdescribe('IncidentTableComponent', () => {
       incidentActions: {
         status: '',
       },
+      responsePlays: {
+        status: '',
+      },
       incidents: {
         filteredIncidentsByQuery: mockIncidents,
+        incidents: mockIncidents,
+        incidentAlerts,
+        incidentNotes,
+        incidentLatestLogEntries: {},
         fetchingIncidents: false,
       },
       users: {
         currentUserLocale: 'en-GB',
+      },
+      settings: {
+        maxRateLimit: 100,
       },
     };
   });
@@ -84,18 +100,10 @@ xdescribe('IncidentTableComponent', () => {
     store = mockStore(baseStore);
     const wrapper = componentWrapper(store, IncidentTableComponent);
     expect(wrapper.find('.incident-table-ctr')).toBeTruthy();
-    expect(
-      wrapper
-        .find('.th')
-        .getElements()
-        .filter((th) => th.key.includes('header')),
-    ).toHaveLength(baseStore.incidentTable.incidentTableColumns.length + 1); // Include selection header
-    expect(
-      wrapper
-        .find('[role="row"]')
-        .getElements()
-        .filter((tr) => tr.key.includes('row')),
-    ).toHaveLength(mockIncidents.length);
+    expect(wrapper.find('div[role="columnheader"]').getElements()).toHaveLength(
+      baseStore.incidentTable.incidentTableColumns.length + 1,
+    ); // Include selection header
+    expect(wrapper.find('div[role="row"]').getElements()).toHaveLength(mockIncidents.length + 1); // Include header row
   });
 
   it('should render cell with valid hyperlink for custom detail field', () => {
@@ -105,13 +113,14 @@ xdescribe('IncidentTableComponent', () => {
     const incidentNumber = 1;
     const customDetailField = 'link';
     const url = wrapper
-      .find('[role="row"]')
+      .find('div[role="row"]')
       .get(incidentNumber)
-      .props.children.find((td) => td.key.includes(customDetailField)).props.children.props
-      .cell.value;
-    const sanitizedUrl = sanitizeUrl(url);
+      .props.children.find((td) => td.props['data-incident-header'].includes(customDetailField))
+      .props.children.props.cell.value;
 
-    expect(validator.isURL(sanitizedUrl)).toBeTruthy();
+    console.log(url);
+
+    expect(validator.isURL(url)).toBeTruthy();
   });
 
   it('should render cell with JSON stringified value for custom detail field', () => {
@@ -121,10 +130,10 @@ xdescribe('IncidentTableComponent', () => {
     const incidentNumber = 1;
     const customDetailField = 'object_details';
     const jsonValue = wrapper
-      .find('[role="row"]')
+      .find('div[role="row"]')
       .get(incidentNumber)
-      .props.children.find((td) => td.key.includes(customDetailField)).props.children.props
-      .cell.value;
+      .props.children.find((td) => td.props['data-incident-header'].includes(customDetailField))
+      .props.children.props.cell.value;
 
     // jsonValue should include a key with value 'value1'
     expect(typeof jsonValue).toBe('object');
