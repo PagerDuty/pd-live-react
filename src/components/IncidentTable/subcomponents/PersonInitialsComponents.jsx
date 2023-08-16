@@ -63,12 +63,12 @@ const PersonInitialsComponent = ({
           {displayedUsersByInitials.map((user) => (
             <Tr key={user.id}>
               <Td>
-                <Link key={user.id} isExternal href={user.html_url}>
+                <Link isExternal href={user.html_url}>
                   {user.summary}
                 </Link>
               </Td>
               <Td>
-                <Link key={user.id} isExternal href={`mailto:${user.email}`}>
+                <Link isExternal href={`mailto:${user.email}`}>
                   {user.email}
                 </Link>
               </Td>
@@ -85,7 +85,7 @@ const PersonInitialsComponent = ({
           <AvatarGroup size="sm" max={3} spacing="-0.6rem">
             {displayedUsersByInitials.map((user) => (
               // <Tooltip key={user.id} label={user.summary} aria-label={user.summary}>
-              <Link isExternal href={user.html_url}>
+              <Link key={user.id} isExternal href={user.html_url}>
                 <Avatar
                   color="white"
                   mr={1}
