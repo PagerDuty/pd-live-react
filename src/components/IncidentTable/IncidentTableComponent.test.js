@@ -1,11 +1,12 @@
-import '@testing-library/jest-dom';
-
 import validator from 'validator';
+import {
+  componentWrapper, screen,
+} from 'src/custom-testing-lib';
 
 import 'i18n.js';
 
 import {
-  mockStore, componentWrapper,
+  mockStore,
 } from 'mocks/store.test';
 
 import {
@@ -95,47 +96,32 @@ describe('IncidentTableComponent', () => {
         maxRateLimit: 100,
       },
     };
+    store = mockStore(baseStore);
+    componentWrapper(store, IncidentTableComponent);
   });
 
   it('should render incident table with non-empty data', () => {
-    store = mockStore(baseStore);
-    const wrapper = componentWrapper(store, IncidentTableComponent);
-    expect(wrapper.find('.incident-table-ctr')).toBeTruthy();
-    expect(wrapper.find('div[role="columnheader"]').getElements()).toHaveLength(
+    expect(screen.getByRole('table')).toBeTruthy();
+    expect(screen.getAllByRole('columnheader')).toHaveLength(
       baseStore.incidentTable.incidentTableColumns.length + 1,
     ); // Include selection header
-    expect(wrapper.find('div[role="row"]').getElements()).toHaveLength(mockIncidents.length + 1); // Include header row
+    expect(screen.getAllByRole('row')).toHaveLength(mockIncidents.length + 1); // Include header row
   });
 
   it('should render cell with valid hyperlink for custom detail field', () => {
-    store = mockStore(baseStore);
-    const wrapper = componentWrapper(store, IncidentTableComponent);
-
     const incidentNumber = 1;
     const customDetailField = 'link';
-    const url = wrapper
-      .find('div[role="row"]')
-      .get(incidentNumber)
-      .props.children.find((td) => td.props['data-incident-header'].includes(customDetailField))
-      .props.children.props.cell.value;
+    const url = screen.getAllByIncidentHeader(customDetailField)[incidentNumber].textContent;
 
     expect(validator.isURL(url)).toBeTruthy();
   });
 
   it('should render cell with JSON stringified value for custom detail field', () => {
-    store = mockStore(baseStore);
-    const wrapper = componentWrapper(store, IncidentTableComponent);
-
     const incidentNumber = 1;
     const customDetailField = 'object_details';
-    const jsonValue = wrapper
-      .find('div[role="row"]')
-      .get(incidentNumber)
-      .props.children.find((td) => td.props['data-incident-header'].includes(customDetailField))
-      .props.children.props.cell.value;
+    const jsonValue = screen.getAllByIncidentHeader(customDetailField)[incidentNumber].textContent;
 
     // jsonValue should include a key with value 'value1'
-    expect(typeof jsonValue).toBe('object');
     expect(JSON.stringify(jsonValue)).toContain('value1');
   });
 });

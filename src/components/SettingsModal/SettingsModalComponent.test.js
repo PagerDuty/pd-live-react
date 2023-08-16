@@ -1,10 +1,9 @@
-import '@testing-library/jest-dom';
 import {
-  screen,
-} from '@testing-library/react';
+  componentWrapper, screen,
+} from 'src/custom-testing-lib';
 
 import {
-  mockStore, componentWrapper,
+  mockStore,
 } from 'mocks/store.test';
 
 import {

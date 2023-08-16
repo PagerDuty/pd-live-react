@@ -2,7 +2,7 @@ module.exports = {
   testEnvironment: 'jsdom',
   testPathIgnorePatterns: ['./cypress/'],
   setupFiles: ['dotenv/config', 'jest-canvas-mock'],
-  setupFilesAfterEnv: ['./setupTests.js'],
+  setupFilesAfterEnv: ['./src/setupTests.js'],
   moduleDirectories: ['node_modules', 'src'],
   moduleNameMapper: {
     "^src(.*)$": "<rootDir>/src$1",
