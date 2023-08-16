@@ -1,7 +1,11 @@
+import {
+  componentWrapper, screen,
+} from 'src/custom-testing-lib';
+
 import 'i18n.js';
 
 import {
-  mockStore, componentWrapper,
+  mockStore,
 } from 'mocks/store.test';
 
 import {
@@ -45,8 +49,8 @@ describe('SelectedIncidentsComponent', () => {
       },
     });
 
-    const wrapper = componentWrapper(store, SelectedIncidentsComponent);
-    expect(wrapper.find('div.selected-incidents-ctr').contains('Querying')).toBeTruthy();
+    componentWrapper(store, SelectedIncidentsComponent);
+    expect(screen.getByText('Querying')).toBeInTheDocument();
   });
 
   it('should render fetching notes spinner', () => {
@@ -76,8 +80,8 @@ describe('SelectedIncidentsComponent', () => {
       },
     });
 
-    const wrapper = componentWrapper(store, SelectedIncidentsComponent);
-    expect(wrapper.find('div.selected-incidents-ctr').contains('Fetching Notes')).toBeTruthy();
+    componentWrapper(store, SelectedIncidentsComponent);
+    expect(screen.getByText('Fetching Notes')).toBeInTheDocument();
   });
 
   it('should render fetching alerts spinner', () => {
@@ -107,8 +111,8 @@ describe('SelectedIncidentsComponent', () => {
       },
     });
 
-    const wrapper = componentWrapper(store, SelectedIncidentsComponent);
-    expect(wrapper.find('div.selected-incidents-ctr').contains('Fetching Alerts')).toBeTruthy();
+    componentWrapper(store, SelectedIncidentsComponent);
+    expect(screen.getByText('Fetching Alerts')).toBeInTheDocument();
   });
 
   it('should render refreshing spinner', () => {
@@ -138,8 +142,8 @@ describe('SelectedIncidentsComponent', () => {
       },
     });
 
-    const wrapper = componentWrapper(store, SelectedIncidentsComponent);
-    expect(wrapper.find('div.selected-incidents-ctr').contains('Refreshing')).toBeTruthy();
+    componentWrapper(store, SelectedIncidentsComponent);
+    expect(screen.getByText('Refreshing')).toBeInTheDocument();
   });
 
   it('should render selected incidents information', () => {
@@ -170,9 +174,7 @@ describe('SelectedIncidentsComponent', () => {
       },
     });
 
-    const wrapper = componentWrapper(store, SelectedIncidentsComponent);
-    expect(wrapper.find('span.selected-incidents-badge').text()).toEqual(
-      `${randomSelectedIncidentCount}/${mockIncidents.length} Selected`,
-    );
+    componentWrapper(store, SelectedIncidentsComponent);
+    expect(screen.getByText(`${randomSelectedIncidentCount}/${mockIncidents.length} Selected`)).toBeInTheDocument();
   });
 });
