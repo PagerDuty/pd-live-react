@@ -5,15 +5,16 @@ import {
 } from 'react-redux';
 import configureStore from 'redux-mock-store';
 import {
-  mount,
-} from 'enzyme';
+  render,
+} from '@testing-library/react';
+import '@testing-library/jest-dom';
 import {
   act,
 } from 'react-dom/test-utils';
 
 export const mockStore = configureStore([]);
 
-export const componentWrapper = (store, Component) => mount(
+export const componentWrapper = (store, Component) => render(
   <Provider store={store}>
     <Component />
   </Provider>,
