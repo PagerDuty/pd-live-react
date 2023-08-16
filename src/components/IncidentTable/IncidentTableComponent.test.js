@@ -17,7 +17,6 @@ import IncidentTableComponent from './IncidentTableComponent';
 describe('IncidentTableComponent', () => {
   let baseStore;
   let store;
-  // FIXME: Jest can only render max of 3 incidents for some reason?
   const mockIncidents = generateMockIncidents(3);
 
   beforeEach(() => {
