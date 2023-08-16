@@ -1,3 +1,4 @@
+/* eslint-disable import/no-extraneous-dependencies */
 import {
   queryHelpers, buildQueries,
 } from '@testing-library/react';

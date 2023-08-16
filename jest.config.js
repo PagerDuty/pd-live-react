@@ -5,7 +5,7 @@ module.exports = {
   setupFilesAfterEnv: ['./src/setupTests.js'],
   moduleDirectories: ['node_modules', 'src'],
   moduleNameMapper: {
-    "^src(.*)$": "<rootDir>/src$1",
+    '^src(.*)$': '<rootDir>/src$1',
     '\\.(css|less|scss|sass)$': 'identity-obj-proxy',
     '^axios$': require.resolve('axios'),
   },
@@ -13,5 +13,5 @@ module.exports = {
     '^.+\\.(js|jsx|ts|tsx|mjs)$': 'babel-jest',
     '^.+\\.svg$': 'svg-jest',
   },
-  transformIgnorePatterns: [`/node_modules/(?!(somePkg)|react-dnd|dnd-core|@react-dnd)`],
+  transformIgnorePatterns: ['/node_modules/(?!(somePkg)|react-dnd|dnd-core|@react-dnd)'],
 };

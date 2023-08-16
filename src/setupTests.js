@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 /* eslint-disable import/no-extraneous-dependencies */
 import replaceAllInserter from 'string.prototype.replaceall';
 
