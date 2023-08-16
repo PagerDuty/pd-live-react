@@ -14,8 +14,10 @@ import {
   mockStore,
 } from 'mocks/store.test';
 
+import {
+  within,
+} from 'custom-testing-lib';
 import ColumnsModalComponent from './ColumnsModalComponent';
-import { within } from 'custom-testing-lib';
 
 describe('ColumnsModalComponent', () => {
   let baseStore;
@@ -102,7 +104,9 @@ describe('ColumnsModalComponent', () => {
 
   it('should render an available custom column option with unique header name', () => {
     const customColumns = screen.getByText('Custom').parentElement.parentElement;
-    const customColumn = within(customColumns).getByText('AnotherCustomField:details.to.some.other.path');
+    const customColumn = within(customColumns).getByText(
+      'AnotherCustomField:details.to.some.other.path',
+    );
     expect(customColumn).toBeInTheDocument();
     expect(within(customColumn).getByLabelText('Remove column')).toBeInTheDocument();
 
@@ -114,7 +118,9 @@ describe('ColumnsModalComponent', () => {
 
   it('should render an enabled custom column option with JSON path containing spaces', () => {
     const customColumns = screen.getByText('Custom').parentElement.parentElement;
-    const customColumn = within(customColumns).getByText('Fav Flavour:details.[\'favorite ice cream flavor\']');
+    const customColumn = within(customColumns).getByText(
+      "Fav Flavour:details.['favorite ice cream flavor']",
+    );
     expect(customColumn).toBeInTheDocument();
     expect(within(customColumn).getByLabelText('Remove column')).toBeInTheDocument();
 

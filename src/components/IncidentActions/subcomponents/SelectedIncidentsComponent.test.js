@@ -175,6 +175,8 @@ describe('SelectedIncidentsComponent', () => {
     });
 
     componentWrapper(store, SelectedIncidentsComponent);
-    expect(screen.getByText(`${randomSelectedIncidentCount}/${mockIncidents.length} Selected`)).toBeInTheDocument();
+    expect(
+      screen.getByText(`${randomSelectedIncidentCount}/${mockIncidents.length} Selected`),
+    ).toBeInTheDocument();
   });
 });
