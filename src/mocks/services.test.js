@@ -17,5 +17,3 @@ const generateMockService = () => {
 export const generateMockServices = (num) => Array.from({ length: num }, () => generateMockService());
 
 export default generateMockServices;
-
-test.skip('Mock Services', () => 1);

@@ -34,5 +34,3 @@ const generateMockLogEntry = () => {
 export const generateMockLogEntries = (num) => Array.from({ length: num }, () => generateMockLogEntry());
 
 export default generateMockLogEntries;
-
-test.skip('Mock log entries', () => 1);

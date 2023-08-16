@@ -17,5 +17,3 @@ const generateMockTeam = () => {
 export const generateMockTeams = (num) => Array.from({ length: num }, () => generateMockTeam());
 
 export default generateMockTeams;
-
-test.skip('Mock Teams', () => 1);

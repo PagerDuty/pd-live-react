@@ -4,6 +4,7 @@ module.exports = {
   setupFiles: ['dotenv/config', 'jest-canvas-mock'],
   setupFilesAfterEnv: ['./src/setupTests.js'],
   moduleDirectories: ['node_modules', 'src'],
+  modulePathIgnorePatterns: ['src/mocks'],
   moduleNameMapper: {
     '^src(.*)$': '<rootDir>/src$1',
     '\\.(css|less|scss|sass)$': 'identity-obj-proxy',
