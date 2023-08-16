@@ -7,7 +7,7 @@ import {
 
 import {
   PD_OAUTH_CLIENT_ID, PD_OAUTH_CLIENT_SECRET,
-} from 'config/constants';
+} from 'src/config/constants';
 
 import {
   createCodeVerifier,

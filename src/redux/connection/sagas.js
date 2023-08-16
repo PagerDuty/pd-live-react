@@ -2,28 +2,29 @@ import {
   put, call, select, takeLatest, take,
 } from 'redux-saga/effects';
 
-import i18next from 'i18n';
+import i18next from 'src/i18n';
 
 import {
   throttledPdAxiosRequest,
-} from 'util/pd-api-wrapper';
+} from 'src/util/pd-api-wrapper';
 
 import {
-  FETCH_LOG_ENTRIES_COMPLETED, FETCH_LOG_ENTRIES_ERROR,
-} from 'redux/log_entries/actions';
+  FETCH_LOG_ENTRIES_COMPLETED,
+  FETCH_LOG_ENTRIES_ERROR,
+} from 'src/redux/log_entries/actions';
 
 import {
   updateConnectionStatusRequested, MISSING_ABILITY_ERROR,
-} from 'util/sagas';
+} from 'src/util/sagas';
 
 import {
   PD_REQUIRED_ABILITY, DEBUG_DISABLE_POLLING,
-} from 'config/constants';
+} from 'src/config/constants';
 
 // import {
 //   FILTER_INCIDENTS_LIST_BY_PRIORITY_COMPLETED,
 //   FILTER_INCIDENTS_LIST_BY_PRIORITY_ERROR,
-// } from 'redux/incidents/actions';
+// } from 'src/redux/incidents/actions';
 
 import {
   UPDATE_CONNECTION_STATUS_REQUESTED,

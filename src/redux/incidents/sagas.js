@@ -9,36 +9,38 @@ import {
   // throttledPdAxiosRequest,
   pdParallelFetch,
   resetLimiterWithRateLimit,
-} from 'util/pd-api-wrapper';
+} from 'src/util/pd-api-wrapper';
 
 import {
   filterIncidentsByField,
   filterIncidentsByFieldOfList,
   UPDATE_INCIDENT_REDUCER_STATUS,
   UPDATE_INCIDENT_LAST_FETCH_DATE,
-} from 'util/incidents';
+} from 'src/util/incidents';
 
 import {
   flattenObject,
-} from 'util/helpers';
+} from 'src/util/helpers';
 
-import fuseOptions from 'config/fuse-config';
+import fuseOptions from 'src/config/fuse-config';
 
-import selectSettings from 'redux/settings/selectors';
-import selectQuerySettings from 'redux/query_settings/selectors';
-import selectIncidentTable from 'redux/incident_table/selectors';
+import selectSettings from 'src/redux/settings/selectors';
+import selectQuerySettings from 'src/redux/query_settings/selectors';
+import selectIncidentTable from 'src/redux/incident_table/selectors';
 import {
   UPDATE_CONNECTION_STATUS_REQUESTED,
-} from 'redux/connection/actions';
+} from 'src/redux/connection/actions';
 
 import {
   // UPDATE_RECENT_LOG_ENTRIES_COMPLETED,
   FETCH_LOG_ENTRIES_COMPLETED,
-} from 'redux/log_entries/actions';
+} from 'src/redux/log_entries/actions';
 
 import {
-  INCIDENTS_PAGINATION_LIMIT, DEBUG_SINCE_DATE, DEBUG_UNTIL_DATE,
-} from 'config/constants';
+  INCIDENTS_PAGINATION_LIMIT,
+  DEBUG_SINCE_DATE,
+  DEBUG_UNTIL_DATE,
+} from 'src/config/constants';
 
 import {
   FETCH_INCIDENTS_REQUESTED,

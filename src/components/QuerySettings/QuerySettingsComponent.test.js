@@ -1,7 +1,7 @@
 import '@testing-library/jest-dom';
 
 import gb from 'date-fns/locale/en-GB';
-import moment from 'moment';
+import moment from 'moment/min/moment-with-locales';
 
 import {
   registerLocale,
@@ -16,11 +16,11 @@ import {
 // Required to validate how store is actually affected.
 import {
   store,
-} from 'redux/store';
+} from 'src/redux/store';
 
 import {
   VALIDATE_INCIDENT_QUERY_REQUESTED,
-} from 'redux/query_settings/actions';
+} from 'src/redux/query_settings/actions';
 
 import QuerySettingsComponent from './QuerySettingsComponent';
 

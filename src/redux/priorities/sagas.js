@@ -3,18 +3,18 @@ import {
 } from 'redux-saga/effects';
 
 import _ from 'lodash';
-import i18next from 'i18n';
+import i18next from 'src/i18n';
 
 import {
   UPDATE_QUERY_SETTING_INCIDENT_PRIORITY_REQUESTED,
-} from 'redux/query_settings/actions';
+} from 'src/redux/query_settings/actions';
 import {
   pdParallelFetch,
-} from 'util/pd-api-wrapper';
+} from 'src/util/pd-api-wrapper';
 
 import {
   UPDATE_CONNECTION_STATUS_REQUESTED,
-} from 'redux/connection/actions';
+} from 'src/redux/connection/actions';
 import {
   FETCH_PRIORITIES_REQUESTED,
   FETCH_PRIORITIES_COMPLETED,

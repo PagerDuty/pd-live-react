@@ -16,7 +16,7 @@ import {
 
 import {
   pdParallelFetch,
-} from 'util/pd-api-wrapper';
+} from 'src/util/pd-api-wrapper';
 
 import {
   FETCH_LOG_ENTRIES_REQUESTED,

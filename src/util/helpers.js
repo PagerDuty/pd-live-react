@@ -2,7 +2,7 @@
 /* eslint-disable no-param-reassign */
 /* eslint-disable no-sequences */
 /* eslint-disable no-return-assign */
-import moment from 'moment';
+import moment from 'moment/min/moment-with-locales';
 
 export const flattenObject = (obj, out = {}) => {
   Object.keys(obj).forEach((key) => {

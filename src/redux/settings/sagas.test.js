@@ -11,7 +11,7 @@ import {
   MAX_RATE_LIMIT_UPPER,
   REFRESH_INTERVAL_LOWER,
   REFRESH_INTERVAL_UPPER,
-} from 'config/constants';
+} from 'src/config/constants';
 
 import settings from './reducers';
 import {

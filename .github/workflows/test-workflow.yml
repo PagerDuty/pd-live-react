@@ -64,16 +64,16 @@ jobs:
           - Settings/settings.spec.js
           - app.spec.js
     env:
-      REACT_APP_PD_ENV: 'github-ci'
-      REACT_APP_PD_SUBDOMAIN_ALLOW_LIST: '*'
-      REACT_APP_PD_USER_TOKEN: ${{ secrets.PD_INTEGRATION_USER_TOKEN }}
-      REACT_APP_PD_REQUIRED_ABILITY: ${{ secrets.PD_REQUIRED_ABILITY }}
-      REACT_APP_DD_APPLICATION_ID: ${{ secrets.DD_APPLICATION_ID }}
-      REACT_APP_DD_CLIENT_TOKEN: ${{ secrets.DD_CLIENT_TOKEN }}
-      REACT_APP_DD_SITE: ${{ secrets.DD_SITE }}
-      REACT_APP_DD_SAMPLE_RATE: ${{ secrets.DD_SAMPLE_RATE }}
-      REACT_APP_DD_TRACK_INTERACTIONS: ${{ secrets.DD_TRACK_INTERACTIONS }}
-      REACT_APP_DD_DEFAULT_PRIVACY_LEVEL: ${{ secrets.DD_DEFAULT_PRIVACY_LEVEL }}
+      VITE_PD_ENV: 'github-ci'
+      VITE_PD_SUBDOMAIN_ALLOW_LIST: '*'
+      VITE_PD_USER_TOKEN: ${{ secrets.PD_INTEGRATION_USER_TOKEN }}
+      VITE_PD_REQUIRED_ABILITY: ${{ secrets.PD_REQUIRED_ABILITY }}
+      VITE_DD_APPLICATION_ID: ${{ secrets.DD_APPLICATION_ID }}
+      VITE_DD_CLIENT_TOKEN: ${{ secrets.DD_CLIENT_TOKEN }}
+      VITE_DD_SITE: ${{ secrets.DD_SITE }}
+      VITE_DD_SAMPLE_RATE: ${{ secrets.DD_SAMPLE_RATE }}
+      VITE_DD_TRACK_INTERACTIONS: ${{ secrets.DD_TRACK_INTERACTIONS }}
+      VITE_DD_DEFAULT_PRIVACY_LEVEL: ${{ secrets.DD_DEFAULT_PRIVACY_LEVEL }}
       CYPRESS_PROJECT_ID: ${{ secrets.CYPRESS_PROJECT_ID }}
       CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

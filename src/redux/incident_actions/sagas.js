@@ -2,25 +2,25 @@ import {
   put, call, select, takeLatest, all,
 } from 'redux-saga/effects';
 
-import i18next from 'i18next';
+import i18next from 'src/i18n';
 
 import {
   handleSagaError,
   handleSingleAPIErrorResponse,
   handleMultipleAPIErrorResponses,
   displayActionModal,
-} from 'util/sagas';
+} from 'src/util/sagas';
 
 import {
   SELECT_INCIDENT_TABLE_ROWS_REQUESTED,
-} from 'redux/incident_table/actions';
+} from 'src/redux/incident_table/actions';
 
 import {
   getIncidentByIdRequest, // updateIncidentsList,
-} from 'redux/incidents/sagas';
+} from 'src/redux/incidents/sagas';
 
-import selectPriorities from 'redux/priorities/selectors';
-import selectIncidentTable from 'redux/incident_table/selectors';
+import selectPriorities from 'src/redux/priorities/selectors';
+import selectIncidentTable from 'src/redux/incident_table/selectors';
 
 import {
   TRIGGERED,
@@ -30,14 +30,14 @@ import {
   getSnoozeTimes,
   filterIncidentsByField,
   generateIncidentActionModal,
-} from 'util/incidents';
+} from 'src/util/incidents';
 
 import {
   getObjectsFromList, chunkArray,
-} from 'util/helpers';
+} from 'src/util/helpers';
 import {
   throttledPdAxiosRequest,
-} from 'util/pd-api-wrapper';
+} from 'src/util/pd-api-wrapper';
 import selectIncidentActions from './selectors';
 import {
   ACTION_REQUESTED,

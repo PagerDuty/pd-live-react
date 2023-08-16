@@ -4,7 +4,7 @@ import {
 
 import {
   columnsForSavedColumns,
-} from 'config/column-generator';
+} from 'src/config/column-generator';
 
 import {
   SAVE_INCIDENT_TABLE_SETTINGS_REQUESTED,

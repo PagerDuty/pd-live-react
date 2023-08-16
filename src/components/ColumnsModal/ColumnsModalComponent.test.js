@@ -1,5 +1,6 @@
+/* eslint-disable react/jsx-filename-extension */
 import '@testing-library/jest-dom';
-
+import React from 'react';
 import {
   DndProvider,
 } from 'react-dnd';

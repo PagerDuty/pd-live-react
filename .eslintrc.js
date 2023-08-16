@@ -10,14 +10,27 @@ module.exports = {
     browser: true,
     es2021: true,
   },
-  extends: ['plugin:react/recommended', 'airbnb', 'plugin:cypress/recommended'],
+  extends: [
+    'eslint:recommended',
+    'plugin:react/recommended',
+    'plugin:react/jsx-runtime',
+    'plugin:react-hooks/recommended',
+    'airbnb',
+    'plugin:cypress/recommended'
+  ],
   parser: '@babel/eslint-parser',
   parserOptions: {
     ecmaFeatures: { jsx: true },
-    ecmaVersion: 12,
+    ecmaVersion: 'latest',
     sourceType: 'module',
   },
-  plugins: ['react', 'prettier', 'cypress'],
+  plugins: [
+    'react',
+    'prettier',
+    'cypress',
+    'jsx',
+    'react-refresh',
+  ],
   rules: {
     'max-len': [WARN, { code: 120, ignorePattern: '^import\\W.*', ignoreTrailingComments: true }],
     'object-curly-newline': [
@@ -25,12 +38,13 @@ module.exports = {
       { ObjectPattern: { multiline: true, minProperties: 1 }, ImportDeclaration: 'always' },
     ],
     'react/prop-types': OFF, // To be done in another refactor
-    'react/react-in-jsx-scope': OFF,
-    'react/jsx-filename-extension': [ERROR, { extensions: ['.js', '.jsx'] }],
+    // 'react/jsx-filename-extension': [ERROR, { extensions: ['.js', '.jsx'] }],
     'no-param-reassign': [ERROR, { props: true, ignorePropertyModificationsFor: ['draft'] }],
     'no-use-before-define': [ERROR, { functions: false }],
     'no-plusplus': [ERROR, { allowForLoopAfterthoughts: true }],
-    'jest/expect-expect': OFF,
+    'react-refresh/only-export-components': OFF, // To be done in another refactor
+    'react-hooks/exhaustive-deps': OFF, // To be done in another refactor
+    'react-hooks/rules-of-hooks': OFF, // To be done in another refactor
   },
   overrides: [
     {
@@ -46,7 +60,14 @@ module.exports = {
     },
   ],
   settings: {
+     react: { version: '18.2' },
     'import/resolver': {
+      alias: {
+        map: [
+          ['src', './src'],
+        ],
+        extensions: ['.ts', '.js', '.jsx', '.json']
+      },
       node: {
         extensions: ['.ts', '.js', '.jsx', '.json'],
         paths: ['node_modules/', 'node_modules/@types', 'src/'],

@@ -1,6 +1,6 @@
 /* eslint-disable cypress/unsafe-to-chain-command */
 
-import moment from 'moment';
+import moment from 'moment/min/moment-with-locales';
 import 'moment/min/locales.min';
 
 import {

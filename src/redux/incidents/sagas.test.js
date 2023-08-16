@@ -9,7 +9,7 @@ import {
   generateMockIncidents,
 } from 'mocks/incidents.test';
 
-import selectIncidentTable from 'redux/incident_table/selectors';
+import selectIncidentTable from 'src/redux/incident_table/selectors';
 
 import {
   FILTER_INCIDENTS_LIST_BY_QUERY,
