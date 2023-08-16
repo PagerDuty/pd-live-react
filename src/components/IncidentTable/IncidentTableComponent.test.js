@@ -20,6 +20,7 @@ describe('IncidentTableComponent', () => {
   const mockIncidents = generateMockIncidents(3);
 
   beforeEach(() => {
+    /* eslint-disable no-param-reassign */
     // incidentAlerts is an map of alerts grouped by incident.id
     const incidentAlerts = mockIncidents.reduce((acc, incident) => {
       acc[incident.id] = incident.alerts;
@@ -30,6 +31,7 @@ describe('IncidentTableComponent', () => {
       acc[incident.id] = incident.notes;
       return acc;
     }, {});
+    /* eslint-enable no-param-reassign */
     baseStore = {
       incidentTable: {
         incidentTableState: {},
@@ -116,8 +118,6 @@ describe('IncidentTableComponent', () => {
       .get(incidentNumber)
       .props.children.find((td) => td.props['data-incident-header'].includes(customDetailField))
       .props.children.props.cell.value;
-
-    console.log(url);
 
     expect(validator.isURL(url)).toBeTruthy();
   });
