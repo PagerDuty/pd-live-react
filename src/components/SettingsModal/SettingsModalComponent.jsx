@@ -129,7 +129,6 @@ const SettingsModalComponent = () => {
       setSearchAllCustomDetails(tempSearchAllCustomDetails);
     }
     if (tempFuzzySearch !== fuzzySearch) {
-      console.log('tempFuzzySearch', tempFuzzySearch);
       setFuzzySearch(tempFuzzySearch);
     }
     if (tempRespondersInEpFilter !== respondersInEpFilter) {
