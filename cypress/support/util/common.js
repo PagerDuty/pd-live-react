@@ -319,6 +319,20 @@ export const updateRelativeDates = (relativeDates = false) => {
   checkActionAlertsModalContent('Updated user profile settings');
 };
 
+export const updateFuzzySearch = (fuzzySearch = false) => {
+  cy.get('.settings-panel-dropdown').click();
+  cy.get('.dropdown-item').contains('Settings').click();
+
+  if (fuzzySearch) {
+    cy.get('#fuzzy-search-switch').check({ force: true });
+  } else {
+    cy.get('#fuzzy-search-switch').uncheck({ force: true });
+  }
+
+  cy.get('#save-settings-button').click();
+  checkActionAlertsModalContent('Updated user profile settings');
+};
+
 export const updateDarkMode = () => {
   cy.get('[aria-label="Toggle Dark Mode"]').click();
 };
