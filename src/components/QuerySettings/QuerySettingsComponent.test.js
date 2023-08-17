@@ -11,7 +11,11 @@ import 'i18n.js';
 
 import {
   componentWrapper, waitForComponentToPaint,
-} from 'mocks/store.test';
+} from 'src/custom-testing-lib';
+
+// import {
+//   mockStore,
+// } from 'mocks/store.test';
 
 // Required to validate how store is actually affected.
 import {
@@ -24,18 +28,37 @@ import {
 
 import QuerySettingsComponent from './QuerySettingsComponent';
 
-// Query settings tests need reworked
+// FIXME: Query settings tests need reworked
 xdescribe('QuerySettingsComponent', () => {
+  // let baseStore;
+  // let store;
   const defaultSinceDateTenor = '1 Day';
   const currentUserLocale = 'en-GB';
+  beforeEach(() => {
+    // baseStore = {
+    //   settings: {
+    //     defaultSinceDateTenor,
+    //   },
+    //   querySettings: {
+    //     sinceDate: null,
+    //     untilDate: null,
+    //   },
+    //   priorities: { priorities: [] },
+    //   teams: { teams: [] },
+    //   users: {
+    //     currentUserLocale,
+    //   },
+    // };
+    // store = baseStore;
+  });
   registerLocale(currentUserLocale, gb);
   moment.locale(currentUserLocale);
 
   const sinceDateInput = (wrapper) => wrapper.find('#query-date-input').hostNodes();
 
   it('should render component', () => {
-    // NB: Jest doesn't properly identify if react-bootstrap el is not visible, see workaround below
     const wrapper = componentWrapper(store, QuerySettingsComponent);
+    // NB: Jest doesn't properly identify if react-bootstrap el is not visible, see workaround below
     expect(wrapper.find('#query-settings-accordion').at(0).getDOMNode().className).toEqual(
       'collapse show',
     );

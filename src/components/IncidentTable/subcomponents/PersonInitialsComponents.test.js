@@ -5,8 +5,9 @@ import {
 } from 'react-redux';
 
 import {
-  mount,
-} from 'enzyme';
+  render, screen,
+} from 'src/custom-testing-lib';
+
 import {
   mockStore,
 } from 'mocks/store.test';
@@ -41,14 +42,14 @@ describe('PersonInitialsComponents', () => {
     const displayedUsers = users.map((user) => ({
       user,
     }));
-    const wrapper = mount(
+    render(
       <Provider store={store}>
         <PersonInitialsComponents displayedUsers={displayedUsers} />
       </Provider>,
     );
     // Initials should be rendered
-    expect(wrapper.find('div[role="img"]').contains('AL')).toBeTruthy();
+    expect(screen.getByRole('img', { name: 'Abraham Lincoln' })).toHaveTextContent('AL');
     // Emojis should also be rendered as initials
-    expect(wrapper.find('div[role="img"]').contains('G📟')).toBeTruthy();
+    expect(screen.getByRole('img', { name: 'George Washington 📟' })).toHaveTextContent('G📟');
   });
 });

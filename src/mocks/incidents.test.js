@@ -135,5 +135,3 @@ export const generateMockIncident = () => {
 export const generateMockIncidents = (num) => Array.from({ length: num }, () => generateMockIncident());
 
 export default generateMockIncidents;
-
-test.skip('Mock incidents', () => 1);

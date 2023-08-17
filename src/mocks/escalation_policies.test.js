@@ -18,5 +18,3 @@ const generateMockEscalationPolicy = () => {
 export const generateMockEscalationPolicies = (num) => Array.from({ length: num }, () => generateMockEscalationPolicy());
 
 export default generateMockEscalationPolicies;
-
-test.skip('Mock Teams', () => 1);
