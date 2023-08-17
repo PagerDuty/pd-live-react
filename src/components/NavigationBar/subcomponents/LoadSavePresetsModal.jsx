@@ -30,6 +30,7 @@ import {
   setDefaultSinceDateTenor as setDefaultSinceDateTenorConnected,
   setMaxRateLimit as setMaxRateLimitConnected,
   setSearchAllCustomDetails as setSearchAllCustomDetailsConnected,
+  setFuzzySearch as setFuzzySearchConnected,
   setRespondersInEpFilter as setRespondersInEpFilterConnected,
   setAlertCustomDetailColumns as setAlertCustomDetailColumnsConnected,
   setDarkMode as setDarkModeConnected,
@@ -65,6 +66,7 @@ const SettingsModalComponent = () => {
     defaultSinceDateTenor,
     maxRateLimit,
     searchAllCustomDetails,
+    fuzzySearch,
     respondersInEpFilter,
     alertCustomDetailFields,
     darkMode,
@@ -98,6 +100,7 @@ const SettingsModalComponent = () => {
   const setDefaultSinceDateTenor = (tenor) => dispatch(setDefaultSinceDateTenorConnected(tenor));
   const setMaxRateLimit = (limit) => dispatch(setMaxRateLimitConnected(limit));
   const setSearchAllCustomDetails = (search) => dispatch(setSearchAllCustomDetailsConnected(search));
+  const setFuzzySearch = (search) => dispatch(setFuzzySearchConnected(search));
   const setRespondersInEpFilter = (show) => dispatch(setRespondersInEpFilterConnected(show));
   const setAlertCustomDetailColumns = (columns) => dispatch(setAlertCustomDetailColumnsConnected(columns));
   const setDarkMode = (mode) => dispatch(setDarkModeConnected(mode));
@@ -122,6 +125,7 @@ const SettingsModalComponent = () => {
       defaultSinceDateTenor,
       maxRateLimit,
       searchAllCustomDetails,
+      fuzzySearch: !!fuzzySearch,
       respondersInEpFilter,
       alertCustomDetailFields,
       darkMode,
@@ -166,6 +170,7 @@ const SettingsModalComponent = () => {
     setDefaultSinceDateTenor(presets.settings.defaultSinceDateTenor);
     setMaxRateLimit(presets.settings.maxRateLimit);
     setSearchAllCustomDetails(presets.settings.searchAllCustomDetails);
+    setFuzzySearch(!!presets.settings.fuzzySearch);
     setRespondersInEpFilter(presets.settings.respondersInEpFilter);
     setAlertCustomDetailColumns(presets.settings.alertCustomDetailFields);
     setDarkMode(presets.settings.darkMode);

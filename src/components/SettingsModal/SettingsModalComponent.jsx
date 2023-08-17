@@ -28,6 +28,7 @@ import {
   Stack,
   Switch,
   Text,
+  VStack,
   useToast,
   // useColorMode,
 } from '@chakra-ui/react';
@@ -55,6 +56,7 @@ import {
   setDefaultSinceDateTenor as setDefaultSinceDateTenorConnected,
   setMaxRateLimit as setMaxRateLimitConnected,
   setSearchAllCustomDetails as setSearchAllCustomDetailsConnected,
+  setFuzzySearch as setFuzzySearchConnected,
   setRespondersInEpFilter as setRespondersInEpFilterConnected,
   setRelativeDates as setRelativeDatesConnected,
 } from 'src/redux/settings/actions';
@@ -71,6 +73,7 @@ const SettingsModalComponent = () => {
     defaultSinceDateTenor,
     maxRateLimit,
     searchAllCustomDetails,
+    fuzzySearch,
     respondersInEpFilter,
     relativeDates,
   } = useSelector((state) => state.settings);
@@ -87,6 +90,9 @@ const SettingsModalComponent = () => {
   };
   const setSearchAllCustomDetails = (newSearchAllCustomDetails) => {
     dispatch(setSearchAllCustomDetailsConnected(newSearchAllCustomDetails));
+  };
+  const setFuzzySearch = (newFuzzySearch) => {
+    dispatch(setFuzzySearchConnected(newFuzzySearch));
   };
   const setRespondersInEpFilter = (newRespondersInEpFilter) => {
     dispatch(setRespondersInEpFilterConnected(newRespondersInEpFilter));
@@ -105,6 +111,7 @@ const SettingsModalComponent = () => {
   const [tempMaxRateLimit, setTempMaxRateLimit] = useState(maxRateLimit);
 
   const [tempSearchAllCustomDetails, setTempSearchAllCustomDetails] = useState(searchAllCustomDetails);
+  const [tempFuzzySearch, setTempFuzzySearch] = useState(fuzzySearch);
   const [tempRespondersInEpFilter, setTempRespondersInEpFilter] = useState(respondersInEpFilter);
   const [tempRelativeDates, setTempRelativeDates] = useState(relativeDates);
 
@@ -120,6 +127,10 @@ const SettingsModalComponent = () => {
     }
     if (tempSearchAllCustomDetails !== searchAllCustomDetails) {
       setSearchAllCustomDetails(tempSearchAllCustomDetails);
+    }
+    if (tempFuzzySearch !== fuzzySearch) {
+      console.log('tempFuzzySearch', tempFuzzySearch);
+      setFuzzySearch(tempFuzzySearch);
     }
     if (tempRespondersInEpFilter !== respondersInEpFilter) {
       setRespondersInEpFilter(tempRespondersInEpFilter);
@@ -202,16 +213,28 @@ const SettingsModalComponent = () => {
             </FormControl>
             <FormControl>
               <FormLabel htmlFor="search-all-custom-details-switch">{t('Global Search')}</FormLabel>
-              <Switch
-                id="search-all-custom-details-switch"
-                isChecked={tempSearchAllCustomDetails}
-                aria-label={t('Search all alert custom details in global search')}
-                onChange={(e) => {
-                  setTempSearchAllCustomDetails(e.target.checked);
-                }}
-              >
-                {t('Search all alert custom details in global search')}
-              </Switch>
+              <VStack align="flex-start" spacing={1}>
+                <Switch
+                  id="search-all-custom-details-switch"
+                  isChecked={tempSearchAllCustomDetails}
+                  aria-label={t('Search all alert custom details in global search')}
+                  onChange={(e) => {
+                    setTempSearchAllCustomDetails(e.target.checked);
+                  }}
+                >
+                  {t('Search all alert custom details in global search')}
+                </Switch>
+                <Switch
+                  id="fuzzy-search-switch"
+                  isChecked={tempFuzzySearch}
+                  aria-label={t('Fuzzy search')}
+                  onChange={(e) => {
+                    setTempFuzzySearch(e.target.checked);
+                  }}
+                >
+                  {t('Fuzzy search')}
+                </Switch>
+              </VStack>
             </FormControl>
             <FormControl>
               <FormLabel htmlFor="responders-in-ep-filter-switch">{t('Filters')}</FormLabel>

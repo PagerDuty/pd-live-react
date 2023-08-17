@@ -420,7 +420,7 @@ export function* filterIncidentsImpl() {
     incidentTableColumns,
   } = yield select(selectIncidentTable);
   const {
-    searchAllCustomDetails, respondersInEpFilter,
+    searchAllCustomDetails, respondersInEpFilter, fuzzySearch,
   } = yield select(selectSettings);
 
   let filteredIncidentsByQuery = [...incidents];
@@ -527,6 +527,10 @@ export function* filterIncidentsImpl() {
 
       if (searchAllCustomDetails) {
         updatedFuseOptions.keys = [...updatedFuseOptions.keys, 'alerts.flattedCustomDetails'];
+      }
+
+      if (!fuzzySearch) {
+        updatedFuseOptions.threshold = 0.0;
       }
 
       try {

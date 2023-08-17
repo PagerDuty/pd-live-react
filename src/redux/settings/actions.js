@@ -15,6 +15,9 @@ export const SET_DEFAULT_SINCE_DATE_TENOR_COMPLETED = 'SET_DEFAULT_SINCE_DATE_TE
 export const SET_SEARCH_ALL_CUSTOM_DETAILS_REQUESTED = 'SET_SEARCH_ALL_CUSTOM_DETAILS_REQUESTED';
 export const SET_SEARCH_ALL_CUSTOM_DETAILS_COMPLETED = 'SET_SEARCH_ALL_CUSTOM_DETAILS_COMPLETED';
 
+export const SET_FUZZY_SEARCH_REQUESTED = 'SET_FUZZY_SEARCH_REQUESTED';
+export const SET_FUZZY_SEARCH_COMPLETED = 'SET_FUZZY_SEARCH_COMPLETED';
+
 export const SET_RESPONDERS_IN_EP_FILTER_REQUESTED = 'SET_RESPONDERS_IN_EP_FILTER_REQUESTED';
 export const SET_RESPONDERS_IN_EP_FILTER_COMPLETED = 'SET_RESPONDERS_IN_EP_FILTER_COMPLETED';
 
@@ -60,6 +63,11 @@ export const setDefaultSinceDateTenor = (defaultSinceDateTenor) => ({
 export const setSearchAllCustomDetails = (searchAllCustomDetails) => ({
   type: SET_SEARCH_ALL_CUSTOM_DETAILS_REQUESTED,
   searchAllCustomDetails,
+});
+
+export const setFuzzySearch = (fuzzySearch) => ({
+  type: SET_FUZZY_SEARCH_REQUESTED,
+  fuzzySearch,
 });
 
 export const setRespondersInEpFilter = (respondersInEpFilter) => ({
