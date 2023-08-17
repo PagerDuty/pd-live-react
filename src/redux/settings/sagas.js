@@ -27,6 +27,8 @@ import {
   SET_DEFAULT_SINCE_DATE_TENOR_COMPLETED,
   SET_SEARCH_ALL_CUSTOM_DETAILS_REQUESTED,
   SET_SEARCH_ALL_CUSTOM_DETAILS_COMPLETED,
+  SET_FUZZY_SEARCH_REQUESTED,
+  SET_FUZZY_SEARCH_COMPLETED,
   SET_RESPONDERS_IN_EP_FILTER_REQUESTED,
   SET_RESPONDERS_IN_EP_FILTER_COMPLETED,
   SET_ALERT_CUSTOM_DETAIL_COLUMNS_REQUESTED,
@@ -114,6 +116,20 @@ export function* setSearchAllCustomDetailsImpl(action) {
   yield put({
     type: SET_SEARCH_ALL_CUSTOM_DETAILS_COMPLETED,
     searchAllCustomDetails,
+  });
+}
+
+export function* setFuzzySearch() {
+  yield takeLatest(SET_FUZZY_SEARCH_REQUESTED, setFuzzySearchImpl);
+}
+
+export function* setFuzzySearchImpl(action) {
+  const {
+    fuzzySearch,
+  } = action;
+  yield put({
+    type: SET_FUZZY_SEARCH_COMPLETED,
+    fuzzySearch,
   });
 }
 
