@@ -53,7 +53,9 @@ export const checkActionAlertsModalContent = (content) => {
 
 export const checkPopoverContent = (incidentId, incidentHeader, content) => {
   cy.wait(2000);
-  cy.get(`[data-incident-header="${incidentHeader}"][data-incident-cell-id="${incidentId}"]`).within(() => {
+  cy.get(
+    `[data-incident-header="${incidentHeader}"][data-incident-cell-id="${incidentId}"]`,
+  ).within(() => {
     cy.get('.chakra-avatar__group').realHover();
     cy.get('.chakra-popover__popper').should('be.visible').contains(content, { timeout: 10000 });
   });
@@ -237,10 +239,9 @@ export const manageCustomAlertColumnDefinitions = (customAlertColumnDefinitions)
   cy.get('.settings-panel-dropdown').click();
   cy.get('.dropdown-item').contains('Columns').click();
 
-  cy.get('#custom-columns-card-body .chakra-icon')
-    .each(($el) => {
-      cy.wrap($el).click();
-    });
+  cy.get('#custom-columns-card-body .chakra-icon').each(($el) => {
+    cy.wrap($el).click();
+  });
 
   customAlertColumnDefinitions.forEach((customAlertColumnDefinition) => {
     const [header, accessorPath] = customAlertColumnDefinition.split(':');
