@@ -1,3 +1,4 @@
+/* eslint-disable import/no-extraneous-dependencies */
 // ***********************************************************
 // This example support/index.js is processed and
 // loaded automatically before your test files.
@@ -21,4 +22,4 @@ import './commands';
 
 import 'cypress-fail-fast';
 import '@4tw/cypress-drag-drop';
-import "cypress-real-events";
+import 'cypress-real-events';

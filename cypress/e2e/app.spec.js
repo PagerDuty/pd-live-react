@@ -92,11 +92,14 @@ describe('PagerDuty Live', () => {
       .set({ hour: 0, minute: 0, second: 0, millisecond: 0 })
       .toISOString();
     const until = moment().set({ hour: 0, minute: 0, second: 0, millisecond: 0 }).toISOString();
-    cy.intercept('GET', [
-      'https://api.pagerduty.com/incidents',
-      '?limit=100&total=true&offset=0',
-      `&since=${since}&until=${until}*`,
-    ].join('')).as('getUrl');
+    cy.intercept(
+      'GET',
+      [
+        'https://api.pagerduty.com/incidents',
+        '?limit=100&total=true&offset=0',
+        `&since=${since}&until=${until}*`,
+      ].join(''),
+    ).as('getUrl');
 
     cy.visit(
       `http://localhost:3000/pd-live-react/?disable-polling=true&since=${since}&until=${until}`,

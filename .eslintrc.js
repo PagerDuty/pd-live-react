@@ -1,4 +1,6 @@
-const { OFF, WARN, ERROR } = {
+const {
+  OFF, WARN, ERROR,
+} = {
   OFF: 0,
   WARN: 1,
   ERROR: 2,
@@ -16,7 +18,7 @@ module.exports = {
     'plugin:react/jsx-runtime',
     'plugin:react-hooks/recommended',
     'airbnb',
-    'plugin:cypress/recommended'
+    'plugin:cypress/recommended',
   ],
   parser: '@babel/eslint-parser',
   parserOptions: {
@@ -60,13 +62,13 @@ module.exports = {
     },
   ],
   settings: {
-     react: { version: '18.2' },
+    react: { version: '18.2' },
     'import/resolver': {
       alias: {
         map: [
           ['src', './src'],
         ],
-        extensions: ['.ts', '.js', '.jsx', '.json']
+        extensions: ['.ts', '.js', '.jsx', '.json'],
       },
       node: {
         extensions: ['.ts', '.js', '.jsx', '.json'],
