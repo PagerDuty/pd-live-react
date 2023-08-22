@@ -14,6 +14,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version-file: .tool-versions
+      - name: Node Version
+        run: node -v
       - name: Install Yarn
         run: npm install -g yarn
       # https://github.com/actions/cache/blob/main/examples.md#node---yarn
@@ -33,6 +38,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version-file: .tool-versions
+      - name: Node Version
+        run: node -v
       - name: Install Yarn
         run: npm install -g yarn
       - name: Get yarn cache directory path
