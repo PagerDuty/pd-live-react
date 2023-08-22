@@ -51,13 +51,9 @@ jobs:
   cypress-run:
     needs: install
     runs-on: ubuntu-latest
-    permissions:
-      packages: read
     container:
-      image: ghcr.io/pagerduty/pd-live-react-cypress-browsers:latest
-      credentials:
-        username: ${{ github.actor }}
-        password: ${{ secrets.GITHUB_TOKEN }}
+      image: cypress/browsers:node-20.5.0-chrome-114.0.5735.133-1-ff-114.0.2-edge-114.0.1823.51-1
+      options: --user 1001
     strategy:
       fail-fast: false
       matrix:
