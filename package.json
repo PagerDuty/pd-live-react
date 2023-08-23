@@ -150,6 +150,6 @@
     "vite-plugin-eslint": "^1.8.1",
     "vite-plugin-svgr": "^3.2.0",
     "wait-on": "^7.0.1",
-    "yarn-audit-fix": "^9.3.12"
+    "yarn-audit-fix": "^10.0.0"
   }
 }
