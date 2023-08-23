@@ -4,7 +4,7 @@
   "version": "0.9.2-beta.0",
   "private": true,
   "dependencies": {
-    "@braintree/sanitize-url": "^6.0.2",
+    "@braintree/sanitize-url": "^6.0.3",
     "@chakra-ui/icons": "^2.0.19",
     "@chakra-ui/react": "^2.7.1",
     "@craco/craco": "^7.0.0",
