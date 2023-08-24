@@ -48,7 +48,7 @@ import {
 } from 'src/redux/query_settings/actions';
 
 import {
-  updateIncidentTableColumns as updateIncidentTableColumnsConnected,
+  saveIncidentTable as saveIncidentTableConnected,
 } from 'src/redux/incident_table/actions';
 
 import {
@@ -110,7 +110,7 @@ const SettingsModalComponent = () => {
   const updateQuerySettingsEscalationPolicies = (eps) => dispatch(updateQuerySettingsEscalationPoliciesConnected(eps));
   const updateQuerySettingsServices = (services) => dispatch(updateQuerySettingsServicesConnected(services));
   const updateQuerySettingsUsers = (users) => dispatch(updateQuerySettingsUsersConnected(users));
-  const updateIncidentTableColumns = (columns) => dispatch(updateIncidentTableColumnsConnected(columns));
+  const saveIncidentTable = (columns) => dispatch(saveIncidentTableConnected(columns));
 
   const toast = useToast();
   const {
@@ -183,7 +183,7 @@ const SettingsModalComponent = () => {
     updateQuerySettingsServices(presets.querySettings.serviceIds);
     updateQuerySettingsUsers(presets.querySettings.userIds);
 
-    updateIncidentTableColumns(presets.incidentTableColumns);
+    saveIncidentTable(presets.incidentTableColumns);
   };
 
   const inputFile = useRef(null);

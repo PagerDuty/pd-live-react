@@ -106,15 +106,20 @@ const TableColumnsModalComponent = () => {
       id: column.id,
       Header: column.Header,
       columnType: column.columnType,
+      accessor: column.accessor,
+      accessorPath: column.accessorPath,
       label: column.i18n ? column.i18n : column.Header,
       value,
     };
   });
   const [selectedColumns, setSelectedColumns] = useState(getSelectedColumns());
 
-  const getUnselectedColumns = () => allAvailableColumns.filter(
-    (c) => !selectedColumns.find((s) => columnValue(s) === columnValue(c)),
-  );
+  const getUnselectedColumns = () => {
+    const unselected = allAvailableColumns.filter(
+      (c) => !selectedColumns.find((s) => s.value === columnValue(c)),
+    );
+    return unselected;
+  };
   const unselectedColumns = useMemo(getUnselectedColumns, [allAvailableColumns, selectedColumns]);
 
   const unselectColumn = (column) => {
