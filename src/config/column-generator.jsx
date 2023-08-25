@@ -882,6 +882,7 @@ export const incidentColumnsTranslations = [
   i18next.t('Source'),
   i18next.t('Class'),
   i18next.t('Group'),
+  i18next.t('Links'),
 ];
 
 // List of severity names for i18next-parser
