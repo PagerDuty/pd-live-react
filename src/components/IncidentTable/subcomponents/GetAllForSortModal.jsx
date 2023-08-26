@@ -17,10 +17,6 @@ import {
   ModalFooter,
   ModalBody,
   ModalCloseButton,
-  // Progress,
-  // Stack,
-  // Box,
-  // Text,
 } from '@chakra-ui/react';
 
 import {
@@ -28,37 +24,32 @@ import {
 } from 'src/redux/incidents/actions';
 
 const GetAllForSortModal = ({
-  isOpen, onClose, columnType,
+  isOpen, onClose, columnType, rows,
 }) => {
   const maxRateLimit = useSelector((state) => state.settings.maxRateLimit);
-  const {
-    filteredIncidentsByQuery, incidentAlerts, incidentNotes,
-  } = useSelector(
-    (state) => state.incidents,
-  );
   const dispatch = useDispatch();
   const getIncidentAlerts = (incidentId) => dispatch(getIncidentAlertsAsync(incidentId));
   const getIncidentNotes = (incidentId) => dispatch(getIncidentNotesAsync(incidentId));
 
   const rowsNeedingFetchAlerts = useMemo(
-    () => filteredIncidentsByQuery.filter((incident) => incidentAlerts[incident.id] === undefined),
-    [filteredIncidentsByQuery, incidentAlerts],
+    () => rows.filter((incident) => !incident.original.alerts),
+    [rows],
   );
 
   const rowsNeedingFetchNotes = useMemo(
-    () => filteredIncidentsByQuery.filter((incident) => incidentNotes[incident.id] === undefined),
-    [filteredIncidentsByQuery, incidentNotes],
+    () => rows.filter((incident) => !incident.original.notes),
+    [rows],
   );
 
   const fetchRows = useCallback(() => {
     if (columnType === 'alert') {
-      rowsNeedingFetchAlerts.forEach((incident) => {
-        getIncidentAlerts(incident.id);
+      rowsNeedingFetchAlerts.forEach((row) => {
+        getIncidentAlerts(row.original.id);
       });
     }
     if (columnType === 'notes') {
-      rowsNeedingFetchNotes.forEach((incident) => {
-        getIncidentNotes(incident.id);
+      rowsNeedingFetchNotes.forEach((row) => {
+        getIncidentNotes(row.original.id);
       });
     }
   }, [

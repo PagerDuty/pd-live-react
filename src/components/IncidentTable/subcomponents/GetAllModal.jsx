@@ -25,54 +25,70 @@ import {
 } from 'src/redux/incidents/actions';
 
 const GetAllModal = ({
-  isOpen, onClose, exportCsv,
+  isOpen, onClose, exportCsv, rows: rowsToExport,
 }) => {
   const maxRateLimit = useSelector((state) => state.settings.maxRateLimit);
-  const selectedRows = useSelector((state) => state.incidentTable.selectedRows);
-  const {
-    filteredIncidentsByQuery, incidentAlerts, incidentNotes,
-  } = useSelector(
-    (state) => state.incidents,
-  );
+
   const dispatch = useDispatch();
   const getIncidentAlerts = (incidentId) => dispatch(getIncidentAlertsAsync(incidentId));
   const getIncidentNotes = (incidentId) => dispatch(getIncidentNotesAsync(incidentId));
 
-  const rowsToExport = useMemo(
-    () => (selectedRows && selectedRows.length > 0
-      ? selectedRows
-      : filteredIncidentsByQuery.map((incident) => ({
-        ...incident,
-        alerts: incidentAlerts[incident.id],
-        notes: incidentNotes[incident.id],
-      }))),
-    [selectedRows, filteredIncidentsByQuery, incidentAlerts, incidentNotes],
-  );
-
   const rowsNeedingFetch = useMemo(
-    () => rowsToExport.filter((incident) => !incident.alerts || !incident.notes),
+    () => rowsToExport.filter((row) => {
+      const {
+        alerts, notes,
+      } = row.original;
+      return !alerts || !notes;
+    }),
     [rowsToExport],
   );
 
-  const rowsFetchingAlerts = useMemo(
-    () => rowsToExport.filter((incident) => incident.alerts && incident.alerts.status === 'fetching'),
+  const rowsFetching = useMemo(
+    () => rowsToExport.filter((row) => {
+      const {
+        alerts,
+        notes,
+      } = row.original;
+      return (
+        (alerts && alerts.status === 'fetching')
+        || (notes && notes.status === 'fetching')
+      );
+    }),
     [rowsToExport],
   );
 
-  const rowsDoneFetchingAlerts = useMemo(
-    () => rowsToExport.filter((incident) => incident.alerts && incident.alerts instanceof Array),
+  const rowsDoneFetching = useMemo(
+    () => rowsToExport.filter((row) => {
+      const {
+        alerts,
+        notes,
+      } = row.original;
+      return (
+        (alerts && alerts instanceof Array)
+        && (notes && notes instanceof Array)
+      );
+    }),
     [rowsToExport],
   );
 
   const readyToExport = useMemo(
-    () => rowsNeedingFetch.length === 0 && rowsFetchingAlerts.length === 0,
-    [rowsNeedingFetch, rowsFetchingAlerts],
+    () => rowsNeedingFetch.length === 0 && rowsFetching.length === 0,
+    [rowsNeedingFetch],
   );
 
   const fetchRows = useCallback(() => {
-    rowsNeedingFetch.forEach((incident) => {
-      getIncidentAlerts(incident.id);
-      getIncidentNotes(incident.id);
+    rowsNeedingFetch.forEach((row) => {
+      const {
+        id,
+        notes,
+        alerts,
+      } = row.original;
+      if (!notes) {
+        getIncidentNotes(id);
+      }
+      if (!alerts) {
+        getIncidentAlerts(id);
+      }
     });
   }, [rowsNeedingFetch]);
 
@@ -105,16 +121,16 @@ const GetAllModal = ({
                 <Button onClick={exportCsv}>No, export without notes and alerts</Button>
               </>
             )}
-            {rowsFetchingAlerts.length > 0 && rowsNeedingFetch.length === 0 && (
+            {rowsFetching.length > 0 && rowsNeedingFetch.length === 0 && (
               <>
                 <Text fontSize="sm">Fetching notes and alerts...</Text>
                 <Box rounded="md" borderWidth={1} p={2}>
                   <Text fontSize="sm" fontWeight="bold">
-                    {`${rowsFetchingAlerts.length} remaining`}
+                    {`${rowsFetching.length} remaining`}
                   </Text>
                   <Progress
                     min={0}
-                    value={rowsDoneFetchingAlerts.length}
+                    value={rowsDoneFetching.length}
                     max={rowsToExport.length}
                   />
                 </Box>
