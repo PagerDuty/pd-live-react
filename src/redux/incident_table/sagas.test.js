@@ -54,7 +54,9 @@ describe('Sagas: Incident Table', () => {
       incidentTableColumns: persistableColumns,
     })
     .hasFinalState({
-      incidentTableState: {},
+      incidentTableState: {
+        filters: [],
+      },
       incidentTableColumns: persistableColumns,
       allSelected: false,
       selectedCount: 0,
