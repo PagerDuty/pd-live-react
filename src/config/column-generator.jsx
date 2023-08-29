@@ -610,6 +610,75 @@ export const defaultIncidentColumns = () => [
 
 export const defaultAlertsColumns = () => [
   incidentColumn({
+    id: 'links',
+    header: 'Links',
+    columnType: 'alert',
+    accessor: (incident) => {
+      if (incident.alerts && incident.alerts instanceof Array && incident.alerts.length > 0) {
+        const links = [];
+        incident.alerts.forEach((alert) => {
+          if (alert.body?.cef_details?.contexts) {
+            alert.body.cef_details.contexts.forEach((context) => {
+              if (context.type === 'link') {
+                links.push(context.href);
+              }
+            });
+          }
+        });
+        // unique links on href
+        const uniqueLinks = links.filter(
+          (link, index, self) => self.findIndex((l) => l === link) === index,
+        );
+        return uniqueLinks.join(', ');
+      }
+      return '';
+    },
+    minWidth: 200,
+    renderer: ({
+      cell,
+    }) => {
+      const {
+        alerts,
+      } = cell.row.original;
+      if (alerts?.status === 'fetching') {
+        return (
+          <CellDiv>
+            <Skeleton>fetching</Skeleton>
+          </CellDiv>
+        );
+      }
+      if (alerts && alerts instanceof Array && alerts.length > 0) {
+        const links = [];
+        alerts.forEach((alert) => {
+          if (alert.body?.cef_details?.contexts) {
+            alert.body.cef_details.contexts.forEach((context) => {
+              if (context.type === 'link') {
+                links.push(context);
+              }
+            });
+          }
+        });
+        if (links.length > 0) {
+          // unique links on href
+          const uniqueLinks = links.filter(
+            (link, index, self) => self.findIndex((l) => l.href === link.href) === index,
+          );
+          return renderLinkCells(
+            uniqueLinks.map((link) => ({
+              text: link.text || link.href,
+              href: link.href,
+            })),
+          );
+        }
+      }
+      return (
+        <CellDiv>
+          --
+        </CellDiv>
+      );
+    },
+  }),
+  incidentColumn({
     id: 'severity',
     header: 'Severity',
     columnType: 'alert',
@@ -813,6 +882,7 @@ export const incidentColumnsTranslations = [
   i18next.t('Source'),
   i18next.t('Class'),
   i18next.t('Group'),
+  i18next.t('Links'),
 ];
 
 // List of severity names for i18next-parser
