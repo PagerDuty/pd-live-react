@@ -14,6 +14,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version-file: .tool-versions
+      - name: Node Version
+        run: node -v
       - name: Install Yarn
         run: npm install -g yarn
       # https://github.com/actions/cache/blob/main/examples.md#node---yarn
@@ -33,6 +38,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version-file: .tool-versions
+      - name: Node Version
+        run: node -v
       - name: Install Yarn
         run: npm install -g yarn
       - name: Get yarn cache directory path
@@ -52,7 +62,7 @@ jobs:
     needs: install
     runs-on: ubuntu-latest
     container:
-      image: cypress/browsers:node-18.16.0-chrome-114.0.5735.133-1-ff-114.0.2-edge-114.0.1823.51-1
+      image: cypress/browsers:node-20.5.0-chrome-114.0.5735.133-1-ff-114.0.2-edge-114.0.1823.51-1
       options: --user 1001
     strategy:
       fail-fast: false
@@ -87,7 +97,7 @@ jobs:
         run: node -v
       - name: Cypress run
         # Uses the official Cypress GitHub action https://github.com/cypress-io/github-action
-        uses: cypress-io/github-action@v5
+        uses: cypress-io/github-action@v6
         with:
           # Starts web server for E2E tests - replace with your own server invocation
           # https://docs.cypress.io/guides/continuous-integration/introduction#Boot-your-server
