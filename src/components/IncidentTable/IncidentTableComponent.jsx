@@ -304,6 +304,19 @@ const IncidentTableComponent = () => {
     },
   );
 
+  // save filters when the user changes them
+  useEffect(() => {
+    updateIncidentTableState({
+      ...incidentTableState,
+      filters: tableInstance.state.filters,
+    });
+  }, [tableInstance.state.filters]);
+
+  // Update table filters when columns change
+  useEffect(() => {
+    tableInstance.setAllFilters(incidentTableState.filters);
+  }, [columns]);
+
   const {
     getTableProps,
     getTableBodyProps,
