@@ -1,9 +1,11 @@
-import '@testing-library/jest-dom';
+import {
+  componentWrapper, screen,
+} from 'src/custom-testing-lib';
 
 import 'i18n.js';
 
 import {
-  mockStore, componentWrapper,
+  mockStore,
 } from 'mocks/store.test';
 
 import {
@@ -12,16 +14,15 @@ import {
 
 import {
   generateRandomInteger,
-} from 'util/helpers';
+} from 'src/util/helpers';
 
 import {
   TRIGGERED, RESOLVED,
-} from 'util/incidents';
+} from 'src/util/incidents';
 
 import IncidentActionsComponent from './IncidentActionsComponent';
 
-// FIXME: incident state
-xdescribe('IncidentActionsComponent', () => {
+describe('IncidentActionsComponent', () => {
   const randomIncidentCount = generateRandomInteger(1, 100);
   const mockIncidents = generateMockIncidents(randomIncidentCount);
 
@@ -34,6 +35,10 @@ xdescribe('IncidentActionsComponent', () => {
       fetchingIncidentAlerts: false,
       refreshingIncidents: false,
       filteredIncidentsByQuery: mockIncidents,
+      incidents: mockIncidents,
+      incidentAlerts: {},
+      incidentNotes: {},
+      incidentLatestLogEntries: {},
     },
     querySettings: [],
     priorities: { priorities: [] },
@@ -41,7 +46,13 @@ xdescribe('IncidentActionsComponent', () => {
     extensions: {
       serviceExtensionMap: {},
     },
-    responsePlays: { responsePlays: [] },
+    incidentActions: {
+      status: '',
+    },
+    responsePlays: {
+      responsePlays: [],
+      status: '',
+    },
     settings: {
       darkMode: false,
     },
@@ -52,67 +63,43 @@ xdescribe('IncidentActionsComponent', () => {
 
   it('should render element', () => {
     store = mockStore(baseStoreMap);
-    const wrapper = componentWrapper(store, IncidentActionsComponent);
-    expect(wrapper.find('#incident-actions-ctr')).toBeTruthy();
+    componentWrapper(store, IncidentActionsComponent);
+    expect(screen.getAllByRole('button')).toHaveLength(10); // All 10 action buttons
   });
 
   it('should activate all buttons when a triggered incident is selected', () => {
     tempMockIncident.status = TRIGGERED;
     tempStoreMap.incidentTable = { selectedRows: [tempMockIncident], selectedCount: 1 };
     store = mockStore(tempStoreMap);
-    const wrapper = componentWrapper(store, IncidentActionsComponent);
+    componentWrapper(store, IncidentActionsComponent);
 
-    expect(wrapper.find('button#incident-action-acknowledge-button').prop('className')).toEqual(
-      'action-button btn btn-light',
-    );
-    expect(wrapper.find('button#incident-action-escalate-button').prop('className')).toEqual(
-      'dropdown-toggle btn btn-light',
-    );
-    expect(wrapper.find('button#incident-action-reassign-button').prop('className')).toEqual(
-      'action-button btn btn-light',
-    );
-    expect(wrapper.find('button#incident-action-add-responders-button').prop('className')).toEqual(
-      'action-button btn btn-light',
-    );
-    expect(wrapper.find('button#incident-action-snooze-button').prop('className')).toEqual(
-      'dropdown-toggle btn btn-light',
-    );
-    expect(wrapper.find('button#incident-action-merge-button').prop('className')).toEqual(
-      'action-button btn btn-light',
-    );
-    expect(wrapper.find('button#incident-action-resolve-button').prop('className')).toEqual(
-      'action-button btn btn-light',
-    );
-    expect(wrapper.find('button#incident-action-update-priority-button').prop('className')).toEqual(
-      'dropdown-toggle btn btn-light',
-    );
-    expect(wrapper.find('button#incident-action-add-note-button').prop('className')).toEqual(
-      'action-button btn btn-light',
-    );
-    expect(wrapper.find('button#incident-action-run-action-button').prop('className')).toEqual(
-      'dropdown-toggle btn btn-light',
-    );
+    expect(screen.getByRole('button', { name: 'Acknowledge' })).toBeEnabled();
+    expect(screen.getByRole('button', { name: 'Escalate' })).toBeEnabled();
+    expect(screen.getByRole('button', { name: 'Reassign' })).toBeEnabled();
+    expect(screen.getByRole('button', { name: 'Add Responders' })).toBeEnabled();
+    expect(screen.getByRole('button', { name: 'Snooze' })).toBeEnabled();
+    expect(screen.getByRole('button', { name: 'Merge' })).toBeEnabled();
+    expect(screen.getByRole('button', { name: 'Resolve' })).toBeEnabled();
+    expect(screen.getByRole('button', { name: 'Update Priority' })).toBeEnabled();
+    expect(screen.getByRole('button', { name: 'Add Note' })).toBeEnabled();
+    expect(screen.getByRole('button', { name: 'Run Action' })).toBeEnabled();
   });
 
   it('should deactivate acknowledge button when a resolved incident is selected', () => {
     tempMockIncident.status = RESOLVED;
     tempStoreMap.incidentTable = { selectedRows: [tempMockIncident], selectedCount: 1 };
     store = mockStore(tempStoreMap);
-    const wrapper = componentWrapper(store, IncidentActionsComponent);
+    componentWrapper(store, IncidentActionsComponent);
 
-    expect(wrapper.find('button#incident-action-acknowledge-button').prop('className')).toEqual(
-      'action-button btn btn-outline-secondary',
-    );
+    expect(screen.getByRole('button', { name: 'Acknowledge' })).toBeDisabled();
   });
 
   it('should activate merge button when a resolved incident is selected', () => {
     tempMockIncident.status = RESOLVED;
     tempStoreMap.incidentTable = { selectedRows: [tempMockIncident], selectedCount: 1 };
     store = mockStore(tempStoreMap);
-    const wrapper = componentWrapper(store, IncidentActionsComponent);
+    componentWrapper(store, IncidentActionsComponent);
 
-    expect(wrapper.find('button#incident-action-merge-button').prop('className')).toEqual(
-      'action-button btn btn-light',
-    );
+    expect(screen.getByRole('button', { name: 'Merge' })).toBeEnabled();
   });
 });

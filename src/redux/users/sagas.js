@@ -5,25 +5,25 @@ import {
 import {
   formatError,
 } from 'pretty-print-error';
-import i18next from 'i18n';
+import i18next from 'src/i18n';
 
 import {
   PD_SUBDOMAIN_ALLOW_LIST,
-} from 'config/constants';
+} from 'src/config/constants';
 
 import {
   // pd,
   throttledPdAxiosRequest,
   pdParallelFetch,
-} from 'util/pd-api-wrapper';
+} from 'src/util/pd-api-wrapper';
 
 import {
   convertListToMapById, getSubdomainFromUserUrl,
-} from 'util/helpers';
+} from 'src/util/helpers';
 
 import {
   updateConnectionStatusRequested,
-} from 'util/sagas';
+} from 'src/util/sagas';
 
 import {
   USER_AUTHORIZE_REQUESTED,

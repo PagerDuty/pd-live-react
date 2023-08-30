@@ -4,7 +4,7 @@ import {
 
 import {
   HIGH, INCIDENT_STATES,
-} from 'util/incidents';
+} from 'src/util/incidents';
 
 const generateMockAlert = () => {
   // Generate Faker stubs for alert
@@ -135,5 +135,3 @@ export const generateMockIncident = () => {
 export const generateMockIncidents = (num) => Array.from({ length: num }, () => generateMockIncident());
 
 export default generateMockIncidents;
-
-test.skip('Mock incidents', () => 1);

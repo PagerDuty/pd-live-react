@@ -2,14 +2,14 @@ import {
   put, call, takeLatest,
 } from 'redux-saga/effects';
 
-import i18next from 'i18n';
+import i18next from 'src/i18n';
 
 import {
   pdParallelFetch,
-} from 'util/pd-api-wrapper';
+} from 'src/util/pd-api-wrapper';
 import {
   UPDATE_CONNECTION_STATUS_REQUESTED,
-} from 'redux/connection/actions';
+} from 'src/redux/connection/actions';
 import {
   FETCH_ESCALATION_POLICIES_REQUESTED,
   FETCH_ESCALATION_POLICIES_COMPLETED,

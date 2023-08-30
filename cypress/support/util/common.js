@@ -28,14 +28,14 @@ export const waitForIncidentTable = () => {
   cy.get('.incident-table-fixed-list').scrollTo('top', { ensureScrollable: false });
 };
 
-export const selectIncident = (incidentIdx = 0) => {
+export const selectIncident = (incidentIdx = 0, shiftKey = false) => {
   const selector = `[data-incident-row-idx="${incidentIdx}"]`;
   cy.get(selector).invoke('attr', 'data-incident-id').as(`selectedIncidentId_${incidentIdx}`);
-  cy.get(selector).click();
+  cy.get(selector).click({ shiftKey });
 };
 
 export const selectAllIncidents = () => {
-  cy.get('#select-all', { timeout: 20000 }).click();
+  cy.get('#select-all', { timeout: 20000 }).click({ force: true });
 };
 
 export const checkNoIncidentsSelected = () => {
@@ -53,7 +53,9 @@ export const checkActionAlertsModalContent = (content) => {
 
 export const checkPopoverContent = (incidentId, incidentHeader, content) => {
   cy.wait(2000);
-  cy.get(`[data-incident-header="${incidentHeader}"][data-incident-cell-id="${incidentId}"]`).within(() => {
+  cy.get(
+    `[data-incident-header="${incidentHeader}"][data-incident-cell-id="${incidentId}"]`,
+  ).within(() => {
     cy.get('.chakra-avatar__group').realHover();
     cy.get('.chakra-popover__popper').should('be.visible').contains(content, { timeout: 10000 });
   });
@@ -237,10 +239,9 @@ export const manageCustomAlertColumnDefinitions = (customAlertColumnDefinitions)
   cy.get('.settings-panel-dropdown').click();
   cy.get('.dropdown-item').contains('Columns').click();
 
-  cy.get('#custom-columns-card-body .chakra-icon')
-    .each(($el) => {
-      cy.wrap($el).click();
-    });
+  cy.get('#custom-columns-card-body .chakra-icon').each(($el) => {
+    cy.wrap($el).click();
+  });
 
   customAlertColumnDefinitions.forEach((customAlertColumnDefinition) => {
     const [header, accessorPath] = customAlertColumnDefinition.split(':');
@@ -313,6 +314,20 @@ export const updateRelativeDates = (relativeDates = false) => {
     cy.get('#relative-dates-switch').check({ force: true });
   } else {
     cy.get('#relative-dates-switch').uncheck({ force: true });
+  }
+
+  cy.get('#save-settings-button').click();
+  checkActionAlertsModalContent('Updated user profile settings');
+};
+
+export const updateFuzzySearch = (fuzzySearch = false) => {
+  cy.get('.settings-panel-dropdown').click();
+  cy.get('.dropdown-item').contains('Settings').click();
+
+  if (fuzzySearch) {
+    cy.get('#fuzzy-search-switch').check({ force: true });
+  } else {
+    cy.get('#fuzzy-search-switch').uncheck({ force: true });
   }
 
   cy.get('#save-settings-button').click();

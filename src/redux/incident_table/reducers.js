@@ -75,7 +75,9 @@ const incidentTable = produce(
     }
   },
   {
-    incidentTableState: {},
+    incidentTableState: {
+      filters: [],
+    },
     incidentTableColumns: defaultColumns,
     allSelected: false,
     selectedCount: 0,

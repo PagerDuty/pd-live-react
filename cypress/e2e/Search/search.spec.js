@@ -4,9 +4,11 @@
 import {
   acceptDisclaimer,
   waitForIncidentTable,
-  // activateButton,
-  // priorityNames,
+  addNote,
+  checkActionAlertsModalContent,
   selectIncident,
+  selectAllIncidents,
+  updateFuzzySearch,
 } from '../../support/util/common';
 
 describe('Search Incidents', { failFast: { enabled: false } }, () => {
@@ -24,10 +26,11 @@ describe('Search Incidents', { failFast: { enabled: false } }, () => {
 
   it('Search for `Service A1` returns incidents only on Service A1', () => {
     cy.get('#global-search-input').clear().type('Service A1');
-    cy.wait(5000);
+    cy.wait(1000);
     cy.get('[data-incident-header="Service"]').each(($el) => {
       cy.wrap($el).should('have.text', 'Service A1');
     });
+    cy.get('#global-search-input').clear();
   });
 
   it('Search for 2nd selected incident returns exactly 1 incident only', () => {
@@ -41,11 +44,67 @@ describe('Search Incidents', { failFast: { enabled: false } }, () => {
       const text = $el.text().split(' ')[0];
       expect(text).to.equal('1/1');
     });
+    // Click the select all checkbox twice to unselect all
+    cy.get('#global-search-input').clear();
+    cy.wait(1000);
+    selectAllIncidents();
+    selectAllIncidents();
   });
 
   it('Search for `zzzzzz` returns no incidents', () => {
     cy.get('#global-search-input').clear().type('zzzzzz');
-    cy.wait(5000);
+    cy.wait(1000);
     cy.get('.empty-incidents-badge').should('be.visible');
+    cy.get('#global-search-input').clear();
+  });
+
+  it('Fuzzy search disabled returns incident with note exact match', () => {
+    const incidentIdx = 0;
+    selectIncident(incidentIdx);
+
+    cy.get(`@selectedIncidentId_${incidentIdx}`).then(() => {
+      addNote('foobar');
+      checkActionAlertsModalContent('have been updated with a note');
+      selectIncident(incidentIdx);
+      cy.get('#global-search-input').clear().type('foobar');
+      cy.wait(1000);
+      cy.get('[data-incident-header="Latest Note"]').each(($el) => {
+        cy.wrap($el).should('have.text', 'foobar');
+      });
+    });
+    cy.get('#global-search-input').clear();
+  });
+
+  it('Fuzzy search disabled does not return incident with note fuzzy match', () => {
+    cy.get('#global-search-input').clear().type('foobaz');
+    cy.wait(1000);
+    cy.get('.empty-incidents-badge').should('be.visible');
+    cy.get('#global-search-input').clear();
+  });
+
+  it('Fuzzy search enabled returns incident with note fuzzy match', () => {
+    updateFuzzySearch(true);
+    const incidentIdx = 0;
+    selectIncident(incidentIdx);
+
+    cy.get(`@selectedIncidentId_${incidentIdx}`).then(() => {
+      cy.get('#global-search-input').clear().type('foobaz');
+      cy.wait(1000);
+      cy.get('[data-incident-header="Latest Note"]').each(($el) => {
+        cy.wrap($el).should('have.text', 'foobar');
+      });
+    });
+    cy.get('#global-search-input').clear();
+  });
+
+  it('Column filtering on Service column for `A1` returns incidents only on Service A1', () => {
+    cy.get('#service-filter-icon').realHover();
+    cy.get('input[placeholder="Filter"]').filter(':visible').click().type('A1');
+    cy.wait(1000);
+    cy.get('[data-incident-header="Service"]').each(($el) => {
+      cy.wrap($el).should('have.text', 'Service A1');
+    });
+    cy.get('#service-filter-icon').realHover();
+    cy.get('button[aria-label="Clear Filter"]').filter(':visible').click();
   });
 });

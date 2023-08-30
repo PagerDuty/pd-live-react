@@ -13,6 +13,8 @@ import {
   SET_DEFAULT_SINCE_DATE_TENOR_COMPLETED,
   SET_SEARCH_ALL_CUSTOM_DETAILS_REQUESTED,
   SET_SEARCH_ALL_CUSTOM_DETAILS_COMPLETED,
+  SET_FUZZY_SEARCH_REQUESTED,
+  SET_FUZZY_SEARCH_COMPLETED,
   SET_RESPONDERS_IN_EP_FILTER_REQUESTED,
   SET_RESPONDERS_IN_EP_FILTER_COMPLETED,
   SET_ALERT_CUSTOM_DETAIL_COLUMNS_REQUESTED,
@@ -86,6 +88,15 @@ const settings = produce(
       case SET_SEARCH_ALL_CUSTOM_DETAILS_COMPLETED:
         draft.searchAllCustomDetails = action.searchAllCustomDetails;
         draft.status = SET_SEARCH_ALL_CUSTOM_DETAILS_COMPLETED;
+        break;
+
+      case SET_FUZZY_SEARCH_REQUESTED:
+        draft.status = SET_FUZZY_SEARCH_REQUESTED;
+        break;
+
+      case SET_FUZZY_SEARCH_COMPLETED:
+        draft.fuzzySearch = action.fuzzySearch;
+        draft.status = SET_FUZZY_SEARCH_COMPLETED;
         break;
 
       case SET_RESPONDERS_IN_EP_FILTER_REQUESTED:
@@ -163,6 +174,7 @@ const settings = produce(
     autoAcceptIncidentsQuery: true,
     autoRefreshInterval: 5,
     searchAllCustomDetails: false,
+    fuzzySearch: false,
     respondersInEpFilter: false,
     alertCustomDetailFields: [
       {

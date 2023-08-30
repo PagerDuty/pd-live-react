@@ -1,5 +1,5 @@
 /* eslint-disable cypress/unsafe-to-chain-command */
-import moment from 'moment';
+import moment from 'moment/min/moment-with-locales';
 
 import gb from 'date-fns/locale/en-GB';
 import {
@@ -53,10 +53,7 @@ describe('Query Incidents', { failFast: { enabled: false } }, () => {
       .subtract(1, 'days')
       .set({ hour: 0, minute: 0, second: 0, millisecond: 0 });
     cy.get('#query-date-input').click();
-    cy.get('#since-date-input')
-      .clear()
-      .type(queryDate.format('DD/MM/yyyy'))
-      .type('{enter}');
+    cy.get('#since-date-input').clear().type(queryDate.format('DD/MM/yyyy')).type('{enter}');
     cy.get('#query-date-submit').click();
     waitForIncidentTable();
 

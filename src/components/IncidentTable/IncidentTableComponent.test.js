@@ -1,14 +1,12 @@
-import '@testing-library/jest-dom';
-
-import {
-  sanitizeUrl,
-} from '@braintree/sanitize-url';
 import validator from 'validator';
+import {
+  componentWrapper, screen,
+} from 'src/custom-testing-lib';
 
 import 'i18n.js';
 
 import {
-  mockStore, componentWrapper,
+  mockStore,
 } from 'mocks/store.test';
 
 import {
@@ -17,17 +15,29 @@ import {
 
 import IncidentTableComponent from './IncidentTableComponent';
 
-// FIXME: Tests need reworked with the incident and alerts state
-xdescribe('IncidentTableComponent', () => {
+describe('IncidentTableComponent', () => {
   let baseStore;
   let store;
-  // FIXME: Jest can only render max of 3 incidents for some reason?
   const mockIncidents = generateMockIncidents(3);
 
   beforeEach(() => {
+    /* eslint-disable no-param-reassign */
+    // incidentAlerts is an map of alerts grouped by incident.id
+    const incidentAlerts = mockIncidents.reduce((acc, incident) => {
+      acc[incident.id] = incident.alerts;
+      return acc;
+    }, {});
+    // incidentNotes is an map of notes grouped by incident.id
+    const incidentNotes = mockIncidents.reduce((acc, incident) => {
+      acc[incident.id] = incident.notes;
+      return acc;
+    }, {});
+    /* eslint-enable no-param-reassign */
     baseStore = {
       incidentTable: {
-        incidentTableState: {},
+        incidentTableState: {
+          filters: [],
+        },
         incidentTableColumns: [
           {
             Header: '#',
@@ -70,64 +80,50 @@ xdescribe('IncidentTableComponent', () => {
       incidentActions: {
         status: '',
       },
+      responsePlays: {
+        status: '',
+      },
       incidents: {
         filteredIncidentsByQuery: mockIncidents,
+        incidents: mockIncidents,
+        incidentAlerts,
+        incidentNotes,
+        incidentLatestLogEntries: {},
         fetchingIncidents: false,
       },
       users: {
         currentUserLocale: 'en-GB',
       },
+      settings: {
+        maxRateLimit: 100,
+      },
     };
+    store = mockStore(baseStore);
+    componentWrapper(store, IncidentTableComponent);
   });
 
   it('should render incident table with non-empty data', () => {
-    store = mockStore(baseStore);
-    const wrapper = componentWrapper(store, IncidentTableComponent);
-    expect(wrapper.find('.incident-table-ctr')).toBeTruthy();
-    expect(
-      wrapper
-        .find('.th')
-        .getElements()
-        .filter((th) => th.key.includes('header')),
-    ).toHaveLength(baseStore.incidentTable.incidentTableColumns.length + 1); // Include selection header
-    expect(
-      wrapper
-        .find('[role="row"]')
-        .getElements()
-        .filter((tr) => tr.key.includes('row')),
-    ).toHaveLength(mockIncidents.length);
+    expect(screen.getByRole('table')).toBeTruthy();
+    expect(screen.getAllByRole('columnheader')).toHaveLength(
+      baseStore.incidentTable.incidentTableColumns.length + 1,
+    ); // Include selection header
+    expect(screen.getAllByRole('row')).toHaveLength(mockIncidents.length + 1); // Include header row
   });
 
   it('should render cell with valid hyperlink for custom detail field', () => {
-    store = mockStore(baseStore);
-    const wrapper = componentWrapper(store, IncidentTableComponent);
-
     const incidentNumber = 1;
     const customDetailField = 'link';
-    const url = wrapper
-      .find('[role="row"]')
-      .get(incidentNumber)
-      .props.children.find((td) => td.key.includes(customDetailField)).props.children.props
-      .cell.value;
-    const sanitizedUrl = sanitizeUrl(url);
+    const url = screen.getAllByIncidentHeader(customDetailField)[incidentNumber].textContent;
 
-    expect(validator.isURL(sanitizedUrl)).toBeTruthy();
+    expect(validator.isURL(url)).toBeTruthy();
   });
 
   it('should render cell with JSON stringified value for custom detail field', () => {
-    store = mockStore(baseStore);
-    const wrapper = componentWrapper(store, IncidentTableComponent);
-
     const incidentNumber = 1;
     const customDetailField = 'object_details';
-    const jsonValue = wrapper
-      .find('[role="row"]')
-      .get(incidentNumber)
-      .props.children.find((td) => td.key.includes(customDetailField)).props.children.props
-      .cell.value;
+    const jsonValue = screen.getAllByIncidentHeader(customDetailField)[incidentNumber].textContent;
 
     // jsonValue should include a key with value 'value1'
-    expect(typeof jsonValue).toBe('object');
     expect(JSON.stringify(jsonValue)).toContain('value1');
   });
 });

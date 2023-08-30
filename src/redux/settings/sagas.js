@@ -1,19 +1,20 @@
+/* eslint-disable import/no-cycle */
+
 import {
   put, select, takeLatest,
 } from 'redux-saga/effects';
 
-// eslint-disable-next-line import/no-cycle
 import {
   persistor,
-} from 'redux/store';
+} from 'src/redux/store';
 
 import {
   resetLimiterWithRateLimit,
-} from 'util/pd-api-wrapper';
+} from 'src/util/pd-api-wrapper';
 
 import {
   FILTER_INCIDENTS_LIST,
-} from 'redux/incidents/actions';
+} from 'src/redux/incidents/actions';
 
 import {
   TOGGLE_SETTINGS_REQUESTED,
@@ -26,6 +27,8 @@ import {
   SET_DEFAULT_SINCE_DATE_TENOR_COMPLETED,
   SET_SEARCH_ALL_CUSTOM_DETAILS_REQUESTED,
   SET_SEARCH_ALL_CUSTOM_DETAILS_COMPLETED,
+  SET_FUZZY_SEARCH_REQUESTED,
+  SET_FUZZY_SEARCH_COMPLETED,
   SET_RESPONDERS_IN_EP_FILTER_REQUESTED,
   SET_RESPONDERS_IN_EP_FILTER_COMPLETED,
   SET_ALERT_CUSTOM_DETAIL_COLUMNS_REQUESTED,
@@ -113,6 +116,20 @@ export function* setSearchAllCustomDetailsImpl(action) {
   yield put({
     type: SET_SEARCH_ALL_CUSTOM_DETAILS_COMPLETED,
     searchAllCustomDetails,
+  });
+}
+
+export function* setFuzzySearch() {
+  yield takeLatest(SET_FUZZY_SEARCH_REQUESTED, setFuzzySearchImpl);
+}
+
+export function* setFuzzySearchImpl(action) {
+  const {
+    fuzzySearch,
+  } = action;
+  yield put({
+    type: SET_FUZZY_SEARCH_COMPLETED,
+    fuzzySearch,
   });
 }
 

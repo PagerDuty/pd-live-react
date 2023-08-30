@@ -1,6 +1,6 @@
 /* eslint-disable cypress/unsafe-to-chain-command */
 
-import moment from 'moment';
+import moment from 'moment/min/moment-with-locales';
 import 'moment/min/locales.min';
 
 import {
@@ -42,11 +42,7 @@ describe('Manage Settings', { failFast: { enabled: false } }, () => {
   it('Change user locale to fr', () => {
     const localeName = 'Français';
 
-    updateUserLocale(
-      localeName,
-      'Settings',
-      'Paramètres du profil utilisateur mis à jour',
-    );
+    updateUserLocale(localeName, 'Settings', 'Paramètres du profil utilisateur mis à jour');
   });
 
   it('Change user locale to en-US', () => {
@@ -54,35 +50,19 @@ describe('Manage Settings', { failFast: { enabled: false } }, () => {
     const expectedSinceDateFormat = moment().subtract(1, 'days').format('L');
     const expectedIncidentDateFormat = moment().format('LL');
 
-    updateUserLocale(
-      localeName,
-      'Paramètres',
-      'Updated user profile settings',
-    );
+    updateUserLocale(localeName, 'Paramètres', 'Updated user profile settings');
     cy.get('#query-date-input').should('contain', expectedSinceDateFormat);
     cy.get('[data-incident-header="Created At"][data-incident-row-cell-idx="0"]')
       .should('be.visible')
       .should('contain', expectedIncidentDateFormat);
   });
 
-  [
-    '1 Day',
-    '3 Days',
-    '1 Week',
-    '2 Weeks',
-    '1 Month',
-    '3 Months',
-    '6 Months',
-  ].forEach((tenor) => {
+  ['1 Day', '3 Days', '1 Week', '2 Weeks', '1 Month', '3 Months', '6 Months'].forEach((tenor) => {
     it(`Update default since date lookback to ${tenor}`, () => {
       const [sinceDateNum, sinceDateTenor] = tenor.split(' ');
       const expectedDate = moment().subtract(Number(sinceDateNum), sinceDateTenor).format('L');
       updateDefaultSinceDateLookback(tenor);
-      updateUserLocale(
-        'English (United States)',
-        'Settings',
-        'Updated user profile settings',
-      );
+      updateUserLocale('English (United States)', 'Settings', 'Updated user profile settings');
       cy.get('#query-date-input').should('contain', expectedDate);
     });
   });
@@ -93,9 +73,7 @@ describe('Manage Settings', { failFast: { enabled: false } }, () => {
     cy.window()
       .its('store')
       .invoke('getState')
-      .then((state) => expect(
-        Number(state.settings.maxRateLimit),
-      ).to.equal(maxRateLimit));
+      .then((state) => expect(Number(state.settings.maxRateLimit)).to.equal(maxRateLimit));
   });
 
   it('Add standard columns to incident table', () => {
@@ -105,10 +83,15 @@ describe('Manage Settings', { failFast: { enabled: false } }, () => {
       ['Group', 'service_group'],
       ['Component', 'source_component'],
     ];
-    manageIncidentTableColumns('add', columns.map((column) => column[1]));
-    columns.map((column) => column[0]).forEach((columnName) => {
-      cy.get(`[data-column-name="${columnName}"]`).scrollIntoView().should('be.visible');
-    });
+    manageIncidentTableColumns(
+      'add',
+      columns.map((column) => column[1]),
+    );
+    columns
+      .map((column) => column[0])
+      .forEach((columnName) => {
+        cy.get(`[data-column-name="${columnName}"]`).scrollIntoView().should('be.visible');
+      });
   });
 
   it('Remove standard columns from incident table', () => {
@@ -116,13 +99,18 @@ describe('Manage Settings', { failFast: { enabled: false } }, () => {
       ['Service', 'service'],
       ['Latest Note', 'latest_note'],
     ];
-    manageIncidentTableColumns('remove', columns.map((column) => column[1]));
+    manageIncidentTableColumns(
+      'remove',
+      columns.map((column) => column[1]),
+    );
 
     // Assert against DOM to see if element has been removed
     cy.get('body').then((body) => {
-      columns.map((column) => column[0]).forEach((columnName) => {
-        expect(body.find(`[data-column-name="${columnName}"]`).length).to.equal(0);
-      });
+      columns
+        .map((column) => column[0])
+        .forEach((columnName) => {
+          expect(body.find(`[data-column-name="${columnName}"]`).length).to.equal(0);
+        });
     });
   });
 
@@ -131,8 +119,9 @@ describe('Manage Settings', { failFast: { enabled: false } }, () => {
     const targetColumn = ['Priority', 'priority'];
     let newColumnWidth;
 
-    cy.get(`[data-column-name="${columnToResize[0]}"] > .resizer`)
-      .trigger('mousedown', { which: 1 });
+    cy.get(`[data-column-name="${columnToResize[0]}"] > .resizer`).trigger('mousedown', {
+      which: 1,
+    });
     // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.wait(500);
     cy.get(`[data-column-name="${targetColumn[0]}"] > .resizer`)
@@ -195,9 +184,7 @@ describe('Manage Settings', { failFast: { enabled: false } }, () => {
     cy.window()
       .its('store')
       .invoke('getState')
-      .then((state) => expect(
-        state.settings.darkMode,
-      ).to.equal(!currentDarkMode));
+      .then((state) => expect(state.settings.darkMode).to.equal(!currentDarkMode));
   });
 
   it('Update relative dates', () => {
@@ -206,9 +193,7 @@ describe('Manage Settings', { failFast: { enabled: false } }, () => {
       cy.window()
         .its('store')
         .invoke('getState')
-        .then((state) => expect(
-          state.settings.relativeDates,
-        ).to.equal(relativeDates));
+        .then((state) => expect(state.settings.relativeDates).to.equal(relativeDates));
 
       if (relativeDates) {
         checkIncidentCellContentAllRows('Created At', /second[s]? ago|minute[s]? ago|hour[s]? ago/);
@@ -217,13 +202,16 @@ describe('Manage Settings', { failFast: { enabled: false } }, () => {
   });
 
   it('Add age column to incident table', () => {
-    const columns = [
-      ['Age', 'age'],
-    ];
-    manageIncidentTableColumns('add', columns.map((column) => column[1]));
-    columns.map((column) => column[0]).forEach((columnName) => {
-      cy.get(`[data-column-name="${columnName}"]`).scrollIntoView().should('be.visible');
-    });
+    const columns = [['Age', 'age']];
+    manageIncidentTableColumns(
+      'add',
+      columns.map((column) => column[1]),
+    );
+    columns
+      .map((column) => column[0])
+      .forEach((columnName) => {
+        cy.get(`[data-column-name="${columnName}"]`).scrollIntoView().should('be.visible');
+      });
     checkIncidentCellContentAllRows('Age', /second[s]?|minute[s]?|hour[s]?/);
   });
 
@@ -246,7 +234,9 @@ describe('Manage Settings', { failFast: { enabled: false } }, () => {
     cy.get('.settings-panel-dropdown').click();
     cy.get('.dropdown-item').contains('Load/Save Presets').click();
     // cy.get('#load-presets-button').click();
-    cy.get('input[type=file]#load-presets-file').selectFile('cypress/downloads/presets.json', { force: true });
+    cy.get('input[type=file]#load-presets-file').selectFile('cypress/downloads/presets.json', {
+      force: true,
+    });
     checkActionAlertsModalContent('Presets loaded');
     waitForIncidentTable();
     // Check some settings configured above have been restored
@@ -256,14 +246,14 @@ describe('Manage Settings', { failFast: { enabled: false } }, () => {
       ['Group', 'service_group'],
       ['Component', 'source_component'],
     ];
-    columns.map((column) => column[0]).forEach((columnName) => {
-      cy.get(`[data-column-name="${columnName}"]`).scrollIntoView().should('be.visible');
-    });
+    columns
+      .map((column) => column[0])
+      .forEach((columnName) => {
+        cy.get(`[data-column-name="${columnName}"]`).scrollIntoView().should('be.visible');
+      });
     cy.window()
       .its('store')
       .invoke('getState')
-      .then((state) => expect(
-        state.settings.darkMode,
-      ).to.equal(true));
+      .then((state) => expect(state.settings.darkMode).to.equal(true));
   });
 });

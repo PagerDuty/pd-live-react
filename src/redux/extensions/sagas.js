@@ -3,19 +3,19 @@ import {
   put, call, select, takeLatest,
 } from 'redux-saga/effects';
 
-import i18next from 'i18n';
+import i18next from 'src/i18n';
 
-import selectServices from 'redux/services/selectors';
+import selectServices from 'src/redux/services/selectors';
 import {
   CUSTOM_INCIDENT_ACTION, EXTERNAL_SYSTEM,
-} from 'util/extensions';
+} from 'src/util/extensions';
 import {
   pdParallelFetch,
-} from 'util/pd-api-wrapper';
+} from 'src/util/pd-api-wrapper';
 
 import {
   UPDATE_CONNECTION_STATUS_REQUESTED,
-} from 'redux/connection/actions';
+} from 'src/redux/connection/actions';
 import {
   FETCH_EXTENSIONS_REQUESTED,
   FETCH_EXTENSIONS_COMPLETED,

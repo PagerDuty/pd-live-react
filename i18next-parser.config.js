@@ -8,6 +8,7 @@ module.exports = {
   defaultNamespace: 'translation',
   // Default namespace used in your i18next config
 
+  // eslint-disable-next-line no-unused-vars
   defaultValue: (locale, namespace, key, value) => key,
   // Default value to give to empty keys
   // You may also specify a function accepting the locale, namespace, and key as arguments
@@ -21,7 +22,10 @@ module.exports = {
 
   keySeparator: false,
   // Key separator used in your translation keys
-  // If you want to use plain english keys, separators such as `.` and `:` will conflict. You might want to set `keySeparator: false` and `namespaceSeparator: false`. That way, `t('Status: Loading...')` will not think that there are a namespace and three separator dots for instance.
+  // If you want to use plain english keys, separators such as `.` and `:` will conflict.
+  // You might want to set `keySeparator: false` and `namespaceSeparator: false`.
+  // That way, `t('Status: Loading...')` will not think that there are a namespace and
+  // three separator dots for instance.
 
   // see below for more details
   lexers: {
@@ -48,7 +52,10 @@ module.exports = {
 
   namespaceSeparator: false,
   // Namespace separator used in your translation keys
-  // If you want to use plain english keys, separators such as `.` and `:` will conflict. You might want to set `keySeparator: false` and `namespaceSeparator: false`. That way, `t('Status: Loading...')` will not think that there are a namespace and three separator dots for instance.
+  // If you want to use plain english keys, separators such as `.` and `:` will conflict.
+  // You might want to set `keySeparator: false` and `namespaceSeparator: false`.
+  // That way, `t('Status: Loading...')` will not think that there are a namespace and
+  // three separator dots for instance.
 
   output: 'src/locales/$LOCALE/$NAMESPACE.json',
   // Supports $LOCALE and $NAMESPACE injection
@@ -57,14 +64,16 @@ module.exports = {
 
   pluralSeparator: '_',
   // Plural separator used in your translation keys
-  // If you want to use plain english keys, separators such as `_` might conflict. You might want to set `pluralSeparator` to a different string that does not occur in your keys.
+  // If you want to use plain english keys, separators such as `_` might conflict.
+  // You might want to set `pluralSeparator` to a different string that does not occur in your keys.
 
   input: undefined,
   // An array of globs that describe where to look for source files
   // relative to the location of the configuration file
 
   sort: true,
-  // Whether or not to sort the catalog. Can also be a [compareFunction](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/sort#parameters)
+  // Whether or not to sort the catalog. Can also be a compareFunction
+  // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/sort#parameters)
 
   verbose: false,
   // Display info about the parsing including some stats

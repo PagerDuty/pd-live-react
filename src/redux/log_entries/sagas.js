@@ -5,18 +5,18 @@ import {
   put, call, select, takeLatest, take,
 } from 'redux-saga/effects';
 
-import i18next from 'i18n';
+import i18next from 'src/i18n';
 
 import {
   pd, pdParallelFetch,
-} from 'util/pd-api-wrapper';
+} from 'src/util/pd-api-wrapper';
 
 import {
   UPDATE_CONNECTION_STATUS_REQUESTED,
-} from 'redux/connection/actions';
+} from 'src/redux/connection/actions';
 import {
   FETCH_INCIDENTS_REQUESTED, PROCESS_LOG_ENTRIES,
-} from 'redux/incidents/actions';
+} from 'src/redux/incidents/actions';
 
 import {
   FETCH_LOG_ENTRIES_REQUESTED,

@@ -31,7 +31,10 @@ describe('Manage Open Incidents', { failFast: { enabled: false } }, () => {
       ['Responders', 'responders'],
       ['Latest Log Entry Type', 'latest_log_entry_type'],
     ];
-    manageIncidentTableColumns('add', columns.map((column) => column[1]));
+    manageIncidentTableColumns(
+      'add',
+      columns.map((column) => column[1]),
+    );
     waitForIncidentTable();
   });
 
@@ -44,7 +47,10 @@ describe('Manage Open Incidents', { failFast: { enabled: false } }, () => {
         ['Responders', 'responders'],
         ['Latest Log Entry Type', 'latest_log_entry_type'],
       ];
-      manageIncidentTableColumns('add', columns.map((column) => column[1]));
+      manageIncidentTableColumns(
+        'add',
+        columns.map((column) => column[1]),
+      );
     }
     waitForIncidentTable();
   });
@@ -61,6 +67,19 @@ describe('Manage Open Incidents', { failFast: { enabled: false } }, () => {
       expect(incidentNumbers[0]).to.equal(incidentNumbers[1]);
     });
     // Unselect all incidents for the next run
+    selectAllIncidents();
+  });
+
+  it('Shift-select multiple incidents', () => {
+    selectIncident(0);
+    selectIncident(4, true);
+    cy.get('.selected-incidents-badge').then(($el) => {
+      const text = $el.text();
+      const incidentNumbers = text.split(' ')[0].split('/');
+      expect(incidentNumbers[0]).to.equal('5');
+    });
+    // Unselect all incidents for the next run
+    selectAllIncidents();
     selectAllIncidents();
   });
 
@@ -110,7 +129,12 @@ describe('Manage Open Incidents', { failFast: { enabled: false } }, () => {
       addNote(note);
       checkActionAlertsModalContent('have been updated with a note');
       checkIncidentCellContent(incidentId, 'Latest Note', note);
-      checkIncidentCellContentHasLink(incidentId, 'Latest Note', 'example.com', 'http://example.com');
+      checkIncidentCellContentHasLink(
+        incidentId,
+        'Latest Note',
+        'example.com',
+        'http://example.com',
+      );
     });
   });
 
@@ -123,7 +147,12 @@ describe('Manage Open Incidents', { failFast: { enabled: false } }, () => {
       addNote(note);
       checkActionAlertsModalContent('have been updated with a note');
       checkIncidentCellContent(incidentId, 'Latest Note', note);
-      checkIncidentCellContentHasLink(incidentId, 'Latest Note', 'test@example.com', 'mailto:test@example.com');
+      checkIncidentCellContentHasLink(
+        incidentId,
+        'Latest Note',
+        'test@example.com',
+        'mailto:test@example.com',
+      );
     });
   });
 

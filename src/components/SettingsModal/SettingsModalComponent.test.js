@@ -1,12 +1,14 @@
-import '@testing-library/jest-dom';
+import {
+  componentWrapper, screen,
+} from 'src/custom-testing-lib';
 
 import {
-  mockStore, componentWrapper,
+  mockStore,
 } from 'mocks/store.test';
 
 import {
   MAX_RATE_LIMIT_LOWER,
-} from 'config/constants';
+} from 'src/config/constants';
 
 import SettingsModalComponent from './SettingsModalComponent';
 
@@ -28,26 +30,23 @@ describe('SettingsModalComponent', () => {
         currentUserLocale: 'en-GB',
       },
     };
+    store = mockStore(baseStore);
+    componentWrapper(store, SettingsModalComponent);
   });
 
   it('should render modal', () => {
-    store = mockStore(baseStore);
-    const wrapper = componentWrapper(store, SettingsModalComponent);
-    expect(wrapper.find('.chakra-modal__header').contains('Settings')).toBeTruthy();
+    expect(screen.getByRole('banner')).toBeInTheDocument();
+    expect(screen.getByRole('banner')).toHaveTextContent('Settings');
   });
 
   it('should display user profile settings', () => {
-    store = mockStore(baseStore);
-    const wrapper = componentWrapper(store, SettingsModalComponent);
-
-    expect(wrapper.find('select#user-locale-select').props().value).toBe('en-GB');
-    expect(wrapper.find('select#since-date-tenor-select').props().value).toBe('1 Day');
-    expect(wrapper.find("div[aria-label='Max Rate Limit']").prop('aria-valuenow')).toEqual(
-      MAX_RATE_LIMIT_LOWER,
+    expect(screen.getByLabelText('Locale')).toHaveValue('en-GB');
+    expect(screen.getByLabelText('Default Since Date Lookback')).toHaveValue('1 Day');
+    expect(screen.getByLabelText('Max Rate Limit').getAttribute('aria-valuenow')).toEqual(
+      MAX_RATE_LIMIT_LOWER.toString(),
     );
-
-    expect(wrapper.find('input#search-all-custom-details-switch').prop('checked')).toBeTruthy();
-    expect(wrapper.find('input#responders-in-ep-filter-switch').prop('checked')).toBeTruthy();
-    expect(wrapper.find('input#relative-dates-switch').prop('checked')).toBeTruthy();
+    expect(screen.getByLabelText('Global Search')).toBeChecked();
+    expect(screen.getByLabelText('Filters')).toBeChecked();
+    expect(screen.getByLabelText('Relative Dates')).toBeChecked();
   });
 });

@@ -2,13 +2,13 @@ import {
   put, select, take, takeLatest,
 } from 'redux-saga/effects';
 
-import RealUserMonitoring from 'config/monitoring';
+import RealUserMonitoring from 'src/config/monitoring';
 
-import selectUsers from 'redux/users/selectors';
+import selectUsers from 'src/redux/users/selectors';
 
 import {
   USER_AUTHORIZE_COMPLETED, USER_UNAUTHORIZE_COMPLETED,
-} from 'redux/users/actions';
+} from 'src/redux/users/actions';
 
 import {
   START_MONITORING_REQUESTED,

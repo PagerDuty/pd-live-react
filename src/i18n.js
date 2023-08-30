@@ -3,7 +3,7 @@ import {
   initReactI18next,
 } from 'react-i18next';
 import LanguageDetector from 'i18next-browser-languagedetector';
-import moment from 'moment';
+import moment from 'moment/min/moment-with-locales';
 
 import gb from 'date-fns/locale/en-GB';
 import us from 'date-fns/locale/en-US';
@@ -79,7 +79,7 @@ export const lngs = {
   },
 };
 
-moment.locale('fr', {
+moment.updateLocale('fr', {
   relativeTime: {
     future: 'dans %s',
     past: 'il y a %s',
@@ -97,7 +97,7 @@ moment.locale('fr', {
   },
 });
 
-moment.locale('es', {
+moment.updateLocale('es', {
   relativeTime: {
     future: 'en %s',
     past: 'hace %s',
@@ -115,7 +115,7 @@ moment.locale('es', {
   },
 });
 
-moment.locale('de', {
+moment.updateLocale('de', {
   relativeTime: {
     future: 'in %s',
     past: 'vor %s',
@@ -133,7 +133,7 @@ moment.locale('de', {
   },
 });
 
-moment.locale('ja', {
+moment.updateLocale('ja', {
   relativeTime: {
     future: '%s後',
     past: '%s前',
@@ -151,7 +151,7 @@ moment.locale('ja', {
   },
 });
 
-moment.locale('id', {
+moment.updateLocale('id', {
   relativeTime: {
     future: 'dalam %s',
     past: '%s yang lalu',
@@ -169,7 +169,7 @@ moment.locale('id', {
   },
 });
 
-moment.locale('pt', {
+moment.updateLocale('pt', {
   relativeTime: {
     future: 'em %s',
     past: 'há %s',

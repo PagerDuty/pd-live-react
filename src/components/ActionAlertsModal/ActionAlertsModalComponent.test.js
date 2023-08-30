@@ -1,5 +1,9 @@
 import {
-  mockStore, componentWrapper,
+  componentWrapper,
+} from 'src/custom-testing-lib';
+
+import {
+  mockStore,
 } from 'mocks/store.test';
 
 import ActionAlertsModalComponent from './ActionAlertsModalComponent';

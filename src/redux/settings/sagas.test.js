@@ -11,7 +11,7 @@ import {
   MAX_RATE_LIMIT_UPPER,
   REFRESH_INTERVAL_LOWER,
   REFRESH_INTERVAL_UPPER,
-} from 'config/constants';
+} from 'src/config/constants';
 
 import settings from './reducers';
 import {
@@ -73,6 +73,7 @@ describe('Sagas: Settings', () => {
         ],
         darkMode: false,
         searchAllCustomDetails: false,
+        fuzzySearch: false,
         respondersInEpFilter: false,
         relativeDates: false,
         status: SET_DEFAULT_SINCE_DATE_TENOR_COMPLETED,
@@ -111,6 +112,7 @@ describe('Sagas: Settings', () => {
         alertCustomDetailFields,
         darkMode: false,
         searchAllCustomDetails: false,
+        fuzzySearch: false,
         respondersInEpFilter: false,
         relativeDates: false,
         status: SET_ALERT_CUSTOM_DETAIL_COLUMNS_COMPLETED,
@@ -152,6 +154,7 @@ describe('Sagas: Settings', () => {
         ],
         darkMode: false,
         searchAllCustomDetails: false,
+        fuzzySearch: false,
         respondersInEpFilter: false,
         relativeDates: false,
         status: SET_MAX_RATE_LIMIT_COMPLETED,
@@ -190,6 +193,7 @@ describe('Sagas: Settings', () => {
         ],
         darkMode: false,
         searchAllCustomDetails: false,
+        fuzzySearch: false,
         respondersInEpFilter: false,
         relativeDates: false,
         status: SET_AUTO_ACCEPT_INCIDENTS_QUERY_COMPLETED,
@@ -231,6 +235,7 @@ describe('Sagas: Settings', () => {
         ],
         darkMode: false,
         searchAllCustomDetails: false,
+        fuzzySearch: false,
         respondersInEpFilter: false,
         relativeDates: false,
         status: SET_AUTO_REFRESH_INTERVAL_COMPLETED,
@@ -269,6 +274,7 @@ describe('Sagas: Settings', () => {
         ],
         darkMode: true,
         searchAllCustomDetails: false,
+        fuzzySearch: false,
         respondersInEpFilter: false,
         relativeDates: false,
         status: SET_DARK_MODE_COMPLETED,
@@ -307,6 +313,7 @@ describe('Sagas: Settings', () => {
         ],
         darkMode: false,
         searchAllCustomDetails: false,
+        fuzzySearch: false,
         respondersInEpFilter: false,
         relativeDates: true,
         status: SET_RELATIVE_DATES_COMPLETED,

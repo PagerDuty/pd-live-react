@@ -19,5 +19,3 @@ const generateMockUser = () => {
 export const generateMockUsers = (num) => Array.from({ length: num }, () => generateMockUser());
 
 export default generateMockUsers;
-
-test.skip('Mock Users', () => 1);
