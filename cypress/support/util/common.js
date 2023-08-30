@@ -35,7 +35,7 @@ export const selectIncident = (incidentIdx = 0) => {
 };
 
 export const selectAllIncidents = () => {
-  cy.get('#select-all', { timeout: 20000 }).click();
+  cy.get('#select-all', { timeout: 20000 }).click({ force: true });
 };
 
 export const checkNoIncidentsSelected = () => {
