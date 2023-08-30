@@ -28,14 +28,14 @@ export const waitForIncidentTable = () => {
   cy.get('.incident-table-fixed-list').scrollTo('top', { ensureScrollable: false });
 };
 
-export const selectIncident = (incidentIdx = 0) => {
+export const selectIncident = (incidentIdx = 0, shiftKey = false) => {
   const selector = `[data-incident-row-idx="${incidentIdx}"]`;
   cy.get(selector).invoke('attr', 'data-incident-id').as(`selectedIncidentId_${incidentIdx}`);
-  cy.get(selector).click();
+  cy.get(selector).click({ shiftKey });
 };
 
 export const selectAllIncidents = () => {
-  cy.get('#select-all', { timeout: 20000 }).click();
+  cy.get('#select-all', { timeout: 20000 }).click({ force: true });
 };
 
 export const checkNoIncidentsSelected = () => {

@@ -5,7 +5,7 @@
 /* eslint-disable no-nested-ternary */
 
 import React, {
-  useEffect, useMemo, useCallback, useState,
+  useEffect, useMemo, useCallback, useState, useRef,
 } from 'react';
 
 import {
@@ -33,7 +33,7 @@ import {
 } from 'react-intersection-observer';
 
 import {
-  Box, Flex, Text,
+  Box, Flex, Text, Checkbox,
 } from '@chakra-ui/react';
 
 import {
@@ -51,7 +51,6 @@ import {
   updateIncidentTableState as updateIncidentTableStateConnected,
 } from 'src/redux/incident_table/actions';
 
-import CheckboxComponent from './subcomponents/CheckboxComponent';
 import EmptyIncidentsComponent from './subcomponents/EmptyIncidentsComponent';
 import QueryActiveComponent from './subcomponents/QueryActiveComponent';
 import GetAllModal from './subcomponents/GetAllModal';
@@ -246,6 +245,8 @@ const IncidentTableComponent = () => {
   // Custom row id fetch to handle dynamic table updates
   const getRowId = useCallback((row) => row.id, []);
 
+  const lastSelectedRowId = useRef(null);
+
   // Create instance of react-table with options and plugins
   const tableInstance = useTable(
     {
@@ -286,16 +287,52 @@ const IncidentTableComponent = () => {
           Header: ({
             getToggleAllRowsSelectedProps,
           }) => (
-            <CheckboxComponent id="select-all" {...getToggleAllRowsSelectedProps()} />
+            <Checkbox
+              m={0}
+              id="select-all"
+              isIndeterminate={!tableInstance.isAllRowsSelected && tableInstance.selectedFlatRows.length > 0}
+              isChecked={tableInstance.isAllRowsSelected}
+              {...getToggleAllRowsSelectedProps()}
+            />
           ),
           Cell: ({
             row,
           }) => (
-            <CheckboxComponent
+            <Checkbox
+              m={0}
               data-incident-row-idx={row.index}
               data-incident-id={row.original.id}
               id={`${row.original.id}-checkbox`}
-              {...row.getToggleRowSelectedProps()}
+              isChecked={row.isSelected}
+              {...row.getToggleRowSelectedProps({
+                onChange: (e) => {
+                  const oldSelectedRowId = lastSelectedRowId.current;
+                  const newSelectedRowId = row.original.id;
+                  if (row.isSelected) {
+                    // deselecting
+                    lastSelectedRowId.current = null;
+                  } else {
+                    lastSelectedRowId.current = newSelectedRowId;
+                  }
+                  if (e.nativeEvent.shiftKey && oldSelectedRowId) {
+                    const oldSelectedRowIdx = tableInstance.rows.findIndex(
+                      (r) => r.id === oldSelectedRowId,
+                    );
+                    const newSelectedRowIdx = tableInstance.rows.findIndex(
+                      (r) => r.id === newSelectedRowId,
+                    );
+                    const minIdx = Math.min(oldSelectedRowIdx, newSelectedRowIdx);
+                    const maxIdx = Math.max(oldSelectedRowIdx, newSelectedRowIdx);
+                    const rowsToSelect = tableInstance.rows.slice(minIdx, maxIdx + 1);
+                    rowsToSelect.forEach((r) => {
+                      tableInstance.prepareRow(r);
+                      r.toggleRowSelected(true);
+                    });
+                  } else {
+                    row.toggleRowSelected();
+                  }
+                },
+              })}
             />
           ),
         },
