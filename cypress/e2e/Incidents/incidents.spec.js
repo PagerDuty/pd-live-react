@@ -70,6 +70,19 @@ describe('Manage Open Incidents', { failFast: { enabled: false } }, () => {
     selectAllIncidents();
   });
 
+  it('Shift-select multiple incidents', () => {
+    selectIncident(0);
+    selectIncident(4, true);
+    cy.get('.selected-incidents-badge').then(($el) => {
+      const text = $el.text();
+      const incidentNumbers = text.split(' ')[0].split('/');
+      expect(incidentNumbers[0]).to.equal('5');
+    });
+    // Unselect all incidents for the next run
+    selectAllIncidents();
+    selectAllIncidents();
+  });
+
   it('Acknowledge singular incident', () => {
     const incidentIdx = 0;
     selectIncident(incidentIdx);

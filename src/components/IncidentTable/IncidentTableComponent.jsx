@@ -325,6 +325,7 @@ const IncidentTableComponent = () => {
                     const maxIdx = Math.max(oldSelectedRowIdx, newSelectedRowIdx);
                     const rowsToSelect = tableInstance.rows.slice(minIdx, maxIdx + 1);
                     rowsToSelect.forEach((r) => {
+                      tableInstance.prepareRow(r);
                       r.toggleRowSelected(true);
                     });
                   } else {
