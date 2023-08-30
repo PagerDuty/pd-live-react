@@ -508,6 +508,7 @@ const IncidentTableComponent = () => {
                       {column.id !== 'select' && (
                         <>
                           <Text
+                            id={`${column.id}-filter-icon`}
                             display="inline"
                             mx={0.5}
                             onClick={(e) => {
