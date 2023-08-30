@@ -35,7 +35,9 @@ describe('IncidentTableComponent', () => {
     /* eslint-enable no-param-reassign */
     baseStore = {
       incidentTable: {
-        incidentTableState: {},
+        incidentTableState: {
+          filters: [],
+        },
         incidentTableColumns: [
           {
             Header: '#',

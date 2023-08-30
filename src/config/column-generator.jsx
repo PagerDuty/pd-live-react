@@ -43,6 +43,7 @@ import {
 import StatusComponent from 'src/components/IncidentTable/subcomponents/StatusComponent';
 import NumAlertsComponent from 'src/components/IncidentTable/subcomponents/NumAlertsComponent';
 import PersonInitialsComponents from 'src/components/IncidentTable/subcomponents/PersonInitialsComponents';
+import ColumnFilterComponent from 'src/components/IncidentTable/subcomponents/ColumnFilterComponent';
 
 const linkifyOptions = { target: { url: '_blank' }, rel: 'noopener noreferrer' };
 
@@ -194,6 +195,7 @@ export const incidentColumn = ({
     Cell: wrappedRenderer,
     minWidth,
     columnType: columnType || 'incident',
+    Filter: ColumnFilterComponent,
   };
 
   if (id) {

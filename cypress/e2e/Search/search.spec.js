@@ -96,4 +96,15 @@ describe('Search Incidents', { failFast: { enabled: false } }, () => {
     });
     cy.get('#global-search-input').clear();
   });
+
+  it('Column filtering on Service column for `A1` returns incidents only on Service A1', () => {
+    cy.get('#service-filter-icon').realHover();
+    cy.get('input[placeholder="Filter"]').filter(':visible').click().type('A1');
+    cy.wait(1000);
+    cy.get('[data-incident-header="Service"]').each(($el) => {
+      cy.wrap($el).should('have.text', 'Service A1');
+    });
+    cy.get('#service-filter-icon').realHover();
+    cy.get('button[aria-label="Clear Filter"]').filter(':visible').click();
+  });
 });

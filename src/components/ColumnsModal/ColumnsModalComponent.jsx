@@ -46,6 +46,7 @@ import {
 
 import {
   saveIncidentTable as saveIncidentTableConnected,
+  updateIncidentTableState as updateIncidentTableStateConnected,
 } from 'src/redux/incident_table/actions';
 
 import {
@@ -60,6 +61,9 @@ const TableColumnsModalComponent = () => {
   const displayColumnsModal = useSelector((state) => state.settings.displayColumnsModal);
   const alertCustomDetailFields = useSelector((state) => state.settings.alertCustomDetailFields);
   const incidentTableColumns = useSelector((state) => state.incidentTable.incidentTableColumns);
+  const {
+    incidentTableState,
+  } = useSelector((state) => state.incidentTable);
 
   const dispatch = useDispatch();
   const toggleColumnsModal = () => dispatch(toggleColumnsModalConnected());
@@ -68,6 +72,9 @@ const TableColumnsModalComponent = () => {
   };
   const saveIncidentTable = (updatedIncidentTableColumns) => {
     dispatch(saveIncidentTableConnected(updatedIncidentTableColumns));
+  };
+  const updateIncidentTableState = (updatedIncidentTableState) => {
+    dispatch(updateIncidentTableStateConnected(updatedIncidentTableState));
   };
 
   const {
@@ -301,6 +308,11 @@ const TableColumnsModalComponent = () => {
             colorScheme="blue"
             mr={3}
             onClick={() => {
+              // remove any filters on columns that are no longer selected
+              const selectedColumnIds = selectedColumns.map((c) => c.id);
+              const filters = incidentTableState.filters.filter((f) => selectedColumnIds.includes(f.id));
+              updateIncidentTableState({ ...incidentTableState, filters });
+
               saveIncidentTable(selectedColumns);
               toggleColumnsModal();
               toast({

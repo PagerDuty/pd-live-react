@@ -21,7 +21,7 @@ import {
 } from 'react-window';
 
 import {
-  useTable, useSortBy, useRowSelect, useBlockLayout, useResizeColumns,
+  useTable, useSortBy, useRowSelect, useBlockLayout, useResizeColumns, useFilters,
 } from 'react-table';
 
 import {
@@ -33,7 +33,7 @@ import {
 } from 'react-intersection-observer';
 
 import {
-  Box, Text,
+  Box, Flex, Text,
 } from '@chakra-ui/react';
 
 import {
@@ -180,6 +180,7 @@ const IncidentTableComponent = () => {
       minWidth: 30,
       width: 150,
       maxWidth: 1600,
+      Filter: '',
     }),
     [],
   );
@@ -268,6 +269,7 @@ const IncidentTableComponent = () => {
       stateReducer: (newState, action) => debouncedUpdateIncidentTableState(newState, action),
     },
     // Plugins
+    useFilters,
     useSortBy,
     useRowSelect,
     useBlockLayout,
@@ -301,6 +303,19 @@ const IncidentTableComponent = () => {
       ]);
     },
   );
+
+  // save filters when the user changes them
+  useEffect(() => {
+    updateIncidentTableState({
+      ...incidentTableState,
+      filters: tableInstance.state.filters,
+    });
+  }, [tableInstance.state.filters]);
+
+  // Update table filters when columns change
+  useEffect(() => {
+    tableInstance.setAllFilters(incidentTableState.filters);
+  }, [columns]);
 
   const {
     getTableProps,
@@ -470,7 +485,7 @@ const IncidentTableComponent = () => {
                     {...column.getHeaderProps()}
                     className={column.isSorted ? 'th-sorted' : 'th'}
                   >
-                    <Box
+                    <Flex
                       {...column.getSortByToggleProps()}
                       onClick={(e) => {
                         if (column.id !== 'select') {
@@ -490,8 +505,25 @@ const IncidentTableComponent = () => {
                           ? column.render('Header')
                           : t(column.render('Header'))}
                       </Text>
-                      <span>{column.isSorted ? (column.isSortedDesc ? ' ▼' : ' ▲') : ''}</span>
-                    </Box>
+                      {column.id !== 'select' && (
+                        <>
+                          <Text
+                            id={`${column.id}-filter-icon`}
+                            display="inline"
+                            mx={0.5}
+                            onClick={(e) => {
+                              e.preventDefault();
+                              e.stopPropagation();
+                            }}
+                          >
+                            {column.render('Filter')}
+                          </Text>
+                          <Text display="inline">
+                            {column.isSorted ? (column.isSortedDesc ? ' ▼' : ' ▲') : ''}
+                          </Text>
+                        </>
+                      )}
+                    </Flex>
                     {column.canResize && (
                       <Box
                         {...column.getResizerProps()}
@@ -537,12 +569,14 @@ const IncidentTableComponent = () => {
         <GetAllModal
           isOpen={displayGetAllModal}
           onClose={() => setDisplayGetAllModal(false)}
+          rows={tableInstance.selectedFlatRows.length > 0 ? tableInstance.selectedFlatRows : rows}
           exportCsv={exportCsv}
         />
         <GetAllForSortModal
           isOpen={displayGetAllForSortModal}
           onClose={() => setDisplayGetAllForSortModal(false)}
           columnType={columnTypeForGetAllModal}
+          rows={rows}
         />
       </Box>
     );
