@@ -51,7 +51,6 @@ import {
   updateIncidentTableState as updateIncidentTableStateConnected,
 } from 'src/redux/incident_table/actions';
 
-// import CheckboxComponent from './subcomponents/CheckboxComponent';
 import EmptyIncidentsComponent from './subcomponents/EmptyIncidentsComponent';
 import QueryActiveComponent from './subcomponents/QueryActiveComponent';
 import GetAllModal from './subcomponents/GetAllModal';
