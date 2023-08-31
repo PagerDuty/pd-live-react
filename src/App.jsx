@@ -174,7 +174,7 @@ const App = () => {
         if (userAuthorized && abilities.includes(PD_REQUIRED_ABILITY)) {
           if (fetchingLogEntriesRef.current) {
             // eslint-disable-next-line no-console
-            console.error('skipping log entries fetch because already fetching log entries');
+            console.warn('skipping log entries fetch because already fetching log entries');
             return;
           }
 
@@ -193,7 +193,7 @@ const App = () => {
             getLogEntriesAsync(since);
           } else if (fetchingIncidentsRef.current) {
             // eslint-disable-next-line no-console
-            console.error('skipping log entries fetch because already fetching incidents');
+            console.warn('skipping log entries fetch because already fetching incidents');
           }
         }
       }, LOG_ENTRIES_POLLING_INTERVAL_SECONDS * 1000);
