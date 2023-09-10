@@ -1,6 +1,10 @@
 import React from 'react';
 
 import {
+  useDispatch,
+} from 'react-redux';
+
+import {
   Box,
   Link,
   TableContainer,
@@ -22,9 +26,21 @@ import {
   CheckCircleIcon, WarningTwoIcon,
 } from '@chakra-ui/icons';
 
+import {
+  setShowIncidentAlertsModalForIncidentId as setShowIncidentAlertsModalForIncidentIdConnected,
+} from 'src/redux/settings/actions';
+
 const NumAlertsComponent = ({
-  alerts,
+  incident,
 }) => {
+  const alerts = incident?.alerts;
+  const incidentId = incident?.id;
+
+  const dispatch = useDispatch();
+  const setShowIncidentAlertsModalForIncidentId = (showIncidentAlertsModalforIncidentId) => {
+    dispatch(setShowIncidentAlertsModalForIncidentIdConnected(showIncidentAlertsModalforIncidentId));
+  };
+
   let value;
   if (alerts instanceof Array) {
     value = `${alerts.length}`;
@@ -85,7 +101,16 @@ const NumAlertsComponent = ({
   return (
     <Popover trigger="hover" size="content" preventOverflow>
       <PopoverTrigger>
-        <Box m={0} p={2} cursor="default">
+        <Box
+          m={0}
+          p={2}
+          cursor="default"
+          onClick={
+            alerts instanceof Array && alerts.length > 0
+              ? () => { setShowIncidentAlertsModalForIncidentId(incidentId); }
+              : undefined
+          }
+        >
           {value}
         </Box>
       </PopoverTrigger>

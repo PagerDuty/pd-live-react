@@ -334,13 +334,11 @@ export const defaultIncidentColumns = () => [
     minWidth: 130,
     renderer: ({
       row: {
-        original: {
-          alerts,
-        },
+        original: incident,
       },
     }) => (
       <CellDiv>
-        <NumAlertsComponent alerts={alerts} />
+        <NumAlertsComponent incident={incident} />
       </CellDiv>
     ),
   }),
