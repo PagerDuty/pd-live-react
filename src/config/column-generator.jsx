@@ -42,6 +42,7 @@ import {
 
 import StatusComponent from 'src/components/IncidentTable/subcomponents/StatusComponent';
 import NumAlertsComponent from 'src/components/IncidentTable/subcomponents/NumAlertsComponent';
+import LinksComponent from 'src/components/IncidentTable/subcomponents/LinksComponent';
 import PersonInitialsComponents from 'src/components/IncidentTable/subcomponents/PersonInitialsComponents';
 import ColumnFilterComponent from 'src/components/IncidentTable/subcomponents/ColumnFilterComponent';
 
@@ -637,48 +638,16 @@ export const defaultAlertsColumns = () => [
     },
     minWidth: 200,
     renderer: ({
-      cell,
-    }) => {
-      const {
-        alerts,
-      } = cell.row.original;
-      if (alerts?.status === 'fetching') {
-        return (
-          <CellDiv>
-            <Skeleton>fetching</Skeleton>
-          </CellDiv>
-        );
-      }
-      if (alerts && alerts instanceof Array && alerts.length > 0) {
-        const links = [];
-        alerts.forEach((alert) => {
-          if (alert.body?.cef_details?.contexts) {
-            alert.body.cef_details.contexts.forEach((context) => {
-              if (context.type === 'link') {
-                links.push(context);
-              }
-            });
-          }
-        });
-        if (links.length > 0) {
-          // unique links on href
-          const uniqueLinks = links.filter(
-            (link, index, self) => self.findIndex((l) => l.href === link.href) === index,
-          );
-          return renderLinkCells(
-            uniqueLinks.map((link) => ({
-              text: link.text || link.href,
-              href: link.href,
-            })),
-          );
-        }
-      }
-      return (
-        <CellDiv>
-          --
-        </CellDiv>
-      );
-    },
+      row: {
+        original: {
+          alerts,
+        },
+      },
+    }) => (
+      <CellDiv>
+        <LinksComponent alerts={alerts} />
+      </CellDiv>
+    ),
   }),
   incidentColumn({
     id: 'severity',
