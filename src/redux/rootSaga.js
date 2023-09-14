@@ -75,6 +75,7 @@ import {
   toggleDisplayAddNoteModal,
   runCustomIncidentActionAsync,
   syncWithExternalSystemAsync,
+  moveAlertsAsync,
 } from './incident_actions/sagas';
 
 import {
@@ -121,6 +122,7 @@ import {
   setFuzzySearch,
   setRespondersInEpFilter,
   setAlertCustomDetailColumns,
+  setShowIncidentAlertsModalForIncidentId,
   setMaxRateLimit,
   setAutoAcceptIncidentsQuery,
   setAutoRefreshInterval,
@@ -203,6 +205,7 @@ export default function* rootSaga() {
     toggleDisplayAddNoteModal(),
     runCustomIncidentActionAsync(),
     syncWithExternalSystemAsync(),
+    moveAlertsAsync(),
 
     // Action Alerts Modal
     toggleActionAlertsModal(),
@@ -245,6 +248,7 @@ export default function* rootSaga() {
     setFuzzySearch(),
     setRespondersInEpFilter(),
     setAlertCustomDetailColumns(),
+    setShowIncidentAlertsModalForIncidentId(),
     setMaxRateLimit(),
     setAutoAcceptIncidentsQuery(),
     setAutoRefreshInterval(),

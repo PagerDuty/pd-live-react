@@ -34,6 +34,12 @@ export const selectIncident = (incidentIdx = 0, shiftKey = false) => {
   cy.get(selector).click({ shiftKey });
 };
 
+export const selectAlert = (alertIdx = 0) => {
+  const selector = `[data-alert-row-idx="${alertIdx}"]`;
+  cy.get(selector).invoke('attr', 'data-alert-id').as(`selectedAlertId_${alertIdx}`);
+  cy.get(selector).click();
+};
+
 export const selectAllIncidents = () => {
   cy.get('#select-all', { timeout: 20000 }).click({ force: true });
 };

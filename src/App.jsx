@@ -33,6 +33,7 @@ import AddNoteModalComponent from 'src/components/AddNoteModal/AddNoteModalCompo
 import ReassignModalComponent from 'src/components/ReassignModal/ReassignModalComponent';
 import AddResponderModalComponent from 'src/components/AddResponderModal/AddResponderModalComponent';
 import MergeModalComponent from 'src/components/MergeModal/MergeModalComponent';
+import IncidentAlertsModal from 'src/components/IncidentTable/subcomponents/IncidentAlertsModal';
 
 import {
   getIncidentsAsync as getIncidentsAsyncConnected,
@@ -174,7 +175,7 @@ const App = () => {
         if (userAuthorized && abilities.includes(PD_REQUIRED_ABILITY)) {
           if (fetchingLogEntriesRef.current) {
             // eslint-disable-next-line no-console
-            console.error('skipping log entries fetch because already fetching log entries');
+            console.warn('skipping log entries fetch because already fetching log entries');
             return;
           }
 
@@ -193,7 +194,7 @@ const App = () => {
             getLogEntriesAsync(since);
           } else if (fetchingIncidentsRef.current) {
             // eslint-disable-next-line no-console
-            console.error('skipping log entries fetch because already fetching incidents');
+            console.warn('skipping log entries fetch because already fetching incidents');
           }
         }
       }, LOG_ENTRIES_POLLING_INTERVAL_SECONDS * 1000);
@@ -272,6 +273,7 @@ const App = () => {
           <ReassignModalComponent />
           <AddResponderModalComponent />
           <MergeModalComponent />
+          <IncidentAlertsModal />
         </Box>
         <Flex as="footer" position="fixed" bottom={0} w="100%" zIndex="1" pt={1} ref={footerRef}>
           <IncidentActionsComponent />

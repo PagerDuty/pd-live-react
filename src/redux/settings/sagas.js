@@ -45,6 +45,8 @@ import {
   SET_DARK_MODE_COMPLETED,
   SET_RELATIVE_DATES_REQUESTED,
   SET_RELATIVE_DATES_COMPLETED,
+  SET_SHOW_INCIDENT_ALERTS_MODAL_FOR_INCIDENT_ID_REQUESTED,
+  SET_SHOW_INCIDENT_ALERTS_MODAL_FOR_INCIDENT_ID_COMPLETED,
 } from './actions';
 
 import selectSettings from './selectors';
@@ -161,6 +163,23 @@ export function* setAlertCustomDetailColumnsImpl(action) {
   yield put({
     type: SET_ALERT_CUSTOM_DETAIL_COLUMNS_COMPLETED,
     alertCustomDetailFields,
+  });
+}
+
+export function* setShowIncidentAlertsModalForIncidentId() {
+  yield takeLatest(
+    SET_SHOW_INCIDENT_ALERTS_MODAL_FOR_INCIDENT_ID_REQUESTED,
+    setShowIncidentAlertsModalForIncidentIdImpl,
+  );
+}
+
+export function* setShowIncidentAlertsModalForIncidentIdImpl(action) {
+  const {
+    incidentId,
+  } = action;
+  yield put({
+    type: SET_SHOW_INCIDENT_ALERTS_MODAL_FOR_INCIDENT_ID_COMPLETED,
+    incidentId,
   });
 }
 

@@ -1,6 +1,10 @@
 import React from 'react';
 
 import {
+  useDispatch,
+} from 'react-redux';
+
+import {
   Box,
   Link,
   TableContainer,
@@ -22,17 +26,22 @@ import {
   CheckCircleIcon, WarningTwoIcon,
 } from '@chakra-ui/icons';
 
+import {
+  setShowIncidentAlertsModalForIncidentId as setShowIncidentAlertsModalForIncidentIdConnected,
+} from 'src/redux/settings/actions';
+
 const NumAlertsComponent = ({
-  alerts,
+  incident,
 }) => {
-  let value;
-  if (alerts instanceof Array) {
-    value = `${alerts.length}`;
-  } else if (alerts?.status) {
-    value = alerts.status;
-  } else {
-    value = '';
-  }
+  const numAlerts = incident?.alert_counts?.all || 0;
+  const alerts = incident?.alerts;
+  const incidentId = incident?.id;
+
+  const dispatch = useDispatch();
+  const setShowIncidentAlertsModalForIncidentId = (showIncidentAlertsModalforIncidentId) => {
+    dispatch(setShowIncidentAlertsModalForIncidentIdConnected(showIncidentAlertsModalforIncidentId));
+  };
+
   let tooltipText;
   if (alerts instanceof Array && alerts.length > 0) {
     const alertsSortedDescendingDate = [...alerts].sort(
@@ -85,8 +94,17 @@ const NumAlertsComponent = ({
   return (
     <Popover trigger="hover" size="content" preventOverflow>
       <PopoverTrigger>
-        <Box m={0} p={2} cursor="default">
-          {value}
+        <Box
+          m={0}
+          p={2}
+          cursor="default"
+          onClick={
+            alerts instanceof Array && alerts.length > 0
+              ? () => { setShowIncidentAlertsModalForIncidentId(incidentId); }
+              : undefined
+          }
+        >
+          {numAlerts}
         </Box>
       </PopoverTrigger>
       <PopoverContent w="content">
