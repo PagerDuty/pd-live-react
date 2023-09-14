@@ -33,6 +33,7 @@ import {
 const NumAlertsComponent = ({
   incident,
 }) => {
+  const numAlerts = incident?.alert_counts?.all || 0;
   const alerts = incident?.alerts;
   const incidentId = incident?.id;
 
@@ -41,14 +42,6 @@ const NumAlertsComponent = ({
     dispatch(setShowIncidentAlertsModalForIncidentIdConnected(showIncidentAlertsModalforIncidentId));
   };
 
-  let value;
-  if (alerts instanceof Array) {
-    value = `${alerts.length}`;
-  } else if (alerts?.status) {
-    value = alerts.status;
-  } else {
-    value = '';
-  }
   let tooltipText;
   if (alerts instanceof Array && alerts.length > 0) {
     const alertsSortedDescendingDate = [...alerts].sort(
@@ -111,7 +104,7 @@ const NumAlertsComponent = ({
               : undefined
           }
         >
-          {value}
+          {numAlerts}
         </Box>
       </PopoverTrigger>
       <PopoverContent w="content">
