@@ -295,11 +295,13 @@ const IncidentAlertsModal = () => {
                   </Tr>
                 </Thead>
                 <Tbody>
-                  {alertsSortedDescendingDate.map((alert) => (
+                  {alertsSortedDescendingDate.map((alert, alertIndex) => (
                     <Tr key={alert.id}>
                       <Td>
                         <Checkbox
                           id={`alerts-modal-checkbox-${alert.id}`}
+                          data-alert-row-idx={alertIndex}
+                          data-alert-id={alert.id}
                           isChecked={selectedAlerts.includes(alert.id)}
                           onChange={(e) => {
                             if (e.target.checked) {
