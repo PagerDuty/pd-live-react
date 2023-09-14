@@ -85,6 +85,8 @@ import {
   SYNC_WITH_EXTERNAL_SYSTEM_REQUESTED,
   SYNC_WITH_EXTERNAL_SYSTEM_COMPLETED,
   SYNC_WITH_EXTERNAL_SYSTEM_ERROR,
+  MOVE_ALERTS_COMPLETED,
+  MOVE_ALERTS_REQUESTED,
 } from './actions';
 
 import {
@@ -927,5 +929,178 @@ export function* syncWithExternalSystem(action) {
     }
   } catch (e) {
     yield call(handleSagaError, SYNC_WITH_EXTERNAL_SYSTEM_ERROR, e);
+  }
+}
+
+export function* moveAlertsAsync() {
+  yield takeLatest(MOVE_ALERTS_REQUESTED, moveAlerts);
+}
+
+export function* moveAlerts(action) {
+  const {
+    fromIncidentId, toIncidentId, alerts, options,
+  } = action;
+
+  if (!fromIncidentId || !toIncidentId || !alerts || !options) {
+    yield displayActionModal('error', 'Unable to move alerts');
+    return;
+  }
+
+  if (!toIncidentId.startsWith('new')) {
+    // move to existing incident
+    const data = {
+      alerts: alerts.map((alert) => ({
+        id: alert.id,
+        type: 'alert_reference',
+        incident: {
+          id: toIncidentId,
+          type: 'incident_reference',
+        },
+      })),
+    };
+    const response = yield call(
+      throttledPdAxiosRequest,
+      'PUT',
+      `incidents/${fromIncidentId}/alerts`,
+      null,
+      data,
+    );
+    if (!response || response.status !== 200) {
+      yield displayActionModal('error', 'Unable to move alerts');
+      return;
+    }
+    yield displayActionModal('success', 'Alerts moved');
+    yield put({
+      type: MOVE_ALERTS_COMPLETED,
+    });
+  } else {
+    // move to new incident
+    const incidentResponse = yield getIncidentByIdRequest(fromIncidentId);
+    if (!incidentResponse || !incidentResponse.ok) {
+      yield displayActionModal('error', 'Unable to retrieve incident');
+      return;
+    }
+    const fromIncident = incidentResponse.data.incident;
+    const serviceId = options.serviceId || fromIncident.service.id;
+    const epId = options.epId || fromIncident.escalation_policy.id;
+    const priorityId = options.priorityId || fromIncident.priority?.id || null;
+
+    if (toIncidentId === 'new-each') {
+      // create new incident for each alert
+      const createIncidentsCalls = alerts.map((alert, idx) => (
+        call(
+          throttledPdAxiosRequest,
+          'POST',
+          'incidents',
+          null,
+          {
+            incident: {
+              type: 'incident',
+              title: alerts[idx].summary,
+              service: {
+                id: serviceId,
+                type: 'service_reference',
+              },
+              escalation_policy: {
+                id: epId,
+                type: 'escalation_policy_reference',
+              },
+              urgency: options.urgency || fromIncident.urgency,
+              priority: priorityId ? { id: priorityId, type: 'priority_reference' } : null,
+            },
+          },
+        )
+      ));
+      const createIncidentsResponses = yield all(createIncidentsCalls);
+      if (!createIncidentsResponses || createIncidentsResponses.some((r) => r.status !== 201)) {
+        yield displayActionModal('error', 'Unable to create incidents');
+        return;
+      }
+      const newIncidents = createIncidentsResponses.map((r) => r.data.incident);
+      const newIncidentIds = newIncidents.map((i) => i.id);
+      const data = {
+        alerts: alerts.map((alert, idx) => ({
+          id: alert.id,
+          type: 'alert_reference',
+          incident: {
+            id: newIncidentIds[idx],
+            type: 'incident_reference',
+          },
+        })),
+      };
+      const response = yield call(
+        throttledPdAxiosRequest,
+        'PUT',
+        `incidents/${fromIncidentId}/alerts`,
+        null,
+        data,
+      );
+      if (!response || response.status !== 200) {
+        yield displayActionModal('error', 'Unable to move alerts');
+        return;
+      }
+      yield displayActionModal('success', 'Alerts moved');
+      yield put({
+        type: MOVE_ALERTS_COMPLETED,
+      });
+    } else if (toIncidentId === 'new') {
+      // create new incident for all alerts
+      const newIncidentData = {
+        incident: {
+          type: 'incident',
+          title: options.summary || `Moved alerts from ${fromIncident.title}`,
+          service: {
+            id: serviceId,
+            type: 'service_reference',
+          },
+          escalation_policy: {
+            id: epId,
+            type: 'escalation_policy_reference',
+          },
+          urgency: options.urgency || fromIncident.urgency,
+          priority: priorityId ? { id: priorityId, type: 'priority_reference' } : null,
+        },
+      };
+
+      const newIncidentResponse = yield call(
+        throttledPdAxiosRequest,
+        'POST',
+        'incidents',
+        null,
+        newIncidentData,
+      );
+      if (!newIncidentResponse || newIncidentResponse.status !== 201) {
+        yield displayActionModal('error', 'Unable to create incident');
+        return;
+      }
+      const newIncident = newIncidentResponse.data.incident;
+      const newIncidentId = newIncident.id;
+
+      const data = {
+        alerts: alerts.map((alert) => ({
+          id: alert.id,
+          type: 'alert_reference',
+          incident: {
+            id: newIncidentId,
+            type: 'incident_reference',
+          },
+        })),
+      };
+      const response = yield call(
+        throttledPdAxiosRequest,
+        'PUT',
+        `incidents/${fromIncidentId}/alerts`,
+        null,
+        data,
+      );
+      if (!response || response.status !== 200) {
+        yield displayActionModal('error', 'Unable to move alerts');
+        return;
+      }
+      yield displayActionModal('success', 'Alerts moved');
+      yield put({
+        type: MOVE_ALERTS_COMPLETED,
+      });
+    }
   }
 }

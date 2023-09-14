@@ -49,6 +49,9 @@ import {
   SYNC_WITH_EXTERNAL_SYSTEM_REQUESTED,
   SYNC_WITH_EXTERNAL_SYSTEM_COMPLETED,
   SYNC_WITH_EXTERNAL_SYSTEM_ERROR,
+  MOVE_ALERTS_REQUESTED,
+  MOVE_ALERTS_COMPLETED,
+  MOVE_ALERTS_ERROR,
 } from './actions';
 
 const incidentActions = produce(
@@ -262,6 +265,19 @@ const incidentActions = produce(
 
       case SYNC_WITH_EXTERNAL_SYSTEM_ERROR:
         draft.status = SYNC_WITH_EXTERNAL_SYSTEM_ERROR;
+        draft.error = action.message;
+        break;
+
+      case MOVE_ALERTS_REQUESTED:
+        draft.status = MOVE_ALERTS_REQUESTED;
+        break;
+
+      case MOVE_ALERTS_COMPLETED:
+        draft.status = MOVE_ALERTS_COMPLETED;
+        break;
+
+      case MOVE_ALERTS_ERROR:
+        draft.status = MOVE_ALERTS_ERROR;
         draft.error = action.message;
         break;
 

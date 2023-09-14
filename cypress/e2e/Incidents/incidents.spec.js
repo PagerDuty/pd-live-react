@@ -1,4 +1,6 @@
 /* eslint-disable no-underscore-dangle */
+/* eslint-disable cypress/unsafe-to-chain-command */
+
 import {
   acceptDisclaimer,
   waitForIncidentTable,
@@ -22,6 +24,7 @@ import {
   checkIncidentCellContentHasLink,
   manageIncidentTableColumns,
   priorityNames,
+  selectAlert,
 } from '../../support/util/common';
 
 describe('Manage Open Incidents', { failFast: { enabled: false } }, () => {
@@ -294,5 +297,132 @@ describe('Manage Open Incidents', { failFast: { enabled: false } }, () => {
     selectIncident(0);
     runResponsePlay(responsePlayName);
     checkActionAlertsModalContent(`Ran "${responsePlayName}" response play for incident(s)`);
+  });
+
+  it('Hovering over Num Alerts count should popup alert table', () => {
+    // Remove the other columns to make it easier to see the alert count without scrolling
+    const removeColumns = [
+      ['Responders', 'responders'],
+      ['Latest Log Entry Type', 'latest_log_entry_type'],
+    ];
+    manageIncidentTableColumns(
+      'remove',
+      removeColumns.map((column) => column[1]),
+    );
+
+    const addColumns = [
+      ['Num Alerts', 'num_alerts'],
+    ];
+    manageIncidentTableColumns(
+      'add',
+      addColumns.map((column) => column[1]),
+    );
+
+    const incidentIdx = 0;
+
+    cy.get(`[data-incident-header="Num Alerts"][data-incident-row-cell-idx="${incidentIdx}"]`)
+      .should('be.visible')
+      .should('contain', '1');
+
+    cy.get(`[data-incident-header="Num Alerts"][data-incident-row-cell-idx="${incidentIdx}"]`).within(() => {
+      cy.get('[aria-haspopup="dialog"]').realHover();
+    });
+
+    cy.get('[data-popper-placement="bottom"]').should('be.visible');
+    cy.get('[data-popper-placement="bottom"]').should('contain', 'Created At');
+    cy.get('[data-popper-placement="bottom"]').should('contain', 'Status');
+    cy.get('[data-popper-placement="bottom"]').should('contain', 'Summary');
+
+    // Reset hover state
+    cy.get('body').realHover({ position: 'topLeft' });
+  });
+
+  it('Split/move alert from one incident to a new incident', () => {
+    const incidentIdx = 0;
+
+    cy.get(`[data-incident-header="Num Alerts"][data-incident-row-cell-idx="${incidentIdx}"]`).within(() => {
+      cy.get('[aria-haspopup="dialog"]').click();
+    });
+
+    selectAlert(0);
+
+    cy.get('#alerts-modal-move-btn').click();
+    cy.get('#alerts-modal-move-select').type('Move all selected alerts to one new incident{enter}');
+    cy.get('#alerts-modal-move-summary-input').clear().type('New incident created from split alert');
+    cy.get('#alerts-modal-complete-move-btn').click();
+
+    checkActionAlertsModalContent('Alerts moved');
+    waitForIncidentTable();
+
+    cy.get(`[data-incident-header="Title"][data-incident-row-cell-idx="${incidentIdx}"]`)
+      .should('be.visible')
+      .should('have.text', 'New incident created from split alert');
+  });
+
+  it('Merge incidents then split alerts to their own incidents', () => {
+    const targetIncidentIdx = 0;
+    selectIncident(targetIncidentIdx);
+    selectIncident(targetIncidentIdx + 1);
+    merge(targetIncidentIdx);
+    checkActionAlertsModalContent('and their alerts have been merged onto');
+    waitForIncidentTable();
+    const incidentIdx = 0;
+
+    cy.get(`[data-incident-header="Num Alerts"][data-incident-row-cell-idx="${incidentIdx}"]`).within(() => {
+      cy.get('[aria-haspopup="dialog"]').should('be.visible').should('have.text', '2').click();
+    });
+
+    selectAlert(0);
+    selectAlert(1);
+
+    cy.get('#alerts-modal-move-btn').click();
+    cy.get('#alerts-modal-move-select').type('Move each selected alert to its own new incident{enter}');
+    cy.get('#alerts-modal-complete-move-btn').click();
+
+    checkActionAlertsModalContent('Alerts moved');
+    waitForIncidentTable();
+  });
+
+  it('Move alerts to a specific incident', () => {
+    const targetIncidentIdx = 0;
+    const sourceIncidentIdx = 1;
+    selectIncident(targetIncidentIdx);
+
+    cy.get(`@selectedIncidentId_${targetIncidentIdx}`).then((incidentId) => {
+      cy.get(`[data-incident-header="Num Alerts"][data-incident-cell-id="${incidentId}"]`).within(() => {
+        cy.get('[aria-haspopup="dialog"]').should('be.visible').should('have.text', '1');
+      });
+
+      cy.get(`[data-incident-header="Title"][data-incident-cell-id="${incidentId}"]`).within(() => {
+        cy.get('a').invoke('text').as('targetIncidentTitle');
+      });
+    });
+
+    cy.get(`[data-incident-header="Num Alerts"][data-incident-row-cell-idx="${sourceIncidentIdx}"]`).within(() => {
+      cy.get('[aria-haspopup="dialog"]').should('be.visible').should('have.text', '1').click();
+    });
+
+    selectAlert(0);
+
+    cy.get('#alerts-modal-move-btn').click();
+    cy.get('@targetIncidentTitle').then((targetIncidentTitle) => {
+      cy.log(`targetIncidentTitle: ${targetIncidentTitle}`);
+      cy.get('#alerts-modal-move-select').type(`${targetIncidentTitle}{enter}`);
+    });
+    cy.get('#alerts-modal-complete-move-btn').click();
+
+    checkActionAlertsModalContent('Alerts moved');
+    waitForIncidentTable();
+
+    cy.get(`@selectedIncidentId_${targetIncidentIdx}`).then((incidentId) => {
+      cy.get(`[data-incident-header="Num Alerts"][data-incident-cell-id="${incidentId}"]`).within(() => {
+        cy.get('[aria-haspopup="dialog"]').should('be.visible').should('have.text', '2');
+      });
+    });
+
+    // Tidy up by resolving the incident with two alerts
+    selectIncident(0);
+    cy.get('#incident-action-resolve-button').click();
+    checkActionAlertsModalContent('have been resolved');
   });
 });

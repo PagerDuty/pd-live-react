@@ -63,6 +63,10 @@ export const SYNC_WITH_EXTERNAL_SYSTEM_REQUESTED = 'SYNC_WITH_EXTERNAL_SYSTEM_RE
 export const SYNC_WITH_EXTERNAL_SYSTEM_COMPLETED = 'SYNC_WITH_EXTERNAL_SYSTEM_COMPLETED';
 export const SYNC_WITH_EXTERNAL_SYSTEM_ERROR = 'SYNC_WITH_EXTERNAL_SYSTEM_ERROR';
 
+export const MOVE_ALERTS_REQUESTED = 'MOVE_ALERTS_REQUESTED';
+export const MOVE_ALERTS_COMPLETED = 'MOVE_ALERTS_COMPLETED';
+export const MOVE_ALERTS_ERROR = 'MOVE_ALERTS_ERROR';
+
 export const doAction = () => ({
   type: ACTION_REQUESTED,
 });
@@ -169,4 +173,12 @@ export const syncWithExternalSystem = (incidents, webhook, displayModal = true) 
   incidents,
   webhook,
   displayModal,
+});
+
+export const moveAlerts = (fromIncidentId, toIncidentId, alerts, options) => ({
+  type: MOVE_ALERTS_REQUESTED,
+  fromIncidentId,
+  toIncidentId,
+  alerts,
+  options,
 });
