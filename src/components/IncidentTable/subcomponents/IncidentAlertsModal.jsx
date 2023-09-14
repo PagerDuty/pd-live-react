@@ -338,6 +338,7 @@ const IncidentAlertsModal = () => {
           </ModalBody>
           <ModalFooter>
             <Button
+              id="alerts-modal-download-csv-btn"
               colorScheme="blue"
               mr={3}
               onClick={() => {
@@ -358,6 +359,7 @@ const IncidentAlertsModal = () => {
               {t('Download CSV (X alerts)', { count: selectedAlerts.length || alerts.length })}
             </Button>
             <Button
+              id="alerts-modal-move-btn"
               colorScheme="blue"
               mr={3}
               isDisabled={selectedAlerts.length === 0}
@@ -366,6 +368,7 @@ const IncidentAlertsModal = () => {
               {t('Move')}
             </Button>
             <Button
+              id="alerts-modal-close-btn"
               mr={3}
               onClick={() => {
                 setMoveTarget(null);
@@ -509,6 +512,7 @@ const IncidentAlertsModal = () => {
           </ModalBody>
           <ModalFooter>
             <Button
+              id="alerts-modal-complete-move-btn"
               colorScheme="blue"
               mr={3}
               isDisabled={!moveTarget}
