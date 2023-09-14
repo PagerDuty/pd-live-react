@@ -412,16 +412,15 @@ export function* filterIncidentsImpl() {
 
   try {
     // Filter current incident list by priority
-    if (incidentPriority.length > 0) {
+    if (incidentPriority?.length > 0) {
       filteredIncidentsByQuery = filteredIncidentsByQuery.filter((incident) => {
         if (incident.priority && incidentPriority.includes(incident.priority.id)) return true;
         if (!incident.priority && incidentPriority.includes('--')) return true;
         return false;
       });
     }
-
     // Filter current incident list by status
-    if (incidentStatus.length > 0) {
+    if (incidentStatus?.length > 0) {
       filteredIncidentsByQuery = filterIncidentsByField(
         filteredIncidentsByQuery,
         'status',
@@ -430,7 +429,7 @@ export function* filterIncidentsImpl() {
     }
 
     // Filter current incident list by urgency
-    if (incidentUrgency.length > 0) {
+    if (incidentUrgency?.length > 0) {
       filteredIncidentsByQuery = filterIncidentsByField(
         filteredIncidentsByQuery,
         'urgency',
@@ -439,7 +438,7 @@ export function* filterIncidentsImpl() {
     }
 
     // Filter current incident list by team
-    if (teamIds.length) {
+    if (teamIds?.length) {
       filteredIncidentsByQuery = filterIncidentsByFieldOfList(
         filteredIncidentsByQuery,
         'teams',
@@ -449,7 +448,7 @@ export function* filterIncidentsImpl() {
     }
 
     // Filter current incident list by escalation policy
-    if (escalationPolicyIds.length > 0) {
+    if (escalationPolicyIds?.length > 0) {
       filteredIncidentsByQuery = filteredIncidentsByQuery.filter((incident) => {
         if (escalationPolicyIds.includes(incident.escalation_policy.id)) return true;
         if (respondersInEpFilter && incident.responder_requests.length > 0) {
@@ -472,7 +471,7 @@ export function* filterIncidentsImpl() {
     }
 
     // Filter current incident list by service
-    if (serviceIds.length > 0) {
+    if (serviceIds?.length > 0) {
       filteredIncidentsByQuery = filterIncidentsByField(
         filteredIncidentsByQuery,
         'service.id',
@@ -481,7 +480,7 @@ export function* filterIncidentsImpl() {
     }
 
     // Filter current incident list by user
-    if (userIds.length > 0) {
+    if (userIds?.length > 0) {
       filteredIncidentsByQuery = filterIncidentsByFieldOfList(
         filteredIncidentsByQuery,
         'assignments',
