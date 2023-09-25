@@ -378,7 +378,10 @@ const IncidentTableComponent = () => {
       const row = data[index];
       useEffect(() => {
         if (inView) {
-          if (!row.original.alerts) {
+          if (
+            !row.original.alerts
+            || (Array.isArray(row.original.alerts) && row.original.alerts.length !== row.original.alert_counts?.all)
+          ) {
             getIncidentAlerts(row.original.id);
           }
           if (!row.original.notes) {
