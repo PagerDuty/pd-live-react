@@ -378,7 +378,6 @@ const IncidentTableComponent = () => {
       const row = data[index];
       useEffect(() => {
         if (inView) {
-          console.log('in view', row.original.id);
           if (
             !row.original.alerts
             || (Array.isArray(row.original.alerts) && row.original.alerts.length !== row.original.alert_counts?.all)
