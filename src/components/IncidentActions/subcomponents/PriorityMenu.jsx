@@ -34,12 +34,17 @@ const PriorityMenu = () => {
   } = useTranslation();
   const selectedRows = useSelector((state) => state.incidentTable.selectedRows);
   const priorities = useSelector((state) => state.priorities.priorities);
+  const abilities = useSelector((state) => state.connection.abilities);
   const dispatch = useDispatch();
   const updatePriority = (incidents, priorityId) => {
     dispatch(updatePriorityConnected(incidents, priorityId));
   };
 
-  const enabled = useMemo(() => selectedRows.length > 0, [selectedRows]);
+  const enabled = useMemo(() => (
+    selectedRows.length > 0
+    && Array.isArray(abilities)
+    && !abilities.includes('disable_edit_priority')
+  ), [selectedRows]);
 
   return (
     <Menu>
