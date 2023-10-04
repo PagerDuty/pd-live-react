@@ -150,11 +150,12 @@ export const updatePriority = (incidents, priorityId, displayModal = true) => ({
   displayModal,
 });
 
-export const addNote = (incidents, note, displayModal = true) => ({
+export const addNote = (incidents, note, displayModal = true, toggleModal = true) => ({
   type: ADD_NOTE_REQUESTED,
   incidents,
   note,
   displayModal,
+  toggleModal,
 });
 
 export const toggleDisplayAddNoteModal = () => ({
