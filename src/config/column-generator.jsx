@@ -45,6 +45,7 @@ import NumAlertsComponent from 'src/components/IncidentTable/subcomponents/NumAl
 import LinksComponent from 'src/components/IncidentTable/subcomponents/LinksComponent';
 import PersonInitialsComponents from 'src/components/IncidentTable/subcomponents/PersonInitialsComponents';
 import ColumnFilterComponent from 'src/components/IncidentTable/subcomponents/ColumnFilterComponent';
+import LatestNoteComponent from 'src/components/IncidentTable/subcomponents/LatestNoteComponent';
 
 const linkifyOptions = { target: { url: '_blank' }, rel: 'noopener noreferrer' };
 
@@ -496,13 +497,9 @@ export const defaultIncidentColumns = () => [
         original,
       },
     }) => (
-      <CellDiv>
-        <Linkify options={linkifyOptions}>
-          {original.notes?.length > 0 && original.notes.slice(-1)[0].content}
-          {original.notes?.length === 0 && '--'}
-          {original.notes?.status === 'fetching' && <Skeleton>fetching</Skeleton>}
-        </Linkify>
-      </CellDiv>
+      <LatestNoteComponent
+        incident={original}
+      />
     ),
   }),
   incidentColumn({
@@ -840,6 +837,7 @@ export const incidentColumnsTranslations = [
   i18next.t('Incident ID'),
   i18next.t('Summary'),
   i18next.t('Latest Note'),
+  i18next.t('Add Note'),
   i18next.t('Latest Note At'),
   i18next.t('External References'),
   i18next.t('Responders'),
