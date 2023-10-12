@@ -151,9 +151,14 @@ const incidents = produce(
         //   break;
 
       case FETCH_INCIDENT_ALERTS_REQUESTED:
-        draft.incidentAlerts[action.incidentId] = {
-          status: 'fetching',
-        };
+        if (!(
+          Array.isArray(draft.incidentAlerts[action.incidentId])
+          && draft.incidentAlerts[action.incidentId].length > 0
+        )) {
+          draft.incidentAlerts[action.incidentId] = {
+            status: 'fetching',
+          };
+        }
         draft.incidentAlertsCalls += 1;
         draft.status = FETCH_INCIDENT_ALERTS_REQUESTED;
         break;
