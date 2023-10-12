@@ -76,6 +76,7 @@ export const checkIncidentCellContent = (incidentId, incidentHeader, content) =>
 
 export const checkIncidentCellContentAllRows = (incidentHeader, content) => {
   cy.wait(2000);
+  cy.get('.incident-table-fixed-list').scrollTo('top', { ensureScrollable: true });
   cy.get('.incident-table-fixed-list > div').then(($tbody) => {
     const visibleIncidentCount = $tbody.find('[role="row"]').length;
     for (let incidentIdx = 0; incidentIdx < visibleIncidentCount; incidentIdx++) {

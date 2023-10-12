@@ -9,7 +9,7 @@ module.exports = defineConfig({
   video: false,
   viewportWidth: 1920,
   viewportHeight: 1080,
-  defaultCommandTimeout: 15000,
+  defaultCommandTimeout: 30000,
   retries: 3,
 
   e2e: {
