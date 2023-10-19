@@ -719,7 +719,7 @@ export function* addNoteAsync() {
 export function* addNote(action) {
   try {
     const {
-      incidents: selectedIncidents, note, displayModal,
+      incidents: selectedIncidents, note, displayModal, toggleModal,
     } = action;
 
     // Build individual requests as the endpoint supports singular POST
@@ -742,7 +742,7 @@ export function* addNote(action) {
     // Invoke parallel calls for optimal performance
     const responses = yield all(addNoteRequests);
     if (responses.every((response) => response.status >= 200 && response.status < 300)) {
-      yield toggleDisplayAddNoteModalImpl();
+      if (toggleModal) yield toggleDisplayAddNoteModalImpl();
       if (displayModal) {
         const actionAlertsModalType = 'success';
         const actionAlertsModalMessage = `${i18next.t('Incident')}(s) ${selectedIncidents

@@ -12,7 +12,7 @@ module.exports = {
   },
   transform: {
     '^.+\\.(js|jsx|ts|tsx|mjs)$': 'babel-jest',
-    '^.+\\.svg$': 'svg-jest',
+    '^.+\\.svg$': 'jest-transformer-svg',
   },
-  transformIgnorePatterns: ['/node_modules/(?!(somePkg)|react-dnd|dnd-core|@react-dnd)'],
+  transformIgnorePatterns: ['/node_modules/(?!(somePkg)|react-dnd|dnd-core|@react-dnd|jsonpath-plus)'],
 };

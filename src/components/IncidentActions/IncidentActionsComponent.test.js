@@ -56,6 +56,7 @@ describe('IncidentActionsComponent', () => {
     settings: {
       darkMode: false,
     },
+    connection: { abilities: [] },
   };
 
   const tempStoreMap = { ...baseStoreMap };
@@ -101,5 +102,13 @@ describe('IncidentActionsComponent', () => {
     componentWrapper(store, IncidentActionsComponent);
 
     expect(screen.getByRole('button', { name: 'Merge' })).toBeEnabled();
+  });
+
+  it('should deactivate priority button when disable_edit_priority ability is set', () => {
+    tempStoreMap.connection = { abilities: ['disable_edit_priority'] };
+    store = mockStore(tempStoreMap);
+    componentWrapper(store, IncidentActionsComponent);
+
+    expect(screen.getByRole('button', { name: 'Update Priority' })).toBeDisabled();
   });
 });
