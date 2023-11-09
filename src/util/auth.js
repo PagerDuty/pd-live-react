@@ -92,23 +92,31 @@ export const exchangeCodeForToken = async (
   codeVerifier,
   code,
 ) => {
-  // eslint-disable-next-line no-unused-vars
-  const postData = async (url, _data) => {
+  const postData = async (url, data) => {
+    const formData = new URLSearchParams(data); // Convert data to URL-encoded form data
     const response = await fetch(url, {
       method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded', // Set the content type
+      },
+      body: formData.toString(), // Convert the form data to a string
     });
-    const json = response.json();
+    const json = await response.json(); // Parse the response JSON
     return json;
   };
 
-  const requestTokenUrl = 'https://identity.pagerduty.com/oauth/token?'
-    + 'grant_type=authorization_code&'
-    + `code=${code}&`
-    + `redirect_uri=${redirectURL}&`
-    + `client_id=${clientId}&`
-    + `client_secret=${clientSecret}&`
-    + `code_verifier=${codeVerifier}`;
-  const data = await postData(requestTokenUrl, {});
+  const requestTokenUrl = 'https://identity.pagerduty.com/oauth/token';
+  const formData = {
+    grant_type: 'authorization_code',
+    code,
+    redirect_uri: redirectURL,
+    client_id: clientId,
+    client_secret: clientSecret,
+    code_verifier: codeVerifier,
+  };
+
+  const data = await postData(requestTokenUrl, formData);
+
   if (data.access_token) {
     return data.access_token;
   }
