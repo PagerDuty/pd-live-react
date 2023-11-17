@@ -4,6 +4,10 @@ import {
   Box, Flex,
 } from '@chakra-ui/react';
 
+import {
+  EXTRA_BUTTONS,
+} from 'src/config/constants';
+
 import SelectedIncidentsComponent from './subcomponents/SelectedIncidentsComponent';
 
 import AcknowledgeButton from './subcomponents/AcknowledgeButton';
@@ -16,6 +20,7 @@ import EscalateMenu from './subcomponents/EscalateMenu';
 import SnoozeMenu from './subcomponents/SnoozeMenu';
 import PriorityMenu from './subcomponents/PriorityMenu';
 import RunActionMenu from './subcomponents/RunActionMenu';
+import ExtraButton from './subcomponents/ExtraButton';
 
 import './IncidentActionsComponent.scss';
 
@@ -46,6 +51,19 @@ const IncidentActionsComponent = () => (
       <PriorityMenu />
       <AddNoteButton />
       <RunActionMenu />
+      {EXTRA_BUTTONS.map(({
+        label, url, width, height,
+      }) => (
+        <>
+          <ExtraButton
+            key={url}
+            label={label}
+            url={url}
+            width={width}
+            height={height}
+          />
+        </>
+      ))}
     </Box>
   </Flex>
 );

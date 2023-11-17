@@ -36,3 +36,16 @@ export const DATE_FORMAT = 'LL \\at h:mm:ss A';
 export const DEBUG_DISABLE_POLLING = debugParams.get('disable-polling') || false;
 export const DEBUG_SINCE_DATE = debugParams.get('since') || null;
 export const DEBUG_UNTIL_DATE = debugParams.get('until') || null;
+
+export const EXTRA_BUTTONS = debugParams.getAll('button').map((button) => {
+  const [label, url, width, height] = button.split(',');
+  if (!label || !url) {
+    return null;
+  }
+  return {
+    label,
+    url,
+    width,
+    height,
+  };
+}).filter((button) => !!button);
