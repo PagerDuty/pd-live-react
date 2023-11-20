@@ -116,7 +116,7 @@
     "dotenv": "^16.3.1",
     "eslint": "^8.43.0",
     "eslint-config-airbnb": "^18.2.1",
-    "eslint-config-prettier": "^8.8.0",
+    "eslint-config-prettier": "^9.0.0",
     "eslint-config-react-app": "^7.0.1",
     "eslint-import-resolver-alias": "^1.1.2",
     "eslint-plugin-cypress": "^2.14.0",
