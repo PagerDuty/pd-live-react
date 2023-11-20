@@ -1,9 +1,7 @@
 /* eslint-disable no-restricted-syntax */
 
 import React, {
-  useEffect,
-  useState,
-  useMemo,
+  useEffect, useState, useMemo,
 } from 'react';
 
 import {
@@ -106,16 +104,20 @@ const alertsToCsv = (alerts) => {
   ];
 
   const header = paths.join(',');
-  const rows = alerts.map((alert) => paths.map((path) => {
-    let value = null;
-    try {
-      value = path.split('.').reduce((o, i) => o[i], alert);
-    } catch (e) { /* ignore */ }
-    if (typeof value === 'string') {
-      return `"${value.replace(/"/g, '""')}"`;
-    }
-    return value;
-  }).join(','));
+  const rows = alerts.map((alert) => paths
+    .map((path) => {
+      let value = null;
+      try {
+        value = path.split('.').reduce((o, i) => o[i], alert);
+      } catch (e) {
+        /* ignore */
+      }
+      if (typeof value === 'string') {
+        return `"${value.replace(/"/g, '""')}"`;
+      }
+      return value;
+    })
+    .join(','));
   return `${header}\n${rows.join('\n')}`;
 };
 
@@ -128,8 +130,7 @@ const IncidentAlertsModal = () => {
     showIncidentAlertsModalForIncidentId,
   } = useSelector((state) => state.settings);
   const {
-    filteredIncidentsByQuery,
-    incidentAlerts,
+    filteredIncidentsByQuery, incidentAlerts,
   } = useSelector((state) => state.incidents);
   const serviceList = useSelector((state) => state.services.services);
   const serviceListOptions = useMemo(() => {
@@ -184,7 +185,9 @@ const IncidentAlertsModal = () => {
     dispatch(moveAlertsConnected(fromIncidentId, toIncidentId, alertsToMove, options));
   };
 
-  const incident = filteredIncidentsByQuery.find((i) => i.id === showIncidentAlertsModalForIncidentId);
+  const incident = filteredIncidentsByQuery.find(
+    (i) => i.id === showIncidentAlertsModalForIncidentId,
+  );
   const alerts = incidentAlerts[showIncidentAlertsModalForIncidentId];
 
   const moveToNewIncidentOptions = {
@@ -278,8 +281,9 @@ const IncidentAlertsModal = () => {
                         id="alerts-modal-checkbox-all"
                         isChecked={selectedAlerts.length === alertsSortedDescendingDate.length}
                         isIndeterminate={
-                        selectedAlerts.length > 0 && selectedAlerts.length < alertsSortedDescendingDate.length
-                      }
+                          selectedAlerts.length > 0
+                          && selectedAlerts.length < alertsSortedDescendingDate.length
+                        }
                         onChange={(e) => {
                           if (e.target.checked) {
                             setSelectedAlerts(alertsSortedDescendingDate.map((alert) => alert.id));
@@ -320,12 +324,7 @@ const IncidentAlertsModal = () => {
                           <CheckCircleIcon color="green.500" />
                         )}
                       </Td>
-                      <Td
-                        maxW={500}
-                        overflow="hidden"
-                        textOverflow="ellipsis"
-                        whiteSpace="nowrap"
-                      >
+                      <Td maxW={500} overflow="hidden" textOverflow="ellipsis" whiteSpace="nowrap">
                         <Link href={alert.html_url} isExternal>
                           {alert.summary}
                         </Link>
@@ -343,7 +342,9 @@ const IncidentAlertsModal = () => {
               mr={3}
               onClick={() => {
                 const alertsCsv = alertsToCsv(
-                  alerts.filter((a) => selectedAlerts.length === 0 || selectedAlerts.includes(a.id)),
+                  alerts.filter(
+                    (a) => selectedAlerts.length === 0 || selectedAlerts.includes(a.id),
+                  ),
                 );
                 const blob = new Blob([alertsCsv], { type: 'text/csv;charset=utf-8;' });
                 const url = URL.createObjectURL(blob);
@@ -382,11 +383,7 @@ const IncidentAlertsModal = () => {
           </ModalFooter>
         </ModalContent>
       </Modal>
-      <Modal
-        isOpen={showMoveModal}
-        onClose={() => setShowMoveModal(false)}
-        size="xl"
-      >
+      <Modal isOpen={showMoveModal} onClose={() => setShowMoveModal(false)} size="xl">
         <ModalOverlay />
         <ModalContent>
           <ModalHeader>
@@ -395,9 +392,7 @@ const IncidentAlertsModal = () => {
           <ModalCloseButton />
           <ModalBody>
             <FormControl>
-              <FormLabel htmlFor="alerts-modal-move-select">
-                {t('Move to')}
-              </FormLabel>
+              <FormLabel htmlFor="alerts-modal-move-select">{t('Move to')}</FormLabel>
               <Select
                 id="alerts-modal-move-select"
                 size="md"
@@ -407,7 +402,7 @@ const IncidentAlertsModal = () => {
                 onChange={(value) => setMoveTarget(value)}
                 placeholder={`${t('Select dotdotdot')}`}
                 chakraStyles={{
-                // Ensure that dropdowns appear over table header
+                  // Ensure that dropdowns appear over table header
                   menu: (provided) => ({
                     ...provided,
                     zIndex: 2,
@@ -419,14 +414,13 @@ const IncidentAlertsModal = () => {
             {moveTarget && moveTarget.value.startsWith('new') && (
               <>
                 <FormControl>
-                  <FormLabel htmlFor="alerts-modal-move-summary-input">
-                    {t('Summary')}
-                  </FormLabel>
+                  <FormLabel htmlFor="alerts-modal-move-summary-input">{t('Summary')}</FormLabel>
                   <Input
                     id="alerts-modal-move-summary-input"
                     isDisabled={moveTarget.value === 'new-each'}
                     value={
-                      (moveTarget.value === 'new-each' && t('Incident titles will be the same as the alert titles'))
+                      (moveTarget.value === 'new-each'
+                        && t('Incident titles will be the same as the alert titles'))
                       || (moveTarget.value === 'new' && moveTargetOptions.summary)
                       || ''
                     }
@@ -434,9 +428,7 @@ const IncidentAlertsModal = () => {
                   />
                 </FormControl>
                 <FormControl>
-                  <FormLabel htmlFor="alerts-modal-move-service-select">
-                    {t('Service')}
-                  </FormLabel>
+                  <FormLabel htmlFor="alerts-modal-move-service-select">{t('Service')}</FormLabel>
                   <Select
                     id="alerts-modal-move-service-select"
                     size="md"
@@ -464,10 +456,10 @@ const IncidentAlertsModal = () => {
                     size="md"
                     isSearchable
                     options={epListOptions}
-                    defaultValue={epListOptions.find((s) => s.value === incident.escalation_policy.id)}
-                    onChange={
-                      (selected) => setMoveTargetOptions((prev) => ({ ...prev, epId: selected.value }))
-                    }
+                    defaultValue={epListOptions.find(
+                      (s) => s.value === incident.escalation_policy.id,
+                    )}
+                    onChange={(selected) => setMoveTargetOptions((prev) => ({ ...prev, epId: selected.value }))}
                     placeholder={`${t('Select dotdotdot')}`}
                     chakraStyles={{
                       // Ensure that dropdowns appear over table header
@@ -480,9 +472,7 @@ const IncidentAlertsModal = () => {
                   />
                 </FormControl>
                 <FormControl>
-                  <FormLabel htmlFor="alerts-modal-move-priority-select">
-                    {t('Priority')}
-                  </FormLabel>
+                  <FormLabel htmlFor="alerts-modal-move-priority-select">{t('Priority')}</FormLabel>
                   <Select
                     id="alerts-modal-move-priority-select"
                     size="md"
@@ -493,9 +483,7 @@ const IncidentAlertsModal = () => {
                         ? priorityListOptions.find((s) => s.value === incident.priority.id)
                         : priorityListOptions.find((s) => s.value === '--')
                     }
-                    onChange={
-                      (selected) => setMoveTargetOptions((prev) => ({ ...prev, priorityId: selected.value }))
-                    }
+                    onChange={(selected) => setMoveTargetOptions((prev) => ({ ...prev, priorityId: selected.value }))}
                     placeholder={`${t('Select dotdotdot')}`}
                     chakraStyles={{
                       // Ensure that dropdowns appear over table header

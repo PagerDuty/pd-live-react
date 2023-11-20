@@ -151,10 +151,12 @@ const incidents = produce(
         //   break;
 
       case FETCH_INCIDENT_ALERTS_REQUESTED:
-        if (!(
-          Array.isArray(draft.incidentAlerts[action.incidentId])
-          && draft.incidentAlerts[action.incidentId].length > 0
-        )) {
+        if (
+          !(
+            Array.isArray(draft.incidentAlerts[action.incidentId])
+            && draft.incidentAlerts[action.incidentId].length > 0
+          )
+        ) {
           draft.incidentAlerts[action.incidentId] = {
             status: 'fetching',
           };

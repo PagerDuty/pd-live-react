@@ -70,10 +70,17 @@ describe('Search Incidents', { failFast: { enabled: false } }, () => {
       cy.wait(1000);
       cy.get('[data-incident-header="Latest Note"]').each(($el) => {
         // cy.wrap($el).should('have.text', 'foobar');
-        cy.wrap($el).find('*').should((subElements) => {
-          const elementWithFoobar = subElements.toArray().find((el) => el.textContent.includes('foobar'));
-          assert.isNotNull(elementWithFoobar, 'Expected to find a subelement containing "foobar"');
-        });
+        cy.wrap($el)
+          .find('*')
+          .should((subElements) => {
+            const elementWithFoobar = subElements
+              .toArray()
+              .find((el) => el.textContent.includes('foobar'));
+            assert.isNotNull(
+              elementWithFoobar,
+              'Expected to find a subelement containing "foobar"',
+            );
+          });
       });
     });
     cy.get('#global-search-input').clear();
@@ -95,10 +102,17 @@ describe('Search Incidents', { failFast: { enabled: false } }, () => {
       cy.get('#global-search-input').clear().type('foobaz');
       cy.wait(1000);
       cy.get('[data-incident-header="Latest Note"]').each(($el) => {
-        cy.wrap($el).find('*').should((subElements) => {
-          const elementWithFoobar = subElements.toArray().find((el) => el.textContent.includes('foobar'));
-          assert.isNotNull(elementWithFoobar, 'Expected to find a subelement containing "foobar"');
-        });
+        cy.wrap($el)
+          .find('*')
+          .should((subElements) => {
+            const elementWithFoobar = subElements
+              .toArray()
+              .find((el) => el.textContent.includes('foobar'));
+            assert.isNotNull(
+              elementWithFoobar,
+              'Expected to find a subelement containing "foobar"',
+            );
+          });
       });
     });
     cy.get('#global-search-input').clear();

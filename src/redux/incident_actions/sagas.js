@@ -987,30 +987,22 @@ export function* moveAlerts(action) {
 
     if (toIncidentId === 'new-each') {
       // create new incident for each alert
-      const createIncidentsCalls = alerts.map((alert, idx) => (
-        call(
-          throttledPdAxiosRequest,
-          'POST',
-          'incidents',
-          null,
-          {
-            incident: {
-              type: 'incident',
-              title: alerts[idx].summary,
-              service: {
-                id: serviceId,
-                type: 'service_reference',
-              },
-              escalation_policy: {
-                id: epId,
-                type: 'escalation_policy_reference',
-              },
-              urgency: options.urgency || fromIncident.urgency,
-              priority: priorityId ? { id: priorityId, type: 'priority_reference' } : null,
-            },
+      const createIncidentsCalls = alerts.map((alert, idx) => call(throttledPdAxiosRequest, 'POST', 'incidents', null, {
+        incident: {
+          type: 'incident',
+          title: alerts[idx].summary,
+          service: {
+            id: serviceId,
+            type: 'service_reference',
           },
-        )
-      ));
+          escalation_policy: {
+            id: epId,
+            type: 'escalation_policy_reference',
+          },
+          urgency: options.urgency || fromIncident.urgency,
+          priority: priorityId ? { id: priorityId, type: 'priority_reference' } : null,
+        },
+      }));
       const createIncidentsResponses = yield all(createIncidentsCalls);
       if (!createIncidentsResponses || createIncidentsResponses.some((r) => r.status !== 201)) {
         yield displayActionModal('error', 'Unable to create incidents');

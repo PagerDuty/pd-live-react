@@ -1,6 +1,5 @@
 import React, {
-  useRef,
-  useState,
+  useRef, useState,
 } from 'react';
 
 import {
@@ -24,8 +23,7 @@ import {
 } from '@chakra-ui/react';
 
 import {
-  AddIcon,
-  CheckIcon,
+  AddIcon, CheckIcon,
 } from '@chakra-ui/icons';
 
 import i18next from 'i18next';
@@ -44,9 +42,7 @@ const LatestNoteComponent = ({
   const noteRef = useRef(null);
   const [note, setNote] = useState('');
   const {
-    isOpen,
-    onToggle,
-    onClose,
+    isOpen, onToggle, onClose,
   } = useDisclosure();
   const dispatch = useDispatch();
   const addNote = (incidents, noteContent) => dispatch(addNoteConnected(incidents, noteContent, true, false));
@@ -59,21 +55,14 @@ const LatestNoteComponent = ({
       alignItems="center"
       justifyContent="space-between"
     >
-      <Box
-        className="td-wrapper"
-        pr={8}
-      >
+      <Box className="td-wrapper" pr={8}>
         <Linkify options={linkifyOptions}>
           {incident.notes?.length > 0 && incident.notes.slice(-1)[0].content}
           {incident.notes?.length === 0 && '--'}
           {incident.notes?.status === 'fetching' && <Skeleton>fetching</Skeleton>}
         </Linkify>
       </Box>
-      <Popover
-        isOpen={isOpen}
-        onClose={onClose}
-        initialFocusRef={noteRef}
-      >
+      <Popover isOpen={isOpen} onClose={onClose} initialFocusRef={noteRef}>
         <PopoverTrigger>
           <IconButton
             size="xs"
@@ -92,9 +81,7 @@ const LatestNoteComponent = ({
         <PopoverContent>
           <PopoverArrow />
           <PopoverCloseButton />
-          <PopoverHeader>
-            {i18next.t('Add Note')}
-          </PopoverHeader>
+          <PopoverHeader>{i18next.t('Add Note')}</PopoverHeader>
           <PopoverBody>
             <Flex>
               <Textarea

@@ -421,9 +421,7 @@ export function* filterIncidentsImpl() {
   } = yield select(selectIncidentTable);
   const {
     searchAllCustomDetails, respondersInEpFilter, fuzzySearch,
-  } = yield select(
-    selectSettings,
-  );
+  } = yield select(selectSettings);
 
   let filteredIncidentsByQuery = [...incidents];
 

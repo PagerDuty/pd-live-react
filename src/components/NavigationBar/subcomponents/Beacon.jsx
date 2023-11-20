@@ -62,7 +62,7 @@ const mapStringToSpeed = (speed) => ({
   normal: '1500ms',
   fast: '800ms',
   slow: '2300ms',
-}[speed] || '1500ms');
+})[speed] || '1500ms';
 
 const mapPropToSpeed = (speed) => {
   if (typeof speed === 'number') {
