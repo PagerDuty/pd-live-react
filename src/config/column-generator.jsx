@@ -496,11 +496,7 @@ export const defaultIncidentColumns = () => [
       row: {
         original,
       },
-    }) => (
-      <LatestNoteComponent
-        incident={original}
-      />
-    ),
+    }) => <LatestNoteComponent incident={original} />,
   }),
   incidentColumn({
     id: 'latest_note_at',

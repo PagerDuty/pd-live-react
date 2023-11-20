@@ -21,7 +21,12 @@ import {
 } from 'react-window';
 
 import {
-  useTable, useSortBy, useRowSelect, useBlockLayout, useResizeColumns, useFilters,
+  useTable,
+  useSortBy,
+  useRowSelect,
+  useBlockLayout,
+  useResizeColumns,
+  useFilters,
 } from 'react-table';
 
 import {
@@ -290,7 +295,9 @@ const IncidentTableComponent = () => {
             <Checkbox
               m={0}
               id="select-all"
-              isIndeterminate={!tableInstance.isAllRowsSelected && tableInstance.selectedFlatRows.length > 0}
+              isIndeterminate={
+                !tableInstance.isAllRowsSelected && tableInstance.selectedFlatRows.length > 0
+              }
               isChecked={tableInstance.isAllRowsSelected}
               {...getToggleAllRowsSelectedProps()}
             />
@@ -380,7 +387,8 @@ const IncidentTableComponent = () => {
         if (inView) {
           if (
             !row.original.alerts
-            || (Array.isArray(row.original.alerts) && row.original.alerts.length !== row.original.alert_counts?.all)
+            || (Array.isArray(row.original.alerts)
+              && row.original.alerts.length !== row.original.alert_counts?.all)
           ) {
             getIncidentAlerts(row.original.id);
           }

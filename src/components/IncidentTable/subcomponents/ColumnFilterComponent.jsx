@@ -14,8 +14,7 @@ import {
 } from '@chakra-ui/react';
 
 import {
-  IoFunnel,
-  IoFunnelOutline,
+  IoFunnel, IoFunnelOutline,
 } from 'react-icons/io5';
 
 import {

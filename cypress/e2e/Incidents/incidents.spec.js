@@ -310,9 +310,7 @@ describe('Manage Open Incidents', { failFast: { enabled: false } }, () => {
       removeColumns.map((column) => column[1]),
     );
 
-    const addColumns = [
-      ['Num Alerts', 'num_alerts'],
-    ];
+    const addColumns = [['Num Alerts', 'num_alerts']];
     manageIncidentTableColumns(
       'add',
       addColumns.map((column) => column[1]),
@@ -324,7 +322,9 @@ describe('Manage Open Incidents', { failFast: { enabled: false } }, () => {
       .should('be.visible')
       .should('contain', '1');
 
-    cy.get(`[data-incident-header="Num Alerts"][data-incident-row-cell-idx="${incidentIdx}"]`).within(() => {
+    cy.get(
+      `[data-incident-header="Num Alerts"][data-incident-row-cell-idx="${incidentIdx}"]`,
+    ).within(() => {
       cy.get('[aria-haspopup="dialog"]').realHover();
     });
 
@@ -340,7 +340,9 @@ describe('Manage Open Incidents', { failFast: { enabled: false } }, () => {
   it('Split/move alert from one incident to a new incident', () => {
     const incidentIdx = 0;
 
-    cy.get(`[data-incident-header="Num Alerts"][data-incident-row-cell-idx="${incidentIdx}"]`).within(() => {
+    cy.get(
+      `[data-incident-header="Num Alerts"][data-incident-row-cell-idx="${incidentIdx}"]`,
+    ).within(() => {
       cy.get('[aria-haspopup="dialog"]').click();
     });
 
@@ -348,7 +350,9 @@ describe('Manage Open Incidents', { failFast: { enabled: false } }, () => {
 
     cy.get('#alerts-modal-move-btn').click();
     cy.get('#alerts-modal-move-select').type('Move all selected alerts to one new incident{enter}');
-    cy.get('#alerts-modal-move-summary-input').clear().type('New incident created from split alert');
+    cy.get('#alerts-modal-move-summary-input')
+      .clear()
+      .type('New incident created from split alert');
     cy.get('#alerts-modal-complete-move-btn').click();
 
     checkActionAlertsModalContent('Alerts moved');
@@ -368,7 +372,9 @@ describe('Manage Open Incidents', { failFast: { enabled: false } }, () => {
     waitForIncidentTable();
     const incidentIdx = 0;
 
-    cy.get(`[data-incident-header="Num Alerts"][data-incident-row-cell-idx="${incidentIdx}"]`).within(() => {
+    cy.get(
+      `[data-incident-header="Num Alerts"][data-incident-row-cell-idx="${incidentIdx}"]`,
+    ).within(() => {
       cy.get('[aria-haspopup="dialog"]').should('be.visible').should('have.text', '2').click();
     });
 
@@ -376,7 +382,9 @@ describe('Manage Open Incidents', { failFast: { enabled: false } }, () => {
     selectAlert(1);
 
     cy.get('#alerts-modal-move-btn').click();
-    cy.get('#alerts-modal-move-select').type('Move each selected alert to its own new incident{enter}');
+    cy.get('#alerts-modal-move-select').type(
+      'Move each selected alert to its own new incident{enter}',
+    );
     cy.get('#alerts-modal-complete-move-btn').click();
 
     checkActionAlertsModalContent('Alerts moved');
@@ -389,16 +397,20 @@ describe('Manage Open Incidents', { failFast: { enabled: false } }, () => {
     selectIncident(targetIncidentIdx);
 
     cy.get(`@selectedIncidentId_${targetIncidentIdx}`).then((incidentId) => {
-      cy.get(`[data-incident-header="Num Alerts"][data-incident-cell-id="${incidentId}"]`).within(() => {
-        cy.get('[aria-haspopup="dialog"]').should('be.visible').should('have.text', '1');
-      });
+      cy.get(`[data-incident-header="Num Alerts"][data-incident-cell-id="${incidentId}"]`).within(
+        () => {
+          cy.get('[aria-haspopup="dialog"]').should('be.visible').should('have.text', '1');
+        },
+      );
 
       cy.get(`[data-incident-header="Title"][data-incident-cell-id="${incidentId}"]`).within(() => {
         cy.get('a').invoke('text').as('targetIncidentTitle');
       });
     });
 
-    cy.get(`[data-incident-header="Num Alerts"][data-incident-row-cell-idx="${sourceIncidentIdx}"]`).within(() => {
+    cy.get(
+      `[data-incident-header="Num Alerts"][data-incident-row-cell-idx="${sourceIncidentIdx}"]`,
+    ).within(() => {
       cy.get('[aria-haspopup="dialog"]').should('be.visible').should('have.text', '1').click();
     });
 
@@ -415,9 +427,11 @@ describe('Manage Open Incidents', { failFast: { enabled: false } }, () => {
     waitForIncidentTable();
 
     cy.get(`@selectedIncidentId_${targetIncidentIdx}`).then((incidentId) => {
-      cy.get(`[data-incident-header="Num Alerts"][data-incident-cell-id="${incidentId}"]`).within(() => {
-        cy.get('[aria-haspopup="dialog"]').should('be.visible').should('have.text', '2');
-      });
+      cy.get(`[data-incident-header="Num Alerts"][data-incident-cell-id="${incidentId}"]`).within(
+        () => {
+          cy.get('[aria-haspopup="dialog"]').should('be.visible').should('have.text', '2');
+        },
+      );
     });
 
     // Tidy up by resolving the incident with two alerts

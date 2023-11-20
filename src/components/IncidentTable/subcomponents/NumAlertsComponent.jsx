@@ -1,6 +1,5 @@
 import React, {
-  useCallback,
-  useMemo,
+  useCallback, useMemo,
 } from 'react';
 
 import {
@@ -46,7 +45,9 @@ const NumAlertsComponent = ({
 
   const dispatch = useDispatch();
   const setShowIncidentAlertsModalForIncidentId = (showIncidentAlertsModalforIncidentId) => {
-    dispatch(setShowIncidentAlertsModalForIncidentIdConnected(showIncidentAlertsModalforIncidentId));
+    dispatch(
+      setShowIncidentAlertsModalForIncidentIdConnected(showIncidentAlertsModalforIncidentId),
+    );
   };
   const getIncidentAlerts = useCallback(
     (id) => {
@@ -55,61 +56,58 @@ const NumAlertsComponent = ({
     [dispatch],
   );
 
-  const tooltipText = useMemo(
-    () => {
-      let r;
-      if (alerts instanceof Array && alerts.length > 0) {
-        const alertsSortedDescendingDate = [...alerts].sort(
-          (a, b) => new Date(b.created_at) - new Date(a.created_at),
-        );
-        r = (
-          <TableContainer>
-            <Table size="sm">
-              <Thead>
-                <Tr>
-                  <Th>Created At</Th>
-                  <Th>Status</Th>
-                  <Th>Summary</Th>
+  const tooltipText = useMemo(() => {
+    let r;
+    if (alerts instanceof Array && alerts.length > 0) {
+      const alertsSortedDescendingDate = [...alerts].sort(
+        (a, b) => new Date(b.created_at) - new Date(a.created_at),
+      );
+      r = (
+        <TableContainer>
+          <Table size="sm">
+            <Thead>
+              <Tr>
+                <Th>Created At</Th>
+                <Th>Status</Th>
+                <Th>Summary</Th>
+              </Tr>
+            </Thead>
+            <Tbody>
+              {alertsSortedDescendingDate.slice(0, 20).map((alert) => (
+                <Tr key={alert.id}>
+                  <Td>{new Date(alert.created_at).toLocaleString()}</Td>
+                  <Td aria-label={alert.status}>
+                    {alert.status === 'triggered' ? (
+                      <WarningTwoIcon color="red.500" />
+                    ) : (
+                      <CheckCircleIcon color="green.500" />
+                    )}
+                  </Td>
+                  <Td>
+                    <Link href={alert.html_url} isExternal>
+                      {alert.summary}
+                    </Link>
+                  </Td>
                 </Tr>
-              </Thead>
-              <Tbody>
-                {alertsSortedDescendingDate.slice(0, 20).map((alert) => (
-                  <Tr key={alert.id}>
-                    <Td>{new Date(alert.created_at).toLocaleString()}</Td>
-                    <Td aria-label={alert.status}>
-                      {alert.status === 'triggered' ? (
-                        <WarningTwoIcon color="red.500" />
-                      ) : (
-                        <CheckCircleIcon color="green.500" />
-                      )}
-                    </Td>
-                    <Td>
-                      <Link href={alert.html_url} isExternal>
-                        {alert.summary}
-                      </Link>
-                    </Td>
-                  </Tr>
-                ))}
-              </Tbody>
-              {alertsSortedDescendingDate.length > 20 && (
+              ))}
+            </Tbody>
+            {alertsSortedDescendingDate.length > 20 && (
               <Tfoot>
                 <Tr>
                   <Th colSpan={3}>{`${alertsSortedDescendingDate.length - 20} more not shown`}</Th>
                 </Tr>
               </Tfoot>
-              )}
-            </Table>
-          </TableContainer>
-        );
-      } else if (alerts instanceof Array && alerts.length === 0) {
-        r = <Box p={4}>No alerts</Box>;
-      } else if (alerts?.status) {
-        r = <Box p={4}>{alerts.status}</Box>;
-      }
-      return r;
-    },
-    [alerts],
-  );
+            )}
+          </Table>
+        </TableContainer>
+      );
+    } else if (alerts instanceof Array && alerts.length === 0) {
+      r = <Box p={4}>No alerts</Box>;
+    } else if (alerts?.status) {
+      r = <Box p={4}>{alerts.status}</Box>;
+    }
+    return r;
+  }, [alerts]);
 
   return (
     <Popover
@@ -127,7 +125,9 @@ const NumAlertsComponent = ({
           cursor="default"
           onClick={
             alerts instanceof Array && alerts.length > 0
-              ? () => { setShowIncidentAlertsModalForIncidentId(incidentId); }
+              ? () => {
+                setShowIncidentAlertsModalForIncidentId(incidentId);
+              }
               : undefined
           }
         >
