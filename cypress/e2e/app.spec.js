@@ -62,7 +62,7 @@ describe('PagerDuty Live', { failFast: { enabled: true } }, () => {
     cy.intercept('https://api.pagerduty.com/abilities*', {
       abilities: ['teams', 'read_only_users', 'service_support_hours', 'urgencies'],
     }).as('getAbilities');
-    cy.visit('http://localhost:3000/pd-live-react');
+    cy.visit('/');
     acceptDisclaimer();
     cy.wait('@getAbilities', { timeout: 30000 });
 
@@ -75,7 +75,7 @@ describe('PagerDuty Live', { failFast: { enabled: true } }, () => {
   });
 
   it('Application indicates when polling is disabled through url parameter disable-polling', () => {
-    cy.visit('http://localhost:3000/pd-live-react/?disable-polling=true');
+    cy.visit('/?disable-polling=true');
 
     // cy.get('.modal-title', { timeout: 30000 }).contains('Disclaimer & License');
     // cy.get('#disclaimer-agree-checkbox').click({ force: true });
@@ -101,9 +101,7 @@ describe('PagerDuty Live', { failFast: { enabled: true } }, () => {
       ].join(''),
     ).as('getUrl');
 
-    cy.visit(
-      `http://localhost:3000/pd-live-react/?disable-polling=true&since=${since}&until=${until}`,
-    );
+    cy.visit(`/?disable-polling=true&since=${since}&until=${until}`);
 
     // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.wait(5000);
