@@ -57,7 +57,7 @@ describe('Manage Settings', { failFast: { enabled: false } }, () => {
       .should('contain', expectedIncidentDateFormat);
   });
 
-  ['1 Day', '3 Days', '1 Week', '2 Weeks', '1 Month', '3 Months', '6 Months'].forEach((tenor) => {
+  ['1 Day', '3 Days', '1 Week', '2 Weeks', '1 Month', '3 Months', '180 Days'].forEach((tenor) => {
     it(`Update default since date lookback to ${tenor}`, () => {
       const [sinceDateNum, sinceDateTenor] = tenor.split(' ');
       const expectedDate = moment().subtract(Number(sinceDateNum), sinceDateTenor).format('L');
