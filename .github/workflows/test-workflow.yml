@@ -103,7 +103,7 @@ jobs:
           # https://docs.cypress.io/guides/continuous-integration/introduction#Boot-your-server
           start: yarn start
           wait-on: 'http://localhost:3000' # Waits for above
-          browser: electron
+          browser: chrome
           # Records to Cypress Cloud
           # https://docs.cypress.io/guides/cloud/projects#Set-up-a-project-to-record
           record: true
