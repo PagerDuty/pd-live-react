@@ -27,7 +27,7 @@ import {
   selectAlert,
 } from '../../support/util/common';
 
-describe('Manage Open Incidents', { failFast: { enabled: false } }, () => {
+describe('Manage Open Incidents', { failFast: { enabled: true } }, () => {
   before(() => {
     acceptDisclaimer();
     const columns = [

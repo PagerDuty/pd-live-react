@@ -17,7 +17,7 @@ import {
   checkActionAlertsModalContent,
 } from '../../support/util/common';
 
-describe('Manage Settings', { failFast: { enabled: false } }, () => {
+describe('Manage Settings', { failFast: { enabled: true } }, () => {
   const localeCode = 'en-US';
   moment.locale(localeCode);
 

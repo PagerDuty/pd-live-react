@@ -11,7 +11,7 @@ import {
   updateFuzzySearch,
 } from '../../support/util/common';
 
-describe('Search Incidents', { failFast: { enabled: false } }, () => {
+describe('Search Incidents', { failFast: { enabled: true } }, () => {
   before(() => {
     acceptDisclaimer();
     waitForIncidentTable();

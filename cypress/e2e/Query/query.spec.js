@@ -19,7 +19,7 @@ import {
 registerLocale('en-GB', gb);
 moment.locale('en-GB');
 
-describe('Query Incidents', { failFast: { enabled: false } }, () => {
+describe('Query Incidents', { failFast: { enabled: true } }, () => {
   before(() => {
     acceptDisclaimer();
     manageIncidentTableColumns('remove', ['latest_note']);
