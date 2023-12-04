@@ -753,6 +753,14 @@ export const defaultAlertsColumns = () => [
       return renderPlainTextAlertCell({ value, cell });
     },
   }),
+  incidentColumn({
+    id: 'creation_time',
+    header: 'Timestamp',
+    columnType: 'alert',
+    accessor: (incident) => incident.alerts?.[0]?.body?.cef_details?.creation_time || '',
+    minWidth: 100,
+    renderer: renderPlainTextAlertCell,
+  }),
 ];
 
 export const customAlertColumnForSavedColumn = (savedColumn) => {
