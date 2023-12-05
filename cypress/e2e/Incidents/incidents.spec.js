@@ -27,8 +27,9 @@ import {
   selectAlert,
 } from '../../support/util/common';
 
-describe('Manage Open Incidents', { failFast: { enabled: true } }, () => {
-  before(() => {
+describe('Manage Open Incidents', { failFast: { enabled: true }, testIsolation: true }, () => {
+  // We use beforeEach as each test will reload/clear the session
+  beforeEach(() => {
     acceptDisclaimer();
     const columns = [
       ['Responders', 'responders'],
@@ -38,23 +39,6 @@ describe('Manage Open Incidents', { failFast: { enabled: true } }, () => {
       'add',
       columns.map((column) => column[1]),
     );
-    waitForIncidentTable();
-  });
-
-  // We use beforeEach as each test will reload/clear the session
-  beforeEach(() => {
-    // Handle failing tests by clearing cache
-    if (cy.state('test').currentRetry() > 1) {
-      acceptDisclaimer();
-      const columns = [
-        ['Responders', 'responders'],
-        ['Latest Log Entry Type', 'latest_log_entry_type'],
-      ];
-      manageIncidentTableColumns(
-        'add',
-        columns.map((column) => column[1]),
-      );
-    }
     waitForIncidentTable();
   });
 
@@ -338,6 +322,22 @@ describe('Manage Open Incidents', { failFast: { enabled: true } }, () => {
   });
 
   it('Split/move alert from one incident to a new incident', () => {
+    // Remove the other columns to make it easier to see the alert count without scrolling
+    const removeColumns = [
+      ['Responders', 'responders'],
+      ['Latest Log Entry Type', 'latest_log_entry_type'],
+    ];
+    manageIncidentTableColumns(
+      'remove',
+      removeColumns.map((column) => column[1]),
+    );
+
+    const addColumns = [['Num Alerts', 'num_alerts']];
+    manageIncidentTableColumns(
+      'add',
+      addColumns.map((column) => column[1]),
+    );
+
     const incidentIdx = 0;
 
     cy.get(
@@ -364,6 +364,22 @@ describe('Manage Open Incidents', { failFast: { enabled: true } }, () => {
   });
 
   it('Merge incidents then split alerts to their own incidents', () => {
+    // Remove the other columns to make it easier to see the alert count without scrolling
+    const removeColumns = [
+      ['Responders', 'responders'],
+      ['Latest Log Entry Type', 'latest_log_entry_type'],
+    ];
+    manageIncidentTableColumns(
+      'remove',
+      removeColumns.map((column) => column[1]),
+    );
+
+    const addColumns = [['Num Alerts', 'num_alerts']];
+    manageIncidentTableColumns(
+      'add',
+      addColumns.map((column) => column[1]),
+    );
+
     const targetIncidentIdx = 0;
     selectIncident(targetIncidentIdx);
     selectIncident(targetIncidentIdx + 1);
@@ -392,6 +408,22 @@ describe('Manage Open Incidents', { failFast: { enabled: true } }, () => {
   });
 
   it('Move alerts to a specific incident', () => {
+    // Remove the other columns to make it easier to see the alert count without scrolling
+    const removeColumns = [
+      ['Responders', 'responders'],
+      ['Latest Log Entry Type', 'latest_log_entry_type'],
+    ];
+    manageIncidentTableColumns(
+      'remove',
+      removeColumns.map((column) => column[1]),
+    );
+
+    const addColumns = [['Num Alerts', 'num_alerts']];
+    manageIncidentTableColumns(
+      'add',
+      addColumns.map((column) => column[1]),
+    );
+
     const targetIncidentIdx = 0;
     const sourceIncidentIdx = 1;
     selectIncident(targetIncidentIdx);
