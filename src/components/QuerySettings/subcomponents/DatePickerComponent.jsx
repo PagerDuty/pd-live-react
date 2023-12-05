@@ -62,9 +62,14 @@ const DatePickerComponent = () => {
 
   // Generate since date based on configured default and dispatch action for query.
   const today = moment();
-  const [sinceDateNum, sinceDateTenor] = defaultSinceDateTenor
+  let [sinceDateNum, sinceDateTenor] = defaultSinceDateTenor
     ? defaultSinceDateTenor.split(' ')
     : ['1', 'Day'];
+
+  if (defaultSinceDateTenor === 'Today') {
+    sinceDateNum = '0';
+    sinceDateTenor = 'Day';
+  }
   const sinceDateCalc = DEBUG_SINCE_DATE
     ? new Date(DEBUG_SINCE_DATE)
     : today

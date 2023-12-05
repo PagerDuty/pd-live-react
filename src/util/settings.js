@@ -5,6 +5,7 @@ import {
 
 /* eslint-disable import/prefer-default-export */
 export const defaultSinceDateTenors = [
+  'Today',
   '1 Day',
   '3 Days',
   '1 Week',
@@ -23,6 +24,7 @@ export const defaultSinceDateTenorsLabels = () => {
     t,
   } = useTranslation();
   return {
+    Today: t('Today'),
     '1 Day': t('1 Day'),
     '3 Days': t('3 Days'),
     '1 Week': t('1 Week'),
