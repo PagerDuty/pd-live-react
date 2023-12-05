@@ -735,6 +735,32 @@ export const defaultAlertsColumns = () => [
     minWidth: 100,
     renderer: renderPlainTextAlertCell,
   }),
+  incidentColumn({
+    id: 'client',
+    header: 'Client',
+    columnType: 'alert',
+    accessor: (incident) => incident.alerts?.[0]?.body?.cef_details?.client || '',
+    minWidth: 100,
+    renderer: ({
+      value, cell,
+    }) => {
+      if (value.length > 0) {
+        return renderLinkCell({
+          text: value,
+          href: cell.row.original.alerts?.[0]?.body?.cef_details?.client_url || cell.row.original.html_url,
+        });
+      }
+      return renderPlainTextAlertCell({ value, cell });
+    },
+  }),
+  incidentColumn({
+    id: 'creation_time',
+    header: 'Timestamp',
+    columnType: 'alert',
+    accessor: (incident) => incident.alerts?.[0]?.body?.cef_details?.creation_time || '',
+    minWidth: 100,
+    renderer: renderPlainTextAlertCell,
+  }),
 ];
 
 export const customAlertColumnForSavedColumn = (savedColumn) => {
