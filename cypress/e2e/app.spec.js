@@ -6,7 +6,7 @@ import {
 
 import packageConfig from '../../package.json';
 
-describe('Integration User Token', { failFast: { enabled: true } }, () => {
+describe('Integration User Token', { failFast: { enabled: true }, testIsolation: true }, () => {
   before(() => {
     expect(Cypress.env('PD_USER_TOKEN')).to.be.a('string');
     cy.intercept('GET', 'https://api.pagerduty.com/users/me').as('getCurrentUser');
@@ -28,22 +28,10 @@ describe('Integration User Token', { failFast: { enabled: true } }, () => {
   });
 });
 
-describe('PagerDuty Live', { failFast: { enabled: true } }, () => {
-  before(() => {
+describe('PagerDuty Live', { failFast: { enabled: true }, testIsolation: true }, () => {
+  beforeEach(() => {
     acceptDisclaimer();
     waitForIncidentTable();
-  });
-
-  beforeEach(() => {
-    if (cy.state('test').currentRetry() > 1) {
-      acceptDisclaimer();
-      waitForIncidentTable();
-    }
-  });
-
-  afterEach(() => {
-    // Reset hover state
-    cy.get('body').realHover({ position: 'topLeft' }).click();
   });
 
   it('Renders the main application page', () => {
@@ -81,11 +69,6 @@ describe('PagerDuty Live', { failFast: { enabled: true } }, () => {
 
   it('Application indicates when polling is disabled through url parameter disable-polling', () => {
     cy.visit('/?disable-polling=true');
-
-    // cy.get('.modal-title', { timeout: 30000 }).contains('Disclaimer & License');
-    // cy.get('#disclaimer-agree-checkbox').click({ force: true });
-    // cy.get('#disclaimer-accept-button').click({ force: true });
-
     cy.get('.status-beacon-ctr').realHover();
     cy.get('[data-popper-placement="bottom"]').should('be.visible');
     cy.get('[data-popper-placement="bottom"]').contains('Live updates disabled');
