@@ -19,26 +19,12 @@ import {
 registerLocale('en-GB', gb);
 moment.locale('en-GB');
 
-describe('Query Incidents', { failFast: { enabled: true } }, () => {
-  before(() => {
+describe('Query Incidents', { failFast: { enabled: true }, testIsolation: true }, () => {
+  beforeEach(() => {
     acceptDisclaimer();
     manageIncidentTableColumns('remove', ['latest_note']);
     manageIncidentTableColumns('add', ['urgency', 'teams', 'escalation_policy']);
-    // priorityNames.forEach((currentPriority) => {
-    //   activateButton(`query-priority-${currentPriority}-button`);
-    // });
     waitForIncidentTable();
-  });
-
-  beforeEach(() => {
-    if (cy.state('test').currentRetry() > 1) {
-      acceptDisclaimer();
-      manageIncidentTableColumns('remove', ['latest_note']);
-      manageIncidentTableColumns('add', ['urgency', 'teams', 'escalation_policy']);
-    }
-    // priorityNames.forEach((currentPriority) => {
-    //   activateButton(`query-priority-${currentPriority}-button`);
-    // });
   });
 
   it('Query for incidents within T-1 since date', () => {
@@ -226,7 +212,7 @@ describe('Query Incidents', { failFast: { enabled: true } }, () => {
     cy.get('#query-user-select').click().type('{del}{del}{del}');
   });
 
-  it('Sort incident column "#" by ascending order', () => {
+  it('Sort incident columns', () => {
     cy.get('[data-column-name="#"]')
       .click()
       .then(($el) => {
@@ -234,9 +220,7 @@ describe('Query Incidents', { failFast: { enabled: true } }, () => {
         expect(cls).to.contain('th-sorted');
         cy.wrap($el).contains('# ▲');
       });
-  });
 
-  it('Sort incident column "#" by descending order', () => {
     cy.get('[data-column-name="#"]')
       .click()
       .then(($el) => {
@@ -244,9 +228,7 @@ describe('Query Incidents', { failFast: { enabled: true } }, () => {
         expect(cls).to.contain('th-sorted');
         cy.wrap($el).contains('# ▼');
       });
-  });
 
-  it('Clear sort on incident column "#"', () => {
     cy.get('[data-column-name="#"]')
       .click()
       .then(($el) => {
