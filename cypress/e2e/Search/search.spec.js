@@ -11,16 +11,9 @@ import {
   updateFuzzySearch,
 } from '../../support/util/common';
 
-describe('Search Incidents', { failFast: { enabled: true } }, () => {
-  before(() => {
-    acceptDisclaimer();
-    waitForIncidentTable();
-  });
-
+describe('Search Incidents', { failFast: { enabled: true }, testIsolation: true }, () => {
   beforeEach(() => {
-    if (cy.state('test').currentRetry() > 1) {
-      acceptDisclaimer();
-    }
+    acceptDisclaimer();
     waitForIncidentTable();
   });
 
