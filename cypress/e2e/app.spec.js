@@ -1,7 +1,7 @@
 import moment from 'moment/min/moment-with-locales';
 
 import {
-  acceptDisclaimer, waitForIncidentTable, pd,
+  acceptDisclaimer, waitForIncidentTable, clearLocalCache, pd,
 } from '../support/util/common';
 
 import packageConfig from '../../package.json';
@@ -41,6 +41,11 @@ describe('PagerDuty Live', { failFast: { enabled: true } }, () => {
     }
   });
 
+  afterEach(() => {
+    // Reset hover state
+    cy.get('body').realHover({ position: 'topLeft' }).click();
+  });
+
   it('Renders the main application page', () => {
     cy.get('#navbar-ctr').contains('Live Incidents Console');
   });
@@ -62,7 +67,7 @@ describe('PagerDuty Live', { failFast: { enabled: true } }, () => {
     cy.intercept('https://api.pagerduty.com/abilities*', {
       abilities: ['teams', 'read_only_users', 'service_support_hours', 'urgencies'],
     }).as('getAbilities');
-    cy.visit('/');
+    clearLocalCache();
     acceptDisclaimer();
     cy.wait('@getAbilities', { timeout: 30000 });
 

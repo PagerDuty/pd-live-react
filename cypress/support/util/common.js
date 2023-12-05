@@ -10,9 +10,6 @@ export const pd = api({ token: Cypress.env('PD_USER_TOKEN') });
   Cypress Helpers
 */
 export const acceptDisclaimer = () => {
-  cy.clearLocalStorage();
-  cy.clearAllSessionStorage();
-  cy.clearCookies();
   cy.visit('/');
   cy.get('.modal-title', { timeout: 30000 }).contains('Disclaimer & License');
   cy.get('#disclaimer-agree-checkbox').click({ force: true });
@@ -282,8 +279,7 @@ export const updateDefaultSinceDateLookback = (tenor = '1 Day') => {
 
   cy.get('#save-settings-button').click();
   checkActionAlertsModalContent('Updated user profile settings');
-  cy.reload();
-  acceptDisclaimer();
+  cy.visit('/');
 };
 
 export const updateAutoRefreshInterval = (autoRefreshInterval = 5) => {
@@ -340,6 +336,11 @@ export const updateFuzzySearch = (fuzzySearch = false) => {
 
 export const updateDarkMode = () => {
   cy.get('[aria-label="Toggle Dark Mode"]').click();
+};
+
+export const clearLocalCache = () => {
+  cy.get('.settings-panel-dropdown').click();
+  cy.get('.dropdown-item').contains('Clear Local Cache').click();
 };
 
 export const priorityNames = ['--', 'P5', 'P4', 'P3', 'P2', 'P1'];
