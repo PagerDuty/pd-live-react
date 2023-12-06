@@ -53,11 +53,9 @@ describe('Manage Open Incidents', { failFast: { enabled: true } }, () => {
       const incidentNumbers = text.split(' ')[0].split('/');
       expect(incidentNumbers[0]).to.equal(incidentNumbers[1]);
     });
-    // Unselect all incidents for the next run
+    // Unselect all incidents
     selectAllIncidents();
-  });
-
-  it('Shift-select multiple incidents', () => {
+    // Shift-select multiple incidents
     selectIncident(0);
     selectIncident(4, true);
     cy.get('.selected-incidents-badge').then(($el) => {
@@ -65,7 +63,7 @@ describe('Manage Open Incidents', { failFast: { enabled: true } }, () => {
       const incidentNumbers = text.split(' ')[0].split('/');
       expect(incidentNumbers[0]).to.equal('5');
     });
-    // Unselect all incidents for the next run
+    // Unselect all incidents
     selectAllIncidents();
     selectAllIncidents();
   });
@@ -81,41 +79,36 @@ describe('Manage Open Incidents', { failFast: { enabled: true } }, () => {
     });
   });
 
-  it('Add note to singular incident', () => {
+  it('Add notes to singular incidents', () => {
     const note = 'All your base are belong to us';
-    const incidentIdx = 0;
-    selectIncident(incidentIdx);
+    selectIncident(0);
 
-    cy.get(`@selectedIncidentId_${incidentIdx}`).then((incidentId) => {
+    cy.get('@selectedIncidentId_0').then((incidentId) => {
       addNote(note);
       checkActionAlertsModalContent('have been updated with a note');
       checkIncidentCellContent(incidentId, 'Latest Note', note);
       checkIncidentCellContent(incidentId, 'Latest Log Entry Type', 'annotate');
     });
-  });
 
-  it('Add a very long note to singular incident which overflows', () => {
-    const note = 'This note is so long that I gave up writing a novel and decided to quit!';
-    const incidentIdx = 1;
-    selectIncident(incidentIdx);
+    // Add a very long note to singular incident which overflows
+    const noteLong = 'This note is so long that I gave up writing a novel and decided to quit!';
+    selectIncident(1);
 
-    cy.get(`@selectedIncidentId_${incidentIdx}`).then((incidentId) => {
-      addNote(note);
+    cy.get('@selectedIncidentId_1').then((incidentId) => {
+      addNote(noteLong);
       checkActionAlertsModalContent('have been updated with a note');
-      checkIncidentCellContent(incidentId, 'Latest Note', note);
+      checkIncidentCellContent(incidentId, 'Latest Note', noteLong);
       checkIncidentCellContent(incidentId, 'Latest Log Entry Type', 'annotate');
     });
-  });
 
-  it('Add note with URL to singular incident', () => {
-    const note = 'This note has a URL example.com included';
-    const incidentIdx = 2;
-    selectIncident(incidentIdx);
+    // 'Add note with URL to singular incident
+    const noteURL = 'This note has a URL example.com included';
+    selectIncident(2);
 
-    cy.get(`@selectedIncidentId_${incidentIdx}`).then((incidentId) => {
-      addNote(note);
+    cy.get('@selectedIncidentId_2').then((incidentId) => {
+      addNote(noteURL);
       checkActionAlertsModalContent('have been updated with a note');
-      checkIncidentCellContent(incidentId, 'Latest Note', note);
+      checkIncidentCellContent(incidentId, 'Latest Note', noteURL);
       checkIncidentCellContentHasLink(
         incidentId,
         'Latest Note',
@@ -123,17 +116,15 @@ describe('Manage Open Incidents', { failFast: { enabled: true } }, () => {
         'http://example.com',
       );
     });
-  });
 
-  it('Add note with email to singular incident', () => {
-    const note = 'This note has an email test@example.com included';
-    const incidentIdx = 3;
-    selectIncident(incidentIdx);
+    // Add note with email to singular incident
+    const noteEmail = 'This note has an email test@example.com included';
+    selectIncident(3);
 
-    cy.get(`@selectedIncidentId_${incidentIdx}`).then((incidentId) => {
-      addNote(note);
+    cy.get('@selectedIncidentId_3').then((incidentId) => {
+      addNote(noteEmail);
       checkActionAlertsModalContent('have been updated with a note');
-      checkIncidentCellContent(incidentId, 'Latest Note', note);
+      checkIncidentCellContent(incidentId, 'Latest Note', noteEmail);
       checkIncidentCellContentHasLink(
         incidentId,
         'Latest Note',
@@ -143,13 +134,13 @@ describe('Manage Open Incidents', { failFast: { enabled: true } }, () => {
     });
   });
 
-  // Assumed environment has 3 levels on escalation policy
-  for (let escalationLevel = 1; escalationLevel < 4; escalationLevel++) {
-    it(`Escalate singular incident to level: ${escalationLevel}`, () => {
-      // Ensure that only high urgency incidents are visible
-      // deactivateButton('query-urgency-low-button');
-      cy.get('.query-urgency-low-button').uncheck({ force: true });
-      waitForIncidentTable();
+  it('Escalate singular incident to multiple levels', () => {
+    // Ensure that only high urgency incidents are visible
+    cy.get('.query-urgency-low-button').uncheck({ force: true });
+    waitForIncidentTable();
+
+    // Assumed environment has 3 levels on escalation policy
+    for (let escalationLevel = 1; escalationLevel < 4; escalationLevel++) {
       const incidentIdx = 0;
       selectIncident(incidentIdx);
       cy.get(`@selectedIncidentId_${incidentIdx}`).then((incidentId) => {
@@ -157,28 +148,50 @@ describe('Manage Open Incidents', { failFast: { enabled: true } }, () => {
         checkActionAlertsModalContent(`have been manually escalated to level ${escalationLevel}`);
         checkIncidentCellContent(incidentId, 'Latest Log Entry Type', /escalate|notify/);
       });
-    });
-  }
+    }
+  });
 
-  it('Reassign singular incident to User A1', () => {
-    // activateButton('query-urgency-low-button'); // bring back low urgency incidents
+  it('Reassign singular incidents to User and Team', () => {
     cy.get('.query-urgency-low-button').check({ force: true });
-    const assignment = 'User A1';
+    let assignment = 'User A1';
     selectIncident(0);
     reassign(assignment);
     checkActionAlertsModalContent(`have been reassigned to ${assignment}`);
-  });
 
-  it('Reassign singular incident to Team A', () => {
-    const assignment = 'Team A';
+    assignment = 'Team A';
     selectIncident(1);
     reassign(assignment);
     checkActionAlertsModalContent(`have been reassigned to ${assignment}`);
   });
 
-  it('Add responder (User A1) to singular incident', () => {
-    const responders = ['User A1'];
+  it('Add User and Team responders to singular incident', () => {
+    let responders = ['User A1'];
     const message = 'Need help with this incident';
+    let incidentIdx = 0;
+    selectIncident(incidentIdx);
+    addResponders(responders, message);
+    checkActionAlertsModalContent('Requested additional response for incident(s)');
+    cy.get(`@selectedIncidentId_${incidentIdx}`).then((incidentId) => {
+      checkIncidentCellContent(incidentId, 'Responders', 'UA');
+      checkPopoverContent(incidentId, 'Responders', 'user_a1@example.com');
+      checkIncidentCellContent(incidentId, 'Latest Log Entry Type', 'responder_request');
+    });
+
+    responders = ['Team A'];
+    incidentIdx = 1;
+    selectIncident(incidentIdx);
+    addResponders(responders, message);
+    checkActionAlertsModalContent('Requested additional response for incident(s)');
+    cy.get(`@selectedIncidentId_${incidentIdx}`).then((incidentId) => {
+      checkIncidentCellContent(incidentId, 'Responders', 'UA');
+      checkPopoverContent(incidentId, 'Responders', 'user_a1@example.com');
+      checkIncidentCellContent(incidentId, 'Latest Log Entry Type', 'responder_request');
+    });
+  });
+
+  it('Add multiple responders (Team A + Team B) to singular incident', () => {
+    const responders = ['Team A', 'Team B'];
+    const message = "Need everyone's help with this incident";
     const incidentIdx = 0;
     selectIncident(incidentIdx);
     addResponders(responders, message);
@@ -190,42 +203,17 @@ describe('Manage Open Incidents', { failFast: { enabled: true } }, () => {
     });
   });
 
-  it('Add responder (Team A) to singular incident', () => {
-    const responders = ['Team A'];
-    const message = 'Need help with this incident';
+  it('Snooze singular incidents with specified or custom durations', () => {
     selectIncident(0);
-    addResponders(responders, message);
-    checkActionAlertsModalContent('Requested additional response for incident(s)');
-  });
-
-  it('Add multiple responders (Team A + Team B) to singular incident', () => {
-    const responders = ['Team A', 'Team B'];
-    const message = "Need everyone's help with this incident";
-    selectIncident(0);
-    addResponders(responders, message);
-    checkActionAlertsModalContent('Requested additional response for incident(s)');
-  });
-
-  it('Snooze singular incident for specified duration (5 minutes)', () => {
-    const duration = '5 minutes';
-    selectIncident(0);
-    snooze(duration);
+    snooze('5 minutes');
     checkActionAlertsModalContent('have been snoozed.');
-  });
 
-  it('Snooze singular incident for custom duration (2 hours)', () => {
-    const type = 'hours';
-    const option = 2;
-    selectIncident(0);
-    snoozeCustom(type, option);
+    selectIncident(1);
+    snoozeCustom('hours', 2);
     checkActionAlertsModalContent('have been snoozed.');
-  });
 
-  it('Snooze singular incident for custom duration (tomorrow for 9:00 AM)', () => {
-    const type = 'tomorrow';
-    const option = '9:00 AM';
-    selectIncident(0);
-    snoozeCustom(type, option);
+    selectIncident(2);
+    snoozeCustom('tomorrow', '9:00 AM');
     checkActionAlertsModalContent('have been snoozed.');
   });
 
@@ -243,8 +231,8 @@ describe('Manage Open Incidents', { failFast: { enabled: true } }, () => {
     checkActionAlertsModalContent('have been resolved');
   });
 
-  priorityNames.forEach((priorityName, idx) => {
-    it(`Update priority of singular incident to ${priorityName}`, () => {
+  it('Update priority of singular incidents', () => {
+    priorityNames.forEach((priorityName, idx) => {
       const incidentIdx = idx;
       selectIncident(incidentIdx);
       cy.get(`@selectedIncidentId_${incidentIdx}`).then((incidentId) => {
@@ -258,10 +246,6 @@ describe('Manage Open Incidents', { failFast: { enabled: true } }, () => {
   });
 
   it('Run external system sync on singular incident', () => {
-    // For some reason this doesn't work on first attempt - clearing cache as a workaround
-    // acceptDisclaimer();
-    // waitForIncidentTable();
-
     const externalSystemName = 'ServiceNow';
     selectIncident(0);
     runExternalSystemSync(externalSystemName);
@@ -282,24 +266,25 @@ describe('Manage Open Incidents', { failFast: { enabled: true } }, () => {
     runResponsePlay(responsePlayName);
     checkActionAlertsModalContent(`Ran "${responsePlayName}" response play for incident(s)`);
   });
+});
 
-  it('Hovering over Num Alerts count should popup alert table', () => {
-    // Remove the other columns to make it easier to see the alert count without scrolling
-    const removeColumns = [
-      ['Responders', 'responders'],
-      ['Latest Log Entry Type', 'latest_log_entry_type'],
-    ];
-    manageIncidentTableColumns(
-      'remove',
-      removeColumns.map((column) => column[1]),
-    );
-
+describe('Manage Alerts', { failFast: { enabled: true } }, () => {
+  // We use beforeEach as each test will reload/clear the session
+  beforeEach(() => {
+    acceptDisclaimer();
     const addColumns = [['Num Alerts', 'num_alerts']];
     manageIncidentTableColumns(
       'add',
       addColumns.map((column) => column[1]),
     );
+    waitForIncidentTable();
+  });
 
+  afterEach(() => {
+    checkNoIncidentsSelected();
+  });
+
+  it('Hovering over Num Alerts count should popup alert table', () => {
     const incidentIdx = 0;
 
     cy.get(`[data-incident-header="Num Alerts"][data-incident-row-cell-idx="${incidentIdx}"]`)
@@ -319,22 +304,6 @@ describe('Manage Open Incidents', { failFast: { enabled: true } }, () => {
   });
 
   it('Split/move alert from one incident to a new incident', () => {
-    // Remove the other columns to make it easier to see the alert count without scrolling
-    const removeColumns = [
-      ['Responders', 'responders'],
-      ['Latest Log Entry Type', 'latest_log_entry_type'],
-    ];
-    manageIncidentTableColumns(
-      'remove',
-      removeColumns.map((column) => column[1]),
-    );
-
-    const addColumns = [['Num Alerts', 'num_alerts']];
-    manageIncidentTableColumns(
-      'add',
-      addColumns.map((column) => column[1]),
-    );
-
     const incidentIdx = 0;
 
     cy.get(
@@ -361,22 +330,6 @@ describe('Manage Open Incidents', { failFast: { enabled: true } }, () => {
   });
 
   it('Merge incidents then split alerts to their own incidents', () => {
-    // Remove the other columns to make it easier to see the alert count without scrolling
-    const removeColumns = [
-      ['Responders', 'responders'],
-      ['Latest Log Entry Type', 'latest_log_entry_type'],
-    ];
-    manageIncidentTableColumns(
-      'remove',
-      removeColumns.map((column) => column[1]),
-    );
-
-    const addColumns = [['Num Alerts', 'num_alerts']];
-    manageIncidentTableColumns(
-      'add',
-      addColumns.map((column) => column[1]),
-    );
-
     const targetIncidentIdx = 0;
     selectIncident(targetIncidentIdx);
     selectIncident(targetIncidentIdx + 1);
@@ -405,22 +358,6 @@ describe('Manage Open Incidents', { failFast: { enabled: true } }, () => {
   });
 
   it('Move alerts to a specific incident', () => {
-    // Remove the other columns to make it easier to see the alert count without scrolling
-    const removeColumns = [
-      ['Responders', 'responders'],
-      ['Latest Log Entry Type', 'latest_log_entry_type'],
-    ];
-    manageIncidentTableColumns(
-      'remove',
-      removeColumns.map((column) => column[1]),
-    );
-
-    const addColumns = [['Num Alerts', 'num_alerts']];
-    manageIncidentTableColumns(
-      'add',
-      addColumns.map((column) => column[1]),
-    );
-
     const targetIncidentIdx = 0;
     const sourceIncidentIdx = 1;
     selectIncident(targetIncidentIdx);
