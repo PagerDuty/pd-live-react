@@ -1,7 +1,10 @@
 import moment from 'moment/min/moment-with-locales';
 
 import {
-  acceptDisclaimer, waitForIncidentTable, clearLocalCache, pd,
+  acceptDisclaimer,
+  waitForIncidentTable,
+  clearLocalCache,
+  pd,
 } from '../support/util/common';
 
 import packageConfig from '../../package.json';

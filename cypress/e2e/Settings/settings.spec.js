@@ -45,19 +45,21 @@ describe('Manage Settings', { failFast: { enabled: true } }, () => {
   });
 
   // 1 Day is the default
-  ['Today', '1 Day', '3 Days', '1 Week', '2 Weeks', '1 Month', '3 Months', '180 Days'].forEach((tenor) => {
-    it(`Update default since date lookback to ${tenor}`, () => {
-      let [sinceDateNum, sinceDateTenor] = tenor.split(' ');
-      if (tenor === 'Today') {
-        sinceDateNum = '0';
-        sinceDateTenor = 'Day';
-      }
-      const expectedDate = moment().subtract(Number(sinceDateNum), sinceDateTenor).format('L');
-      updateDefaultSinceDateLookback(tenor);
-      updateUserLocale('English (United States)', 'Settings', 'Updated user profile settings');
-      cy.get('#query-date-input').should('contain', expectedDate);
-    });
-  });
+  ['Today', '1 Day', '3 Days', '1 Week', '2 Weeks', '1 Month', '3 Months', '180 Days'].forEach(
+    (tenor) => {
+      it(`Update default since date lookback to ${tenor}`, () => {
+        let [sinceDateNum, sinceDateTenor] = tenor.split(' ');
+        if (tenor === 'Today') {
+          sinceDateNum = '0';
+          sinceDateTenor = 'Day';
+        }
+        const expectedDate = moment().subtract(Number(sinceDateNum), sinceDateTenor).format('L');
+        updateDefaultSinceDateLookback(tenor);
+        updateUserLocale('English (United States)', 'Settings', 'Updated user profile settings');
+        cy.get('#query-date-input').should('contain', expectedDate);
+      });
+    },
+  );
 
   it('Update max rate limit', () => {
     const maxRateLimit = 600;

@@ -747,7 +747,9 @@ export const defaultAlertsColumns = () => [
       if (value.length > 0) {
         return renderLinkCell({
           text: value,
-          href: cell.row.original.alerts?.[0]?.body?.cef_details?.client_url || cell.row.original.html_url,
+          href:
+            cell.row.original.alerts?.[0]?.body?.cef_details?.client_url
+            || cell.row.original.html_url,
         });
       }
       return renderPlainTextAlertCell({ value, cell });
