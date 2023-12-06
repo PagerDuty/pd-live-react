@@ -103,13 +103,13 @@ const DatePickerComponent = () => {
       if (date >= untilDate) {
         return false;
       }
-      // if since is more than 6 months before until, don't allow
+      // if since is more than 180 Days before until, don't allow
       const sixMonthsBeforeUntil = moment(untilDate).subtract(180, 'days').toDate();
       if (date < sixMonthsBeforeUntil) {
         return false;
       }
     }
-    // if since is more than 6 months before now, don't allow
+    // if since is more than 180 Days before now, don't allow
     if (date < sixMonthsBeforeNow) {
       return false;
     }

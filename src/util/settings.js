@@ -12,7 +12,7 @@ export const defaultSinceDateTenors = [
   '2 Weeks',
   '1 Month',
   '3 Months',
-  '6 Months',
+  '180 Days',
 ];
 
 // FIXME: This is a bit of a workaround to avoid changing the existing defaultSinceDateTenors
@@ -31,6 +31,6 @@ export const defaultSinceDateTenorsLabels = () => {
     '2 Weeks': t('2 Weeks'),
     '1 Month': t('1 Month'),
     '3 Months': t('3 Months'),
-    '6 Months': t('6 Months'),
+    '180 Days': t('180 Days'),
   };
 };

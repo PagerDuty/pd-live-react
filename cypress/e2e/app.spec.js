@@ -1,12 +1,15 @@
 import moment from 'moment/min/moment-with-locales';
 
 import {
-  acceptDisclaimer, waitForIncidentTable, pd,
+  acceptDisclaimer,
+  waitForIncidentTable,
+  clearLocalCache,
+  pd,
 } from '../support/util/common';
 
 import packageConfig from '../../package.json';
 
-describe('Integration User Token', { failFast: { enabled: false } }, () => {
+describe('Integration User Token', { failFast: { enabled: true } }, () => {
   before(() => {
     expect(Cypress.env('PD_USER_TOKEN')).to.be.a('string');
     cy.intercept('GET', 'https://api.pagerduty.com/users/me').as('getCurrentUser');
@@ -28,17 +31,10 @@ describe('Integration User Token', { failFast: { enabled: false } }, () => {
   });
 });
 
-describe('PagerDuty Live', () => {
-  before(() => {
+describe('PagerDuty Live', { failFast: { enabled: true } }, () => {
+  beforeEach(() => {
     acceptDisclaimer();
     waitForIncidentTable();
-  });
-
-  beforeEach(() => {
-    if (cy.state('test').currentRetry() > 1) {
-      acceptDisclaimer();
-      waitForIncidentTable();
-    }
   });
 
   it('Renders the main application page', () => {
@@ -62,7 +58,7 @@ describe('PagerDuty Live', () => {
     cy.intercept('https://api.pagerduty.com/abilities*', {
       abilities: ['teams', 'read_only_users', 'service_support_hours', 'urgencies'],
     }).as('getAbilities');
-    cy.visit('http://localhost:3000/pd-live-react');
+    clearLocalCache();
     acceptDisclaimer();
     cy.wait('@getAbilities', { timeout: 30000 });
 
@@ -75,12 +71,7 @@ describe('PagerDuty Live', () => {
   });
 
   it('Application indicates when polling is disabled through url parameter disable-polling', () => {
-    cy.visit('http://localhost:3000/pd-live-react/?disable-polling=true');
-
-    // cy.get('.modal-title', { timeout: 30000 }).contains('Disclaimer & License');
-    // cy.get('#disclaimer-agree-checkbox').click({ force: true });
-    // cy.get('#disclaimer-accept-button').click({ force: true });
-
+    cy.visit('/?disable-polling=true');
     cy.get('.status-beacon-ctr').realHover();
     cy.get('[data-popper-placement="bottom"]').should('be.visible');
     cy.get('[data-popper-placement="bottom"]').contains('Live updates disabled');
@@ -101,9 +92,7 @@ describe('PagerDuty Live', () => {
       ].join(''),
     ).as('getUrl');
 
-    cy.visit(
-      `http://localhost:3000/pd-live-react/?disable-polling=true&since=${since}&until=${until}`,
-    );
+    cy.visit(`/?disable-polling=true&since=${since}&until=${until}`);
 
     // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.wait(5000);
