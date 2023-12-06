@@ -17,7 +17,7 @@ import {
   checkActionAlertsModalContent,
 } from '../../support/util/common';
 
-describe('Manage Settings', { failFast: { enabled: true }, testIsolation: true }, () => {
+describe('Manage Settings', { failFast: { enabled: true } }, () => {
   const localeCode = 'en-US';
   moment.locale(localeCode);
 
@@ -44,10 +44,14 @@ describe('Manage Settings', { failFast: { enabled: true }, testIsolation: true }
       .should('contain', expectedIncidentDateFormat);
   });
 
-  // 1 Day is the default, so reset to that after this test
-  ['3 Days', '1 Week', '2 Weeks', '1 Month', '3 Months', '180 Days', '1 Day'].forEach((tenor) => {
+  // 1 Day is the default
+  ['Today', '1 Day', '3 Days', '1 Week', '2 Weeks', '1 Month', '3 Months', '180 Days'].forEach((tenor) => {
     it(`Update default since date lookback to ${tenor}`, () => {
-      const [sinceDateNum, sinceDateTenor] = tenor.split(' ');
+      let [sinceDateNum, sinceDateTenor] = tenor.split(' ');
+      if (tenor === 'Today') {
+        sinceDateNum = '0';
+        sinceDateTenor = 'Day';
+      }
       const expectedDate = moment().subtract(Number(sinceDateNum), sinceDateTenor).format('L');
       updateDefaultSinceDateLookback(tenor);
       updateUserLocale('English (United States)', 'Settings', 'Updated user profile settings');

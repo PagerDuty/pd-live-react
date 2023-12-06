@@ -6,7 +6,7 @@ import {
 
 import packageConfig from '../../package.json';
 
-describe('Integration User Token', { failFast: { enabled: true }, testIsolation: true }, () => {
+describe('Integration User Token', { failFast: { enabled: true } }, () => {
   before(() => {
     expect(Cypress.env('PD_USER_TOKEN')).to.be.a('string');
     cy.intercept('GET', 'https://api.pagerduty.com/users/me').as('getCurrentUser');
@@ -28,7 +28,7 @@ describe('Integration User Token', { failFast: { enabled: true }, testIsolation:
   });
 });
 
-describe('PagerDuty Live', { failFast: { enabled: true }, testIsolation: true }, () => {
+describe('PagerDuty Live', { failFast: { enabled: true } }, () => {
   beforeEach(() => {
     acceptDisclaimer();
     waitForIncidentTable();

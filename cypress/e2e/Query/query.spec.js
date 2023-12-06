@@ -19,7 +19,7 @@ import {
 registerLocale('en-GB', gb);
 moment.locale('en-GB');
 
-describe('Query Incidents', { failFast: { enabled: true }, testIsolation: true }, () => {
+describe('Query Incidents', { failFast: { enabled: true } }, () => {
   beforeEach(() => {
     acceptDisclaimer();
     manageIncidentTableColumns('remove', ['latest_note']);
@@ -54,9 +54,6 @@ describe('Query Incidents', { failFast: { enabled: true }, testIsolation: true }
         });
       }
     });
-
-    // Reset query for next test - both high and low-urgency triggered, ackd and resolved incidents
-    cy.get('.query-urgency-low-button').check({ force: true });
   });
 
   it('Query for triggered incidents only', () => {
@@ -86,11 +83,6 @@ describe('Query Incidents', { failFast: { enabled: true }, testIsolation: true }
     cy.get('.query-status-resolved-button').check({ force: true });
     waitForIncidentTable();
     checkIncidentCellIconAllRows('Status', 'fa-circle-check');
-
-    // Reset query for next test
-    cy.get('.query-status-triggered-button').check({ force: true });
-    cy.get('.query-status-acknowledged-button').check({ force: true });
-    cy.get('.query-status-resolved-button').uncheck({ force: true });
   });
 
   it('Query for high urgency incidents only', () => {
@@ -105,9 +97,6 @@ describe('Query Incidents', { failFast: { enabled: true }, testIsolation: true }
     cy.get('.query-urgency-low-button').check({ force: true });
     waitForIncidentTable();
     checkIncidentCellContentAllRows('Urgency', ' Low');
-
-    // Reset query for next test
-    cy.get('.query-urgency-high-button').check({ force: true });
   });
 
   priorityNames.forEach((currentPriority) => {

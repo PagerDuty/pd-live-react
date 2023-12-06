@@ -27,7 +27,7 @@ import {
   selectAlert,
 } from '../../support/util/common';
 
-describe('Manage Open Incidents', { failFast: { enabled: true }, testIsolation: true }, () => {
+describe('Manage Open Incidents', { failFast: { enabled: true } }, () => {
   // We use beforeEach as each test will reload/clear the session
   beforeEach(() => {
     acceptDisclaimer();
@@ -316,9 +316,6 @@ describe('Manage Open Incidents', { failFast: { enabled: true }, testIsolation: 
     cy.get('[data-popper-placement="bottom"]').should('contain', 'Created At');
     cy.get('[data-popper-placement="bottom"]').should('contain', 'Status');
     cy.get('[data-popper-placement="bottom"]').should('contain', 'Summary');
-
-    // Reset hover state
-    cy.get('body').realHover({ position: 'topLeft' });
   });
 
   it('Split/move alert from one incident to a new incident', () => {
