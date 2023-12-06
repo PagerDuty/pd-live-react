@@ -25,6 +25,7 @@ import {
   manageIncidentTableColumns,
   priorityNames,
   selectAlert,
+  waitForAlerts,
 } from '../../support/util/common';
 
 describe('Manage Open Incidents', { failFast: { enabled: true } }, () => {
@@ -278,6 +279,7 @@ describe('Manage Alerts', { failFast: { enabled: true } }, () => {
       addColumns.map((column) => column[1]),
     );
     waitForIncidentTable();
+    waitForAlerts();
   });
 
   afterEach(() => {

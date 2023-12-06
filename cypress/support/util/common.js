@@ -21,8 +21,15 @@ export const waitForIncidentTable = () => {
   // eslint-disable-next-line cypress/no-unnecessary-waiting
   cy.wait(3000); // Required for query debounce
   cy.get('#incident-table-ctr', { timeout: 60000 }).should('be.visible');
+  cy.get('.selected-incidents-ctr', { timeout: 60000 }).should('not.include.text', 'Querying');
   // will move on to next command even if table is not scrollable
   cy.get('.incident-table-fixed-list').scrollTo('top', { ensureScrollable: false });
+};
+
+export const waitForAlerts = () => {
+  // eslint-disable-next-line cypress/no-unnecessary-waiting
+  cy.wait(3000); // Required for query debounce
+  cy.get('.selected-incidents-ctr', { timeout: 60000 }).should('not.include.text', 'Fetching Alerts');
 };
 
 export const selectIncident = (incidentIdx = 0, shiftKey = false) => {
