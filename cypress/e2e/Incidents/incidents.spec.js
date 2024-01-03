@@ -230,6 +230,9 @@ describe('Manage Open Incidents', { failFast: { enabled: true } }, () => {
     selectIncident(0);
     cy.get('#incident-action-resolve-button').click();
     checkActionAlertsModalContent('have been resolved');
+    // and now show all resolved status (#380)
+    cy.get('.query-status-resolved-button').check({ force: true });
+    waitForIncidentTable();
   });
 
   it('Update priority of singular incidents', () => {

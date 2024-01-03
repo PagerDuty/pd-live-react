@@ -441,11 +441,15 @@ const IncidentTableComponent = () => {
   // Handle deselecting rows after incident action has completed
   useEffect(() => {
     // TODO: Get user feedback on this workflow
-    if (incidentActionsStatus === 'ACTION_COMPLETED') {
-      toggleAllRowsSelected(false);
-    } else if (
-      !incidentActionsStatus.includes('TOGGLE')
-      && incidentActionsStatus.includes('COMPLETED')
+    // toggleAllRowsSelected only works on the currently filtered rows, therefore
+    // to fix #380 we can't wait for the incidentActionsStatus to be COMPLETED
+    //
+    // Workarounds using the stateReducer to clear selectedRowIds also don't appear to work on filtered out rows
+    // Therefore, clearing the checkbox in the UI before it is filtered out is the best we can do for now
+    if (
+      incidentActionsStatus === 'ACTION_COMPLETED'
+      || (!incidentActionsStatus.includes('TOGGLE')
+      && (incidentActionsStatus.includes('REQUESTED') || incidentActionsStatus.includes('COMPLETED')))
     ) {
       toggleAllRowsSelected(false);
     }
