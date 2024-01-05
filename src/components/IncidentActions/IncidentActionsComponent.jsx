@@ -51,7 +51,7 @@ const IncidentActionsComponent = () => (
       <PriorityMenu />
       <AddNoteButton />
       <RunActionMenu />
-      {EXTRA_BUTTONS.map(({
+      {EXTRA_BUTTONS && EXTRA_BUTTONS.map(({
         label, url, width, height,
       }) => (
         <>
