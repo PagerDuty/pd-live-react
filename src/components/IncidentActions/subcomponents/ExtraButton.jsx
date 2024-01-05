@@ -48,7 +48,9 @@ const ExtraButton = ({
         w={isInt(width) ? `${width}vw` : '80vw'}
         h={isInt(height) ? `${height}vh` : '80vh'}
       >
-        <PopoverHeader><b>{label}</b></PopoverHeader>
+        <PopoverHeader>
+          <b>{label}</b>
+        </PopoverHeader>
         <PopoverArrow />
         <PopoverCloseButton />
         <PopoverBody height="calc(100% - 60px)">
