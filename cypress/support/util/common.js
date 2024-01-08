@@ -49,7 +49,7 @@ export const selectAllIncidents = () => {
 };
 
 export const checkNoIncidentsSelected = () => {
-  cy.get('.selected-incidents-badge').then(($el) => {
+  cy.get('.selected-incidents-badge').should(($el) => {
     const text = $el.text();
     const incidentNumbers = text.split(' ')[0].split('/');
     expect(incidentNumbers[0]).to.equal('0');
