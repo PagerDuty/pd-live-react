@@ -49,7 +49,7 @@ describe('Manage Open Incidents', { failFast: { enabled: true } }, () => {
 
   it('Select all incidents', () => {
     selectAllIncidents();
-    cy.get('.selected-incidents-badge').then(($el) => {
+    cy.get('.selected-incidents-badge').should(($el) => {
       const text = $el.text();
       const incidentNumbers = text.split(' ')[0].split('/');
       expect(incidentNumbers[0]).to.equal(incidentNumbers[1]);
@@ -59,7 +59,7 @@ describe('Manage Open Incidents', { failFast: { enabled: true } }, () => {
     // Shift-select multiple incidents
     selectIncident(0);
     selectIncident(4, true);
-    cy.get('.selected-incidents-badge').then(($el) => {
+    cy.get('.selected-incidents-badge').should(($el) => {
       const text = $el.text();
       const incidentNumbers = text.split(' ')[0].split('/');
       expect(incidentNumbers[0]).to.equal('5');
