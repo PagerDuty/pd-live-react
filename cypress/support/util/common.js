@@ -29,7 +29,10 @@ export const waitForIncidentTable = () => {
 export const waitForAlerts = () => {
   // eslint-disable-next-line cypress/no-unnecessary-waiting
   cy.wait(3000); // Required for query debounce
-  cy.get('.selected-incidents-ctr', { timeout: 60000 }).should('not.include.text', 'Fetching Alerts');
+  cy.get('.selected-incidents-ctr', { timeout: 60000 }).should(
+    'not.include.text',
+    'Fetching Alerts',
+  );
 };
 
 export const selectIncident = (incidentIdx = 0, shiftKey = false) => {
@@ -49,7 +52,7 @@ export const selectAllIncidents = () => {
 };
 
 export const checkNoIncidentsSelected = () => {
-  cy.get('.selected-incidents-badge').then(($el) => {
+  cy.get('.selected-incidents-badge').should(($el) => {
     const text = $el.text();
     const incidentNumbers = text.split(' ')[0].split('/');
     expect(incidentNumbers[0]).to.equal('0');
