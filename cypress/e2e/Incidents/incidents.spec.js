@@ -174,7 +174,7 @@ describe('Manage Open Incidents', { failFast: { enabled: true } }, () => {
     checkActionAlertsModalContent('Requested additional response for incident(s)');
     cy.get(`@selectedIncidentId_${incidentIdx}`).then((incidentId) => {
       checkIncidentCellContent(incidentId, 'Responders', 'UA');
-      checkPopoverContent(incidentId, 'Responders', 'user_a1@example.com');
+      checkPopoverContent(incidentId, 'Responders', 'User A');
       checkIncidentCellContent(incidentId, 'Latest Log Entry Type', 'responder_request');
     });
 
@@ -185,7 +185,7 @@ describe('Manage Open Incidents', { failFast: { enabled: true } }, () => {
     checkActionAlertsModalContent('Requested additional response for incident(s)');
     cy.get(`@selectedIncidentId_${incidentIdx}`).then((incidentId) => {
       checkIncidentCellContent(incidentId, 'Responders', 'UA');
-      checkPopoverContent(incidentId, 'Responders', 'user_a1@example.com');
+      checkPopoverContent(incidentId, 'Responders', 'User A');
       checkIncidentCellContent(incidentId, 'Latest Log Entry Type', 'responder_request');
     });
   });
@@ -199,7 +199,9 @@ describe('Manage Open Incidents', { failFast: { enabled: true } }, () => {
     checkActionAlertsModalContent('Requested additional response for incident(s)');
     cy.get(`@selectedIncidentId_${incidentIdx}`).then((incidentId) => {
       checkIncidentCellContent(incidentId, 'Responders', 'UA');
-      checkPopoverContent(incidentId, 'Responders', 'user_a1@example.com');
+      checkIncidentCellContent(incidentId, 'Responders', 'UB');
+      checkPopoverContent(incidentId, 'Responders', 'User A');
+      checkPopoverContent(incidentId, 'Responders', 'User B');
       checkIncidentCellContent(incidentId, 'Latest Log Entry Type', 'responder_request');
     });
   });
