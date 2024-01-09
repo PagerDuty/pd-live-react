@@ -460,7 +460,10 @@ const IncidentTableComponent = () => {
   // take a chance of deselecting too many times
   useEffect(() => {
     // TODO: Get user feedback on this workflow
-    if (responsePlaysStatus.includes('RUN_RESPONSE_PLAY_REQUESTED') || responsePlaysStatus.includes('RUN_RESPONSE_PLAY_COMPLETED')) {
+    if (
+      responsePlaysStatus.includes('RUN_RESPONSE_PLAY_REQUESTED')
+      || responsePlaysStatus.includes('RUN_RESPONSE_PLAY_COMPLETED')
+    ) {
       toggleAllRowsSelected(false);
     }
   }, [responsePlaysStatus]);

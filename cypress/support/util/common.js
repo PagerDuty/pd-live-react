@@ -29,7 +29,10 @@ export const waitForIncidentTable = () => {
 export const waitForAlerts = () => {
   // eslint-disable-next-line cypress/no-unnecessary-waiting
   cy.wait(3000); // Required for query debounce
-  cy.get('.selected-incidents-ctr', { timeout: 60000 }).should('not.include.text', 'Fetching Alerts');
+  cy.get('.selected-incidents-ctr', { timeout: 60000 }).should(
+    'not.include.text',
+    'Fetching Alerts',
+  );
 };
 
 export const selectIncident = (incidentIdx = 0, shiftKey = false) => {
