@@ -103,4 +103,13 @@ describe('PagerDuty Live', { failFast: { enabled: true } }, () => {
     cy.get('#since-date-input').should('be.disabled');
     cy.get('#until-date-input').should('be.disabled');
   });
+
+  it('Application correctly loads iframe for extra buttons when configured', () => {
+    cy.visit('/?button=TestExtra,https://example.com');
+    cy.get('button').contains('TestExtra').should('be.visible');
+    cy.get('button').contains('TestExtra').click();
+    cy.get('[data-popper-placement="top"]').should('be.visible');
+    cy.get('iframe[title="TestExtra"]');
+    // would need to enable cross-domain iframe javascript access to test further
+  });
 });
