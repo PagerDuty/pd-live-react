@@ -44,9 +44,7 @@ const NumAlertsComponent = ({
   let value;
   const links = [];
   if (alerts?.status === 'fetching') {
-    value = (
-      <Skeleton>fetching</Skeleton>
-    );
+    value = <Skeleton>fetching</Skeleton>;
   }
   if (alerts && alerts instanceof Array && alerts.length > 0) {
     alerts.forEach((alert) => {

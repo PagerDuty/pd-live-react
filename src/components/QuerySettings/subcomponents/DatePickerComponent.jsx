@@ -62,9 +62,14 @@ const DatePickerComponent = () => {
 
   // Generate since date based on configured default and dispatch action for query.
   const today = moment();
-  const [sinceDateNum, sinceDateTenor] = defaultSinceDateTenor
+  let [sinceDateNum, sinceDateTenor] = defaultSinceDateTenor
     ? defaultSinceDateTenor.split(' ')
     : ['1', 'Day'];
+
+  if (defaultSinceDateTenor === 'Today') {
+    sinceDateNum = '0';
+    sinceDateTenor = 'Day';
+  }
   const sinceDateCalc = DEBUG_SINCE_DATE
     ? new Date(DEBUG_SINCE_DATE)
     : today
@@ -98,13 +103,13 @@ const DatePickerComponent = () => {
       if (date >= untilDate) {
         return false;
       }
-      // if since is more than 6 months before until, don't allow
+      // if since is more than 180 Days before until, don't allow
       const sixMonthsBeforeUntil = moment(untilDate).subtract(180, 'days').toDate();
       if (date < sixMonthsBeforeUntil) {
         return false;
       }
     }
-    // if since is more than 6 months before now, don't allow
+    // if since is more than 180 Days before now, don't allow
     if (date < sixMonthsBeforeNow) {
       return false;
     }
