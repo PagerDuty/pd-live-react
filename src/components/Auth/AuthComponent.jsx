@@ -30,6 +30,7 @@ const AuthComponent = (props) => {
   const code = urlParams.get('code');
   const subdomain = urlParams.get('subdomain');
   const region = urlParams.get('service_region') || 'us';
+  const buttons = urlParams.getAll('button');
 
   let codeVerifier = sessionStorage.getItem('code_verifier');
   let {
@@ -50,12 +51,23 @@ const AuthComponent = (props) => {
         (token) => {
           sessionStorage.removeItem('code_verifier');
           sessionStorage.setItem('pd_access_token', token);
-          window.location.assign(redirectURL);
+          // if there were button params on the first load, load the button params and put them back on the URL
+          const savedButtonsStr = sessionStorage.getItem('pd_buttons');
+          const savedButtons = savedButtonsStr ? JSON.parse(savedButtonsStr) : [];
+          const buttonParams = savedButtons ? `?button=${savedButtons.join('&button=')}` : '';
+          window.location.assign(redirectURL + buttonParams);
         },
       );
     } else if (!accessToken) {
       codeVerifier = createCodeVerifier();
       sessionStorage.setItem('code_verifier', codeVerifier);
+      // if the user wants to use a button, save the button params in session storage
+      // (because we can't pass them through the OAuth flow)
+      if (buttons.length > 0) {
+        sessionStorage.setItem('pd_buttons', JSON.stringify(buttons));
+      } else {
+        sessionStorage.removeItem('pd_buttons');
+      }
       getAuthURL(clientId, clientSecret, redirectURL, codeVerifier).then((url) => {
         const subdomainParams = subdomain ? `&subdomain=${subdomain}&service_region=${region}` : '';
         setAuthURL(`${url}${subdomainParams}`);

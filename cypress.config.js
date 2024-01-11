@@ -22,8 +22,6 @@ module.exports = defineConfig({
     },
     baseUrl: 'http://localhost:3000/pd-live-react',
     specPattern: 'cypress/e2e/**/*.spec.{js,ts,jsx,tsx}',
-    // Cypress 12 introduces Test Isolation by default which breaks our current tests
-    // https://docs.cypress.io/guides/references/migration-guide#Test-Isolation
-    testIsolation: false,
+    testIsolation: true,
   },
 });

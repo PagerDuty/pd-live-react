@@ -206,11 +206,14 @@ const App = () => {
 
   // Setup log entry clearing
   useEffect(() => {
-    const clearingInterval = setInterval(() => {
-      if (userAuthorized) {
-        cleanRecentLogEntriesAsync();
-      }
-    }, 60 * 60 * 1000);
+    const clearingInterval = setInterval(
+      () => {
+        if (userAuthorized) {
+          cleanRecentLogEntriesAsync();
+        }
+      },
+      60 * 60 * 1000,
+    );
     return () => clearInterval(clearingInterval);
   }, [userAuthorized]);
 

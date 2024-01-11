@@ -40,11 +40,12 @@ const PriorityMenu = () => {
     dispatch(updatePriorityConnected(incidents, priorityId));
   };
 
-  const enabled = useMemo(() => (
-    selectedRows.length > 0
-    && Array.isArray(abilities)
-    && !abilities.includes('disable_edit_priority')
-  ), [selectedRows]);
+  const enabled = useMemo(
+    () => selectedRows.length > 0
+      && Array.isArray(abilities)
+      && !abilities.includes('disable_edit_priority'),
+    [selectedRows],
+  );
 
   return (
     <Menu>

@@ -35,6 +35,7 @@ jest.mock('src/config/constants', () => ({
   DEBUG_DISABLE_POLLING: false,
   DEBUG_SINCE_DATE: null,
   DEBUG_UNTIL_DATE: null,
+  EXTRA_BUTTONS: null,
 }));
 
 beforeEach(() => {

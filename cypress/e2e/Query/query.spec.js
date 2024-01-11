@@ -19,26 +19,12 @@ import {
 registerLocale('en-GB', gb);
 moment.locale('en-GB');
 
-describe('Query Incidents', { failFast: { enabled: false } }, () => {
-  before(() => {
+describe('Query Incidents', { failFast: { enabled: true } }, () => {
+  beforeEach(() => {
     acceptDisclaimer();
     manageIncidentTableColumns('remove', ['latest_note']);
     manageIncidentTableColumns('add', ['urgency', 'teams', 'escalation_policy']);
-    // priorityNames.forEach((currentPriority) => {
-    //   activateButton(`query-priority-${currentPriority}-button`);
-    // });
     waitForIncidentTable();
-  });
-
-  beforeEach(() => {
-    if (cy.state('test').currentRetry() > 1) {
-      acceptDisclaimer();
-      manageIncidentTableColumns('remove', ['latest_note']);
-      manageIncidentTableColumns('add', ['urgency', 'teams', 'escalation_policy']);
-    }
-    // priorityNames.forEach((currentPriority) => {
-    //   activateButton(`query-priority-${currentPriority}-button`);
-    // });
   });
 
   it('Query for incidents within T-1 since date', () => {
@@ -68,9 +54,6 @@ describe('Query Incidents', { failFast: { enabled: false } }, () => {
         });
       }
     });
-
-    // Reset query for next test - both high and low-urgency triggered, ackd and resolved incidents
-    cy.get('.query-urgency-low-button').check({ force: true });
   });
 
   it('Query for triggered incidents only', () => {
@@ -100,11 +83,6 @@ describe('Query Incidents', { failFast: { enabled: false } }, () => {
     cy.get('.query-status-resolved-button').check({ force: true });
     waitForIncidentTable();
     checkIncidentCellIconAllRows('Status', 'fa-circle-check');
-
-    // Reset query for next test
-    cy.get('.query-status-triggered-button').check({ force: true });
-    cy.get('.query-status-acknowledged-button').check({ force: true });
-    cy.get('.query-status-resolved-button').uncheck({ force: true });
   });
 
   it('Query for high urgency incidents only', () => {
@@ -119,9 +97,6 @@ describe('Query Incidents', { failFast: { enabled: false } }, () => {
     cy.get('.query-urgency-low-button').check({ force: true });
     waitForIncidentTable();
     checkIncidentCellContentAllRows('Urgency', ' Low');
-
-    // Reset query for next test
-    cy.get('.query-urgency-high-button').check({ force: true });
   });
 
   priorityNames.forEach((currentPriority) => {
@@ -226,7 +201,7 @@ describe('Query Incidents', { failFast: { enabled: false } }, () => {
     cy.get('#query-user-select').click().type('{del}{del}{del}');
   });
 
-  it('Sort incident column "#" by ascending order', () => {
+  it('Sort incident columns', () => {
     cy.get('[data-column-name="#"]')
       .click()
       .then(($el) => {
@@ -234,9 +209,7 @@ describe('Query Incidents', { failFast: { enabled: false } }, () => {
         expect(cls).to.contain('th-sorted');
         cy.wrap($el).contains('# ▲');
       });
-  });
 
-  it('Sort incident column "#" by descending order', () => {
     cy.get('[data-column-name="#"]')
       .click()
       .then(($el) => {
@@ -244,9 +217,7 @@ describe('Query Incidents', { failFast: { enabled: false } }, () => {
         expect(cls).to.contain('th-sorted');
         cy.wrap($el).contains('# ▼');
       });
-  });
 
-  it('Clear sort on incident column "#"', () => {
     cy.get('[data-column-name="#"]')
       .click()
       .then(($el) => {

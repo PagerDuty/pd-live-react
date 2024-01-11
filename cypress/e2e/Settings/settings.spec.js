@@ -17,25 +17,12 @@ import {
   checkActionAlertsModalContent,
 } from '../../support/util/common';
 
-describe('Manage Settings', { failFast: { enabled: false } }, () => {
+describe('Manage Settings', { failFast: { enabled: true } }, () => {
   const localeCode = 'en-US';
   moment.locale(localeCode);
 
-  before(() => {
-    acceptDisclaimer();
-    // priorityNames.forEach((currentPriority) => {
-    //   activateButton(`query-priority-${currentPriority}-button`);
-    // });
-    waitForIncidentTable();
-  });
-
   beforeEach(() => {
-    if (cy.state('test').currentRetry() > 1) {
-      acceptDisclaimer();
-    }
-    // priorityNames.forEach((currentPriority) => {
-    //   activateButton(`query-priority-${currentPriority}-button`);
-    // });
+    acceptDisclaimer();
     waitForIncidentTable();
   });
 
@@ -50,22 +37,29 @@ describe('Manage Settings', { failFast: { enabled: false } }, () => {
     const expectedSinceDateFormat = moment().subtract(1, 'days').format('L');
     const expectedIncidentDateFormat = moment().format('LL');
 
-    updateUserLocale(localeName, 'Paramètres', 'Updated user profile settings');
+    updateUserLocale(localeName, 'Settings', 'Updated user profile settings');
     cy.get('#query-date-input').should('contain', expectedSinceDateFormat);
     cy.get('[data-incident-header="Created At"][data-incident-row-cell-idx="0"]')
       .should('be.visible')
       .should('contain', expectedIncidentDateFormat);
   });
 
-  ['1 Day', '3 Days', '1 Week', '2 Weeks', '1 Month', '3 Months', '6 Months'].forEach((tenor) => {
-    it(`Update default since date lookback to ${tenor}`, () => {
-      const [sinceDateNum, sinceDateTenor] = tenor.split(' ');
-      const expectedDate = moment().subtract(Number(sinceDateNum), sinceDateTenor).format('L');
-      updateDefaultSinceDateLookback(tenor);
-      updateUserLocale('English (United States)', 'Settings', 'Updated user profile settings');
-      cy.get('#query-date-input').should('contain', expectedDate);
-    });
-  });
+  // 1 Day is the default
+  ['Today', '1 Day', '3 Days', '1 Week', '2 Weeks', '1 Month', '3 Months', '180 Days'].forEach(
+    (tenor) => {
+      it(`Update default since date lookback to ${tenor}`, () => {
+        let [sinceDateNum, sinceDateTenor] = tenor.split(' ');
+        if (tenor === 'Today') {
+          sinceDateNum = '0';
+          sinceDateTenor = 'Day';
+        }
+        const expectedDate = moment().subtract(Number(sinceDateNum), sinceDateTenor).format('L');
+        updateDefaultSinceDateLookback(tenor);
+        updateUserLocale('English (United States)', 'Settings', 'Updated user profile settings');
+        cy.get('#query-date-input').should('contain', expectedDate);
+      });
+    },
+  );
 
   it('Update max rate limit', () => {
     const maxRateLimit = 600;
@@ -216,18 +210,27 @@ describe('Manage Settings', { failFast: { enabled: false } }, () => {
   });
 
   it('Save presets', () => {
+    updateDarkMode();
+    const columns = [
+      ['Teams', 'teams'],
+      ['Num Alerts', 'num_alerts'],
+      ['Group', 'service_group'],
+      ['Component', 'source_component'],
+    ];
+    manageIncidentTableColumns(
+      'add',
+      columns.map((column) => column[1]),
+    );
+    columns
+      .map((column) => column[0])
+      .forEach((columnName) => {
+        cy.get(`[data-column-name="${columnName}"]`).scrollIntoView().should('be.visible');
+      });
     cy.get('.settings-panel-dropdown').click();
     cy.get('.dropdown-item').contains('Load/Save Presets').click();
     cy.get('#save-presets-button').click();
     cy.readFile('cypress/downloads/presets.json');
     cy.get('#close-button').click();
-  });
-
-  it('Clear local cache', () => {
-    cy.get('.settings-panel-dropdown').click();
-    cy.get('.dropdown-item').contains('Clear Local Cache').click();
-    cy.get('.modal-title').contains('Disclaimer & License').should('be.visible');
-    acceptDisclaimer();
   });
 
   it('Load presets', () => {

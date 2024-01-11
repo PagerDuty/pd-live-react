@@ -1,4 +1,3 @@
-/* eslint-disable cypress/no-unnecessary-waiting */
 /* eslint-disable cypress/unsafe-to-chain-command */
 /* eslint-disable import/prefer-default-export */
 import {
@@ -11,9 +10,6 @@ export const pd = api({ token: Cypress.env('PD_USER_TOKEN') });
   Cypress Helpers
 */
 export const acceptDisclaimer = () => {
-  cy.clearLocalStorage();
-  cy.clearAllSessionStorage();
-  cy.clearCookies();
   cy.visit('/');
   cy.get('.modal-title', { timeout: 30000 }).contains('Disclaimer & License');
   cy.get('#disclaimer-agree-checkbox').click({ force: true });
@@ -22,10 +18,21 @@ export const acceptDisclaimer = () => {
 
 export const waitForIncidentTable = () => {
   // Ref: https://stackoverflow.com/a/60065672/6480733
+  // eslint-disable-next-line cypress/no-unnecessary-waiting
   cy.wait(3000); // Required for query debounce
   cy.get('#incident-table-ctr', { timeout: 60000 }).should('be.visible');
+  cy.get('.selected-incidents-ctr', { timeout: 60000 }).should('not.include.text', 'Querying');
   // will move on to next command even if table is not scrollable
   cy.get('.incident-table-fixed-list').scrollTo('top', { ensureScrollable: false });
+};
+
+export const waitForAlerts = () => {
+  // eslint-disable-next-line cypress/no-unnecessary-waiting
+  cy.wait(3000); // Required for query debounce
+  cy.get('.selected-incidents-ctr', { timeout: 60000 }).should(
+    'not.include.text',
+    'Fetching Alerts',
+  );
 };
 
 export const selectIncident = (incidentIdx = 0, shiftKey = false) => {
@@ -45,7 +52,7 @@ export const selectAllIncidents = () => {
 };
 
 export const checkNoIncidentsSelected = () => {
-  cy.get('.selected-incidents-badge').then(($el) => {
+  cy.get('.selected-incidents-badge').should(($el) => {
     const text = $el.text();
     const incidentNumbers = text.split(' ')[0].split('/');
     expect(incidentNumbers[0]).to.equal('0');
@@ -53,12 +60,10 @@ export const checkNoIncidentsSelected = () => {
 };
 
 export const checkActionAlertsModalContent = (content) => {
-  cy.wait(2000);
   cy.get('.chakra-alert__title').contains(content, { timeout: 10000 });
 };
 
 export const checkPopoverContent = (incidentId, incidentHeader, content) => {
-  cy.wait(2000);
   cy.get(
     `[data-incident-header="${incidentHeader}"][data-incident-cell-id="${incidentId}"]`,
   ).within(() => {
@@ -68,14 +73,12 @@ export const checkPopoverContent = (incidentId, incidentHeader, content) => {
 };
 
 export const checkIncidentCellContent = (incidentId, incidentHeader, content) => {
-  cy.wait(2000);
   cy.get(`[data-incident-header="${incidentHeader}"][data-incident-cell-id="${incidentId}"]`)
     .should('be.visible')
     .contains(content);
 };
 
 export const checkIncidentCellContentAllRows = (incidentHeader, content) => {
-  cy.wait(2000);
   cy.get('.incident-table-fixed-list').scrollTo('top', { ensureScrollable: true });
   cy.get('.incident-table-fixed-list > div').then(($tbody) => {
     const visibleIncidentCount = $tbody.find('[role="row"]').length;
@@ -101,7 +104,6 @@ export const checkIncidentCellIcon = (incidentIdx, incidentHeader, icon) => {
 };
 
 export const checkIncidentCellIconAllRows = (incidentHeader, icon) => {
-  cy.wait(2000);
   cy.get('.incident-table-fixed-list > div').then(($tbody) => {
     const visibleIncidentCount = $tbody.find('[role="row"]').length;
     for (let incidentIdx = 0; incidentIdx < visibleIncidentCount; incidentIdx++) {
@@ -111,7 +113,6 @@ export const checkIncidentCellIconAllRows = (incidentHeader, icon) => {
 };
 
 export const checkIncidentCellContentHasLink = (incidentId, incidentHeader, text, link) => {
-  cy.wait(2000);
   cy.get(`[data-incident-header="${incidentHeader}"][data-incident-cell-id="${incidentId}"]`)
     .should('be.visible')
     .contains('a', text)
@@ -144,8 +145,10 @@ export const escalate = (escalationLevel) => {
 export const reassign = (assignment) => {
   cy.get('#incident-action-reassign-button').click();
   cy.get('#reassign-select').click();
+  // eslint-disable-next-line cypress/no-unnecessary-waiting
   cy.wait(200);
   cy.contains('.react-select__option', assignment).click({ force: true });
+  // eslint-disable-next-line cypress/no-unnecessary-waiting
   cy.wait(200);
   cy.get('#reassign-button').click({ force: true });
 };
@@ -198,6 +201,7 @@ export const addNote = (note) => {
 };
 
 const toggleRunAction = () => {
+  // eslint-disable-next-line cypress/no-unnecessary-waiting
   cy.wait(2000); // Unsure why we can't find DOM of action without wait
   cy.get('.incident-action-run-action-button').click();
 };
@@ -285,8 +289,7 @@ export const updateDefaultSinceDateLookback = (tenor = '1 Day') => {
 
   cy.get('#save-settings-button').click();
   checkActionAlertsModalContent('Updated user profile settings');
-  cy.reload();
-  acceptDisclaimer();
+  cy.visit('/');
 };
 
 export const updateAutoRefreshInterval = (autoRefreshInterval = 5) => {
@@ -343,6 +346,11 @@ export const updateFuzzySearch = (fuzzySearch = false) => {
 
 export const updateDarkMode = () => {
   cy.get('[aria-label="Toggle Dark Mode"]').click();
+};
+
+export const clearLocalCache = () => {
+  cy.get('.settings-panel-dropdown').click();
+  cy.get('.dropdown-item').contains('Clear Local Cache').click();
 };
 
 export const priorityNames = ['--', 'P5', 'P4', 'P3', 'P2', 'P1'];

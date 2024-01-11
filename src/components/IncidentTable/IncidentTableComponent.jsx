@@ -21,7 +21,12 @@ import {
 } from 'react-window';
 
 import {
-  useTable, useSortBy, useRowSelect, useBlockLayout, useResizeColumns, useFilters,
+  useTable,
+  useSortBy,
+  useRowSelect,
+  useBlockLayout,
+  useResizeColumns,
+  useFilters,
 } from 'react-table';
 
 import {
@@ -290,7 +295,9 @@ const IncidentTableComponent = () => {
             <Checkbox
               m={0}
               id="select-all"
-              isIndeterminate={!tableInstance.isAllRowsSelected && tableInstance.selectedFlatRows.length > 0}
+              isIndeterminate={
+                !tableInstance.isAllRowsSelected && tableInstance.selectedFlatRows.length > 0
+              }
               isChecked={tableInstance.isAllRowsSelected}
               {...getToggleAllRowsSelectedProps()}
             />
@@ -380,7 +387,8 @@ const IncidentTableComponent = () => {
         if (inView) {
           if (
             !row.original.alerts
-            || (Array.isArray(row.original.alerts) && row.original.alerts.length !== row.original.alert_counts?.all)
+            || (Array.isArray(row.original.alerts)
+              && row.original.alerts.length !== row.original.alert_counts?.all)
           ) {
             getIncidentAlerts(row.original.id);
           }
@@ -430,25 +438,32 @@ const IncidentTableComponent = () => {
     return () => {};
   }, [selectedFlatRows]);
 
-  // Handle deselecting rows after incident action has completed
+  // Handle deselecting rows after incident action has been requested
   useEffect(() => {
     // TODO: Get user feedback on this workflow
-    if (incidentActionsStatus === 'ACTION_COMPLETED') {
-      toggleAllRowsSelected(false);
-    } else if (
-      !incidentActionsStatus.includes('TOGGLE')
-      && incidentActionsStatus.includes('COMPLETED')
-    ) {
+    // toggleAllRowsSelected only works on the currently filtered rows, therefore
+    // to fix #380 we can't wait for the incidentActionsStatus to be COMPLETED
+    //
+    // Workarounds using the stateReducer to clear selectedRowIds also don't appear to work on filtered out rows
+    // Therefore, clearing the checkbox in the UI before it is filtered out is the best we can do for now
+    const isActionRequested = incidentActionsStatus === 'ACTION_REQUESTED';
+    const isToggleAction = incidentActionsStatus.includes('TOGGLE');
+    const isRequestedOrCompleted = incidentActionsStatus.includes('REQUESTED') || incidentActionsStatus.includes('COMPLETED');
+
+    if (isActionRequested || (!isToggleAction && isRequestedOrCompleted)) {
       toggleAllRowsSelected(false);
     }
   }, [incidentActionsStatus]);
 
-  // deselect rows after response play has completed
+  // deselect rows after response play has requested
   // not adding this to the above useEffect because I don't want to
   // take a chance of deselecting too many times
   useEffect(() => {
     // TODO: Get user feedback on this workflow
-    if (responsePlaysStatus === 'RUN_RESPONSE_PLAY_COMPLETED') {
+    if (
+      responsePlaysStatus.includes('RUN_RESPONSE_PLAY_REQUESTED')
+      || responsePlaysStatus.includes('RUN_RESPONSE_PLAY_COMPLETED')
+    ) {
       toggleAllRowsSelected(false);
     }
   }, [responsePlaysStatus]);

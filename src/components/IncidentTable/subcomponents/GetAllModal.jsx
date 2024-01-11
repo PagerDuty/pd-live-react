@@ -46,13 +46,9 @@ const GetAllModal = ({
   const rowsFetching = useMemo(
     () => rowsToExport.filter((row) => {
       const {
-        alerts,
-        notes,
+        alerts, notes,
       } = row.original;
-      return (
-        (alerts && alerts.status === 'fetching')
-        || (notes && notes.status === 'fetching')
-      );
+      return (alerts && alerts.status === 'fetching') || (notes && notes.status === 'fetching');
     }),
     [rowsToExport],
   );
@@ -60,13 +56,9 @@ const GetAllModal = ({
   const rowsDoneFetching = useMemo(
     () => rowsToExport.filter((row) => {
       const {
-        alerts,
-        notes,
+        alerts, notes,
       } = row.original;
-      return (
-        (alerts && alerts instanceof Array)
-        && (notes && notes instanceof Array)
-      );
+      return alerts && alerts instanceof Array && notes && notes instanceof Array;
     }),
     [rowsToExport],
   );
@@ -79,9 +71,7 @@ const GetAllModal = ({
   const fetchRows = useCallback(() => {
     rowsNeedingFetch.forEach((row) => {
       const {
-        id,
-        notes,
-        alerts,
+        id, notes, alerts,
       } = row.original;
       if (!notes) {
         getIncidentNotes(id);
@@ -128,11 +118,7 @@ const GetAllModal = ({
                   <Text fontSize="sm" fontWeight="bold">
                     {`${rowsFetching.length} remaining`}
                   </Text>
-                  <Progress
-                    min={0}
-                    value={rowsDoneFetching.length}
-                    max={rowsToExport.length}
-                  />
+                  <Progress min={0} value={rowsDoneFetching.length} max={rowsToExport.length} />
                 </Box>
                 <Text fontSize="sm" mt={6}>
                   You can close this box and continue using the app, download will continue in the
