@@ -132,7 +132,6 @@ export const pdParallelFetch = async (
 ) => {
   let requestParams = {
     limit: 100,
-    total: true,
     offset: 0,
   };
 
@@ -149,7 +148,7 @@ export const pdParallelFetch = async (
   const firstPageResponse = await throttledPdAxiosRequest(
     'GET',
     endpoint,
-    requestParams,
+    { ...requestParams, total: true },
     undefined,
     axiosRequestOptions,
   );

@@ -33,7 +33,7 @@ import {
 } from 'src/redux/settings/actions';
 
 import {
-  getIncidentAlertsAsync as getIncidentAlertsAsyncConnected,
+  getAlertsForIncidentsAsync as getAlertsForIncidentsAsyncConnected,
 } from 'src/redux/incidents/actions';
 
 const NumAlertsComponent = ({
@@ -49,9 +49,9 @@ const NumAlertsComponent = ({
       setShowIncidentAlertsModalForIncidentIdConnected(showIncidentAlertsModalforIncidentId),
     );
   };
-  const getIncidentAlerts = useCallback(
-    (id) => {
-      dispatch(getIncidentAlertsAsyncConnected(id));
+  const getAlertsForIncidents = useCallback(
+    (ids) => {
+      dispatch(getAlertsForIncidentsAsyncConnected(ids));
     },
     [dispatch],
   );
@@ -115,7 +115,7 @@ const NumAlertsComponent = ({
       size="content"
       preventOverflow
       onOpen={() => {
-        getIncidentAlerts(incidentId);
+        getAlertsForIncidents([incidentId]);
       }}
     >
       <PopoverTrigger>

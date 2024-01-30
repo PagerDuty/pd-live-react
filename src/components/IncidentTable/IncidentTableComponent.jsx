@@ -34,10 +34,6 @@ import {
 } from 'react-contextmenu';
 
 import {
-  useInView,
-} from 'react-intersection-observer';
-
-import {
   Box, Flex, Text, Checkbox,
 } from '@chakra-ui/react';
 
@@ -48,10 +44,6 @@ import {
   columnsForSavedColumns,
 } from 'src/config/column-generator';
 import {
-  getIncidentAlertsAsync as getIncidentAlertsAsyncConnected,
-  getIncidentNotesAsync as getIncidentNotesAsyncConnected,
-} from 'src/redux/incidents/actions';
-import {
   selectIncidentTableRows as selectIncidentTableRowsConnected,
   updateIncidentTableState as updateIncidentTableStateConnected,
 } from 'src/redux/incident_table/actions';
@@ -59,7 +51,6 @@ import {
 import EmptyIncidentsComponent from './subcomponents/EmptyIncidentsComponent';
 import QueryActiveComponent from './subcomponents/QueryActiveComponent';
 import GetAllModal from './subcomponents/GetAllModal';
-import GetAllForSortModal from './subcomponents/GetAllForSortModal';
 
 import './IncidentTableComponent.scss';
 
@@ -158,18 +149,6 @@ const IncidentTableComponent = () => {
   const updateIncidentTableState = useCallback(
     (newIncidentTableState) => {
       dispatch(updateIncidentTableStateConnected(newIncidentTableState));
-    },
-    [dispatch],
-  );
-  const getIncidentAlerts = useCallback(
-    (incidentId) => {
-      dispatch(getIncidentAlertsAsyncConnected(incidentId));
-    },
-    [dispatch],
-  );
-  const getIncidentNotes = useCallback(
-    (incidentId) => {
-      dispatch(getIncidentNotesAsyncConnected(incidentId));
     },
     [dispatch],
   );
@@ -376,27 +355,7 @@ const IncidentTableComponent = () => {
     ({
       data, index, style,
     }) => {
-      const {
-        ref, inView,
-      } = useInView({
-        threshold: 0.1,
-      });
-
       const row = data[index];
-      useEffect(() => {
-        if (inView) {
-          if (
-            !row.original.alerts
-            || (Array.isArray(row.original.alerts)
-              && row.original.alerts.length !== row.original.alert_counts?.all)
-          ) {
-            getIncidentAlerts(row.original.id);
-          }
-          if (!row.original.notes) {
-            getIncidentNotes(row.original.id);
-          }
-        }
-      }, [inView]);
 
       prepareRow(row);
       return (
@@ -405,7 +364,6 @@ const IncidentTableComponent = () => {
             style,
           })}
           className={index % 2 === 0 ? 'tr' : 'tr-odd'}
-          ref={ref}
         >
           {row.cells.map((cell) => (
             <Box
@@ -468,30 +426,6 @@ const IncidentTableComponent = () => {
     }
   }, [responsePlaysStatus]);
 
-  const [displayGetAllForSortModal, setDisplayGetAllForSortModal] = useState(false);
-  const [columnTypeForGetAllModal, setColumnForGetAllModal] = useState(null);
-  const showGetAllForSortModal = useCallback(
-    (column) => {
-      if (column.columnType === 'alert') {
-        const incidentsNeedingAlertsFetched = tableData.filter(
-          (incident) => incident.alerts === undefined,
-        ).length;
-        if (incidentsNeedingAlertsFetched > 0) {
-          setColumnForGetAllModal('alert');
-          setDisplayGetAllForSortModal(true);
-        }
-      } else if (column.id === 'latest_note') {
-        const incidentsNeedingNotesFetched = tableData.filter(
-          (incident) => incident.notes === undefined,
-        ).length;
-        if (incidentsNeedingNotesFetched > 0) {
-          setColumnForGetAllModal('notes');
-          setDisplayGetAllForSortModal(true);
-        }
-      }
-    },
-    [tableData],
-  );
   // Render components based on application state
   if (fetchingIncidents) {
     return <QueryActiveComponent />;
@@ -542,12 +476,6 @@ const IncidentTableComponent = () => {
                   >
                     <Flex
                       {...column.getSortByToggleProps()}
-                      onClick={(e) => {
-                        if (column.id !== 'select') {
-                          column.getSortByToggleProps().onClick(e);
-                          showGetAllForSortModal(column);
-                        }
-                      }}
                       className="th-sort"
                     >
                       <Text
@@ -626,12 +554,6 @@ const IncidentTableComponent = () => {
           onClose={() => setDisplayGetAllModal(false)}
           rows={tableInstance.selectedFlatRows.length > 0 ? tableInstance.selectedFlatRows : rows}
           exportCsv={exportCsv}
-        />
-        <GetAllForSortModal
-          isOpen={displayGetAllForSortModal}
-          onClose={() => setDisplayGetAllForSortModal(false)}
-          columnType={columnTypeForGetAllModal}
-          rows={rows}
         />
       </Box>
     );
