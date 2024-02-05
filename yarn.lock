@@ -3710,10 +3710,10 @@
   dependencies:
     "@types/react" "*"
 
-"@types/react@*", "@types/react@>=16.9.11", "@types/react@^18.2.21":
-  version "18.2.21"
-  resolved "https://registry.yarnpkg.com/@types/react/-/react-18.2.21.tgz#774c37fd01b522d0b91aed04811b58e4e0514ed9"
-  integrity sha512-neFKG/sBAwGxHgXiIxnbm3/AAVQ/cMRS93hvBpg8xYRbeQSPVABp9U2bRnPf0iI4+Ucdv3plSxKK+3CW2ENJxA==
+"@types/react@*", "@types/react@>=16.9.11", "@types/react@^18.2.53":
+  version "18.2.53"
+  resolved "https://registry.yarnpkg.com/@types/react/-/react-18.2.53.tgz#09c21b4621aaad5fed6a5045b33a7430749d8dc5"
+  integrity sha512-52IHsMDT8qATp9B9zoOyobW8W3/0QhaJQTw1HwRj0UY2yBpCAQ7+S/CqHYQ8niAm3p4ji+rWUQ9UCib0GxQ60w==
   dependencies:
     "@types/prop-types" "*"
     "@types/scheduler" "*"
@@ -6538,7 +6538,7 @@ focus-lock@^0.11.6:
   dependencies:
     tslib "^2.0.3"
 
-follow-redirects@^1.14.9, follow-redirects@^1.15.0:
+follow-redirects@^1.15.0:
   version "1.15.4"
   resolved "https://registry.yarnpkg.com/follow-redirects/-/follow-redirects-1.15.4.tgz#cdc7d308bf6493126b17ea2191ea0ccf3e535adf"
   integrity sha512-Cr4D/5wlrb0z9dgERpUL3LrmPKVDsETIJhaCMeDfuFYcqa5bldGV6wBsAN6X/vxlXQtFBMrXdXxdL8CbDTGniw==
