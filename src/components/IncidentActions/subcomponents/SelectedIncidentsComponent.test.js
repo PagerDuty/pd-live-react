@@ -53,7 +53,8 @@ describe('SelectedIncidentsComponent', () => {
     expect(screen.getByText('Querying')).toBeInTheDocument();
   });
 
-  it('should render fetching notes spinner', () => {
+  it.skip('should render fetching notes spinner', () => {
+    // we are not rendering this spinner anymore
     const store = mockStore({
       incidentActions: {
         status: '',
@@ -84,7 +85,8 @@ describe('SelectedIncidentsComponent', () => {
     expect(screen.getByText('Fetching Notes')).toBeInTheDocument();
   });
 
-  it('should render fetching alerts spinner', () => {
+  it.skip('should render fetching alerts spinner', () => {
+    // we are not rendering this spinner anymore
     const store = mockStore({
       incidentActions: {
         status: '',

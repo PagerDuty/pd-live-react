@@ -36,6 +36,9 @@ import MergeModalComponent from 'src/components/MergeModal/MergeModalComponent';
 import IncidentAlertsModal from 'src/components/IncidentTable/subcomponents/IncidentAlertsModal';
 
 import {
+  getExtensionsAsync as getExtensionsAsyncConnected,
+} from 'src/redux/extensions/actions';
+import {
   getIncidentsAsync as getIncidentsAsyncConnected,
   // refreshIncidentsAsync as refreshIncidentsAsyncConnected,
 } from 'src/redux/incidents/actions';
@@ -44,21 +47,11 @@ import {
   cleanRecentLogEntriesAsync as cleanRecentLogEntriesAsyncConnected,
 } from 'src/redux/log_entries/actions';
 import {
-  getServicesAsync as getServicesAsyncConnected,
-} from 'src/redux/services/actions';
-import {
-  getTeamsAsync as getTeamsAsyncConnected,
-} from 'src/redux/teams/actions';
-import {
   getPrioritiesAsync as getPrioritiesAsyncConnected,
 } from 'src/redux/priorities/actions';
 import {
   userAuthorize as userAuthorizeConnected,
-  getUsersAsync as getUsersAsyncConnected,
 } from 'src/redux/users/actions';
-import {
-  getEscalationPoliciesAsync as getEscalationPoliciesAsyncConnected,
-} from 'src/redux/escalation_policies/actions';
 import {
   getResponsePlaysAsync as getResponsePlaysAsyncConnected,
 } from 'src/redux/response_plays/actions';
@@ -98,11 +91,8 @@ const App = () => {
   const checkAbilities = () => dispatch(checkAbilitiesConnected());
   const checkConnectionStatus = () => dispatch(checkConnectionStatusConnected());
   const updateQueueStats = (queueStats) => dispatch(updateQueueStatsConnected(queueStats));
-  const getServicesAsync = (teamIds) => dispatch(getServicesAsyncConnected(teamIds));
-  const getTeamsAsync = () => dispatch(getTeamsAsyncConnected());
+  const getExtensionsAsync = () => dispatch(getExtensionsAsyncConnected());
   const getPrioritiesAsync = () => dispatch(getPrioritiesAsyncConnected());
-  const getUsersAsync = (teamIds) => dispatch(getUsersAsyncConnected(teamIds));
-  const getEscalationPoliciesAsync = () => dispatch(getEscalationPoliciesAsyncConnected());
   const getResponsePlaysAsync = () => dispatch(getResponsePlaysAsyncConnected());
   const getLogEntriesAsync = (since) => dispatch(getLogEntriesAsyncConnected(since));
   const cleanRecentLogEntriesAsync = () => dispatch(cleanRecentLogEntriesAsyncConnected());
@@ -134,15 +124,10 @@ const App = () => {
     if (token && userAuthorized) {
       startMonitoring();
       checkAbilities();
-      getUsersAsync();
-      getServicesAsync();
-      getTeamsAsync();
-      getEscalationPoliciesAsync();
-      getResponsePlaysAsync();
       getPrioritiesAsync();
-      // NB: Get incidents, notes, and alerts are implicitly done from query now
-      // not anymore
       getIncidentsAsync();
+      getExtensionsAsync();
+      getResponsePlaysAsync();
       checkConnectionStatus();
     }
   }, [userAuthorized]);

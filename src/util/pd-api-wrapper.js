@@ -66,13 +66,57 @@ export const pdAxiosRequest = async (method, endpoint, params = {}, data = {}) =
   validateStatus: () => true,
 });
 
-// Ref: https://www.npmjs.com/package/bottleneck#refresh-interval
+let currentLimit = 200;
+// Ref: https://www.npmjs.com/package/bottleneck
 const limiterSettings = {
   maxConcurrent: 20,
-  minTime: Math.floor((60 / 200) * 1000),
+  reservoir: currentLimit,
 };
 
 const limiter = new Bottleneck(limiterSettings);
+let reservoirRefreshInterval;
+
+export const resetLimiterWithRateLimit = async (limit = 200) => {
+  currentLimit = limit;
+  // eslint-disable-next-line no-console
+  console.log(
+    `updating limiter with rate limit ${limit}`,
+  );
+  if (reservoirRefreshInterval) {
+    clearInterval(reservoirRefreshInterval);
+  }
+  limiter.updateSettings({
+    ...limiterSettings,
+    reservoir: limit,
+  });
+  reservoirRefreshInterval = setInterval(() => {
+    limiter.currentReservoir().then((reservoir) => {
+      const maxAmountToAdd = limit - reservoir;
+      const wantToAdd = Math.floor(limit / 10);
+      const amountToAdd = Math.min(maxAmountToAdd, wantToAdd);
+      limiter.incrementReservoir(amountToAdd);
+    });
+  }, 6 * 1000);
+};
+
+let watchdogTimeout;
+
+limiter.on('depleted', () => {
+  // eslint-disable-next-line no-console
+  console.error('Limiter queue depleted, setting watchdog timeout');
+  if (watchdogTimeout) {
+    clearTimeout(watchdogTimeout);
+  }
+  watchdogTimeout = setTimeout(() => {
+    limiter.currentReservoir().then((reservoir) => {
+      if (reservoir === 0) {
+        // eslint-disable-next-line no-console
+        console.error('Watchdog timeout, queue is still depleted after 10 seconds; resetting limiter');
+        resetLimiterWithRateLimit(currentLimit);
+      }
+    });
+  }, 10 * 1000);
+});
 
 /*
   Throttled version of Axios requests for direct API calls
@@ -86,31 +130,26 @@ export const throttledPdAxiosRequest = (
     expiration: 30 * 1000,
     priority: 5,
   },
-) => limiter.schedule(
-  {
-    expiration: options?.expiration || 30 * 1000,
-    priority: options.priority || 5,
-    id: `${method}-${endpoint}-${JSON.stringify(params)}-${Date.now()}-${Math.random()
-      .toString(36)
-      .substring(2, 7)}`,
-  },
-  () => pdAxiosRequest(method, endpoint, params, data),
-);
+) => {
+  const qid = `${method}-${endpoint}-${JSON.stringify(params)}-${Date.now()}-${Math.random()
+    .toString(36)
+    .substring(2, 7)}`;
+
+  return limiter.schedule(
+    {
+      expiration: options?.expiration || 30 * 1000,
+      priority: options.priority || 5,
+      id: qid,
+    },
+    async () => {
+      const r = await pdAxiosRequest(method, endpoint, params, data);
+      return r;
+    },
+  );
+};
 
 export const getLimiterStats = () => limiter.counts();
 export const getLimiter = () => limiter;
-
-export const resetLimiterWithRateLimit = async (limit = 200) => {
-  // eslint-disable-next-line no-console
-  console.log(
-    `updating limiter with rate limit ${limit} => minTime ${Math.floor((60 / limit) * 1000)}`,
-  );
-  limiter.updateSettings({
-    ...limiterSettings,
-    minTime: Math.floor((60 / limit) * 1000),
-  });
-};
-
 /*
   Optimized parallel fetch for paginated endpoints
 */

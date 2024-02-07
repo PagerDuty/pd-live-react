@@ -78,6 +78,7 @@ import {
   getUsersAsync,
   getCurrentUserAsync,
   updateUserLocale,
+  addUserToUsersMap,
 } from './users/sagas';
 
 import {
@@ -200,6 +201,7 @@ export default function* rootSaga() {
     getUsersAsync(),
     getCurrentUserAsync(),
     updateUserLocale(),
+    addUserToUsersMap(),
 
     // Services
     getServicesAsync(),

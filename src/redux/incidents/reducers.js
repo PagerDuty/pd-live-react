@@ -78,10 +78,15 @@ const incidents = produce(
         break;
 
       case FETCH_ALERTS_FOR_INCIDENTS_COMPLETED:
-        draft.incidentAlerts = {
-          ...draft.incidentAlerts,
-          ...action.incidentAlertsMap,
-        };
+        Object.entries(action.incidentAlertsMap).forEach(([incidentId, alerts]) => {
+          if (draft.incidentAlerts[incidentId] instanceof Array) {
+            draft.incidentAlerts[incidentId] = uniqOnId(
+              draft.incidentAlerts[incidentId].concat(alerts),
+            );
+          } else {
+            draft.incidentAlerts[incidentId] = alerts;
+          }
+        });
         draft.status = FETCH_ALERTS_FOR_INCIDENTS_COMPLETED;
         break;
 
@@ -116,10 +121,13 @@ const incidents = produce(
         break;
 
       case FETCH_NOTES_FOR_INCIDENTS_COMPLETED:
-        draft.incidentNotes = {
-          ...draft.incidentNotes,
-          ...action.incidentNotesMap,
-        };
+        Object.entries(action.incidentNotesMap).forEach(([incidentId, notes]) => {
+          if (draft.incidentNotes[incidentId] instanceof Array) {
+            draft.incidentNotes[incidentId] = uniqOnId(draft.incidentNotes[incidentId].concat(notes));
+          } else {
+            draft.incidentNotes[incidentId] = notes;
+          }
+        });
         draft.status = FETCH_NOTES_FOR_INCIDENTS_COMPLETED;
         break;
 
@@ -155,7 +163,14 @@ const incidents = produce(
         }
         for (let i = 0; i < Object.keys(action.incidentAlertsMap).length; i++) {
           const incidentId = Object.keys(action.incidentAlertsMap)[i];
-          if (!draft.incidentAlerts[incidentId]) {
+          if (!(draft.incidentAlerts[incidentId] instanceof Array)) {
+            // sometimes it might be undefined which means that incident alerts have not been requested yet
+            // or it might be an object with status: 'fetching'
+            // this can happen if the incident alerts are being fetched when the incident is created,
+            // it can probably also happen if there was a previous error
+            // in that case it would be an object with status: 'error'
+            // in any case, we want to replace it with an empty array
+            // so that we can concat the new alerts in the next step
             draft.incidentAlerts[incidentId] = [];
           }
           draft.incidentAlerts[incidentId] = uniqOnId(
@@ -175,7 +190,8 @@ const incidents = produce(
         }
         for (let i = 0; i < Object.keys(action.incidentNotesMap).length; i++) {
           const incidentId = Object.keys(action.incidentNotesMap)[i];
-          if (!draft.incidentNotes[incidentId]) {
+          if (!(draft.incidentNotes[incidentId] instanceof Array)) {
+            // same as with incident alerts
             draft.incidentNotes[incidentId] = [];
           }
           draft.incidentNotes[incidentId] = draft.incidentNotes[incidentId].concat(

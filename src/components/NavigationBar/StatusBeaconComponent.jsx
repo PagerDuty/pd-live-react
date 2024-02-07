@@ -5,6 +5,8 @@ import {
 
 import {
   Tooltip,
+  useColorModeValue,
+  useToken,
 } from '@chakra-ui/react';
 
 import i18next from 'src/i18n';
@@ -14,6 +16,16 @@ import Beacon from './subcomponents/Beacon';
 const StatusBeaconComponent = ({
   connectionStatus, connectionStatusMessage, queueStats,
 }) => {
+  const useColorModeToken = (lightColor, darkColor) => (
+    useColorModeValue(useToken('colors', lightColor), useToken('colors', darkColor))
+  );
+  const colorForStatus = {
+    positive: useColorModeToken('green.500', 'green.600'),
+    neutral: useColorModeToken('yellow.300', 'yellow.500'),
+    negative: useColorModeToken('red.500', 'red.600'),
+    dormant: useColorModeToken('gray.400', 'gray.600'),
+  };
+
   const waiting = queueStats.RECEIVED + queueStats.QUEUED;
   const running = queueStats.RUNNING + queueStats.EXECUTING;
 
@@ -32,7 +44,8 @@ const StatusBeaconComponent = ({
       )}
     >
       <div className="status-beacon-ctr">
-        <Beacon status={connectionStatus} speed="normal" size="1.2em" />
+        <Beacon color={colorForStatus[connectionStatus]} loading={waiting + running > 0} />
+        {/* <Beacon status={connectionStatus} speed="normal" size="1.2em" /> */}
       </div>
     </Tooltip>
   );

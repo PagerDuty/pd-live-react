@@ -1,6 +1,11 @@
 import React from 'react';
 
 import {
+  useSelector,
+  useDispatch,
+} from 'react-redux';
+
+import {
   Box, Flex, Text,
 } from '@chakra-ui/react';
 
@@ -8,14 +13,22 @@ import {
   useTranslation,
 } from 'react-i18next';
 
+import {
+  updateQuerySettingsServices as updateQuerySettingsServicesConnected,
+  updateQuerySettingsEscalationPolicies as updateQuerySettingsEscalationPoliciesConnected,
+  updateQuerySettingsUsers as updateQuerySettingsUsersConnected,
+  updateQuerySettingsTeams as updateQuerySettingsTeamsConnected,
+} from 'src/redux/query_settings/actions';
+
+import ServiceSelect from 'src/components/Common/ServiceSelect';
+import EscalationPolicySelect from 'src/components/Common/EscalationPolicySelect';
+import UserSelect from 'src/components/Common/UserSelect';
+import TeamSelect from 'src/components/Common/TeamSelect';
+
 import DatePickerComponent from './subcomponents/DatePickerComponent';
 import StatusQueryComponent from './subcomponents/StatusQueryComponent';
 import UrgencyQueryComponent from './subcomponents/UrgencyQueryComponent';
 import PriorityQueryComponent from './subcomponents/PriorityQueryComponent';
-import UsersQueryComponent from './subcomponents/UsersQueryComponent';
-import TeamsQueryComponent from './subcomponents/TeamsQueryComponent';
-import EscalationPolicyQueryComponent from './subcomponents/EscalationPolicyQueryComponent';
-import ServicesQueryComponent from './subcomponents/ServicesQueryComponent';
 
 import './QuerySettingsComponent.scss';
 
@@ -34,6 +47,26 @@ const QuerySettingsComponent = () => {
   const {
     t,
   } = useTranslation();
+
+  const {
+    serviceIds,
+    escalationPolicyIds,
+    userIds,
+    teamIds,
+  } = useSelector((state) => state.querySettings);
+  const dispatch = useDispatch();
+  const updateQuerySettingsServices = (newServiceIds) => {
+    dispatch(updateQuerySettingsServicesConnected(newServiceIds));
+  };
+  const updateQuerySettingsEscalationPolicies = (newEpIds) => {
+    dispatch(updateQuerySettingsEscalationPoliciesConnected(newEpIds));
+  };
+  const updateQuerySettingsUsers = (newUserIds) => {
+    dispatch(updateQuerySettingsUsersConnected(newUserIds));
+  };
+  const updateQuerySettingsTeams = (newTeamIds) => {
+    dispatch(updateQuerySettingsTeamsConnected(newTeamIds));
+  };
 
   return (
     <Box m={4}>
@@ -55,16 +88,36 @@ const QuerySettingsComponent = () => {
           <PriorityQueryComponent />
         </BoxForInput>
         <BoxForInput label={`${t('Team')}:`}>
-          <TeamsQueryComponent />
+          <TeamSelect
+            id="query-team-select"
+            value={teamIds}
+            onChange={updateQuerySettingsTeams}
+            isMulti
+          />
         </BoxForInput>
         <BoxForInput label={`${t('Users')}:`}>
-          <UsersQueryComponent />
+          <UserSelect
+            id="query-user-select"
+            value={userIds}
+            onChange={updateQuerySettingsUsers}
+            isMulti
+          />
         </BoxForInput>
         <BoxForInput label={`${t('Escalation Policy')}:`}>
-          <EscalationPolicyQueryComponent />
+          <EscalationPolicySelect
+            id="query-escalation-policy-select"
+            value={escalationPolicyIds}
+            onChange={updateQuerySettingsEscalationPolicies}
+            isMulti
+          />
         </BoxForInput>
         <BoxForInput label={`${t('Service')}:`}>
-          <ServicesQueryComponent />
+          <ServiceSelect
+            id="query-service-select"
+            value={serviceIds}
+            onChange={updateQuerySettingsServices}
+            isMulti
+          />
         </BoxForInput>
         {/* <GlobalSearchComponent /> */}
       </Flex>

@@ -1,5 +1,7 @@
 /* eslint-disable react/jsx-props-no-spreading */
-import React from 'react';
+import React, {
+  useMemo,
+} from 'react';
 
 import {
   useSelector, useDispatch, useStore,
@@ -17,17 +19,15 @@ import {
   DrawerCloseButton,
   Flex,
   Text,
-  // VStack,
-  // Grid,
-  // GridItem,
   Spacer,
   Heading,
-  // Code,
+  useColorModeValue,
+  useToken,
 } from '@chakra-ui/react';
 
-// import {
-//   formatError,
-// } from 'pretty-print-error';
+import {
+  PieChart,
+} from 'react-minimal-pie-chart';
 
 import {
   useTranslation,
@@ -52,7 +52,7 @@ const DetailedStatusOverlay = ({
     // errors,
   } = useSelector((state) => state.connection);
   const {
-    status: incidentStatus, error: incidentError,
+    status: incidentStatus, error: incidentError, incidents, incidentAlerts, incidentNotes,
   } = useSelector((state) => state.incidents);
   const {
     status: logEntriesStatus, error: logEntriesError,
@@ -60,21 +60,8 @@ const DetailedStatusOverlay = ({
     (state) => state.logEntries,
   );
   const {
-    status: servicesStatus, error: servicesError,
-  } = useSelector((state) => state.services);
-  const {
-    status: teamsStatus, error: teamsError,
-  } = useSelector((state) => state.teams);
-  const {
-    status: usersStatus,
-    error: usersError,
     currentUser,
   } = useSelector((state) => state.users);
-  const {
-    status: escalationPoliciesStatus, error: escalationPoliciesError,
-  } = useSelector(
-    (state) => state.escalationPolicies,
-  );
   const {
     status: extensionsStatus, error: extensionsError,
   } = useSelector(
@@ -144,37 +131,108 @@ const DetailedStatusOverlay = ({
     </Box>
   );
 
-  // const boxForError = (error) => {
-  //   let errorText;
-  //   if (error instanceof String) {
-  //     errorText = error;
-  //   } else if (error instanceof Error) {
-  //     errorText = formatError(error);
-  //   } else {
-  //     try {
-  //       errorText = JSON.stringify(error);
-  //     } catch (e) {
-  //       try {
-  //         errorText = error.toString();
-  //       } catch (e2) {
-  //         errorText = 'Unknown error';
-  //       }
-  //     }
-  //   }
+  const pieChartLabels = {
+    fetching: t('Fetching'),
+    fetched: t('Fetched'),
+    error: t('Error'),
+    not_fetched: t('Not requested'),
+  };
+  const useColorModeToken = (lightColor, darkColor) => (
+    useColorModeValue(useToken('colors', lightColor), useToken('colors', darkColor))
+  );
+  const pieChartColors = {
+    fetching: useColorModeToken('blue.300', 'blue.600'),
+    fetched: useColorModeToken('green.200', 'green.500'),
+    error: useColorModeToken('red.300', 'red.600'),
+    not_fetching: useColorModeToken('gray.200', 'whiteAlpha.300'),
+  };
 
-  //   return (
-  //     <Box
-  //       rounded="md"
-  //       borderWidth="1px"
-  //       p={2}
-  //       mb={2}
-  //     >
-  //       <Text m={2} fontSize="sm">
-  //         {errorText}
-  //       </Text>
-  //     </Box>
-  //   );
-  // };
+  const fetchCounts = useMemo(() => {
+    const counts = {
+      total: 0,
+      alerts: {
+        fetched: 0,
+        fetching: 0,
+        not_fetched: 0,
+        error: 0,
+      },
+      notes: {
+        fetched: 0,
+        fetching: 0,
+        not_fetched: 0,
+        error: 0,
+      },
+    };
+    incidents.forEach((incident) => {
+      counts.total += 1;
+      if (incidentAlerts[incident.id] instanceof Array) {
+        counts.alerts.fetched += 1;
+      } else if (incidentAlerts[incident.id] instanceof Object) {
+        if (incidentAlerts[incident.id].status === 'fetching') {
+          counts.alerts.fetching += 1;
+        } else if (incidentAlerts[incident.id].status === 'error') {
+          counts.alerts.error += 1;
+        }
+      } else {
+        counts.alerts.not_fetched += 1;
+      }
+      if (incidentNotes[incident.id] instanceof Array) {
+        counts.notes.fetched += 1;
+      } else if (incidentNotes[incident.id] instanceof Object) {
+        if (incidentNotes[incident.id].status === 'fetching') {
+          counts.notes.fetching += 1;
+        } else if (incidentNotes[incident.id].status === 'error') {
+          counts.notes.error += 1;
+        }
+      } else {
+        counts.notes.not_fetched += 1;
+      }
+    });
+    const pieChartData = {
+      notes: Object.entries(counts.notes).map(([key, value]) => ({
+        title: `${pieChartLabels[key]}: ${value}`,
+        value,
+        color: pieChartColors[key],
+      })),
+      alerts: Object.entries(counts.alerts).map(([key, value]) => ({
+        title: `${pieChartLabels[key]}: ${value}`,
+        value,
+        color: pieChartColors[key],
+      })),
+    };
+    return pieChartData;
+  }, [incidents, incidentAlerts, incidentNotes]);
+
+  const IncidentAlertsPie = () => (
+    <Flex direction="row" alignItems="center" justifyContent="space-between">
+      <Box flex="1" px={1}>
+        <Flex px={1} alignItems="center" justifyContent="center">
+          <Box>
+            <Text mt={3} fontSize="sm" fontWeight="bold">
+              {t('Alerts')}
+            </Text>
+          </Box>
+          <Spacer />
+          <Box h={10} w={10} mr={4}>
+            <PieChart data={fetchCounts.alerts} lineWidth={35} />
+          </Box>
+        </Flex>
+      </Box>
+      <Box flex="1" px={1}>
+        <Flex px={1} alignItems="center" justifyContent="center">
+          <Box>
+            <Text mt={3} fontSize="sm" fontWeight="bold">
+              {t('Notes')}
+            </Text>
+          </Box>
+          <Spacer />
+          <Box h={10} w={10} mr={4}>
+            <PieChart data={fetchCounts.notes} lineWidth={35} />
+          </Box>
+        </Flex>
+      </Box>
+    </Flex>
+  );
 
   return (
     <Drawer
@@ -204,15 +262,17 @@ const DetailedStatusOverlay = ({
           </Box>
           <Box rounded="md" borderWidth="1px" p={2} mb={2}>
             <Heading size="sm" pb={4} borderBottomWidth="1px">
+              {t('Activity')}
+            </Heading>
+            <IncidentAlertsPie />
+          </Box>
+          <Box rounded="md" borderWidth="1px" p={2} mb={2}>
+            <Heading size="sm" pb={4} borderBottomWidth="1px">
               {t('Status')}
             </Heading>
             {statusFor(t('Connection'), connectionStatus, connectionError)}
             {statusFor(t('Incidents'), incidentStatus, incidentError)}
             {statusFor(t('Log Entries'), logEntriesStatus, logEntriesError)}
-            {statusFor(t('Services'), servicesStatus, servicesError)}
-            {statusFor(t('Teams'), teamsStatus, teamsError)}
-            {statusFor(t('Users'), usersStatus, usersError)}
-            {statusFor(t('Escalation Policies'), escalationPoliciesStatus, escalationPoliciesError)}
             {statusFor(t('Extensions'), extensionsStatus, extensionsError)}
             {statusFor(t('Response Plays'), responsePlaysStatus, responsePlaysError)}
           </Box>
