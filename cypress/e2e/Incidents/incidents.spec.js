@@ -316,6 +316,10 @@ describe('Manage Alerts', { failFast: { enabled: true } }, () => {
     cy.get(
       `[data-incident-header="Num Alerts"][data-incident-row-cell-idx="${incidentIdx}"]`,
     ).within(() => {
+      cy.get('[aria-haspopup="dialog"]').realHover();
+      // wait for async alert fetch to complete
+      cy.get('[data-popper-placement="bottom"]').should('be.visible');
+      cy.get('[data-popper-placement="bottom"]').should('contain', 'Created At');
       cy.get('[aria-haspopup="dialog"]').click();
     });
 
@@ -348,6 +352,9 @@ describe('Manage Alerts', { failFast: { enabled: true } }, () => {
     cy.get(
       `[data-incident-header="Num Alerts"][data-incident-row-cell-idx="${incidentIdx}"]`,
     ).within(() => {
+      cy.get('[aria-haspopup="dialog"]').should('be.visible').should('have.text', '2').realHover();
+      cy.get('[data-popper-placement="bottom"]').should('be.visible');
+      cy.get('[data-popper-placement="bottom"]').should('contain', 'Created At');
       cy.get('[aria-haspopup="dialog"]').should('be.visible').should('have.text', '2').click();
     });
 
@@ -384,6 +391,9 @@ describe('Manage Alerts', { failFast: { enabled: true } }, () => {
     cy.get(
       `[data-incident-header="Num Alerts"][data-incident-row-cell-idx="${sourceIncidentIdx}"]`,
     ).within(() => {
+      cy.get('[aria-haspopup="dialog"]').should('be.visible').should('have.text', '1').realHover();
+      cy.get('[data-popper-placement="bottom"]').should('be.visible');
+      cy.get('[data-popper-placement="bottom"]').should('contain', 'Created At');
       cy.get('[aria-haspopup="dialog"]').should('be.visible').should('have.text', '1').click();
     });
 
