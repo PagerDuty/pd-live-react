@@ -115,7 +115,8 @@ describe('Query Incidents', { failFast: { enabled: true } }, () => {
   const teams = ['Team A', 'Team B'];
   teams.forEach((team) => {
     it(`Query for incidents on ${team} only`, () => {
-      cy.get('#query-team-select').click().type(`${team}{enter}`);
+      cy.get('#query-team-select').click().type(`${team}`);
+      cy.get('div[role="button"]').contains(team).should('exist').click();
       waitForIncidentTable();
       checkIncidentCellContentAllRows('Teams', team);
       cy.get('#query-team-select').click().type('{del}');
@@ -125,7 +126,8 @@ describe('Query Incidents', { failFast: { enabled: true } }, () => {
   const escalationPolicies = ['Team A (EP)', 'Team B (EP)'];
   escalationPolicies.forEach((escalationPolicy) => {
     it(`Query for incidents on ${escalationPolicy} only`, () => {
-      cy.get('#query-escalation-policy-select').click().type(`${escalationPolicy}{enter}`);
+      cy.get('#query-escalation-policy-select').click().type(`${escalationPolicy}`);
+      cy.get('div[role="button"]').contains(escalationPolicy).should('exist').click();
       waitForIncidentTable();
       checkIncidentCellContentAllRows('Escalation Policy', escalationPolicy);
       cy.get('#query-escalation-policy-select').click().type('{del}');
@@ -135,7 +137,8 @@ describe('Query Incidents', { failFast: { enabled: true } }, () => {
   const services = ['Service A1', 'Service B2'];
   services.forEach((service) => {
     it(`Query for incidents on ${service} only`, () => {
-      cy.get('#query-service-select').click().type(`${service}{enter}`);
+      cy.get('#query-service-select').click().type(`${service}`);
+      cy.get('div[role="button"]').contains(service).should('exist').click();
       waitForIncidentTable();
       checkIncidentCellContentAllRows('Service', service);
       cy.get('#query-service-select').click().type('{del}');
@@ -143,8 +146,10 @@ describe('Query Incidents', { failFast: { enabled: true } }, () => {
   });
 
   it('Query for incidents on Team A and Service A1 only', () => {
-    cy.get('#query-team-select').click().type('Team A{enter}');
-    cy.get('#query-service-select').click().type('Service A1{enter}');
+    cy.get('#query-team-select').click().type('Team A');
+    cy.get('div[role="button"]').contains('Team A').should('exist').click();
+    cy.get('#query-service-select').click().type('Service A1');
+    cy.get('div[role="button"]').contains('Service A1').should('exist').click();
 
     waitForIncidentTable();
     checkIncidentCellContentAllRows('Service', 'Service A1');
@@ -155,8 +160,10 @@ describe('Query Incidents', { failFast: { enabled: true } }, () => {
   });
 
   it('Query for incidents on Team A (EP) and Service A1 only', () => {
-    cy.get('#query-escalation-policy-select').click().type('Team A (EP){enter}');
-    cy.get('#query-service-select').click().type('Service A1{enter}');
+    cy.get('#query-escalation-policy-select').click().type('Team A (EP)');
+    cy.get('div[role="button"]').contains('Team A (EP)').should('exist').click();
+    cy.get('#query-service-select').click().type('Service A1');
+    cy.get('div[role="button"]').contains('Service A1').should('exist').click();
 
     waitForIncidentTable();
     checkIncidentCellContentAllRows('Service', 'Service A1');
@@ -189,11 +196,12 @@ describe('Query Incidents', { failFast: { enabled: true } }, () => {
   });
 
   it('Query for incidents assigned to User A1, A2, or A3', () => {
-    cy.get('#query-user-select')
-      .click()
-      .type('User A1{enter}')
-      .type('User A2{enter}')
-      .type('User A3{enter}');
+    ['User A1', 'User A2', 'User A3'].forEach((user) => {
+      cy.get('#query-user-select')
+        .click()
+        .type(user);
+      cy.get('div[role="button"]').contains(user).should('exist').click();
+    });
 
     waitForIncidentTable();
     checkIncidentCellContentAllRows('Assignees', 'UA');

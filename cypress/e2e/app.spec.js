@@ -87,7 +87,7 @@ describe('PagerDuty Live', { failFast: { enabled: true } }, () => {
       'GET',
       [
         'https://api.pagerduty.com/incidents',
-        '?limit=100&total=true&offset=0',
+        '*limit=100*offset=0*',
         `&since=${since}&until=${until}*`,
       ].join(''),
     ).as('getUrl');
