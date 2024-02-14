@@ -21,11 +21,6 @@ import {
   PD_REQUIRED_ABILITY, DEBUG_DISABLE_POLLING,
 } from 'src/config/constants';
 
-// import {
-//   FILTER_INCIDENTS_LIST_BY_PRIORITY_COMPLETED,
-//   FILTER_INCIDENTS_LIST_BY_PRIORITY_ERROR,
-// } from 'src/redux/incidents/actions';
-
 import {
   UPDATE_CONNECTION_STATUS_REQUESTED,
   UPDATE_CONNECTION_STATUS_COMPLETED,
@@ -79,10 +74,6 @@ export function* checkConnectionStatusImpl() {
   // yield take([CHECK_ABILITIES_COMPLETED, CHECK_ABILITIES_ERROR]);
   if (!DEBUG_DISABLE_POLLING) {
     yield take([FETCH_LOG_ENTRIES_COMPLETED, FETCH_LOG_ENTRIES_ERROR]);
-    // yield take([
-    //   FILTER_INCIDENTS_LIST_BY_PRIORITY_COMPLETED,
-    //   FILTER_INCIDENTS_LIST_BY_PRIORITY_ERROR,
-    // ]);
   }
 
   // Check entire store for fulfilled statuses
@@ -91,32 +82,11 @@ export function* checkConnectionStatusImpl() {
   if (
     store.incidents.status.includes('COMPLETED')
     && store.logEntries.status.includes('COMPLETED')
-    && store.services.status.includes('COMPLETED')
-    && store.teams.status.includes('COMPLETED')
-    && store.users.status.includes('COMPLETED')
-    && store.escalationPolicies.status.includes('COMPLETED')
     && store.extensions.status.includes('COMPLETED')
-    // response plays gives an error if incident workflows is enabled
-    // && store.responsePlays.status.includes('COMPLETED')
-    // && store.connection.status.includes('COMPLETED')
   ) {
     // Ignoring priorities as this is persisted to localcache
     validConnection = true;
   }
-
-  // console.log('validConnection', validConnection);
-  // if (!validConnection) {
-  //   console.log({
-  //     logEntries: store.logEntries.status,
-  //     services: store.services.status,
-  //     teams: store.teams.status,
-  //     users: store.users.status,
-  //     eps: store.escalationPolicies.status,
-  //     extensions: store.extensions.status,
-  //     responsePlays: store.responsePlays.status,
-  //     connection: store.connection.status,
-  //   });
-  // }
 
   // Update connection status depending on store state
   const {

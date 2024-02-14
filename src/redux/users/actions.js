@@ -23,6 +23,10 @@ export const UPDATE_USER_LOCALE_REQUESTED = 'UPDATE_USER_LOCALE_REQUESTED';
 export const UPDATE_USER_LOCALE_COMPLETED = 'UPDATE_USER_LOCALE_COMPLETED';
 export const UPDATE_USER_LOCALE_ERROR = 'UPDATE_USER_LOCALE_ERROR';
 
+export const ADD_USER_TO_USERS_MAP_REQUESTED = 'ADD_USER_TO_USERS_MAP_REQUESTED';
+export const ADD_USER_TO_USERS_MAP_COMPLETED = 'ADD_USER_TO_USERS_MAP_COMPLETED';
+export const ADD_USER_TO_USERS_MAP_ERROR = 'ADD_USER_TO_USERS_MAP_ERROR';
+
 export const userAuthorize = () => ({
   type: USER_AUTHORIZE_REQUESTED,
 });
@@ -47,4 +51,9 @@ export const getCurrentUserAsync = () => ({
 export const updateUserLocale = (locale) => ({
   type: UPDATE_USER_LOCALE_REQUESTED,
   locale,
+});
+
+export const addUserToUsersMap = (user) => ({
+  type: ADD_USER_TO_USERS_MAP_REQUESTED,
+  user,
 });

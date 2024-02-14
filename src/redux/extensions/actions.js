@@ -7,4 +7,6 @@ export const MAP_SERVICES_TO_EXTENSIONS_REQUESTED = 'MAP_SERVICES_TO_EXTENSIONS_
 export const MAP_SERVICES_TO_EXTENSIONS_COMPLETED = 'MAP_SERVICES_TO_EXTENSIONS_COMPLETED';
 export const MAP_SERVICES_TO_EXTENSIONS_ERROR = 'MAP_SERVICES_TO_EXTENSIONS_ERROR';
 
-// NB: Getting extensions and mapping to services is internal, no public action needed
+export const getExtensionsAsync = () => ({
+  type: FETCH_EXTENSIONS_REQUESTED,
+});

@@ -5,7 +5,6 @@ import {
 
 import i18next from 'src/i18n';
 
-import selectServices from 'src/redux/services/selectors';
 import {
   CUSTOM_INCIDENT_ACTION, EXTERNAL_SYSTEM,
 } from 'src/util/extensions';
@@ -63,50 +62,38 @@ export function* mapServicesToExtensions() {
 export function* mapServicesToExtensionsImpl() {
   try {
     const {
-      services,
-    } = yield select(selectServices);
-    const {
       extensions,
     } = yield select(selectExtensions);
 
     // Build map of service ids against extensions
     const serviceExtensionMap = {};
-    services.map((service) => {
-      const serviceExtensions = [];
-      extensions.map((extension) => {
-        extension.extension_objects.map((extensionObject) => {
-          if (extensionObject.type === 'service_reference' && extensionObject.id === service.id) {
-            // Add modified version of extension object for rendering, containing "types" + "labels"
-            const modifiedExtension = { ...extension };
-            const extensionSummary = modifiedExtension.extension_schema.summary;
-
-            // Custom Incident Action
-            if (extensionSummary === CUSTOM_INCIDENT_ACTION) {
-              modifiedExtension.extension_type = CUSTOM_INCIDENT_ACTION;
-
-              // ServiceNow
-            } else if (extensionSummary.includes('ServiceNow')) {
-              modifiedExtension.extension_type = EXTERNAL_SYSTEM;
-              modifiedExtension.extension_label = `${i18next.t('Sync with')} ServiceNow`;
-
-              // Jira
-            } else if (extensionSummary.includes('Jira')) {
-              modifiedExtension.extension_type = EXTERNAL_SYSTEM;
-              modifiedExtension.extension_label = `${i18next.t('Sync with')} ${extensionSummary}`;
-
-              // Zendesk
-            } else if (extensionSummary === 'Zendesk') {
-              modifiedExtension.extension_type = EXTERNAL_SYSTEM;
-              modifiedExtension.extension_label = `${i18next.t('Sync with')} Zendesk`;
-            }
-
-            serviceExtensions.push(modifiedExtension);
+    extensions.map((extension) => {
+      extension.extension_objects.map((extensionObject) => {
+        if (extensionObject.type === 'service_reference') {
+          const serviceId = extensionObject.id;
+          if (!(serviceExtensionMap[serviceId] instanceof Array)) {
+            serviceExtensionMap[serviceId] = [];
           }
-        });
+          const modifiedExtension = { ...extension };
+          const extensionSummary = modifiedExtension.extension_schema.summary;
+          if (extensionSummary === CUSTOM_INCIDENT_ACTION) {
+            modifiedExtension.extension_type = CUSTOM_INCIDENT_ACTION;
+          } else if (extensionSummary.includes('ServiceNow')) {
+            modifiedExtension.extension_type = EXTERNAL_SYSTEM;
+            modifiedExtension.extension_label = `${i18next.t('Sync with')} ServiceNow`;
+          } else if (extensionSummary.includes('Jira')) {
+            modifiedExtension.extension_type = EXTERNAL_SYSTEM;
+            modifiedExtension.extension_label = `${i18next.t('Sync with')} ${extensionSummary}`;
+          } else if (extensionSummary === 'Zendesk') {
+            modifiedExtension.extension_type = EXTERNAL_SYSTEM;
+            modifiedExtension.extension_label = `${i18next.t('Sync with')} Zendesk`;
+          }
+          serviceExtensionMap[serviceId].push(modifiedExtension);
+        }
       });
-      // Sort name of extensions alphabetically
+    });
+    Object.values(serviceExtensionMap).map((serviceExtensions) => {
       serviceExtensions.sort((a, b) => a.name.localeCompare(b.name));
-      serviceExtensionMap[service.id] = serviceExtensions;
     });
 
     yield put({

@@ -51,6 +51,9 @@ import {
   moveAlerts as moveAlertsConnected,
 } from 'src/redux/incident_actions/actions';
 
+import ServiceSelect from 'src/components/Common/ServiceSelect';
+import EscalationPolicySelect from 'src/components/Common/EscalationPolicySelect';
+
 // given an object, return an array of all key paths
 const getAllKeyPaths = (obj, currentPath = [], paths = []) => {
   if (typeof obj === 'object' && obj !== null) {
@@ -132,33 +135,6 @@ const IncidentAlertsModal = () => {
   const {
     filteredIncidentsByQuery, incidentAlerts,
   } = useSelector((state) => state.incidents);
-  const serviceList = useSelector((state) => state.services.services);
-  const serviceListOptions = useMemo(() => {
-    if (serviceList instanceof Array) {
-      const serviceListSorted = [...serviceList].sort((a, b) => a.name.localeCompare(b.name));
-      return serviceListSorted.map((service) => ({
-        label: service.name,
-        value: service.id,
-      }));
-    }
-    // eslint-disable-next-line no-console
-    console.error('serviceList is not an array', serviceList);
-    return [];
-  }, [serviceList]);
-
-  const epList = useSelector((state) => state.escalationPolicies.escalationPolicies);
-  const epListOptions = useMemo(() => {
-    if (epList instanceof Array) {
-      const epListSorted = [...epList].sort((a, b) => a.name.localeCompare(b.name));
-      return epListSorted.map((ep) => ({
-        label: ep.name,
-        value: ep.id,
-      }));
-    }
-    // eslint-disable-next-line no-console
-    console.error('epList is not an array', epList);
-    return [];
-  }, [epList]);
 
   const {
     priorities: priorityList,
@@ -429,46 +405,28 @@ const IncidentAlertsModal = () => {
                 </FormControl>
                 <FormControl>
                   <FormLabel htmlFor="alerts-modal-move-service-select">{t('Service')}</FormLabel>
-                  <Select
+                  <ServiceSelect
                     id="alerts-modal-move-service-select"
                     size="md"
-                    isSearchable
-                    options={serviceListOptions}
-                    defaultValue={serviceListOptions.find((s) => s.value === incident.service.id)}
-                    onChange={(selected) => setMoveTargetOptions((prev) => ({ ...prev, serviceId: selected.value }))}
-                    placeholder={`${t('Select dotdotdot')}`}
-                    chakraStyles={{
-                      // Ensure that dropdowns appear over table header
-                      menu: (provided) => ({
-                        ...provided,
-                        zIndex: 2,
-                        width: 'auto',
-                      }),
+                    isMulti={false}
+                    onChange={(selected) => {
+                      setMoveTargetOptions((prev) => ({ ...prev, serviceId: selected }));
                     }}
+                    value={moveTargetOptions.serviceId || incident.service.id}
                   />
                 </FormControl>
                 <FormControl>
                   <FormLabel htmlFor="alerts-modal-move-ep-select">
                     {t('Escalation Policy')}
                   </FormLabel>
-                  <Select
+                  <EscalationPolicySelect
                     id="alerts-modal-move-ep-select"
                     size="md"
-                    isSearchable
-                    options={epListOptions}
-                    defaultValue={epListOptions.find(
-                      (s) => s.value === incident.escalation_policy.id,
-                    )}
-                    onChange={(selected) => setMoveTargetOptions((prev) => ({ ...prev, epId: selected.value }))}
-                    placeholder={`${t('Select dotdotdot')}`}
-                    chakraStyles={{
-                      // Ensure that dropdowns appear over table header
-                      menu: (provided) => ({
-                        ...provided,
-                        zIndex: 2,
-                        width: 'auto',
-                      }),
+                    isMulti={false}
+                    onChange={(selected) => {
+                      setMoveTargetOptions((prev) => ({ ...prev, epId: selected }));
                     }}
+                    value={moveTargetOptions.epId || incident.escalation_policy.id}
                   />
                 </FormControl>
                 <FormControl>

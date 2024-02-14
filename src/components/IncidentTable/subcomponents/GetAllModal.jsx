@@ -1,10 +1,6 @@
 import React, {
-  useMemo, useCallback,
+  useMemo,
 } from 'react';
-
-import {
-  useSelector, useDispatch,
-} from 'react-redux';
 
 import {
   Button,
@@ -20,29 +16,9 @@ import {
   Text,
 } from '@chakra-ui/react';
 
-import {
-  getIncidentAlertsAsync, getIncidentNotesAsync,
-} from 'src/redux/incidents/actions';
-
 const GetAllModal = ({
   isOpen, onClose, exportCsv, rows: rowsToExport,
 }) => {
-  const maxRateLimit = useSelector((state) => state.settings.maxRateLimit);
-
-  const dispatch = useDispatch();
-  const getIncidentAlerts = (incidentId) => dispatch(getIncidentAlertsAsync(incidentId));
-  const getIncidentNotes = (incidentId) => dispatch(getIncidentNotesAsync(incidentId));
-
-  const rowsNeedingFetch = useMemo(
-    () => rowsToExport.filter((row) => {
-      const {
-        alerts, notes,
-      } = row.original;
-      return !alerts || !notes;
-    }),
-    [rowsToExport],
-  );
-
   const rowsFetching = useMemo(
     () => rowsToExport.filter((row) => {
       const {
@@ -64,23 +40,9 @@ const GetAllModal = ({
   );
 
   const readyToExport = useMemo(
-    () => rowsNeedingFetch.length === 0 && rowsFetching.length === 0,
-    [rowsNeedingFetch],
+    () => rowsToExport.length === rowsDoneFetching.length,
+    [rowsToExport, rowsDoneFetching],
   );
-
-  const fetchRows = useCallback(() => {
-    rowsNeedingFetch.forEach((row) => {
-      const {
-        id, notes, alerts,
-      } = row.original;
-      if (!notes) {
-        getIncidentNotes(id);
-      }
-      if (!alerts) {
-        getIncidentAlerts(id);
-      }
-    });
-  }, [rowsNeedingFetch]);
 
   return (
     <>
@@ -90,28 +52,7 @@ const GetAllModal = ({
           <ModalHeader>Export CSV</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            {rowsNeedingFetch.length > 0 && (
-              <>
-                <p>
-                  You need to load alerts and notes for
-                  {' '}
-                  {rowsNeedingFetch.length}
-                  {' '}
-                  incidents before
-                  exporting. This will take about
-                  {' '}
-                  {Math.ceil(rowsToExport.length / maxRateLimit) * 2}
-                  {' '}
-                  minutes.
-                </p>
-                <p>Fetch notes and alerts?</p>
-                <Button colorScheme="blue" mr={2} onClick={fetchRows}>
-                  Yes
-                </Button>
-                <Button onClick={exportCsv}>No, export without notes and alerts</Button>
-              </>
-            )}
-            {rowsFetching.length > 0 && rowsNeedingFetch.length === 0 && (
+            {rowsFetching.length > 0 && (
               <>
                 <Text fontSize="sm">Fetching notes and alerts...</Text>
                 <Box rounded="md" borderWidth={1} p={2}>
