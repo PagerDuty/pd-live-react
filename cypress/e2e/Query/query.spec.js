@@ -197,9 +197,7 @@ describe('Query Incidents', { failFast: { enabled: true } }, () => {
 
   it('Query for incidents assigned to User A1, A2, or A3', () => {
     ['User A1', 'User A2', 'User A3'].forEach((user) => {
-      cy.get('#query-user-select')
-        .click()
-        .type(user);
+      cy.get('#query-user-select').click().type(user);
       cy.get('div[role="button"]').contains(user).should('exist').click();
     });
 

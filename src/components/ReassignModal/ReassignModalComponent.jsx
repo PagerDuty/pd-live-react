@@ -1,6 +1,5 @@
 import React, {
-  useCallback,
-  useState,
+  useCallback, useState,
 } from 'react';
 
 import {
@@ -80,11 +79,7 @@ const ReassignModalComponent = () => {
 
   const requestOptionsPage = useCallback(async (inputValue, offset, epsOrUsers) => {
     const epOrUser = epsOrUsers === 'escalation_policies' ? 'escalation_policy' : 'user';
-    const r = await throttledPdAxiosRequest(
-      'GET',
-      epsOrUsers,
-      { query: inputValue, offset },
-    );
+    const r = await throttledPdAxiosRequest('GET', epsOrUsers, { query: inputValue, offset });
     // setMore(r.data.more);
     setMore((prev) => ({ ...prev, [epsOrUsers]: r.data.more }));
     const r2 = r.data[epsOrUsers].map((obj) => {
@@ -94,29 +89,39 @@ const ReassignModalComponent = () => {
           addUserToUsersMap(obj);
         }
       }
-      return ({ label: obj.name, name: obj.name, value: obj.id, type: epOrUser });
+      return { label: obj.name, name: obj.name, value: obj.id, type: epOrUser };
     });
     return r2;
   }, []);
 
-  const loadOptions = useCallback(async (epsOrUsers, inputValue) => {
-    setIsLoading((prev) => ({ ...prev, [epsOrUsers]: true }));
-    const r = await requestOptionsPage(inputValue, 0, epsOrUsers);
-    setSelectOptions((prev) => ({ ...prev, [epsOrUsers]: r }));
-    setIsLoading((prev) => ({ ...prev, [epsOrUsers]: false }));
-  }, [currentInputValue, requestOptionsPage]);
+  const loadOptions = useCallback(
+    async (epsOrUsers, inputValue) => {
+      setIsLoading((prev) => ({ ...prev, [epsOrUsers]: true }));
+      const r = await requestOptionsPage(inputValue, 0, epsOrUsers);
+      setSelectOptions((prev) => ({ ...prev, [epsOrUsers]: r }));
+      setIsLoading((prev) => ({ ...prev, [epsOrUsers]: false }));
+    },
+    [currentInputValue, requestOptionsPage],
+  );
 
   const debouncedLoadOptions = useDebouncedCallback(loadOptions, 200);
 
-  const loadMoreOptions = useCallback(async (epsOrUsers) => {
-    if (!more[epsOrUsers]) {
-      return;
-    }
-    setIsLoading((prev) => ({ ...prev, [epsOrUsers]: true }));
-    const r = await requestOptionsPage(currentInputValue, selectOptions[epsOrUsers].length, epsOrUsers);
-    setSelectOptions((prev) => ({ ...prev, [epsOrUsers]: [...prev[epsOrUsers], ...r] }));
-    setIsLoading((prev) => ({ ...prev, [epsOrUsers]: false }));
-  }, [currentInputValue, requestOptionsPage, more, selectOptions]);
+  const loadMoreOptions = useCallback(
+    async (epsOrUsers) => {
+      if (!more[epsOrUsers]) {
+        return;
+      }
+      setIsLoading((prev) => ({ ...prev, [epsOrUsers]: true }));
+      const r = await requestOptionsPage(
+        currentInputValue,
+        selectOptions[epsOrUsers].length,
+        epsOrUsers,
+      );
+      setSelectOptions((prev) => ({ ...prev, [epsOrUsers]: [...prev[epsOrUsers], ...r] }));
+      setIsLoading((prev) => ({ ...prev, [epsOrUsers]: false }));
+    },
+    [currentInputValue, requestOptionsPage, more, selectOptions],
+  );
 
   return (
     <Modal

@@ -1,8 +1,7 @@
 import React from 'react';
 
 import {
-  useSelector,
-  useDispatch,
+  useSelector, useDispatch,
 } from 'react-redux';
 
 import {
@@ -49,11 +48,10 @@ const QuerySettingsComponent = () => {
   } = useTranslation();
 
   const {
-    serviceIds,
-    escalationPolicyIds,
-    userIds,
-    teamIds,
-  } = useSelector((state) => state.querySettings);
+    serviceIds, escalationPolicyIds, userIds, teamIds,
+  } = useSelector(
+    (state) => state.querySettings,
+  );
   const dispatch = useDispatch();
   const updateQuerySettingsServices = (newServiceIds) => {
     dispatch(updateQuerySettingsServicesConnected(newServiceIds));

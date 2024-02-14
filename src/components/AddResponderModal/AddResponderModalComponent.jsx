@@ -1,7 +1,5 @@
 import React, {
-  useCallback,
-  useState,
-  useRef,
+  useCallback, useState, useRef,
 } from 'react';
 
 import {
@@ -77,7 +75,10 @@ const AddResponderModalComponent = () => {
   };
 
   const [selectOptions, setSelectOptions] = useState({ escalation_policies: [], users: [] });
-  const [currentInputValue, setCurrentInputValue] = useState({ escalation_policies: '', users: '' });
+  const [currentInputValue, setCurrentInputValue] = useState({
+    escalation_policies: '',
+    users: '',
+  });
   const [more, setMore] = useState({ escalation_policies: false, users: false });
   const [isLoading, setIsLoading] = useState({ escalation_policies: false, users: false });
   const [selectedItems, setSelectedItems] = useState({ escalation_policies: [], users: [] });
@@ -88,11 +89,7 @@ const AddResponderModalComponent = () => {
 
   const requestOptionsPage = useCallback(async (inputValue, offset, epsOrUsers) => {
     const epOrUser = epsOrUsers === 'escalation_policies' ? 'escalation_policy' : 'user';
-    const r = await throttledPdAxiosRequest(
-      'GET',
-      epsOrUsers,
-      { query: inputValue, offset },
-    );
+    const r = await throttledPdAxiosRequest('GET', epsOrUsers, { query: inputValue, offset });
     setMore((prev) => ({ ...prev, [epsOrUsers]: r.data.more }));
     const r2 = r.data[epsOrUsers].map((obj) => {
       // take the opportunity to add the object to the map
@@ -101,29 +98,39 @@ const AddResponderModalComponent = () => {
           addUserToUsersMap(obj);
         }
       }
-      return ({ label: obj.name, name: obj.name, value: obj.id, type: epOrUser });
+      return { label: obj.name, name: obj.name, value: obj.id, type: epOrUser };
     });
     return r2;
   }, []);
 
-  const loadOptions = useCallback(async (epsOrUsers, inputValue) => {
-    setIsLoading((prev) => ({ ...prev, [epsOrUsers]: true }));
-    const r = await requestOptionsPage(inputValue, 0, epsOrUsers);
-    setSelectOptions((prev) => ({ ...prev, [epsOrUsers]: r }));
-    setIsLoading((prev) => ({ ...prev, [epsOrUsers]: false }));
-  }, [currentInputValue, requestOptionsPage]);
+  const loadOptions = useCallback(
+    async (epsOrUsers, inputValue) => {
+      setIsLoading((prev) => ({ ...prev, [epsOrUsers]: true }));
+      const r = await requestOptionsPage(inputValue, 0, epsOrUsers);
+      setSelectOptions((prev) => ({ ...prev, [epsOrUsers]: r }));
+      setIsLoading((prev) => ({ ...prev, [epsOrUsers]: false }));
+    },
+    [currentInputValue, requestOptionsPage],
+  );
 
   const debouncedLoadOptions = useDebouncedCallback(loadOptions, 200);
 
-  const loadMoreOptions = useCallback(async (epsOrUsers) => {
-    if (!more[epsOrUsers]) {
-      return;
-    }
-    setIsLoading((prev) => ({ ...prev, [epsOrUsers]: true }));
-    const r = await requestOptionsPage(currentInputValue[epsOrUsers], selectOptions[epsOrUsers].length, epsOrUsers);
-    setSelectOptions((prev) => ({ ...prev, [epsOrUsers]: [...prev[epsOrUsers], ...r] }));
-    setIsLoading((prev) => ({ ...prev, [epsOrUsers]: false }));
-  }, [currentInputValue, requestOptionsPage, more, selectOptions]);
+  const loadMoreOptions = useCallback(
+    async (epsOrUsers) => {
+      if (!more[epsOrUsers]) {
+        return;
+      }
+      setIsLoading((prev) => ({ ...prev, [epsOrUsers]: true }));
+      const r = await requestOptionsPage(
+        currentInputValue[epsOrUsers],
+        selectOptions[epsOrUsers].length,
+        epsOrUsers,
+      );
+      setSelectOptions((prev) => ({ ...prev, [epsOrUsers]: [...prev[epsOrUsers], ...r] }));
+      setIsLoading((prev) => ({ ...prev, [epsOrUsers]: false }));
+    },
+    [currentInputValue, requestOptionsPage, more, selectOptions],
+  );
 
   return (
     <Modal
@@ -162,7 +169,9 @@ const AddResponderModalComponent = () => {
             />
           </FormControl>
           <FormControl>
-            <FormLabel mt={4} htmlFor="add-responders-select-eps">{t('Escalation Policies')}</FormLabel>
+            <FormLabel mt={4} htmlFor="add-responders-select-eps">
+              {t('Escalation Policies')}
+            </FormLabel>
             <Select
               id="add-responders-select-eps"
               ref={epSelectRef}
@@ -184,7 +193,9 @@ const AddResponderModalComponent = () => {
             />
           </FormControl>
           <FormControl>
-            <FormLabel mt={4} htmlFor="add-responders-textarea">{t('Message')}</FormLabel>
+            <FormLabel mt={4} htmlFor="add-responders-textarea">
+              {t('Message')}
+            </FormLabel>
             <Textarea
               id="add-responders-textarea"
               value={message}
@@ -206,7 +217,10 @@ const AddResponderModalComponent = () => {
             colorScheme="blue"
             isDisabled={selectedItems.users.length + selectedItems.escalation_policies.length === 0}
             onClick={() => {
-              const responderRequestTargets = [...selectedItems.escalation_policies, ...selectedItems.users];
+              const responderRequestTargets = [
+                ...selectedItems.escalation_policies,
+                ...selectedItems.users,
+              ];
               setSelectedItems({ escalation_policies: [], users: [] });
               setMessage('');
               addResponder(selectedRows, currentUserId, responderRequestTargets, message);

@@ -1,7 +1,5 @@
 import React, {
-  useState,
-  useEffect,
-  useCallback,
+  useState, useEffect, useCallback,
 } from 'react';
 
 import {
@@ -21,11 +19,7 @@ import {
 } from 'src/util/pd-api-wrapper';
 
 const TeamSelect = ({
-  id = 'team-select',
-  size = 'sm',
-  value,
-  onChange,
-  isMulti = false,
+  id = 'team-select', size = 'sm', value, onChange, isMulti = false,
 }) => {
   const {
     t,
@@ -51,22 +45,21 @@ const TeamSelect = ({
   }, [value]);
 
   const requestOptionsPage = useCallback(async (inputValue, offset) => {
-    const r = await throttledPdAxiosRequest(
-      'GET',
-      'teams',
-      { query: inputValue, offset },
-    );
+    const r = await throttledPdAxiosRequest('GET', 'teams', { query: inputValue, offset });
     setMore(r.data.more);
     const r2 = r.data.teams.map((team) => ({ label: team.name, value: team.id }));
     return r2;
   }, []);
 
-  const loadOptions = useCallback(async (inputValue) => {
-    setIsLoading(true);
-    const r = await requestOptionsPage(inputValue, 0);
-    setSelectOptions(r);
-    setIsLoading(false);
-  }, [currentInputValue, requestOptionsPage]);
+  const loadOptions = useCallback(
+    async (inputValue) => {
+      setIsLoading(true);
+      const r = await requestOptionsPage(inputValue, 0);
+      setSelectOptions(r);
+      setIsLoading(false);
+    },
+    [currentInputValue, requestOptionsPage],
+  );
 
   const debouncedLoadOptions = useDebouncedCallback(loadOptions, 200);
 

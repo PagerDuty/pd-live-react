@@ -1,9 +1,7 @@
 import React from 'react';
 
 const Beacon = ({
-  color,
-  loading,
-  size = '1.2em',
+  color, loading, size = '1.2em',
 }) => {
   const containerStyle = {
     width: size,

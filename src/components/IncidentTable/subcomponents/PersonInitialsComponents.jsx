@@ -1,11 +1,8 @@
 import React, {
-  useState,
-  useEffect,
-  useCallback,
+  useState, useEffect, useCallback,
 } from 'react';
 import {
-  useSelector,
-  useDispatch,
+  useSelector, useDispatch,
 } from 'react-redux';
 
 import {
@@ -40,9 +37,12 @@ const PersonInitialsComponent = ({
     usersMap,
   } = useSelector((state) => state.users);
   const dispatch = useDispatch();
-  const addUserToUsersMap = useCallback((user) => {
-    dispatch(addUserToUsersMapConnected(user));
-  }, [dispatch]);
+  const addUserToUsersMap = useCallback(
+    (user) => {
+      dispatch(addUserToUsersMapConnected(user));
+    },
+    [dispatch],
+  );
 
   const [displayedUsersByInitials, setDisplayedUsersByInitials] = useState([]);
   useEffect(() => {

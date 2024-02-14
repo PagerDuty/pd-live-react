@@ -1,7 +1,5 @@
 import React, {
-  useState,
-  useEffect,
-  useCallback,
+  useState, useEffect, useCallback,
 } from 'react';
 
 import {
@@ -51,22 +49,21 @@ const ServiceSelect = ({
   }, [value]);
 
   const requestOptionsPage = useCallback(async (inputValue, offset) => {
-    const r = await throttledPdAxiosRequest(
-      'GET',
-      'services',
-      { query: inputValue, offset },
-    );
+    const r = await throttledPdAxiosRequest('GET', 'services', { query: inputValue, offset });
     setMore(r.data.more);
     const r2 = r.data.services.map((service) => ({ label: service.name, value: service.id }));
     return r2;
   }, []);
 
-  const loadOptions = useCallback(async (inputValue) => {
-    setIsLoading(true);
-    const r = await requestOptionsPage(inputValue, 0);
-    setSelectOptions(r);
-    setIsLoading(false);
-  }, [currentInputValue, requestOptionsPage]);
+  const loadOptions = useCallback(
+    async (inputValue) => {
+      setIsLoading(true);
+      const r = await requestOptionsPage(inputValue, 0);
+      setSelectOptions(r);
+      setIsLoading(false);
+    },
+    [currentInputValue, requestOptionsPage],
+  );
 
   const debouncedLoadOptions = useDebouncedCallback(loadOptions, 200);
 

@@ -1,12 +1,9 @@
 import React, {
-  useState,
-  useEffect,
-  useCallback,
+  useState, useEffect, useCallback,
 } from 'react';
 
 import {
-  useSelector,
-  useDispatch,
+  useSelector, useDispatch,
 } from 'react-redux';
 
 import {
@@ -30,11 +27,7 @@ import {
 } from 'src/redux/users/actions';
 
 const UserSelect = ({
-  id = 'user-select',
-  size = 'sm',
-  value,
-  onChange,
-  isMulti = false,
+  id = 'user-select', size = 'sm', value, onChange, isMulti = false,
 }) => {
   const {
     t,
@@ -70,27 +63,26 @@ const UserSelect = ({
   }, [value]);
 
   const requestOptionsPage = useCallback(async (inputValue, offset) => {
-    const r = await throttledPdAxiosRequest(
-      'GET',
-      'users',
-      { query: inputValue, offset },
-    );
+    const r = await throttledPdAxiosRequest('GET', 'users', { query: inputValue, offset });
     setMore(r.data.more);
     const r2 = r.data.users.map((user) => {
       if (!usersMap[user.id]) {
         addUserToUsersMap(user);
       }
-      return ({ label: user.name, value: user.id });
+      return { label: user.name, value: user.id };
     });
     return r2;
   }, []);
 
-  const loadOptions = useCallback(async (inputValue) => {
-    setIsLoading(true);
-    const r = await requestOptionsPage(inputValue, 0);
-    setSelectOptions(r);
-    setIsLoading(false);
-  }, [currentInputValue, requestOptionsPage]);
+  const loadOptions = useCallback(
+    async (inputValue) => {
+      setIsLoading(true);
+      const r = await requestOptionsPage(inputValue, 0);
+      setSelectOptions(r);
+      setIsLoading(false);
+    },
+    [currentInputValue, requestOptionsPage],
+  );
 
   const debouncedLoadOptions = useDebouncedCallback(loadOptions, 200);
 

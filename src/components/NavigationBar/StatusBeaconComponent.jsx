@@ -4,9 +4,7 @@ import {
 } from 'react-redux';
 
 import {
-  Tooltip,
-  useColorModeValue,
-  useToken,
+  Tooltip, useColorModeValue, useToken,
 } from '@chakra-ui/react';
 
 import i18next from 'src/i18n';
@@ -16,9 +14,7 @@ import Beacon from './subcomponents/Beacon';
 const StatusBeaconComponent = ({
   connectionStatus, connectionStatusMessage, queueStats,
 }) => {
-  const useColorModeToken = (lightColor, darkColor) => (
-    useColorModeValue(useToken('colors', lightColor), useToken('colors', darkColor))
-  );
+  const useColorModeToken = (lightColor, darkColor) => useColorModeValue(useToken('colors', lightColor), useToken('colors', darkColor));
   const colorForStatus = {
     positive: useColorModeToken('green.500', 'green.600'),
     neutral: useColorModeToken('yellow.300', 'yellow.500'),

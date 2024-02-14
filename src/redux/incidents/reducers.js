@@ -123,7 +123,9 @@ const incidents = produce(
       case FETCH_NOTES_FOR_INCIDENTS_COMPLETED:
         Object.entries(action.incidentNotesMap).forEach(([incidentId, notes]) => {
           if (draft.incidentNotes[incidentId] instanceof Array) {
-            draft.incidentNotes[incidentId] = uniqOnId(draft.incidentNotes[incidentId].concat(notes));
+            draft.incidentNotes[incidentId] = uniqOnId(
+              draft.incidentNotes[incidentId].concat(notes),
+            );
           } else {
             draft.incidentNotes[incidentId] = notes;
           }

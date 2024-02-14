@@ -1,7 +1,5 @@
 import React, {
-  useMemo,
-  useState,
-  useEffect,
+  useMemo, useState, useEffect,
 } from 'react';
 
 import {
@@ -61,7 +59,10 @@ const EscalateMenu = () => {
     }
     const selectedEscalationPolicyId = selectedRows[0].escalation_policy.id;
     const fetchEscalationPolicy = async () => {
-      const r = await throttledPdAxiosRequest('GET', `escalation_policies/${selectedEscalationPolicyId}`);
+      const r = await throttledPdAxiosRequest(
+        'GET',
+        `escalation_policies/${selectedEscalationPolicyId}`,
+      );
       setSelectedEscalationRules(r.data.escalation_policy.escalation_rules.slice(0).reverse());
     };
     fetchEscalationPolicy();

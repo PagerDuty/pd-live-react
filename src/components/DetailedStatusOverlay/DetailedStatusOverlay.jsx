@@ -52,7 +52,11 @@ const DetailedStatusOverlay = ({
     // errors,
   } = useSelector((state) => state.connection);
   const {
-    status: incidentStatus, error: incidentError, incidents, incidentAlerts, incidentNotes,
+    status: incidentStatus,
+    error: incidentError,
+    incidents,
+    incidentAlerts,
+    incidentNotes,
   } = useSelector((state) => state.incidents);
   const {
     status: logEntriesStatus, error: logEntriesError,
@@ -137,9 +141,7 @@ const DetailedStatusOverlay = ({
     error: t('Error'),
     not_fetched: t('Not requested'),
   };
-  const useColorModeToken = (lightColor, darkColor) => (
-    useColorModeValue(useToken('colors', lightColor), useToken('colors', darkColor))
-  );
+  const useColorModeToken = (lightColor, darkColor) => useColorModeValue(useToken('colors', lightColor), useToken('colors', darkColor));
   const pieChartColors = {
     fetching: useColorModeToken('blue.300', 'blue.600'),
     fetched: useColorModeToken('green.200', 'green.500'),

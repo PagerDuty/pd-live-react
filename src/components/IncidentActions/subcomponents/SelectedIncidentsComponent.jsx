@@ -10,7 +10,9 @@ import {
 
 import {
   // Box,
-  CircularProgress, Flex, Tag, // useColorModeValue, useToken,
+  CircularProgress,
+  Flex,
+  Tag, // useColorModeValue, useToken,
 } from '@chakra-ui/react';
 
 import {
@@ -99,14 +101,14 @@ const SelectedIncidentsComponent = () => {
       {queryError}
       {fetchingIncidents && <FetchIndicator message={t('Querying')} />}
       {incidentActionsStatus.endsWith('_REQUESTED')
-        && !!textForActionInProgress(incidentActionsStatus)
-        && <FetchIndicator message={textForActionInProgress(incidentActionsStatus)} />}
+        && !!textForActionInProgress(incidentActionsStatus) && (
+          <FetchIndicator message={textForActionInProgress(incidentActionsStatus)} />
+      )}
       {refreshingIncidents && <FetchIndicator message={t('Refreshing')} />}
       {!fetchingIncidents
         && !fetchingIncidentNotes
         && !fetchingIncidentAlerts
-        && !refreshingIncidents
-        && <SelectedIndicator />}
+        && !refreshingIncidents && <SelectedIndicator />}
     </div>
   );
 };

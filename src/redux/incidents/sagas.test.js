@@ -6,11 +6,7 @@ import {
 } from 'redux-saga-test-plan';
 
 import {
-  ACKNOWLEDGED,
-  HIGH,
-  LOW,
-  RESOLVED,
-  TRIGGERED,
+  ACKNOWLEDGED, HIGH, LOW, RESOLVED, TRIGGERED,
 } from 'src/util/incidents';
 
 import {
@@ -122,10 +118,13 @@ describe('Sagas: Incidents', () => {
       .provide([
         [select(selectIncidents), initialIncidents],
         [select(selectIncidentTable), { incidentTableColumns: [] }],
-        [select(selectQuerySettings), {
-          ...initialQuerySettings,
-          searchQuery: mockIncident.title,
-        }],
+        [
+          select(selectQuerySettings),
+          {
+            ...initialQuerySettings,
+            searchQuery: mockIncident.title,
+          },
+        ],
         [select(selectSettings), initialSettings],
       ])
       .dispatch({
@@ -160,12 +159,15 @@ describe('Sagas: Incidents', () => {
     return expectSaga(filterIncidents)
       .withReducer(incidents)
       .provide([
-        [select(selectIncidents), {
-          ...initialIncidents,
-          incidentAlerts: {
-            [mockIncident.id]: mockIncident.alerts,
+        [
+          select(selectIncidents),
+          {
+            ...initialIncidents,
+            incidentAlerts: {
+              [mockIncident.id]: mockIncident.alerts,
+            },
           },
-        }],
+        ],
         [
           select(selectIncidentTable),
           {
@@ -179,10 +181,13 @@ describe('Sagas: Incidents', () => {
             ],
           },
         ],
-        [select(selectQuerySettings), {
-          ...initialQuerySettings,
-          searchQuery: customFieldValue,
-        }],
+        [
+          select(selectQuerySettings),
+          {
+            ...initialQuerySettings,
+            searchQuery: customFieldValue,
+          },
+        ],
         [select(selectSettings), initialSettings],
       ])
       .dispatch({

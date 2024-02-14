@@ -79,9 +79,7 @@ let reservoirRefreshInterval;
 export const resetLimiterWithRateLimit = async (limit = 200) => {
   currentLimit = limit;
   // eslint-disable-next-line no-console
-  console.log(
-    `updating limiter with rate limit ${limit}`,
-  );
+  console.log(`updating limiter with rate limit ${limit}`);
   if (reservoirRefreshInterval) {
     clearInterval(reservoirRefreshInterval);
   }
@@ -111,7 +109,9 @@ limiter.on('depleted', () => {
     limiter.currentReservoir().then((reservoir) => {
       if (reservoir === 0) {
         // eslint-disable-next-line no-console
-        console.error('Watchdog timeout, queue is still depleted after 10 seconds; resetting limiter');
+        console.error(
+          'Watchdog timeout, queue is still depleted after 10 seconds; resetting limiter',
+        );
         resetLimiterWithRateLimit(currentLimit);
       }
     });

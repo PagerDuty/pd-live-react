@@ -549,7 +549,8 @@ export function* filterIncidentsImpl() {
       }
     }
 
-    const incidentIdsNeedingAlertsFetched = filteredIncidentsByQuery.filter((incident) => !incidentAlerts[incident.id])
+    const incidentIdsNeedingAlertsFetched = filteredIncidentsByQuery
+      .filter((incident) => !incidentAlerts[incident.id])
       .map((incident) => incident.id);
 
     yield put({
@@ -557,7 +558,8 @@ export function* filterIncidentsImpl() {
       incidentIds: incidentIdsNeedingAlertsFetched,
     });
 
-    const incidentIdsNeedingNotesFetched = filteredIncidentsByQuery.filter((incident) => !incidentNotes[incident.id])
+    const incidentIdsNeedingNotesFetched = filteredIncidentsByQuery
+      .filter((incident) => !incidentNotes[incident.id])
       .map((incident) => incident.id);
 
     yield put({

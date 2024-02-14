@@ -474,10 +474,7 @@ const IncidentTableComponent = () => {
                     {...column.getHeaderProps()}
                     className={column.isSorted ? 'th-sorted' : 'th'}
                   >
-                    <Flex
-                      {...column.getSortByToggleProps()}
-                      className="th-sort"
-                    >
+                    <Flex {...column.getSortByToggleProps()} className="th-sort">
                       <Text
                         textOverflow="ellipsis"
                         overflow="hidden"
