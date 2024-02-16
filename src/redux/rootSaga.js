@@ -24,24 +24,13 @@ import {
 
 import {
   getIncidentsAsync,
-  // refreshIncidentsAsync,
-  getIncidentAlertsAsync,
-  getIncidentNotesAsync,
-  // getAllIncidentNotesAsync,
-  // getAllIncidentAlertsAsync,
-  // updateIncidentsListAsync,
+  getAlertsForIncidentsAsync,
+  getNotesForIncidentsAsync,
   processLogEntries,
   updateIncidents,
   updateIncidentAlerts,
   updateIncidentNotes,
   filterIncidents,
-  filterIncidentsByPriority,
-  filterIncidentsByStatus,
-  filterIncidentsByUrgency,
-  filterIncidentsByTeam,
-  filterIncidentsByEscalationPolicy,
-  filterIncidentsByService,
-  filterIncidentsByQuery,
 } from './incidents/sagas';
 
 import {
@@ -89,6 +78,7 @@ import {
   getUsersAsync,
   getCurrentUserAsync,
   updateUserLocale,
+  addUserToUsersMap,
 } from './users/sagas';
 
 import {
@@ -162,20 +152,13 @@ export default function* rootSaga() {
 
     // Incidents
     getIncidentsAsync(),
-    getIncidentAlertsAsync(),
-    getIncidentNotesAsync(),
+    getAlertsForIncidentsAsync(),
+    getNotesForIncidentsAsync(),
     processLogEntries(),
     updateIncidents(),
     updateIncidentAlerts(),
     updateIncidentNotes(),
     filterIncidents(),
-    filterIncidentsByPriority(),
-    filterIncidentsByStatus(),
-    filterIncidentsByUrgency(),
-    filterIncidentsByTeam(),
-    filterIncidentsByEscalationPolicy(),
-    filterIncidentsByService(),
-    filterIncidentsByQuery(),
 
     // Log Entries
     getLogEntriesAsync(),
@@ -218,6 +201,7 @@ export default function* rootSaga() {
     getUsersAsync(),
     getCurrentUserAsync(),
     updateUserLocale(),
+    addUserToUsersMap(),
 
     // Services
     getServicesAsync(),

@@ -11,7 +11,7 @@ export const pd = api({ token: Cypress.env('PD_USER_TOKEN') });
 */
 export const acceptDisclaimer = () => {
   cy.visit('/');
-  cy.get('.modal-title', { timeout: 30000 }).contains('Disclaimer & License');
+  cy.get('.modal-title').contains('Disclaimer & License').should('be.visible');
   cy.get('#disclaimer-agree-checkbox').click({ force: true });
   cy.get('#disclaimer-accept-button').click({ force: true });
 };
@@ -38,7 +38,7 @@ export const waitForAlerts = () => {
 export const selectIncident = (incidentIdx = 0, shiftKey = false) => {
   const selector = `[data-incident-row-idx="${incidentIdx}"]`;
   cy.get(selector).invoke('attr', 'data-incident-id').as(`selectedIncidentId_${incidentIdx}`);
-  cy.get(selector).click({ shiftKey });
+  cy.get(selector).click({ shiftKey, force: true });
 };
 
 export const selectAlert = (alertIdx = 0) => {
@@ -142,25 +142,34 @@ export const escalate = (escalationLevel) => {
   cy.get(`.escalation-level-${escalationLevel}-button`).click();
 };
 
-export const reassign = (assignment) => {
+export const reassign = (assignment, type = 'ep') => {
+  // fail if type is not 'ep' or 'user'
+  if (type !== 'ep' && type !== 'user') {
+    throw new Error('Invalid type');
+  }
+  const tabId = type === 'ep' ? 'reassign-ep-tab' : 'reassign-user-tab';
+  const tabSelector = `[data-tab-id="${tabId}"]`;
   cy.get('#incident-action-reassign-button').click();
+  cy.get(tabSelector).click();
   cy.get('#reassign-select').click();
-  // eslint-disable-next-line cypress/no-unnecessary-waiting
-  cy.wait(200);
-  cy.contains('.react-select__option', assignment).click({ force: true });
-  // eslint-disable-next-line cypress/no-unnecessary-waiting
-  cy.wait(200);
-  cy.get('#reassign-button').click({ force: true });
+  cy.get('#reassign-select input').first().type(assignment);
+  cy.get('div[role="button"]').contains(assignment).should('exist').click();
+  cy.get('#reassign-button').click();
 };
 
 export const addResponders = (responders = [], message = null) => {
   cy.get('#incident-action-add-responders-button').click();
   responders.forEach((responder) => {
-    cy.get('#add-responders-select').click();
-    cy.contains('.react-select__option', responder).click({ force: true });
+    if (responder.type !== 'user' && responder.type !== 'ep') {
+      throw new Error(`Invalid responder type: ${JSON.stringify(responder)}`);
+    }
+    const selectId = responder.type === 'user' ? 'add-responders-select-users' : 'add-responders-select-eps';
+    cy.get(`#${selectId}`).click();
+    cy.get(`#${selectId} input`).first().type(responder.assignment);
+    cy.get('div[role="button"]').contains(responder.assignment).should('exist').click();
   });
   if (message) cy.get('#add-responders-textarea').type(message);
-  cy.get('#add-responders-button').click({ force: true });
+  cy.get('#add-responders-button').click();
 };
 
 export const snooze = (duration) => {

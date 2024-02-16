@@ -156,17 +156,17 @@ describe('Manage Open Incidents', { failFast: { enabled: true } }, () => {
     cy.get('.query-urgency-low-button').check({ force: true });
     let assignment = 'User A1';
     selectIncident(0);
-    reassign(assignment);
+    reassign(assignment, 'user');
     checkActionAlertsModalContent(`have been reassigned to ${assignment}`);
 
     assignment = 'Team A';
     selectIncident(1);
-    reassign(assignment);
+    reassign(assignment, 'ep');
     checkActionAlertsModalContent(`have been reassigned to ${assignment}`);
   });
 
   it('Add User and Team responders to singular incident', () => {
-    let responders = ['User A1'];
+    let responders = [{ assignment: 'User A1', type: 'user' }];
     const message = 'Need help with this incident';
     let incidentIdx = 0;
     selectIncident(incidentIdx);
@@ -178,7 +178,7 @@ describe('Manage Open Incidents', { failFast: { enabled: true } }, () => {
       checkIncidentCellContent(incidentId, 'Latest Log Entry Type', 'responder_request');
     });
 
-    responders = ['Team A'];
+    responders = [{ assignment: 'Team A', type: 'ep' }];
     incidentIdx = 1;
     selectIncident(incidentIdx);
     addResponders(responders, message);
@@ -191,7 +191,7 @@ describe('Manage Open Incidents', { failFast: { enabled: true } }, () => {
   });
 
   it('Add multiple responders (Team A + Team B) to singular incident', () => {
-    const responders = ['Team A', 'Team B'];
+    const responders = ['Team A', 'Team B'].map((assignment) => ({ assignment, type: 'ep' }));
     const message = "Need everyone's help with this incident";
     const incidentIdx = 0;
     selectIncident(incidentIdx);
@@ -316,6 +316,10 @@ describe('Manage Alerts', { failFast: { enabled: true } }, () => {
     cy.get(
       `[data-incident-header="Num Alerts"][data-incident-row-cell-idx="${incidentIdx}"]`,
     ).within(() => {
+      cy.get('[aria-haspopup="dialog"]').realHover();
+      // wait for async alert fetch to complete
+      cy.get('[data-popper-placement="bottom"]').should('be.visible');
+      cy.get('[data-popper-placement="bottom"]').should('contain', 'Created At');
       cy.get('[aria-haspopup="dialog"]').click();
     });
 
@@ -348,6 +352,9 @@ describe('Manage Alerts', { failFast: { enabled: true } }, () => {
     cy.get(
       `[data-incident-header="Num Alerts"][data-incident-row-cell-idx="${incidentIdx}"]`,
     ).within(() => {
+      cy.get('[aria-haspopup="dialog"]').should('be.visible').should('have.text', '2').realHover();
+      cy.get('[data-popper-placement="bottom"]').should('be.visible');
+      cy.get('[data-popper-placement="bottom"]').should('contain', 'Created At');
       cy.get('[aria-haspopup="dialog"]').should('be.visible').should('have.text', '2').click();
     });
 
@@ -384,6 +391,9 @@ describe('Manage Alerts', { failFast: { enabled: true } }, () => {
     cy.get(
       `[data-incident-header="Num Alerts"][data-incident-row-cell-idx="${sourceIncidentIdx}"]`,
     ).within(() => {
+      cy.get('[aria-haspopup="dialog"]').should('be.visible').should('have.text', '1').realHover();
+      cy.get('[data-popper-placement="bottom"]').should('be.visible');
+      cy.get('[data-popper-placement="bottom"]').should('contain', 'Created At');
       cy.get('[aria-haspopup="dialog"]').should('be.visible').should('have.text', '1').click();
     });
 

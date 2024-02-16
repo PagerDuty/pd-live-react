@@ -45,11 +45,6 @@ beforeEach(() => {
     unobserve: jest.fn(),
     disconnect: jest.fn(),
   }));
-  window.IntersectionObserver = jest.fn().mockImplementation(() => ({
-    observe: jest.fn(),
-    unobserve: jest.fn(),
-    disconnect: jest.fn(),
-  }));
 });
 
 afterEach(() => {

@@ -46,15 +46,12 @@ import {
   FETCH_INCIDENTS_REQUESTED,
   FETCH_INCIDENTS_COMPLETED,
   FETCH_INCIDENTS_ERROR,
-  // REFRESH_INCIDENTS_REQUESTED,
-  // REFRESH_INCIDENTS_COMPLETED,
-  // REFRESH_INCIDENTS_ERROR,
-  FETCH_INCIDENT_ALERTS_REQUESTED,
-  FETCH_INCIDENT_ALERTS_COMPLETED,
-  FETCH_INCIDENT_ALERTS_ERROR,
-  FETCH_INCIDENT_NOTES_REQUESTED,
-  FETCH_INCIDENT_NOTES_COMPLETED,
-  FETCH_INCIDENT_NOTES_ERROR,
+  FETCH_ALERTS_FOR_INCIDENTS_REQUESTED,
+  FETCH_ALERTS_FOR_INCIDENTS_COMPLETED,
+  // FETCH_ALERTS_FOR_INCIDENTS_ERROR,
+  FETCH_NOTES_FOR_INCIDENTS_REQUESTED,
+  FETCH_NOTES_FOR_INCIDENTS_COMPLETED,
+  // FETCH_NOTES_FOR_INCIDENTS_ERROR,
   PROCESS_LOG_ENTRIES,
   PROCESS_LOG_ENTRIES_COMPLETED,
   // PROCESS_LOG_ENTRIES_ERROR,
@@ -70,30 +67,6 @@ import {
   FILTER_INCIDENTS_LIST,
   FILTER_INCIDENTS_LIST_COMPLETED,
   FILTER_INCIDENTS_LIST_ERROR,
-  FILTER_INCIDENTS_LIST_BY_PRIORITY,
-  FILTER_INCIDENTS_LIST_BY_PRIORITY_COMPLETED,
-  FILTER_INCIDENTS_LIST_BY_PRIORITY_ERROR,
-  FILTER_INCIDENTS_LIST_BY_STATUS,
-  FILTER_INCIDENTS_LIST_BY_STATUS_COMPLETED,
-  FILTER_INCIDENTS_LIST_BY_STATUS_ERROR,
-  FILTER_INCIDENTS_LIST_BY_URGENCY,
-  FILTER_INCIDENTS_LIST_BY_URGENCY_COMPLETED,
-  FILTER_INCIDENTS_LIST_BY_URGENCY_ERROR,
-  FILTER_INCIDENTS_LIST_BY_TEAM,
-  FILTER_INCIDENTS_LIST_BY_TEAM_COMPLETED,
-  FILTER_INCIDENTS_LIST_BY_TEAM_ERROR,
-  FILTER_INCIDENTS_LIST_BY_ESCALATION_POLICY,
-  FILTER_INCIDENTS_LIST_BY_ESCALATION_POLICY_COMPLETED,
-  FILTER_INCIDENTS_LIST_BY_ESCALATION_POLICY_ERROR,
-  FILTER_INCIDENTS_LIST_BY_SERVICE,
-  FILTER_INCIDENTS_LIST_BY_SERVICE_COMPLETED,
-  FILTER_INCIDENTS_LIST_BY_SERVICE_ERROR,
-  FILTER_INCIDENTS_LIST_BY_USER,
-  FILTER_INCIDENTS_LIST_BY_USER_COMPLETED,
-  FILTER_INCIDENTS_LIST_BY_USER_ERROR,
-  FILTER_INCIDENTS_LIST_BY_QUERY,
-  FILTER_INCIDENTS_LIST_BY_QUERY_COMPLETED,
-  FILTER_INCIDENTS_LIST_BY_QUERY_ERROR,
 } from './actions';
 import selectIncidents from './selectors';
 
@@ -193,74 +166,84 @@ export function* getIncidents() {
   }
 }
 
-export function* getIncidentAlertsAsync() {
-  yield takeEvery(FETCH_INCIDENT_ALERTS_REQUESTED, getIncidentAlerts);
+export function* getAlertsForIncidentsAsync() {
+  yield takeEvery(FETCH_ALERTS_FOR_INCIDENTS_REQUESTED, getAlertsForIncidents);
 }
 
-export function* getIncidentAlerts(action) {
+export function* getAlertsForIncidents(action) {
   const {
-    incidentId,
+    incidentIds,
   } = action;
-  try {
-    const alerts = yield call(
+  // split incident ids into chunks of 100
+  const incidentIdChunks = [];
+  for (let i = 0; i < incidentIds.length; i += 100) {
+    incidentIdChunks.push(incidentIds.slice(i, i + 100));
+  }
+  // call pdParallelFetch for each chunk
+  for (let i = 0; i < incidentIdChunks.length; i += 1) {
+    const incidentIdChunk = incidentIdChunks[i];
+    const alertsChunk = yield call(
       pdParallelFetch,
-      `incidents/${incidentId}/alerts`,
-      undefined,
+      'alerts',
+      {
+        incident_ids: incidentIdChunk,
+        date_range: 'all',
+      },
       undefined,
       { priority: 6 },
     );
-
-    yield put({
-      type: FETCH_INCIDENT_ALERTS_COMPLETED,
-      incidentId,
-      alerts,
-    });
-  } catch (e) {
-    yield put({
-      type: FETCH_INCIDENT_ALERTS_ERROR,
-      incidentId,
-      message: e.message,
+    const alertsChunkByIncidentId = incidentIdChunk.reduce((acc, incidentId) => {
+      // eslint-disable-next-line no-param-reassign
+      acc[incidentId] = [];
+      return acc;
+    }, {});
+    alertsChunk.forEach((alert) => {
+      alertsChunkByIncidentId[alert.incident.id].push(alert);
     });
     yield put({
-      type: UPDATE_CONNECTION_STATUS_REQUESTED,
-      connectionStatus: 'neutral',
-      connectionStatusMessage: 'Unable to fetch incident alerts',
+      type: FETCH_ALERTS_FOR_INCIDENTS_COMPLETED,
+      incidentAlertsMap: alertsChunkByIncidentId,
     });
   }
 }
 
-export function* getIncidentNotesAsync() {
-  yield takeEvery(FETCH_INCIDENT_NOTES_REQUESTED, getIncidentNotes);
+export function* getNotesForIncidentsAsync() {
+  yield takeEvery(FETCH_NOTES_FOR_INCIDENTS_REQUESTED, getNotesForIncidents);
 }
 
-export function* getIncidentNotes(action) {
+export function* getNotesForIncidents(action) {
   const {
-    incidentId,
+    incidentIds,
   } = action;
-  try {
-    const notes = yield call(
+  // split incident ids into chunks of 100
+  const incidentIdChunks = [];
+  for (let i = 0; i < incidentIds.length; i += 100) {
+    incidentIdChunks.push(incidentIds.slice(i, i + 100));
+  }
+  // call pdParallelFetch for each chunk
+  for (let i = 0; i < incidentIdChunks.length; i += 1) {
+    const incidentIdChunk = incidentIdChunks[i];
+    const notesChunk = yield call(
       pdParallelFetch,
-      `incidents/${incidentId}/notes`,
-      undefined,
+      'notes',
+      {
+        incident_ids: incidentIdChunk,
+      },
       undefined,
       { priority: 6 },
     );
-
-    yield put({
-      type: FETCH_INCIDENT_NOTES_COMPLETED,
-      incidentId,
-      notes,
+    const notesChunkByIncidentId = incidentIdChunk.reduce((acc, incidentId) => {
+      // eslint-disable-next-line no-param-reassign
+      acc[incidentId] = [];
+      return acc;
+    }, {});
+    notesChunk.forEach((note) => {
+      notesChunkByIncidentId[note.incident.id].push(note);
     });
-  } catch (e) {
+    // dispatch FETCH_NOTES_FOR_INCIDENTS_COMPLETED
     yield put({
-      type: FETCH_INCIDENT_NOTES_ERROR,
-      incidentId,
-      message: e.message,
-    });
-    yield put({
-      type: UPDATE_CONNECTION_STATUS_REQUESTED,
-      connectionStatus: 'neutral',
-      connectionStatusMessage: 'Unable to fetch incident notes',
+      type: FETCH_NOTES_FOR_INCIDENTS_COMPLETED,
+      incidentNotesMap: notesChunkByIncidentId,
     });
   }
 }
@@ -427,7 +410,7 @@ export function* filterIncidentsImpl() {
 
   try {
     // Filter current incident list by priority
-    if (incidentPriority.length > 0) {
+    if (incidentPriority?.length > 0) {
       filteredIncidentsByQuery = filteredIncidentsByQuery.filter((incident) => {
         if (incident.priority && incidentPriority.includes(incident.priority.id)) return true;
         if (!incident.priority && incidentPriority.includes('--')) return true;
@@ -436,7 +419,7 @@ export function* filterIncidentsImpl() {
     }
 
     // Filter current incident list by status
-    if (incidentStatus.length > 0) {
+    if (incidentStatus?.length > 0) {
       filteredIncidentsByQuery = filterIncidentsByField(
         filteredIncidentsByQuery,
         'status',
@@ -445,7 +428,7 @@ export function* filterIncidentsImpl() {
     }
 
     // Filter current incident list by urgency
-    if (incidentUrgency.length > 0) {
+    if (incidentUrgency?.length > 0) {
       filteredIncidentsByQuery = filterIncidentsByField(
         filteredIncidentsByQuery,
         'urgency',
@@ -454,7 +437,7 @@ export function* filterIncidentsImpl() {
     }
 
     // Filter current incident list by team
-    if (teamIds.length) {
+    if (teamIds?.length) {
       filteredIncidentsByQuery = filterIncidentsByFieldOfList(
         filteredIncidentsByQuery,
         'teams',
@@ -464,7 +447,7 @@ export function* filterIncidentsImpl() {
     }
 
     // Filter current incident list by escalation policy
-    if (escalationPolicyIds.length > 0) {
+    if (escalationPolicyIds?.length > 0) {
       filteredIncidentsByQuery = filteredIncidentsByQuery.filter((incident) => {
         if (escalationPolicyIds.includes(incident.escalation_policy.id)) return true;
         if (respondersInEpFilter && incident.responder_requests.length > 0) {
@@ -487,7 +470,7 @@ export function* filterIncidentsImpl() {
     }
 
     // Filter current incident list by service
-    if (serviceIds.length > 0) {
+    if (serviceIds?.length > 0) {
       filteredIncidentsByQuery = filterIncidentsByField(
         filteredIncidentsByQuery,
         'service.id',
@@ -496,7 +479,7 @@ export function* filterIncidentsImpl() {
     }
 
     // Filter current incident list by user
-    if (userIds.length > 0) {
+    if (userIds?.length > 0) {
       filteredIncidentsByQuery = filterIncidentsByFieldOfList(
         filteredIncidentsByQuery,
         'assignments',
@@ -566,6 +549,23 @@ export function* filterIncidentsImpl() {
       }
     }
 
+    const incidentIdsNeedingAlertsFetched = filteredIncidentsByQuery
+      .filter((incident) => !incidentAlerts[incident.id])
+      .map((incident) => incident.id);
+
+    yield put({
+      type: FETCH_ALERTS_FOR_INCIDENTS_REQUESTED,
+      incidentIds: incidentIdsNeedingAlertsFetched,
+    });
+
+    const incidentIdsNeedingNotesFetched = filteredIncidentsByQuery
+      .filter((incident) => !incidentNotes[incident.id])
+      .map((incident) => incident.id);
+
+    yield put({
+      type: FETCH_NOTES_FOR_INCIDENTS_REQUESTED,
+      incidentIds: incidentIdsNeedingNotesFetched,
+    });
     yield put({
       type: FILTER_INCIDENTS_LIST_COMPLETED,
       filteredIncidentsByQuery,
@@ -573,301 +573,6 @@ export function* filterIncidentsImpl() {
   } catch (e) {
     yield put({
       type: FILTER_INCIDENTS_LIST_ERROR,
-      message: e.message,
-    });
-  }
-}
-
-export function* filterIncidentsByPriority() {
-  yield takeLatest(FILTER_INCIDENTS_LIST_BY_PRIORITY, filterIncidentsByPriorityImpl);
-}
-
-export function* filterIncidentsByPriorityImpl(action) {
-  // Filter current incident list by priority
-  try {
-    const {
-      incidentPriority,
-    } = action;
-    const {
-      incidents,
-    } = yield select(selectIncidents);
-    const filteredIncidentsByPriorityList = incidents.filter((incident) => {
-      // Incident priority is not always defined
-      if (incident.priority && incidentPriority.includes(incident.priority.id)) return true;
-      if (!incident.priority && incidentPriority.includes('--')) return true;
-      return false;
-    });
-    yield put({
-      type: FILTER_INCIDENTS_LIST_BY_PRIORITY_COMPLETED,
-      incidents: filteredIncidentsByPriorityList,
-    });
-  } catch (e) {
-    yield put({
-      type: FILTER_INCIDENTS_LIST_BY_PRIORITY_ERROR,
-      message: e.message,
-    });
-  }
-}
-
-export function* filterIncidentsByStatus() {
-  yield takeLatest(FILTER_INCIDENTS_LIST_BY_STATUS, filterIncidentsByStatusImpl);
-}
-
-export function* filterIncidentsByStatusImpl(action) {
-  // Filter current incident list by status
-  try {
-    const {
-      incidentStatus,
-    } = action;
-    const {
-      incidents,
-    } = yield select(selectIncidents);
-    const filteredIncidentsByStatusList = filterIncidentsByField(
-      incidents,
-      'status',
-      incidentStatus,
-    );
-    yield put({
-      type: FILTER_INCIDENTS_LIST_BY_STATUS_COMPLETED,
-      incidents: filteredIncidentsByStatusList,
-    });
-  } catch (e) {
-    yield put({
-      type: FILTER_INCIDENTS_LIST_BY_STATUS_ERROR,
-      message: e.message,
-    });
-  }
-}
-
-export function* filterIncidentsByUrgency() {
-  yield takeLatest(FILTER_INCIDENTS_LIST_BY_URGENCY, filterIncidentsByUrgencyImpl);
-}
-
-export function* filterIncidentsByUrgencyImpl(action) {
-  // Filter current incident list by urgency
-  try {
-    const {
-      incidentUrgency,
-    } = action;
-    const {
-      incidents,
-    } = yield select(selectIncidents);
-    const filteredIncidentsByUrgencyList = filterIncidentsByField(
-      incidents,
-      'urgency',
-      incidentUrgency,
-    );
-    yield put({
-      type: FILTER_INCIDENTS_LIST_BY_URGENCY_COMPLETED,
-      incidents: filteredIncidentsByUrgencyList,
-    });
-  } catch (e) {
-    yield put({
-      type: FILTER_INCIDENTS_LIST_BY_URGENCY_ERROR,
-      message: e.message,
-    });
-  }
-}
-
-export function* filterIncidentsByTeam() {
-  yield takeLatest(FILTER_INCIDENTS_LIST_BY_TEAM, filterIncidentsByTeamImpl);
-}
-
-export function* filterIncidentsByTeamImpl(action) {
-  // Filter current incident list by team - assume no team set means show everything
-  try {
-    const {
-      teamIds,
-    } = action;
-    const {
-      incidents,
-    } = yield select(selectIncidents);
-    let filteredIncidentsByTeamList;
-
-    // Typically there is no filtered view by teams, so if empty, show all teams.
-    if (teamIds.length) {
-      filteredIncidentsByTeamList = filterIncidentsByFieldOfList(incidents, 'teams', 'id', teamIds);
-    } else {
-      filteredIncidentsByTeamList = [...incidents];
-    }
-
-    yield put({
-      type: FILTER_INCIDENTS_LIST_BY_TEAM_COMPLETED,
-      incidents: filteredIncidentsByTeamList,
-    });
-  } catch (e) {
-    yield put({
-      type: FILTER_INCIDENTS_LIST_BY_TEAM_ERROR,
-      message: e.message,
-    });
-  }
-}
-
-export function* filterIncidentsByEscalationPolicy() {
-  yield takeLatest(
-    FILTER_INCIDENTS_LIST_BY_ESCALATION_POLICY,
-    filterIncidentsByEscalationPolicyImpl,
-  );
-}
-
-export function* filterIncidentsByEscalationPolicyImpl(action) {
-  // Filter current incident list by escalation policy
-  try {
-    const {
-      escalationPolicyIds,
-    } = action;
-    const {
-      incidents,
-    } = yield select(selectIncidents);
-    let filteredIncidentsByEscalationPolicyList;
-
-    // eslint-disable-next-line max-len
-    // Typically there is no filtered view by escalation policy, so if empty, show all escalation policies.
-    if (escalationPolicyIds.length) {
-      filteredIncidentsByEscalationPolicyList = filterIncidentsByField(
-        incidents,
-        'escalation_policy.id',
-        escalationPolicyIds,
-      );
-    } else {
-      filteredIncidentsByEscalationPolicyList = [...incidents];
-    }
-
-    yield put({
-      type: FILTER_INCIDENTS_LIST_BY_ESCALATION_POLICY_COMPLETED,
-      incidents: filteredIncidentsByEscalationPolicyList,
-    });
-  } catch (e) {
-    yield put({
-      type: FILTER_INCIDENTS_LIST_BY_ESCALATION_POLICY_ERROR,
-      message: e.message,
-    });
-  }
-}
-
-export function* filterIncidentsByService() {
-  yield takeLatest(FILTER_INCIDENTS_LIST_BY_SERVICE, filterIncidentsByServiceImpl);
-}
-
-export function* filterIncidentsByServiceImpl(action) {
-  // Filter current incident list by service
-  try {
-    const {
-      serviceIds,
-    } = action;
-    const {
-      incidents,
-    } = yield select(selectIncidents);
-    let filteredIncidentsByServiceList;
-
-    // Typically there is no filtered view by services, so if empty, show all services.
-    if (serviceIds.length) {
-      filteredIncidentsByServiceList = filterIncidentsByField(incidents, 'service.id', serviceIds);
-    } else {
-      filteredIncidentsByServiceList = [...incidents];
-    }
-
-    yield put({
-      type: FILTER_INCIDENTS_LIST_BY_SERVICE_COMPLETED,
-      incidents: filteredIncidentsByServiceList,
-    });
-  } catch (e) {
-    yield put({
-      type: FILTER_INCIDENTS_LIST_BY_SERVICE_ERROR,
-      message: e.message,
-    });
-  }
-}
-
-export function* filterIncidentsByUser() {
-  yield takeLatest(FILTER_INCIDENTS_LIST_BY_USER, filterIncidentsByUserImpl);
-}
-
-export function* filterIncidentsByUserImpl(action) {
-  // Filter current incident list by user
-  try {
-    const {
-      userIds,
-    } = action;
-    const {
-      incidents,
-    } = yield select(selectIncidents);
-    let filteredIncidentsByUserList;
-
-    if (userIds.length) {
-      filteredIncidentsByUserList = filterIncidentsByFieldOfList(
-        incidents,
-        'assignments',
-        'assignee.id',
-        userIds,
-      );
-    } else {
-      filteredIncidentsByUserList = [...incidents];
-    }
-
-    yield put({
-      type: FILTER_INCIDENTS_LIST_BY_USER_COMPLETED,
-      incidents: filteredIncidentsByUserList,
-    });
-  } catch (e) {
-    yield put({
-      type: FILTER_INCIDENTS_LIST_BY_USER_ERROR,
-      message: e.message,
-    });
-  }
-}
-
-export function* filterIncidentsByQuery() {
-  yield takeLatest(FILTER_INCIDENTS_LIST_BY_QUERY, filterIncidentsByQueryImpl);
-}
-
-export function* filterIncidentsByQueryImpl(action) {
-  // Filter current incident list by query (aka Global Search)
-  try {
-    const {
-      searchQuery,
-    } = action;
-    const {
-      incidents,
-    } = yield select(selectIncidents);
-    const {
-      incidentTableColumns,
-    } = yield select(selectIncidentTable);
-    let filteredIncidentsByQuery;
-
-    // Update Fuse options to include custom alert JSON to be searched
-    const updatedFuseOptions = { ...fuseOptions };
-    const customAlertDetailColumnKeys = incidentTableColumns
-      .filter((col) => !!col.accessorPath)
-      .map((col) => {
-        // Handle case when '[*]' accessors are used
-        const strippedAccessor = col.accessorPath.replace(/([[*\]])/g, '.');
-        return (
-          `alerts.body.cef_details.${strippedAccessor}`
-            .split('.')
-            // Handle case when special character is wrapped in quotation marks
-            .map((a) => (a.includes("'") ? a.replaceAll("'", '') : a))
-            // Handle empty paths from injection into strippedAccessor
-            .filter((a) => a !== '')
-        );
-      });
-    updatedFuseOptions.keys = fuseOptions.keys.concat(customAlertDetailColumnKeys);
-
-    // Run query with non-empty input
-    if (searchQuery !== '') {
-      const fuse = new Fuse(incidents, updatedFuseOptions);
-      filteredIncidentsByQuery = fuse.search(searchQuery).map((res) => res.item);
-    } else {
-      filteredIncidentsByQuery = [...incidents];
-    }
-
-    yield put({
-      type: FILTER_INCIDENTS_LIST_BY_QUERY_COMPLETED,
-      filteredIncidentsByQuery,
-    });
-  } catch (e) {
-    yield put({
-      type: FILTER_INCIDENTS_LIST_BY_QUERY_ERROR,
       message: e.message,
     });
   }

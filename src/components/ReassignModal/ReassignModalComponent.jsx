@@ -1,15 +1,32 @@
 import React, {
-  useState,
+  useCallback, useState,
 } from 'react';
+
 import {
-  connect,
+  useSelector, useDispatch,
 } from 'react-redux';
 
 import {
-  Modal, Form, Button,
-} from 'react-bootstrap';
-import Select from 'react-select';
-import makeAnimated from 'react-select/animated';
+  useDebouncedCallback,
+} from 'use-debounce';
+
+import {
+  Button,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalFooter,
+  ModalBody,
+  ModalCloseButton,
+  Tabs,
+  TabList,
+  Tab,
+} from '@chakra-ui/react';
+
+import {
+  Select,
+} from 'chakra-react-select';
 
 import {
   useTranslation,
@@ -20,76 +37,146 @@ import {
   reassign as reassignConnected,
 } from 'src/redux/incident_actions/actions';
 
-const animatedComponents = makeAnimated();
+import {
+  throttledPdAxiosRequest,
+} from 'src/util/pd-api-wrapper';
 
-const ReassignModalComponent = ({
-  incidentActions,
-  incidentTable,
-  escalationPolicies,
-  users,
-  toggleDisplayReassignModal,
-  reassign,
-}) => {
+import {
+  addUserToUsersMap as addUserToUsersMapConnected,
+} from 'src/redux/users/actions';
+
+const ReassignModalComponent = () => {
   const {
     t,
   } = useTranslation();
+
   const {
     displayReassignModal,
-  } = incidentActions;
+  } = useSelector((state) => state.incidentActions);
   const {
     selectedRows,
-  } = incidentTable;
+  } = useSelector((state) => state.incidentTable);
+  const usersMap = useSelector((state) => state.users.usersMap);
+  const dispatch = useDispatch();
+  const addUserToUsersMap = (user) => {
+    dispatch(addUserToUsersMapConnected(user));
+  };
+  const reassign = (incidents, assignment) => {
+    dispatch(reassignConnected(incidents, assignment));
+  };
+  const toggleDisplayReassignModal = () => {
+    dispatch(toggleDisplayReassignModalConnected());
+  };
+
+  const [selectOptions, setSelectOptions] = useState({ escalation_policies: [], users: [] });
+  const [currentInputValue, setCurrentInputValue] = useState('');
+  const [more, setMore] = useState({ escalation_policies: false, users: false });
+  const [isLoading, setIsLoading] = useState({ escalation_policies: false, users: false });
+  const [tabIndex, setTabIndex] = useState(0);
+  const tabItems = ['escalation_policies', 'users'];
 
   const [assignment, setAssignment] = useState(null);
 
-  // Generate lists/data from store
-  const selectListAssignments = escalationPolicies
-    .map((escalationPolicy) => ({
-      label: `EP: ${escalationPolicy.name}`,
-      name: escalationPolicy.name,
-      value: escalationPolicy.id,
-      type: 'escalation_policy',
-    }))
-    .concat(
-      users.map((user) => ({
-        label: `User: ${user.name}`,
-        name: user.name,
-        value: user.id,
-        type: 'user',
-      })),
-    );
+  const requestOptionsPage = useCallback(async (inputValue, offset, epsOrUsers) => {
+    const epOrUser = epsOrUsers === 'escalation_policies' ? 'escalation_policy' : 'user';
+    const r = await throttledPdAxiosRequest('GET', epsOrUsers, { query: inputValue, offset });
+    // setMore(r.data.more);
+    setMore((prev) => ({ ...prev, [epsOrUsers]: r.data.more }));
+    const r2 = r.data[epsOrUsers].map((obj) => {
+      // take the opportunity to add the object to the map
+      if (epOrUser === 'user') {
+        if (!usersMap[obj.id]) {
+          addUserToUsersMap(obj);
+        }
+      }
+      return { label: obj.name, name: obj.name, value: obj.id, type: epOrUser };
+    });
+    return r2;
+  }, []);
+
+  const loadOptions = useCallback(
+    async (epsOrUsers, inputValue) => {
+      setIsLoading((prev) => ({ ...prev, [epsOrUsers]: true }));
+      const r = await requestOptionsPage(inputValue, 0, epsOrUsers);
+      setSelectOptions((prev) => ({ ...prev, [epsOrUsers]: r }));
+      setIsLoading((prev) => ({ ...prev, [epsOrUsers]: false }));
+    },
+    [currentInputValue, requestOptionsPage],
+  );
+
+  const debouncedLoadOptions = useDebouncedCallback(loadOptions, 200);
+
+  const loadMoreOptions = useCallback(
+    async (epsOrUsers) => {
+      if (!more[epsOrUsers]) {
+        return;
+      }
+      setIsLoading((prev) => ({ ...prev, [epsOrUsers]: true }));
+      const r = await requestOptionsPage(
+        currentInputValue,
+        selectOptions[epsOrUsers].length,
+        epsOrUsers,
+      );
+      setSelectOptions((prev) => ({ ...prev, [epsOrUsers]: [...prev[epsOrUsers], ...r] }));
+      setIsLoading((prev) => ({ ...prev, [epsOrUsers]: false }));
+    },
+    [currentInputValue, requestOptionsPage, more, selectOptions],
+  );
 
   return (
-    <div className="resassign-modal-ctr">
-      <Modal
-        show={displayReassignModal}
-        onHide={() => {
-          setAssignment(null);
-          toggleDisplayReassignModal();
-        }}
-      >
-        <Modal.Header closeButton>
-          <Modal.Title>{t('Reassign To')}</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <Form>
-            <Select
-              id="reassign-select"
-              classNamePrefix="react-select"
-              onChange={(selectedAssignment) => {
-                setAssignment(selectedAssignment);
-              }}
-              components={animatedComponents}
-              options={selectListAssignments}
-              placeholder={t('Search for Escalation Policy or User')}
-            />
-          </Form>
-        </Modal.Body>
-        <Modal.Footer>
+    <Modal
+      isOpen={displayReassignModal}
+      onClose={() => {
+        setTabIndex(0);
+        setAssignment(null);
+        toggleDisplayReassignModal();
+      }}
+    >
+      <ModalOverlay />
+      <ModalContent>
+        <ModalHeader>{t('Reassign To')}</ModalHeader>
+        <ModalCloseButton />
+        <ModalBody>
+          <Tabs
+            variant="soft-rounded"
+            index={tabIndex}
+            onChange={(index) => {
+              setAssignment(null);
+              setTabIndex(index);
+              loadOptions(tabItems[index]);
+            }}
+          >
+            <TabList>
+              <Tab data-tab-id="reassign-ep-tab">{t('Escalation Policies')}</Tab>
+              <Tab data-tab-id="reassign-user-tab">{t('Users')}</Tab>
+            </TabList>
+          </Tabs>
+          <p />
+          <Select
+            id="reassign-select"
+            // isMulti
+            isSearchable
+            isClearable
+            isLoading={isLoading[tabItems[tabIndex]]}
+            onChange={(selectedAssignment) => {
+              setAssignment(selectedAssignment);
+            }}
+            onInputChange={(inputValue) => {
+              setCurrentInputValue(inputValue);
+              debouncedLoadOptions(tabItems[tabIndex], inputValue);
+            }}
+            onMenuScrollToBottom={() => loadMoreOptions(tabItems[tabIndex])}
+            onFocus={() => loadOptions(tabItems[tabIndex], currentInputValue)}
+            options={selectOptions[tabItems[tabIndex]]}
+            value={assignment}
+            placeholder={`${t('Select dotdotdot')}`}
+          />
+        </ModalBody>
+        <ModalFooter>
           <Button
             id="reassign-button"
-            variant="primary"
-            disabled={assignment === null}
+            colorScheme="blue"
+            isDisabled={assignment === null}
             onClick={() => {
               setAssignment(null);
               reassign(selectedRows, assignment);
@@ -100,28 +187,17 @@ const ReassignModalComponent = ({
           <Button
             variant="light"
             onClick={() => {
+              setTabIndex(0);
               setAssignment(null);
               toggleDisplayReassignModal();
             }}
           >
             {t('Cancel')}
           </Button>
-        </Modal.Footer>
-      </Modal>
-    </div>
+        </ModalFooter>
+      </ModalContent>
+    </Modal>
   );
 };
 
-const mapStateToProps = (state) => ({
-  incidentActions: state.incidentActions,
-  incidentTable: state.incidentTable,
-  escalationPolicies: state.escalationPolicies.escalationPolicies,
-  users: state.users.users,
-});
-
-const mapDispatchToProps = (dispatch) => ({
-  toggleDisplayReassignModal: () => dispatch(toggleDisplayReassignModalConnected()),
-  reassign: (incidents, assignment) => dispatch(reassignConnected(incidents, assignment)),
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(ReassignModalComponent);
+export default ReassignModalComponent;

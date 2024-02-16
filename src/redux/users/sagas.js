@@ -44,6 +44,9 @@ import {
   UPDATE_USER_LOCALE_REQUESTED,
   UPDATE_USER_LOCALE_COMPLETED,
   UPDATE_USER_LOCALE_ERROR,
+  ADD_USER_TO_USERS_MAP_REQUESTED,
+  ADD_USER_TO_USERS_MAP_COMPLETED,
+  ADD_USER_TO_USERS_MAP_ERROR,
 } from './actions';
 
 import selectUsers from './selectors';
@@ -181,5 +184,23 @@ export function* updateUserLocaleImpl(action) {
   } catch (e) {
     // TODO: Implement logic for unsupported locale
     yield put({ type: UPDATE_USER_LOCALE_ERROR, message: e.message });
+  }
+}
+
+export function* addUserToUsersMap() {
+  yield takeLatest(ADD_USER_TO_USERS_MAP_REQUESTED, addUserToUsersMapImpl);
+}
+
+export function* addUserToUsersMapImpl(action) {
+  try {
+    const {
+      user,
+    } = action;
+    yield put({
+      type: ADD_USER_TO_USERS_MAP_COMPLETED,
+      user,
+    });
+  } catch (e) {
+    yield put({ type: ADD_USER_TO_USERS_MAP_ERROR, message: e.message });
   }
 }

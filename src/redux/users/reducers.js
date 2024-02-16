@@ -21,6 +21,9 @@ import {
   UPDATE_USER_LOCALE_REQUESTED,
   UPDATE_USER_LOCALE_COMPLETED,
   UPDATE_USER_LOCALE_ERROR,
+  ADD_USER_TO_USERS_MAP_REQUESTED,
+  ADD_USER_TO_USERS_MAP_COMPLETED,
+  ADD_USER_TO_USERS_MAP_ERROR,
 } from './actions';
 
 const users = produce(
@@ -111,6 +114,20 @@ const users = produce(
 
       case UPDATE_USER_LOCALE_ERROR:
         draft.status = UPDATE_USER_LOCALE_ERROR;
+        draft.error = action.message;
+        break;
+
+      case ADD_USER_TO_USERS_MAP_REQUESTED:
+        draft.status = ADD_USER_TO_USERS_MAP_REQUESTED;
+        break;
+
+      case ADD_USER_TO_USERS_MAP_COMPLETED:
+        draft.usersMap[action.user.id] = action.user;
+        draft.status = ADD_USER_TO_USERS_MAP_COMPLETED;
+        break;
+
+      case ADD_USER_TO_USERS_MAP_ERROR:
+        draft.status = ADD_USER_TO_USERS_MAP_ERROR;
         draft.error = action.message;
         break;
 

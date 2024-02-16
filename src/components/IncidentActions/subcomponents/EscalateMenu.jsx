@@ -1,5 +1,5 @@
 import React, {
-  useMemo,
+  useMemo, useState, useEffect,
 } from 'react';
 
 import {
@@ -28,19 +28,18 @@ import {
 } from 'src/util/incidents';
 
 import {
-  getObjectsFromListbyKey,
-} from 'src/util/helpers';
-
-import {
   escalate as escalateConnected,
 } from 'src/redux/incident_actions/actions';
+
+import {
+  throttledPdAxiosRequest,
+} from 'src/util/pd-api-wrapper';
 
 const EscalateMenu = () => {
   const {
     t,
   } = useTranslation();
   const selectedRows = useSelector((state) => state.incidentTable.selectedRows);
-  const escalationPolicies = useSelector((state) => state.escalationPolicies.escalationPolicies);
   const dispatch = useDispatch();
   const escalate = (incidents, escalationLevel) => dispatch(escalateConnected(incidents, escalationLevel));
   const enabled = useMemo(() => {
@@ -51,19 +50,22 @@ const EscalateMenu = () => {
     return incident.status !== RESOLVED && incident.urgency === HIGH;
   }, [selectedRows]);
 
-  const selectedEscalationRules = useMemo(() => {
+  const [selectedEscalationRules, setSelectedEscalationRules] = useState([]);
+
+  useEffect(() => {
     if (selectedRows.length !== 1) {
-      return [];
+      setSelectedEscalationRules([]);
+      return;
     }
     const selectedEscalationPolicyId = selectedRows[0].escalation_policy.id;
-    const selectedEscalationPolicy = getObjectsFromListbyKey(
-      escalationPolicies,
-      'id',
-      selectedEscalationPolicyId,
-    )[0];
-    return selectedEscalationPolicy
-      ? selectedEscalationPolicy.escalation_rules.slice(0).reverse()
-      : [];
+    const fetchEscalationPolicy = async () => {
+      const r = await throttledPdAxiosRequest(
+        'GET',
+        `escalation_policies/${selectedEscalationPolicyId}`,
+      );
+      setSelectedEscalationRules(r.data.escalation_policy.escalation_rules.slice(0).reverse());
+    };
+    fetchEscalationPolicy();
   }, [selectedRows]);
 
   return (

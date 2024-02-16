@@ -5,6 +5,10 @@ import {
 } from 'react-redux';
 
 import {
+  waitFor,
+} from '@testing-library/react';
+
+import {
   render, screen,
 } from 'src/custom-testing-lib';
 
@@ -38,7 +42,7 @@ describe('PersonInitialsComponents', () => {
     global.CSS = jest.fn();
   });
 
-  it('should render component with assignee initials', () => {
+  it('should render component with assignee initials', async () => {
     const displayedUsers = users.map((user) => ({
       user,
     }));
@@ -48,8 +52,9 @@ describe('PersonInitialsComponents', () => {
       </Provider>,
     );
     // Initials should be rendered
-    expect(screen.getByRole('img', { name: 'Abraham Lincoln' })).toHaveTextContent('AL');
-    // Emojis should also be rendered as initials
-    expect(screen.getByRole('img', { name: 'George Washington 📟' })).toHaveTextContent('G📟');
+    await waitFor(() => {
+      expect(screen.getByRole('img', { name: 'Abraham Lincoln' })).toHaveTextContent('AL');
+      expect(screen.getByRole('img', { name: 'George Washington 📟' })).toHaveTextContent('G📟');
+    });
   });
 });
