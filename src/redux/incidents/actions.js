@@ -37,9 +37,10 @@ export const getIncidentsAsync = () => ({
   type: FETCH_INCIDENTS_REQUESTED,
 });
 
-export const getAlertsForIncidentsAsync = (incidentIds) => ({
+export const getAlertsForIncidentsAsync = (incidentIds, isRefetch = false) => ({
   type: FETCH_ALERTS_FOR_INCIDENTS_REQUESTED,
   incidentIds,
+  isRefetch,
 });
 
 export const getNotesForIncidentsAsync = (incidentIds) => ({
