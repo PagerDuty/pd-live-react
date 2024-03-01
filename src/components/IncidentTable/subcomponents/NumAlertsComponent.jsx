@@ -51,7 +51,7 @@ const NumAlertsComponent = ({
   };
   const getAlertsForIncidents = useCallback(
     (ids) => {
-      dispatch(getAlertsForIncidentsAsyncConnected(ids));
+      dispatch(getAlertsForIncidentsAsyncConnected(ids, true));
     },
     [dispatch],
   );
