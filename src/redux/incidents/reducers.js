@@ -63,17 +63,19 @@ const incidents = produce(
         break;
 
       case FETCH_ALERTS_FOR_INCIDENTS_REQUESTED:
-        draft.incidentAlerts = {
-          ...draft.incidentAlerts,
-          // dict with keys as the strings of incident ids array and values as { status: 'fetching' }
-          ...action.incidentIds.reduce((acc, incidentId) => {
-            // eslint-disable-next-line no-param-reassign
-            acc[incidentId] = {
-              status: 'fetching',
-            };
-            return acc;
-          }, {}),
-        };
+        if (!(action.isRefetch)) {
+          draft.incidentAlerts = {
+            ...draft.incidentAlerts,
+            // dict with keys as the strings of incident ids array and values as { status: 'fetching' }
+            ...action.incidentIds.reduce((acc, incidentId) => {
+              // eslint-disable-next-line no-param-reassign
+              acc[incidentId] = {
+                status: 'fetching',
+              };
+              return acc;
+            }, {}),
+          };
+        }
         draft.status = FETCH_ALERTS_FOR_INCIDENTS_REQUESTED;
         break;
 
