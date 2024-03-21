@@ -22,6 +22,14 @@ const generateMockAlert = () => {
   const message = faker.commerce.productDescription();
   const uuid = faker.string.uuid();
   const link = faker.internet.url();
+  const customDetails = {
+    quote,
+    'some obsecure field': uuid,
+    link,
+    object_details: {
+      key1: 'value1',
+    },
+  };
   return {
     type: 'alert',
     id: alertId,
@@ -30,18 +38,15 @@ const generateMockAlert = () => {
     created_at: createdAt,
     body: {
       contexts: [],
+      // custom details are in both body.cef_details.details and body.details for events
+      // but only body.details is guaranteed to exist, and won't be null
+      // body.cef_details.details can be null if the alert is from an email
+      details: customDetails,
       cef_details: {
         contexts: [],
         dedup_key: alertId,
         description: title,
-        details: {
-          quote,
-          'some obsecure field': uuid,
-          link,
-          object_details: {
-            key1: 'value1',
-          },
-        },
+        details: customDetails,
         event_class: jobType,
         message,
         mutations: [
