@@ -154,7 +154,7 @@ describe('Sagas: Incidents', () => {
   it('filterIncidents: Search by Alert Custom Detail Field', () => {
     const mockIncident = mockIncidents[0];
     const customField = 'some obsecure field';
-    const customFieldValue = mockIncident.alerts[0].body.cef_details.details[customField];
+    const customFieldValue = mockIncident.alerts[0].body.details[customField];
     const expectedIncidentResult = [mockIncident];
     return expectSaga(filterIncidents)
       .withReducer(incidents)
