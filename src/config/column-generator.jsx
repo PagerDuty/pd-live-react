@@ -773,7 +773,11 @@ export const customAlertColumnForSavedColumn = (savedColumn) => {
     return null;
   }
   const accessor = (incident) => {
-    const path = `alerts[*].body.cef_details.${accessorPath}`;
+    // custom details are in both body.cef_details.details and body.details for events
+    // but only body.details is guaranteed to exist, and won't be null
+    // body.cef_details.details can be null if the alert is from an email
+    // const path = `alerts[*].body.cef_details.${accessorPath}`;
+    const path = `alerts[*].body.${accessorPath}`;
     let result = null;
     try {
       result = JSONPath({

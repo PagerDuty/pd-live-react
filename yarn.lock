@@ -5278,10 +5278,10 @@ csstype@^3.0.11, csstype@^3.0.2, csstype@^3.1.2:
   resolved "https://registry.yarnpkg.com/csstype/-/csstype-3.1.2.tgz#1d4bf9d572f11c14031f0436e1c10bc1f571f50b"
   integrity sha512-I7K1Uu0MBPzaFKg4nI5Q7Vs2t+3gWWW648spaF+Rg7pI9ds18Ugn+lvg4SHczUdKlHI5LWBXyqfS8+DufyBsgQ==
 
-cypress-fail-fast@^7.0.3:
-  version "7.0.3"
-  resolved "https://registry.yarnpkg.com/cypress-fail-fast/-/cypress-fail-fast-7.0.3.tgz#85ac2861c155611939f0bad03a09e561891f9ddf"
-  integrity sha512-IYVDZ+ykfTd2DFBK3N6NnWXc2gix7VwSi9Vg4zv40jm6PLknZTD4cZoRmh7uvpoQAIKNIFbx5V81qQD5pLHLSQ==
+cypress-fail-fast@^7.1.0:
+  version "7.1.0"
+  resolved "https://registry.yarnpkg.com/cypress-fail-fast/-/cypress-fail-fast-7.1.0.tgz#36e28e39fffaacf852b4866c8459e5274eb8326d"
+  integrity sha512-OnN5WqSP49yHKoitq+FmMG/+nUvat6NdFLNUQgVJYbmDdgyiiS1aI33S8+AuRb4zRZR5+5/eq53p/oL+a/m2Tw==
   dependencies:
     chalk "4.1.2"
 
@@ -6614,9 +6614,9 @@ focus-lock@^0.11.6:
     tslib "^2.0.3"
 
 follow-redirects@^1.15.4:
-  version "1.15.5"
-  resolved "https://registry.yarnpkg.com/follow-redirects/-/follow-redirects-1.15.5.tgz#54d4d6d062c0fa7d9d17feb008461550e3ba8020"
-  integrity sha512-vSFWUON1B+yAw1VN4xMfxgn5fTUiaOzAJCKBwIIgT/+7CuGy9+r+5gITvP62j3RmaD5Ph65UaERdOSRGUzZtgw==
+  version "1.15.6"
+  resolved "https://registry.yarnpkg.com/follow-redirects/-/follow-redirects-1.15.6.tgz#7f815c0cda4249c74ff09e95ef97c23b5fd0399b"
+  integrity sha512-wWN62YITEaOpSK584EZXJafH1AGpO8RVgElfkuXbTOrPX4fIfOyEpW/CsiNd8JdYrAoOvafRTOEnvsO++qCqFA==
 
 font-awesome@^4.7.0:
   version "4.7.0"
@@ -10961,10 +10961,10 @@ warning@^4.0.0, warning@^4.0.2, warning@^4.0.3:
   dependencies:
     loose-envify "^1.0.0"
 
-web-vitals@^3.4.0:
-  version "3.4.0"
-  resolved "https://registry.yarnpkg.com/web-vitals/-/web-vitals-3.4.0.tgz#45ed33a3a2e029dc38d36547eb5d71d1c7e2552d"
-  integrity sha512-n9fZ5/bG1oeDkyxLWyep0eahrNcPDF6bFqoyispt7xkW0xhDzpUBTgyDKqWDi1twT0MgH4HvvqzpUyh0ZxZV4A==
+web-vitals@^3.5.2:
+  version "3.5.2"
+  resolved "https://registry.yarnpkg.com/web-vitals/-/web-vitals-3.5.2.tgz#5bb58461bbc173c3f00c2ddff8bfe6e680999ca9"
+  integrity sha512-c0rhqNcHXRkY/ogGDJQxZ9Im9D19hDihbzSQJrsioex+KnFgmMzBiy57Z1EjkhX/+OjyBpclDCzz2ITtjokFmg==
 
 webidl-conversions@^3.0.0:
   version "3.0.1"

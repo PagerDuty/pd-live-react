@@ -498,7 +498,10 @@ export function* filterIncidentsImpl() {
           // Handle case when '[*]' accessors are used
           const strippedAccessor = col.accessorPath.replace(/([[*\]])/g, '.');
           return (
-            `alerts.body.cef_details.${strippedAccessor}`
+            // custom details are in both body.cef_details.details and body.details for events
+            // but only body.details is guaranteed to exist, and won't be null
+            // body.cef_details.details can be null if the alert is from an email
+            `alerts.body.${strippedAccessor}`
               .split('.')
               // Handle case when special character is wrapped in quotation marks
               .map((a) => (a.includes("'") ? a.replaceAll("'", '') : a))
@@ -523,8 +526,11 @@ export function* filterIncidentsImpl() {
           const incidentAlertsForSearch = incidentAlerts[incident.id] instanceof Array ? incidentAlerts[incident.id] : [];
           const incidentAlertsForSearchWithFlattedCustomDetails = incidentAlertsForSearch.map(
             (alert) => {
-              const flattedCustomDetails = alert.body?.cef_details
-                ? Object.values(flattenObject(alert.body.cef_details)).join(' ')
+              // custom details are in both body.cef_details.details and body.details for events
+              // but only body.details is guaranteed to exist, and won't be null
+              // body.cef_details.details can be null if the alert is from an email
+              const flattedCustomDetails = alert.body?.details
+                ? Object.values(flattenObject(alert.body.details)).join(' ')
                 : '';
               return {
                 ...alert,
