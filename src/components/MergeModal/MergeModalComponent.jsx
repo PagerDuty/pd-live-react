@@ -12,6 +12,9 @@ import {
   Box,
   Button,
   Checkbox,
+  CircularProgress,
+  CircularProgressLabel,
+  Flex,
   FormControl,
   FormLabel,
   Input,
@@ -34,6 +37,7 @@ import {
 } from 'react-i18next';
 
 import {
+  MERGE_REQUESTED,
   toggleDisplayMergeModal as toggleDisplayMergeModalConnected,
   merge as mergeConnected,
 } from 'src/redux/incident_actions/actions';
@@ -48,6 +52,8 @@ const MergeModalComponent = () => {
   const incidents = useSelector((state) => state.incidents.incidents);
   const {
     displayMergeModal,
+    mergeProgress,
+    status,
   } = useSelector((state) => state.incidentActions);
   const {
     selectedRows,
@@ -60,6 +66,14 @@ const MergeModalComponent = () => {
   const {
     t,
   } = useTranslation();
+
+  const isMerging = useMemo(() => status === MERGE_REQUESTED, [status]);
+  const mergeProgressPercent = useMemo(() => {
+    if (mergeProgress?.total && mergeProgress?.complete) {
+      return Math.round((mergeProgress.complete / mergeProgress.total) * 100);
+    }
+    return 0;
+  }, [mergeProgress]);
 
   const selectedIncidents = useMemo(() => {
     if (selectedRows instanceof Array) {
@@ -75,7 +89,7 @@ const MergeModalComponent = () => {
         }));
     }
     // eslint-disable-next-line no-console
-    console.log('selectedRows is not an array', selectedRows);
+    console.error('selectedRows is not an array', selectedRows);
     return [];
   }, [displayMergeModal, selectedRows]);
 
@@ -171,14 +185,26 @@ const MergeModalComponent = () => {
     merge(mergeTarget, incidentsToMerge, true, addToTitle ? addToTitleText : null);
   };
 
+  const handleClose = () => {
+    if (!isMerging) {
+      toggleDisplayMergeModal();
+    }
+  };
+
   return (
-    <Modal isOpen={displayMergeModal} onClose={toggleDisplayMergeModal} size="xl">
+    <Modal
+      isOpen={displayMergeModal}
+      onClose={handleClose}
+      closeOnEsc={!isMerging}
+      closeOnOverlayClick={!isMerging}
+      size="xl"
+    >
       <ModalOverlay />
       <ModalContent>
         <ModalHeader>{t('Merge Incidents')}</ModalHeader>
         <ModalCloseButton />
         <ModalBody>
-          <FormControl>
+          <FormControl isDisabled={isMerging}>
             <Text fontSize="sm">
               {t('The alerts of the selected incidents will be merged into a single incident')}
             </Text>
@@ -205,7 +231,7 @@ const MergeModalComponent = () => {
               {t('The remaining selected incidents will be resolved after the merge is complete')}
             </Text>
           </FormControl>
-          <FormControl>
+          <FormControl isDisabled={isMerging}>
             <Checkbox
               size="sm"
               isChecked={addToTitle}
@@ -230,17 +256,39 @@ const MergeModalComponent = () => {
           )}
         </ModalBody>
         <ModalFooter>
+          <Flex px={1} alignItems="center" justifyContent="center" mr="auto">
+            {status === MERGE_REQUESTED && (
+              <>
+                <CircularProgress
+                  isIndeterminate={mergeProgress.updatingTitles}
+                  value={mergeProgressPercent || null}
+                  color="green.300"
+                  my={0}
+                  mr={1}
+                >
+                  <CircularProgressLabel display={mergeProgress.updatingTitles ? 'none' : 'inherit'}>
+                    {`${mergeProgressPercent}%`}
+                  </CircularProgressLabel>
+                </CircularProgress>
+                {mergeProgress.updatingTitles ? t('Updating titles') : t('Merging')}
+              </>
+            )}
+          </Flex>
           <Box>
             <Button
               id="merge-button"
               colorScheme="blue"
               mr={3}
               onClick={doMerge}
-              isDisabled={!mergeTarget || mergingIsDisallowed}
+              isDisabled={!mergeTarget || mergingIsDisallowed || isMerging}
             >
               {t('Merge')}
             </Button>
-            <Button variant="ghost" onClick={toggleDisplayMergeModal}>
+            <Button
+              isDisabled={isMerging}
+              variant="ghost"
+              onClick={handleClose}
+            >
               {t('Cancel')}
             </Button>
           </Box>

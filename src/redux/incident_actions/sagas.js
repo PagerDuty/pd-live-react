@@ -64,6 +64,7 @@ import {
   TOGGLE_DISPLAY_CUSTOM_SNOOZE_MODAL_REQUESTED,
   TOGGLE_DISPLAY_CUSTOM_SNOOZE_MODAL_COMPLETED,
   MERGE_REQUESTED,
+  MERGE_PROGRESS,
   MERGE_COMPLETED,
   MERGE_ERROR,
   TOGGLE_DISPLAY_MERGE_MODAL_REQUESTED,
@@ -90,7 +91,7 @@ import {
 } from './actions';
 
 import {
-  PROCESS_LOG_ENTRIES_COMPLETED, UPDATE_INCIDENTS,
+  PROCESS_LOG_ENTRIES_COMPLETED, UPDATE_INCIDENTS, getIncidentsAsync,
 } from '../incidents/actions';
 
 const chunkedPdAxiosRequestCalls = (
@@ -482,60 +483,89 @@ export function* mergeAsync() {
 export function* merge(action) {
   try {
     const {
+      displayMergeModal,
+      // mergeProgress,
+    } = yield select(selectIncidentActions);
+    const {
       targetIncident, incidents, displayModal, addToTitleText,
     } = action;
     const incidentsToBeMerged = [...incidents];
 
-    // Build request manually given PUT
-    const data = {
-      source_incidents: incidentsToBeMerged.map((incident) => ({
+    // split incidentsToBeMerged into chunks of 100
+    const incidentChunks = chunkArray(incidentsToBeMerged, 25);
+    const incidentBodies = incidentChunks.map((chunk) => ({
+      source_incidents: chunk.map((incident) => ({
         id: incident.id,
         type: 'incident_reference',
       })),
-    };
+    }));
 
-    const response = yield call(
+    const numRequests = incidentBodies.length + (addToTitleText ? 1 : 0);
+    let complete = 0;
+    yield put({
+      type: MERGE_PROGRESS,
+      mergeProgress: {
+        total: numRequests,
+        complete,
+      },
+    });
+
+    // Build individual requests as the endpoint supports singular PUT
+    const mergeRequests = incidentBodies.map((incidentBody) => call(
       throttledPdAxiosRequest,
       'PUT',
       `incidents/${targetIncident.id}/merge`,
       null,
-      data,
+      incidentBody,
       {
         priority: 1,
         expiration: 5 * 60 * 1000,
       },
-    );
+    ));
 
-    if (response.status >= 200 && response.status < 300) {
-      yield toggleDisplayMergeModalImpl();
-
-      const mergedIncident = response.data.incident;
-      const resolvedIncidents = incidentsToBeMerged.map((incident) => ({
-        id: incident.id,
-        status: RESOLVED,
-      }));
-      yield put({
-        type: UPDATE_INCIDENTS,
-        updatedIncidents: [...resolvedIncidents, mergedIncident],
-      });
-
-      if (displayModal) {
-        const actionAlertsModalType = 'success';
-        const actionAlertsModalMessage = `${i18next.t('Incident')}(s) ${incidentsToBeMerged
-          .map((i) => i.incident_number)
-          .join(', ')} ${i18next.t('and their alerts have been merged onto incident')}
-          ${targetIncident.incident_number}`;
-        yield displayActionModal(actionAlertsModalType, actionAlertsModalMessage);
+    // eslint-disable-next-line no-restricted-syntax
+    for (const mergeRequest of mergeRequests) {
+      const response = yield mergeRequest;
+      if (response.status !== 200) {
+        handleSingleAPIErrorResponse(response);
+        yield put({
+          type: MERGE_ERROR,
+          message: 'Error merging incidents',
+        });
+        yield getIncidentsAsync();
+        return;
       }
+      complete += 1;
       yield put({
-        type: MERGE_COMPLETED,
-        mergedIncident,
+        type: MERGE_PROGRESS,
+        mergeProgress: {
+          total: numRequests,
+          complete,
+        },
       });
-    } else {
-      handleSingleAPIErrorResponse(response);
     }
 
+    const mergedIncidentResp = yield getIncidentByIdRequest(targetIncident.id);
+    const mergedIncident = mergedIncidentResp.data.incident;
+    const resolvedIncidents = incidentsToBeMerged.map((incident) => ({
+      id: incident.id,
+      status: RESOLVED,
+    }));
+
+    yield put({
+      type: UPDATE_INCIDENTS,
+      updatedIncidents: [...resolvedIncidents, mergedIncident],
+    });
+
     if (addToTitleText) {
+      yield put({
+        type: MERGE_PROGRESS,
+        mergeProgress: {
+          total: numRequests,
+          complete,
+          updatingTitles: true,
+        },
+      });
       const titleUpdates = incidentsToBeMerged.map((incident) => call(
         throttledPdAxiosRequest,
         'PUT',
@@ -553,6 +583,7 @@ export function* merge(action) {
         },
       ));
       const titleResponses = yield all(titleUpdates);
+
       const successes = titleResponses.filter((r) => r.status >= 200 && r.status < 300);
       if (successes.length !== titleResponses.length) {
         handleMultipleAPIErrorResponses(
@@ -565,6 +596,21 @@ export function* merge(action) {
         updatedIncidents,
       });
     }
+    if (displayModal) {
+      const actionAlertsModalType = 'success';
+      const actionAlertsModalMessage = `${i18next.t('Incident')}(s) ${incidentsToBeMerged
+        .map((i) => i.incident_number)
+        .join(', ')} ${i18next.t('and their alerts have been merged onto incident')}
+        ${targetIncident.incident_number}`;
+      yield displayActionModal(actionAlertsModalType, actionAlertsModalMessage);
+    }
+    if (displayMergeModal) {
+      yield toggleDisplayMergeModalImpl();
+    }
+    yield put({
+      type: MERGE_COMPLETED,
+      mergedIncident,
+    });
   } catch (e) {
     yield call(handleSagaError, MERGE_ERROR, e);
   }
