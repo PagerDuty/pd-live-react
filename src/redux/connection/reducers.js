@@ -8,13 +8,20 @@ import {
   UPDATE_CONNECTION_STATUS_COMPLETED,
   UPDATE_QUEUE_STATS_REQUESTED,
   UPDATE_QUEUE_STATS_COMPLETED,
+  START_QUEUE_STATS_POLLING,
+  STOP_QUEUE_STATS_POLLING,
   CHECK_CONNECTION_STATUS_REQUESTED,
   CHECK_CONNECTION_STATUS_COMPLETED,
+  START_CONNECTION_STATUS_POLLING,
+  STOP_CONNECTION_STATUS_POLLING,
   CHECK_ABILITIES_REQUESTED,
   CHECK_ABILITIES_COMPLETED,
   CHECK_ABILITIES_ERROR,
+  START_ABILITIES_POLLING,
+  STOP_ABILITIES_POLLING,
   SAVE_ERROR_REQUESTED,
   SAVE_ERROR_COMPLETED,
+  CATASTROPHE,
 } from './actions';
 
 const connection = produce(
@@ -45,12 +52,28 @@ const connection = produce(
         draft.queueStats = action.queueStats;
         break;
 
+      case START_QUEUE_STATS_POLLING:
+        draft.status = START_QUEUE_STATS_POLLING;
+        break;
+
+      case STOP_QUEUE_STATS_POLLING:
+        draft.status = STOP_QUEUE_STATS_POLLING;
+        break;
+
       case CHECK_CONNECTION_STATUS_REQUESTED:
         draft.status = CHECK_CONNECTION_STATUS_REQUESTED;
         break;
 
       case CHECK_CONNECTION_STATUS_COMPLETED:
         draft.status = CHECK_CONNECTION_STATUS_COMPLETED;
+        break;
+
+      case START_CONNECTION_STATUS_POLLING:
+        draft.status = START_CONNECTION_STATUS_POLLING;
+        break;
+
+      case STOP_CONNECTION_STATUS_POLLING:
+        draft.status = STOP_CONNECTION_STATUS_POLLING;
         break;
 
       case CHECK_ABILITIES_REQUESTED:
@@ -60,6 +83,14 @@ const connection = produce(
       case CHECK_ABILITIES_COMPLETED:
         draft.status = CHECK_ABILITIES_COMPLETED;
         draft.abilities = action.abilities;
+        break;
+
+      case START_ABILITIES_POLLING:
+        draft.status = START_ABILITIES_POLLING;
+        break;
+
+      case STOP_ABILITIES_POLLING:
+        draft.status = STOP_ABILITIES_POLLING;
         break;
 
       case CHECK_ABILITIES_ERROR:
@@ -76,6 +107,11 @@ const connection = produce(
         if (draft.errors.length > 25) {
           draft.errors.shift();
         }
+        break;
+
+      case CATASTROPHE:
+        draft.status = CATASTROPHE;
+        draft.connectionStatusMessage = action.connectionStatusMessage;
         break;
 
       default:

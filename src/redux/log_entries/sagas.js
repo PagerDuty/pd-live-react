@@ -2,10 +2,16 @@
 /* eslint-disable max-len */
 
 import {
-  put, call, select, takeLatest, take,
+  put, call, select, takeLatest, take, delay, race,
 } from 'redux-saga/effects';
 
 import i18next from 'src/i18n';
+
+import {
+  LOG_ENTRIES_POLLING_INTERVAL_SECONDS,
+  LOG_ENTRIES_CLEARING_INTERVAL_SECONDS,
+  DEBUG_DISABLE_POLLING,
+} from 'src/config/constants';
 
 import {
   pd, pdParallelFetch,
@@ -25,6 +31,11 @@ import {
   CLEAN_RECENT_LOG_ENTRIES,
   CLEAN_RECENT_LOG_ENTRIES_COMPLETED,
   CLEAN_RECENT_LOG_ENTRIES_ERROR,
+  START_CLEAN_RECENT_LOG_ENTRIES_POLLING,
+  STOP_CLEAN_RECENT_LOG_ENTRIES_POLLING,
+  START_LOG_ENTRIES_POLLING,
+  UPDATE_LOG_ENTRIES_POLLING,
+  STOP_LOG_ENTRIES_POLLING,
 } from './actions';
 
 import selectLogEntries from './selectors';
@@ -36,6 +47,9 @@ export function* getLogEntriesAsync() {
 export function* getLogEntries(action) {
   const {
     recentLogEntries,
+    pollingStatus: {
+      errors: pollingErrors,
+    },
   } = yield select(selectLogEntries);
 
   try {
@@ -43,6 +57,7 @@ export function* getLogEntries(action) {
     const {
       since,
     } = action;
+
     const params = {
       since: since.toISOString().replace(/\.[\d]{3}/, ''),
       'include[]': ['incidents', 'linked_incidents', 'external_references', 'channels'],
@@ -51,12 +66,18 @@ export function* getLogEntries(action) {
     try {
       logEntries = yield call(pdParallelFetch, 'log_entries', params, null, {
         priority: 5,
-        maxRecords: 1000,
+        maxRecords: 5000,
       });
     } catch (e) {
       if (e.message && e.message.startsWith('Too many records')) {
         // eslint-disable-next-line no-console
-        console.log(`getLogEntries: ${e.message} - fetching incidents instead`);
+        console.error(`getLogEntries: ${e.message} - fetching incidents instead`);
+        yield put({
+          type: UPDATE_LOG_ENTRIES_POLLING,
+          pollingStatus: {
+            errors: [...pollingErrors, e].slice(-25),
+          },
+        });
         yield put({
           type: FETCH_LOG_ENTRIES_ERROR,
           message: e.message,
@@ -110,6 +131,12 @@ export function* getLogEntries(action) {
     // Call to update recent log entries with this data.
     // yield call(updateRecentLogEntries);
   } catch (e) {
+    yield put({
+      type: UPDATE_LOG_ENTRIES_POLLING,
+      pollingStatus: {
+        errors: [...pollingErrors, e].slice(-25),
+      },
+    });
     // Handle API auth failure
     if (e.status === 401) {
       e.message = i18next.t('Unauthorized Access');
@@ -120,6 +147,61 @@ export function* getLogEntries(action) {
       connectionStatus: 'neutral',
       connectionStatusMessage: e.message,
     });
+  }
+}
+
+export function* pollLogEntriesTask() {
+  while (true) {
+    const {
+      logEntries: {
+        latestLogEntryDate,
+      },
+      users: {
+        userAuthorized,
+        userAcceptedDisclaimer,
+      },
+      incidents: {
+        fetchingIncidents,
+      },
+    } = yield select();
+    if (userAuthorized && userAcceptedDisclaimer && !fetchingIncidents && !DEBUG_DISABLE_POLLING) {
+      const lastPollStarted = new Date();
+      yield put({
+        type: UPDATE_LOG_ENTRIES_POLLING,
+        pollingStatus: {
+          lastPollStarted,
+        },
+      });
+      yield call(getLogEntries, { since: latestLogEntryDate });
+      const lastPollCompleted = new Date();
+      yield put({
+        type: UPDATE_LOG_ENTRIES_POLLING,
+        pollingStatus: {
+          lastPollCompleted,
+        },
+      });
+
+      let timeTaken = lastPollCompleted - lastPollStarted;
+      if (timeTaken > LOG_ENTRIES_POLLING_INTERVAL_SECONDS * 1000) {
+        // if the time taken to fetch log entries is greater than the polling interval,
+        // then we should start the next poll immediately
+        timeTaken = LOG_ENTRIES_POLLING_INTERVAL_SECONDS * 1000;
+      } else if (timeTaken < 0) {
+        timeTaken = 0;
+      }
+      yield delay((LOG_ENTRIES_POLLING_INTERVAL_SECONDS * 1000) - timeTaken);
+    } else {
+      // eslint-disable-next-line no-console
+      console.log('skipping poll', { userAuthorized, userAcceptedDisclaimer, fetchingIncidents, DEBUG_DISABLE_POLLING });
+      yield delay(LOG_ENTRIES_POLLING_INTERVAL_SECONDS * 1000);
+    }
+  }
+}
+
+export function* pollLogEntriesTaskWatcher() {
+  while (true) {
+    yield take(START_LOG_ENTRIES_POLLING);
+    yield race([call(pollLogEntriesTask), take(STOP_LOG_ENTRIES_POLLING)]);
   }
 }
 
@@ -149,5 +231,19 @@ export function* cleanRecentLogEntries() {
     });
   } catch (e) {
     yield put({ type: CLEAN_RECENT_LOG_ENTRIES_ERROR, message: e.message });
+  }
+}
+
+export function* cleanRecentLogEntriesTask() {
+  while (true) {
+    yield call(cleanRecentLogEntries);
+    yield delay(LOG_ENTRIES_CLEARING_INTERVAL_SECONDS * 1000);
+  }
+}
+
+export function* cleanRecentLogEntriesTaskWatcher() {
+  while (true) {
+    yield take(START_CLEAN_RECENT_LOG_ENTRIES_POLLING);
+    yield race([call(cleanRecentLogEntriesTask), take(STOP_CLEAN_RECENT_LOG_ENTRIES_POLLING)]);
   }
 }

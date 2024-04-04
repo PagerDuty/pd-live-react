@@ -7,6 +7,8 @@ import {
   useSelector, useDispatch, useStore,
 } from 'react-redux';
 
+import moment from 'moment/min/moment-with-locales';
+
 import {
   Badge,
   Box,
@@ -34,6 +36,10 @@ import {
 } from 'react-i18next';
 
 import {
+  DATE_FORMAT,
+} from 'src/config/constants';
+
+import {
   getIncidentsAsync as getIncidentsAsyncAction,
   UPDATE_INCIDENT_ALERTS,
   UPDATE_INCIDENT_NOTES,
@@ -46,11 +52,7 @@ const DetailedStatusOverlay = ({
   const {
     t,
   } = useTranslation();
-  const {
-    status: connectionStatus,
-    error: connectionError,
-    // errors,
-  } = useSelector((state) => state.connection);
+
   const {
     status: incidentStatus,
     error: incidentError,
@@ -59,7 +61,14 @@ const DetailedStatusOverlay = ({
     incidentNotes,
   } = useSelector((state) => state.incidents);
   const {
-    status: logEntriesStatus, error: logEntriesError,
+    // status: logEntriesStatus, error: logEntriesError,
+    latestLogEntryDate,
+    pollingStatus: {
+      polling: logEntriesPolling,
+      lastPollStarted,
+      lastPollCompleted,
+      errors: pollingErrors,
+    },
   } = useSelector(
     (state) => state.logEntries,
   );
@@ -95,6 +104,7 @@ const DetailedStatusOverlay = ({
     const badgeText = status.split('_').pop();
     switch (badgeText) {
       case 'COMPLETED':
+      case 'STARTED':
         badgeProps.colorScheme = 'green';
         break;
       case 'REQUESTED':
@@ -102,6 +112,7 @@ const DetailedStatusOverlay = ({
         break;
       case 'FAILED':
       case 'ERROR':
+      case 'STOPPED':
         badgeProps.colorScheme = 'red';
         break;
       default:
@@ -126,7 +137,6 @@ const DetailedStatusOverlay = ({
         <Spacer />
         <Box>{badgeForStatus(status)}</Box>
       </Flex>
-      {/* {error && !(['REQUESTED', 'COMPLETED'].includes(status.split('_').pop())) && ( */}
       {error && (
         <Text fontSize="xs" color="red.500">
           {error}
@@ -270,11 +280,50 @@ const DetailedStatusOverlay = ({
           </Box>
           <Box rounded="md" borderWidth="1px" p={2} mb={2}>
             <Heading size="sm" pb={4} borderBottomWidth="1px">
+              {t('Live Updates')}
+            </Heading>
+            {statusFor(t('Polling'), logEntriesPolling ? 'STARTED' : 'STOPPED', '')}
+            <Text fontSize="xs" mb={0}>
+              {t('Last Requested')}
+              :
+            </Text>
+            <Text fontSize="xs">
+              {lastPollStarted ? moment(lastPollStarted.toISOString()).format(DATE_FORMAT) : t('n/a')}
+            </Text>
+            <Text fontSize="xs" mb={0}>
+              {t('Last Completed')}
+              :
+            </Text>
+            <Text fontSize="xs">
+              {lastPollCompleted ? moment(lastPollCompleted.toISOString()).format(DATE_FORMAT) : t('n/a')}
+            </Text>
+            <Text fontSize="xs" mb={0}>
+              {t('Latest Log Entry')}
+              :
+            </Text>
+            <Text fontSize="xs">
+              {latestLogEntryDate ? moment(latestLogEntryDate.toISOString()).format(DATE_FORMAT) : t('n/a')}
+            </Text>
+            {pollingErrors.length > 0 && (
+              <Text fontSize="xs" color="red.500">
+                <Button
+                  size="sm"
+                  colorScheme="red"
+                  onClick={() => {
+                    // eslint-disable-next-line no-console
+                    console.log(pollingErrors);
+                  }}
+                >
+                  {t(`Log ${pollingErrors.length} Errors`)}
+                </Button>
+              </Text>
+            )}
+          </Box>
+          <Box rounded="md" borderWidth="1px" p={2} mb={2}>
+            <Heading size="sm" pb={4} borderBottomWidth="1px">
               {t('Status')}
             </Heading>
-            {statusFor(t('Connection'), connectionStatus, connectionError)}
             {statusFor(t('Incidents'), incidentStatus, incidentError)}
-            {statusFor(t('Log Entries'), logEntriesStatus, logEntriesError)}
             {statusFor(t('Extensions'), extensionsStatus, extensionsError)}
             {statusFor(t('Response Plays'), responsePlaysStatus, responsePlaysError)}
           </Box>

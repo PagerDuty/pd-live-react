@@ -551,7 +551,7 @@ export function* filterIncidentsImpl() {
           .map((res) => filteredIncidentsByQuery[res.refIndex]);
       } catch (e) {
         // eslint-disable-next-line no-console
-        console.log('Error in Fuse search', e);
+        console.error('Error in Fuse search', e);
       }
     }
 

@@ -2,6 +2,8 @@ import {
   put,
 } from 'redux-saga/effects';
 
+import RealUserMonitoring from 'src/config/monitoring';
+
 import i18next from 'src/i18n';
 
 import {
@@ -20,6 +22,7 @@ export const MISSING_ABILITY_ERROR = i18next.t(
 
 // Helper function to handle errors while processing saga
 export function* handleSagaError(action, exception) {
+  RealUserMonitoring.trackError(exception);
   yield displayActionModal('error', exception.message);
   yield put({ type: action, message: exception.message });
 }

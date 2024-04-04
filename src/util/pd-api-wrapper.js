@@ -9,6 +9,8 @@ import axios from 'axios';
 
 import Bottleneck from 'bottleneck';
 
+import RealUserMonitoring from 'src/config/monitoring';
+
 import {
   PD_USER_TOKEN,
 } from 'src/config/constants';
@@ -102,6 +104,10 @@ let watchdogTimeout;
 limiter.on('depleted', () => {
   // eslint-disable-next-line no-console
   console.error('Limiter queue depleted, setting watchdog timeout');
+  RealUserMonitoring.trackError('LimiterDepleted', {
+    reservoir: 0,
+    currentLimit,
+  });
   if (watchdogTimeout) {
     clearTimeout(watchdogTimeout);
   }
@@ -112,6 +118,10 @@ limiter.on('depleted', () => {
         console.error(
           'Watchdog timeout, queue is still depleted after 10 seconds; resetting limiter',
         );
+        RealUserMonitoring.trackError('LimiterWatchdogTimeout', {
+          reservoir,
+          currentLimit,
+        });
         resetLimiterWithRateLimit(currentLimit);
       }
     });
