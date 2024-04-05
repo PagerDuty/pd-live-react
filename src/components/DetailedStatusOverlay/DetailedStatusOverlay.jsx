@@ -45,6 +45,10 @@ import {
   UPDATE_INCIDENT_NOTES,
 } from 'src/redux/incidents/actions';
 
+import {
+  OAUTH_REFRESH_REQUESTED,
+} from 'src/redux/connection/actions';
+
 const DetailedStatusOverlay = ({
   btnRef, isOpen, onOpen, onClose,
 }) => {
@@ -331,6 +335,18 @@ const DetailedStatusOverlay = ({
             <Heading size="sm" pb={4} borderBottomWidth="1px">
               {t('Debugging Actions')}
             </Heading>
+            <Button
+              size="sm"
+              m={2}
+              colorScheme="green"
+              onClick={() => {
+                dispatch({
+                  type: OAUTH_REFRESH_REQUESTED,
+                });
+              }}
+            >
+              {t('Refresh OAuth Token')}
+            </Button>
             <Button
               size="sm"
               m={2}

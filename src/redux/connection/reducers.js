@@ -19,6 +19,9 @@ import {
   CHECK_ABILITIES_ERROR,
   START_ABILITIES_POLLING,
   STOP_ABILITIES_POLLING,
+  OAUTH_REFRESH_REQUESTED,
+  OAUTH_REFRESH_COMPLETED,
+  OAUTH_REFRESH_ERROR,
   SAVE_ERROR_REQUESTED,
   SAVE_ERROR_COMPLETED,
   CATASTROPHE,
@@ -91,6 +94,18 @@ const connection = produce(
 
       case STOP_ABILITIES_POLLING:
         draft.status = STOP_ABILITIES_POLLING;
+        break;
+
+      case OAUTH_REFRESH_REQUESTED:
+        draft.status = OAUTH_REFRESH_REQUESTED;
+        break;
+
+      case OAUTH_REFRESH_COMPLETED:
+        draft.status = OAUTH_REFRESH_COMPLETED;
+        break;
+
+      case OAUTH_REFRESH_ERROR:
+        draft.status = OAUTH_REFRESH_ERROR;
         break;
 
       case CHECK_ABILITIES_ERROR:

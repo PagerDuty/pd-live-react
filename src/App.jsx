@@ -62,6 +62,8 @@ import {
   START_ABILITIES_POLLING,
   STOP_ABILITIES_POLLING,
   START_QUEUE_STATS_POLLING,
+  START_OAUTH_REFRESH_POLLING,
+  STOP_OAUTH_REFRESH_POLLING,
   CATASTROPHE,
 } from 'src/redux/connection/actions';
 import {
@@ -133,10 +135,12 @@ const App = () => {
       dispatch({ type: START_LOG_ENTRIES_POLLING });
       dispatch({ type: START_CLEAN_RECENT_LOG_ENTRIES_POLLING });
       dispatch({ type: START_ABILITIES_POLLING });
+      dispatch({ type: START_OAUTH_REFRESH_POLLING });
     } else {
       dispatch({ type: STOP_LOG_ENTRIES_POLLING });
       dispatch({ type: STOP_CLEAN_RECENT_LOG_ENTRIES_POLLING });
       dispatch({ type: STOP_ABILITIES_POLLING });
+      dispatch({ type: STOP_OAUTH_REFRESH_POLLING });
     }
   }, [userAuthorized, userAcceptedDisclaimer]);
 
@@ -154,7 +158,7 @@ const App = () => {
     );
   }
 
-  if (!token) {
+  if (typeof token !== 'string' || !token.startsWith('pd')) {
     return (
       <div className="App">
         <AuthComponent clientId={PD_OAUTH_CLIENT_ID} clientSecret={PD_OAUTH_CLIENT_SECRET} />

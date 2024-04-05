@@ -86,6 +86,6 @@ describe('Authentication Helper Suite', () => {
       codeVerifier,
       code,
     );
-    expect(token).toEqual(mockAccessToken);
+    expect(token.access_token).toEqual(mockAccessToken);
   });
 });

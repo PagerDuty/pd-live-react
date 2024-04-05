@@ -491,7 +491,7 @@ export function* merge(action) {
     } = action;
     const incidentsToBeMerged = [...incidents];
 
-    // split incidentsToBeMerged into chunks of 100
+    // split incidentsToBeMerged into chunks
     const incidentChunks = chunkArray(incidentsToBeMerged, 25);
     const incidentBodies = incidentChunks.map((chunk) => ({
       source_incidents: chunk.map((incident) => ({
@@ -510,7 +510,6 @@ export function* merge(action) {
       },
     });
 
-    // Build individual requests as the endpoint supports singular PUT
     const mergeRequests = incidentBodies.map((incidentBody) => call(
       throttledPdAxiosRequest,
       'PUT',

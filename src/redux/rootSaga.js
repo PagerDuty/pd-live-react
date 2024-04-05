@@ -135,6 +135,8 @@ import {
   checkConnectionStatusTaskWatcher,
   checkAbilities,
   checkAbilitiesTaskWatcher,
+  refreshOauth,
+  checkForTokenExpiryWatcher,
   updateQueueStats,
   updateQueueStatsTaskWatcher,
 } from './connection/sagas';
@@ -262,6 +264,8 @@ export default function* rootSaga() {
       updateQueueStatsTaskWatcher(),
       checkAbilities(),
       checkAbilitiesTaskWatcher(),
+      refreshOauth(),
+      checkForTokenExpiryWatcher(),
 
       // Monitoring
       startMonitoring(),

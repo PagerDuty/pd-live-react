@@ -19,7 +19,10 @@ import {
 } from 'src/util/sagas';
 
 import {
-  PD_REQUIRED_ABILITY, DEBUG_DISABLE_POLLING,
+  PD_OAUTH_CLIENT_ID,
+  PD_OAUTH_CLIENT_SECRET,
+  PD_REQUIRED_ABILITY,
+  DEBUG_DISABLE_POLLING,
 } from 'src/config/constants';
 
 import {
@@ -38,6 +41,11 @@ import {
   CHECK_ABILITIES_ERROR,
   START_ABILITIES_POLLING,
   STOP_ABILITIES_POLLING,
+  OAUTH_REFRESH_REQUESTED,
+  OAUTH_REFRESH_COMPLETED,
+  OAUTH_REFRESH_ERROR,
+  START_OAUTH_REFRESH_POLLING,
+  STOP_OAUTH_REFRESH_POLLING,
   SAVE_ERROR_REQUESTED,
   SAVE_ERROR_COMPLETED,
 } from './actions';
@@ -202,6 +210,79 @@ export function* checkAbilitiesTaskWatcher() {
   while (true) {
     yield take(START_ABILITIES_POLLING);
     yield race([call(checkAbilitiesTask), take(STOP_ABILITIES_POLLING)]);
+  }
+}
+
+export function* refreshOauth() {
+  yield takeLatest(OAUTH_REFRESH_REQUESTED, refreshOauthImpl);
+}
+
+export function* refreshOauthImpl() {
+  const postData = async (url, data) => {
+    const formData = new URLSearchParams(data); // Convert data to URL-encoded form data
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded', // Set the content type
+      },
+      body: formData.toString(), // Convert the form data to a string
+    });
+    const json = await response.json(); // Parse the response JSON
+    return json;
+  };
+
+  const refreshToken = sessionStorage.getItem('pd_refresh_token');
+  if (!refreshToken) {
+    yield put({ type: OAUTH_REFRESH_ERROR, message: 'No refresh token found' });
+  }
+
+  const requestTokenUrl = 'https://identity.pagerduty.com/oauth/token';
+  const formData = {
+    grant_type: 'refresh_token',
+    client_id: PD_OAUTH_CLIENT_ID,
+    client_secret: PD_OAUTH_CLIENT_SECRET,
+    refresh_token: refreshToken,
+  };
+
+  const response = yield call(postData, requestTokenUrl, formData);
+  const {
+    access_token: accessToken,
+    refresh_token: newRefreshToken,
+    expires_in: expiresIn,
+  } = response;
+  if (!accessToken || !newRefreshToken || !expiresIn) {
+    yield put({ type: OAUTH_REFRESH_ERROR, message: 'Invalid response from OAuth server' });
+  } else {
+    sessionStorage.setItem('pd_access_token', accessToken);
+    sessionStorage.setItem('pd_refresh_token', newRefreshToken);
+    sessionStorage.setItem('pd_token_expires_at', Date.now() + expiresIn * 1000);
+    yield put({ type: OAUTH_REFRESH_COMPLETED });
+  }
+}
+
+export function* checkForTokenExpiry() {
+  while (true) {
+    const tokenExpiresAtStr = sessionStorage.getItem('pd_token_expires_at');
+    const refreshToken = sessionStorage.getItem('pd_refresh_token');
+    if (
+      (typeof refreshToken === 'string')
+      && (refreshToken.startsWith('pd'))
+      && (typeof tokenExpiresAtStr === 'string')
+      && (/^-?\d+$/.test(tokenExpiresAtStr))
+    ) {
+      const tokenExpiresAt = new Date(parseInt(tokenExpiresAtStr, 10));
+      if (tokenExpiresAt && (Date.now() + 60_000 > tokenExpiresAt)) {
+        yield put({ type: OAUTH_REFRESH_REQUESTED });
+      }
+    }
+    yield delay(60_000);
+  }
+}
+
+export function* checkForTokenExpiryWatcher() {
+  while (true) {
+    yield take(START_OAUTH_REFRESH_POLLING);
+    yield race([call(checkForTokenExpiry), take(STOP_OAUTH_REFRESH_POLLING)]);
   }
 }
 
