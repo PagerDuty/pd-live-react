@@ -4,6 +4,11 @@ import React, {
 } from 'react';
 
 import {
+  useDispatch,
+} from 'react-redux';
+
+import {
+  Button,
   Code,
   Modal,
   ModalOverlay,
@@ -17,6 +22,14 @@ import {
   useTranslation,
 } from 'react-i18next';
 
+import {
+  userUnauthorize as userUnauthorizeConnected,
+} from 'src/redux/users/actions';
+
+import {
+  stopMonitoring as stopMonitoringConnected,
+} from 'src/redux/monitoring/actions';
+
 const CatastropheOverlay = ({
   errorMessage,
   countdownSeconds = 10,
@@ -24,6 +37,11 @@ const CatastropheOverlay = ({
   const {
     t,
   } = useTranslation();
+
+  const dispatch = useDispatch();
+  const userUnauthorize = () => dispatch(userUnauthorizeConnected());
+  const stopMonitoring = () => dispatch(stopMonitoringConnected());
+
   const [seconds, setSeconds] = useState(countdownSeconds);
 
   useEffect(() => {
@@ -46,6 +64,19 @@ const CatastropheOverlay = ({
           <Text>
             {t('The application will restart in X seconds.', { seconds })}
           </Text>
+          <Button
+            onClick={() => {
+              userUnauthorize();
+              stopMonitoring();
+              sessionStorage.removeItem('pd_access_token');
+              window.location.reload(true);
+            }}
+            colorScheme="red"
+            my={4}
+            mx="auto"
+          >
+            {t('Reauthorize')}
+          </Button>
         </ModalBody>
       </ModalContent>
     </Modal>

@@ -157,7 +157,7 @@ export function* acknowledge(action) {
     const errors = responses.filter((response) => response.status !== 200);
 
     if (errors.length > 0) {
-      handleMultipleAPIErrorResponses(errors);
+      yield call(handleMultipleAPIErrorResponses, errors);
     }
 
     if (acknowledgedIncidents.length > 0) {
@@ -210,7 +210,7 @@ export function* escalate(action) {
     const errors = responses.filter((response) => response.status !== 200);
 
     if (errors.length > 0) {
-      handleMultipleAPIErrorResponses(errors);
+      yield call(handleMultipleAPIErrorResponses, errors);
     }
 
     if (escalatedIncidents.length > 0) {
@@ -279,7 +279,7 @@ export function* reassign(action) {
     const errors = responses.filter((response) => response.status !== 200);
 
     if (errors.length > 0) {
-      handleMultipleAPIErrorResponses(errors);
+      yield call(handleMultipleAPIErrorResponses, errors);
     }
 
     if (reassignedIncidents.length > 0) {
@@ -372,7 +372,7 @@ export function* addResponder(action) {
         updatedIncidentResponderRequests: responses,
       });
     } else {
-      handleMultipleAPIErrorResponses(responses);
+      yield call(handleMultipleAPIErrorResponses, responses);
     }
   } catch (e) {
     yield call(handleSagaError, ADD_RESPONDER_ERROR, e);
@@ -452,7 +452,7 @@ export function* snooze(action) {
         snoozedIncidents: updatedIncidents,
       });
     } else {
-      handleMultipleAPIErrorResponses(responses);
+      yield call(handleMultipleAPIErrorResponses, responses);
     }
   } catch (e) {
     yield call(handleSagaError, SNOOZE_ERROR, e);
@@ -526,7 +526,7 @@ export function* merge(action) {
     for (const mergeRequest of mergeRequests) {
       const response = yield mergeRequest;
       if (response.status !== 200) {
-        handleSingleAPIErrorResponse(response);
+        yield call(handleSingleAPIErrorResponse, response);
         yield put({
           type: MERGE_ERROR,
           message: 'Error merging incidents',
@@ -585,9 +585,7 @@ export function* merge(action) {
 
       const successes = titleResponses.filter((r) => r.status >= 200 && r.status < 300);
       if (successes.length !== titleResponses.length) {
-        handleMultipleAPIErrorResponses(
-          titleResponses.filter((r) => !(r.status >= 200 && r.status < 300)),
-        );
+        yield call(handleMultipleAPIErrorResponses, titleResponses);
       }
       const updatedIncidents = successes.map((r) => r.data.incident);
       yield put({
@@ -659,7 +657,7 @@ export function* resolve(action) {
     const errors = responses.filter((response) => response.status !== 200);
 
     if (errors.length > 0) {
-      handleMultipleAPIErrorResponses(errors);
+      yield call(handleMultipleAPIErrorResponses, errors);
     }
 
     if (resolvedIncidents.length > 0) {
@@ -750,7 +748,7 @@ export function* updatePriority(action) {
         yield displayActionModal(actionAlertsModalType, actionAlertsModalMessage);
       }
     } else {
-      handleMultipleAPIErrorResponses(responses);
+      yield call(handleMultipleAPIErrorResponses, responses);
     }
   } catch (e) {
     yield call(handleSagaError, UPDATE_PRIORITY_ERROR, e);
@@ -800,7 +798,7 @@ export function* addNote(action) {
         updatedIncidentNotes: responses,
       });
     } else {
-      handleMultipleAPIErrorResponses(responses);
+      yield call(handleMultipleAPIErrorResponses, responses);
     }
   } catch (e) {
     yield call(handleSagaError, ADD_NOTE_ERROR, e);
@@ -868,7 +866,7 @@ export function* runCustomIncidentAction(action) {
         yield displayActionModal(actionAlertsModalType, actionAlertsModalMessage);
       }
     } else {
-      handleMultipleAPIErrorResponses(responses);
+      yield call(handleMultipleAPIErrorResponses, responses);
     }
   } catch (e) {
     yield call(handleSagaError, RUN_CUSTOM_INCIDENT_ACTION_ERROR, e);
@@ -970,7 +968,7 @@ export function* syncWithExternalSystem(action) {
         yield displayActionModal(actionAlertsModalType, actionAlertsModalMessage);
       }
     } else {
-      handleMultipleAPIErrorResponses(responses);
+      yield call(handleMultipleAPIErrorResponses, responses);
     }
   } catch (e) {
     yield call(handleSagaError, SYNC_WITH_EXTERNAL_SYSTEM_ERROR, e);

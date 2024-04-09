@@ -48,7 +48,7 @@ export const getPdAccessTokenObject = () => {
 
 export const pd = api(getPdAccessTokenObject());
 
-export const pdAxiosRequest = async (method, endpoint, params = {}, data = {}) => axios({
+export const pdAxiosRequest = async (method, endpoint, params = {}, data = {}, throwErrors = false) => axios({
   method,
   url: `https://api.pagerduty.com/${endpoint}`,
   headers: {
@@ -64,8 +64,11 @@ export const pdAxiosRequest = async (method, endpoint, params = {}, data = {}) =
   },
   params: { ...params, rand: Math.random().toString(36).substring(2, 7) },
   data,
-  // never throw, just return the error
-  validateStatus: () => true,
+}).catch((error) => {
+  if (throwErrors) {
+    throw error;
+  }
+  return error;
 });
 
 let currentLimit = 200;
@@ -145,6 +148,8 @@ export const throttledPdAxiosRequest = (
     .toString(36)
     .substring(2, 7)}`;
 
+  const throwErrors = options?.throwErrors || false;
+
   return limiter.schedule(
     {
       expiration: options?.expiration || 30 * 1000,
@@ -152,7 +157,7 @@ export const throttledPdAxiosRequest = (
       id: qid,
     },
     async () => {
-      const r = await pdAxiosRequest(method, endpoint, params, data);
+      const r = await pdAxiosRequest(method, endpoint, params, data, throwErrors);
       return r;
     },
   );

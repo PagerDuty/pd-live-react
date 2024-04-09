@@ -13,6 +13,12 @@ import {
 } from 'react-dnd-html5-backend';
 
 import {
+  ErrorBoundary,
+} from 'react-error-boundary';
+
+import RealUserMonitoring from 'src/config/monitoring';
+
+import {
   Box, Flex,
 } from '@chakra-ui/react';
 
@@ -86,6 +92,11 @@ const App = () => {
   const getPrioritiesAsync = () => dispatch(getPrioritiesAsyncConnected());
   const getResponsePlaysAsync = () => dispatch(getResponsePlaysAsyncConnected());
   const getIncidentsAsync = () => dispatch(getIncidentsAsyncConnected());
+
+  const dispatchCatastrophe = (connectionStatusMessage) => dispatch({
+    type: CATASTROPHE,
+    connectionStatusMessage,
+  });
 
   const darkMode = useSelector((state) => state.settings.darkMode);
 
@@ -186,29 +197,38 @@ const App = () => {
 
   return (
     <div className="App">
-      <Box position="fixed" w="100%" h="100%" overflow="hidden">
-        <Box as="header" top={0} w="100%" pb={1}>
-          <NavigationBarComponent />
+      <ErrorBoundary fallbackRender={
+          (details) => {
+            RealUserMonitoring.trackError(details.error);
+            dispatchCatastrophe(`UI Render error: ${details.error.message}`);
+            return null;
+          }
+        }
+      >
+        <Box position="fixed" w="100%" h="100%" overflow="hidden">
+          <Box as="header" top={0} w="100%" pb={1}>
+            <NavigationBarComponent />
+          </Box>
+          <Box as="main" id="main">
+            <IncidentTableComponent />
+            <SettingsModalComponent />
+            <LoadSavePresetsModal />
+            <DndProvider backend={HTML5Backend}>
+              <ColumnsModalComponent />
+            </DndProvider>
+            <ActionAlertsModalComponent />
+            <CustomSnoozeModalComponent />
+            <AddNoteModalComponent />
+            <ReassignModalComponent />
+            <AddResponderModalComponent />
+            <MergeModalComponent />
+            <IncidentAlertsModal />
+          </Box>
+          <Flex as="footer" position="fixed" bottom={0} w="100%" zIndex="1" pt={1}>
+            <IncidentActionsComponent />
+          </Flex>
         </Box>
-        <Box as="main" id="main">
-          <IncidentTableComponent />
-          <SettingsModalComponent />
-          <LoadSavePresetsModal />
-          <DndProvider backend={HTML5Backend}>
-            <ColumnsModalComponent />
-          </DndProvider>
-          <ActionAlertsModalComponent />
-          <CustomSnoozeModalComponent />
-          <AddNoteModalComponent />
-          <ReassignModalComponent />
-          <AddResponderModalComponent />
-          <MergeModalComponent />
-          <IncidentAlertsModal />
-        </Box>
-        <Flex as="footer" position="fixed" bottom={0} w="100%" zIndex="1" pt={1}>
-          <IncidentActionsComponent />
-        </Flex>
-      </Box>
+      </ErrorBoundary>
     </div>
   );
 };

@@ -7,12 +7,21 @@ import {
 } from 'use-debounce';
 
 import {
+  useToast,
+} from '@chakra-ui/react';
+
+import {
   Select,
 } from 'chakra-react-select';
 
 import {
   useTranslation,
 } from 'react-i18next';
+
+import RealUserMonitoring from 'src/config/monitoring';
+import {
+  AxiosError,
+} from 'axios';
 
 import {
   throttledPdAxiosRequest,
@@ -29,12 +38,34 @@ const ServiceSelect = ({
     t,
   } = useTranslation();
 
+  const toast = useToast();
+
   const [selectOptions, setSelectOptions] = useState([]);
   const [currentInputValue, setCurrentInputValue] = useState('');
   const [more, setMore] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
   const [storedSelectServices, setStoredSelectServices] = useState([]);
+
+  const [apiError, setApiError] = useState(null);
+
+  useEffect(() => {
+    const details = {};
+    if (apiError) {
+      if (apiError instanceof AxiosError) {
+        details.url = apiError.config.url;
+        details.method = apiError.config.method;
+        details.status = apiError.response?.status;
+        details.data = apiError.response?.data;
+      }
+      RealUserMonitoring.trackError(apiError, details);
+      toast({
+        title: t('Error'),
+        description: apiError.message,
+        status: 'error',
+      });
+    }
+  }, [apiError]);
 
   // get the user names for the selected serviceIds
   useEffect(() => {
@@ -49,10 +80,21 @@ const ServiceSelect = ({
   }, [value]);
 
   const requestOptionsPage = useCallback(async (inputValue, offset) => {
-    const r = await throttledPdAxiosRequest('GET', 'services', { query: inputValue, offset });
-    setMore(r.data.more);
-    const r2 = r.data.services.map((service) => ({ label: service.name, value: service.id }));
-    return r2;
+    try {
+      const r = await throttledPdAxiosRequest(
+        'GET',
+        'services',
+        { query: inputValue, offset },
+        null,
+        { throwErrors: true },
+      );
+      setMore(r.data.more);
+      const r2 = r.data.services.map((service) => ({ label: service.name, value: service.id }));
+      return r2;
+    } catch (e) {
+      setApiError(e);
+      return [];
+    }
   }, []);
 
   const loadOptions = useCallback(

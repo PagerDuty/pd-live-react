@@ -45,6 +45,7 @@ export function* getServices(action) {
     // Handle API auth failure
     if (e.response?.status === 401) {
       e.message = i18next.t('Unauthorized Access');
+      throw e;
     }
     yield put({ type: FETCH_SERVICES_ERROR, message: e.message });
     yield put({

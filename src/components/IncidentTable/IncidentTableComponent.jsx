@@ -406,7 +406,10 @@ const IncidentTableComponent = () => {
     // Therefore, clearing the checkbox in the UI before it is filtered out is the best we can do for now
     const isActionRequested = incidentActionsStatus === 'ACTION_REQUESTED';
     const isToggleAction = incidentActionsStatus.includes('TOGGLE');
-    const isRequestedOrCompleted = incidentActionsStatus.includes('REQUESTED') || incidentActionsStatus.includes('COMPLETED');
+    const isRequestedOrCompleted = (
+      incidentActionsStatus.includes('REQUESTED')
+      || incidentActionsStatus.includes('COMPLETED')
+    );
 
     if (isActionRequested || (!isToggleAction && isRequestedOrCompleted)) {
       toggleAllRowsSelected(false);

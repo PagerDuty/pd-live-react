@@ -43,6 +43,7 @@
     "react-dnd": "^16.0.1",
     "react-dnd-html5-backend": "^16.0.1",
     "react-dom": "^18",
+    "react-error-boundary": "^4.0.13",
     "react-i18next": "^13.2.0",
     "react-icons": "^4.9.0",
     "react-minimal-pie-chart": "^8.4.0",

@@ -8,6 +8,10 @@ import {
 import i18next from 'src/i18n';
 
 import {
+  handleSingleAPIErrorResponse,
+} from 'src/util/sagas';
+
+import {
   LOG_ENTRIES_POLLING_INTERVAL_SECONDS,
   LOG_ENTRIES_CLEARING_INTERVAL_SECONDS,
   DEBUG_DISABLE_POLLING,
@@ -18,6 +22,7 @@ import {
 } from 'src/util/pd-api-wrapper';
 
 import {
+  CATASTROPHE,
   UPDATE_CONNECTION_STATUS_REQUESTED,
 } from 'src/redux/connection/actions';
 import {
@@ -51,7 +56,6 @@ export function* getLogEntries(action) {
       errors: pollingErrors,
     },
   } = yield select(selectLogEntries);
-
   try {
     //  Create params and call pd lib
     const {
@@ -87,7 +91,7 @@ export function* getLogEntries(action) {
         });
         return;
       }
-      throw Error(i18next.t('Unable to fetch log entries') + e.message ? `: ${e.message}` : '');
+      throw e;
     }
 
     // Filter out log entries that are already in recent log entries map
@@ -127,9 +131,6 @@ export function* getLogEntries(action) {
       type: PROCESS_LOG_ENTRIES,
       logEntries,
     });
-
-    // Call to update recent log entries with this data.
-    // yield call(updateRecentLogEntries);
   } catch (e) {
     yield put({
       type: UPDATE_LOG_ENTRIES_POLLING,
@@ -137,16 +138,18 @@ export function* getLogEntries(action) {
         errors: [...pollingErrors, e].slice(-25),
       },
     });
-    // Handle API auth failure
-    if (e.status === 401) {
-      e.message = i18next.t('Unauthorized Access');
-    }
     yield put({ type: FETCH_LOG_ENTRIES_ERROR, message: e.message });
     yield put({
       type: UPDATE_CONNECTION_STATUS_REQUESTED,
       connectionStatus: 'neutral',
       connectionStatusMessage: e.message,
     });
+    // Handle API failure
+    if (e.response) {
+      yield call(handleSingleAPIErrorResponse, e.response);
+    } else {
+      throw e;
+    }
   }
 }
 
