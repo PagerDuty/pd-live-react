@@ -4,6 +4,7 @@ import {
 
 import Fuse from 'fuse.js';
 
+import RealUserMonitoring from 'src/config/monitoring';
 import {
   pd,
   // throttledPdAxiosRequest,
@@ -192,12 +193,27 @@ export function* getAlertsForIncidents(action) {
       undefined,
       { priority: 6 },
     );
+    if (!(alertsChunk instanceof Array)) {
+      RealUserMonitoring.trackError(new Error('alertsChunk is not an array'), alertsChunk);
+      // eslint-disable-next-line no-continue
+      continue;
+    }
     const alertsChunkByIncidentId = incidentIdChunk.reduce((acc, incidentId) => {
-      // eslint-disable-next-line no-param-reassign
-      acc[incidentId] = [];
+      if (typeof incidentId !== 'string') {
+        RealUserMonitoring.trackError(new Error('incidentId is not a string'), incidentId);
+      } else {
+        // eslint-disable-next-line no-param-reassign
+        acc[incidentId] = [];
+      }
       return acc;
     }, {});
     alertsChunk.forEach((alert) => {
+      if (!(alert?.incident?.id) || !(alertsChunkByIncidentId[alert.incident.id] instanceof Array)) {
+        RealUserMonitoring.trackError(
+          new Error('alert is missing incident id or alertsChunkByIncidentId is not an array'), alert,
+        );
+        return;
+      }
       alertsChunkByIncidentId[alert.incident.id].push(alert);
     });
     yield put({
@@ -232,12 +248,27 @@ export function* getNotesForIncidents(action) {
       undefined,
       { priority: 6 },
     );
+    if (!(notesChunk instanceof Array)) {
+      RealUserMonitoring.trackError(new Error('notesChunk is not an array'), notesChunk);
+      // eslint-disable-next-line no-continue
+      continue;
+    }
     const notesChunkByIncidentId = incidentIdChunk.reduce((acc, incidentId) => {
-      // eslint-disable-next-line no-param-reassign
-      acc[incidentId] = [];
+      if (typeof incidentId !== 'string') {
+        RealUserMonitoring.trackError(new Error('incidentId is not a string'), incidentId);
+      } else {
+        // eslint-disable-next-line no-param-reassign
+        acc[incidentId] = [];
+      }
       return acc;
     }, {});
     notesChunk.forEach((note) => {
+      if (!(note?.incident?.id) || !(notesChunkByIncidentId[note.incident.id] instanceof Array)) {
+        RealUserMonitoring.trackError(
+          new Error('note is missing incident id or notesChunkByIncidentId is not an array'), note,
+        );
+        return;
+      }
       notesChunkByIncidentId[note.incident.id].push(note);
     });
     // dispatch FETCH_NOTES_FOR_INCIDENTS_COMPLETED
@@ -273,6 +304,12 @@ export function* processLogEntriesImpl(action) {
   for (let i = 0; i < logEntries.length; i += 1) {
     const logEntry = logEntries[i];
 
+    if (!logEntry.incident) {
+      // log entry does not have an incident, skip
+      RealUserMonitoring.trackError(new Error('Log entry does not have an incident'), logEntry);
+      // eslint-disable-next-line no-continue
+      continue;
+    }
     // update latest log entry
     if (
       !incidentLatestLogEntryMap[logEntry.incident.id]

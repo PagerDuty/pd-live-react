@@ -274,7 +274,7 @@ export default function* rootSaga() {
   } catch (e) {
     RealUserMonitoring.trackError(e);
     // eslint-disable-next-line no-console
-    console.log('Error in rootSaga:', e);
+    console.error('Error in rootSaga:', e);
     yield put({
       type: CATASTROPHE,
       connectionStatusMessage: e.message,

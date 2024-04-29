@@ -260,7 +260,7 @@ const MergeModalComponent = () => {
             {status === MERGE_REQUESTED && (
               <>
                 <CircularProgress
-                  isIndeterminate={mergeProgress.updatingTitles}
+                  isIndeterminate={mergeProgress.updatingTitles ? 'true' : null}
                   value={mergeProgressPercent || null}
                   color="green.300"
                   my={0}

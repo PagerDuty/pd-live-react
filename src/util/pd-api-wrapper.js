@@ -107,7 +107,7 @@ let watchdogTimeout;
 limiter.on('depleted', () => {
   // eslint-disable-next-line no-console
   console.error('Limiter queue depleted, setting watchdog timeout');
-  RealUserMonitoring.trackError('LimiterDepleted', {
+  RealUserMonitoring.trackError(new Error('LimiterDepleted'), {
     reservoir: 0,
     currentLimit,
   });
@@ -121,7 +121,7 @@ limiter.on('depleted', () => {
         console.error(
           'Watchdog timeout, queue is still depleted after 10 seconds; resetting limiter',
         );
-        RealUserMonitoring.trackError('LimiterWatchdogTimeout', {
+        RealUserMonitoring.trackError(new Error('LimiterWatchdogTimeout'), {
           reservoir,
           currentLimit,
         });
@@ -130,6 +130,37 @@ limiter.on('depleted', () => {
     });
   }, 10 * 1000);
 });
+
+limiter.on('error', (error) => {
+  RealUserMonitoring.trackError(new Error('limiter error'), {
+    error,
+    currentLimit,
+  });
+});
+
+// Listen to the 'failed' event
+limiter.on('failed', async (error, jobInfo) => {
+  const {
+    id,
+  } = jobInfo.options;
+  // eslint-disable-next-line no-console
+  console.error(`Job ${id} failed: ${error}`);
+
+  RealUserMonitoring.trackError(error, {
+    jobInfo,
+  });
+
+  if (jobInfo.retryCount < 3) {
+    // eslint-disable-next-line no-console
+    console.error(`Retrying job ${id} in 100ms!`);
+    return 100;
+  }
+  return undefined;
+});
+
+// Listen to the 'retry' event
+// eslint-disable-next-line no-console
+limiter.on('retry', (error, jobInfo) => console.error(`Now retrying ${jobInfo.options.id}`));
 
 /*
   Throttled version of Axios requests for direct API calls
@@ -144,7 +175,7 @@ export const throttledPdAxiosRequest = (
     priority: 5,
   },
 ) => {
-  const qid = `${method}-${endpoint}-${JSON.stringify(params)}-${Date.now()}-${Math.random()
+  const qid = `${method}-${endpoint}-${Date.now()}-${Math.random()
     .toString(36)
     .substring(2, 7)}`;
 
@@ -160,7 +191,23 @@ export const throttledPdAxiosRequest = (
       const r = await pdAxiosRequest(method, endpoint, params, data, throwErrors);
       return r;
     },
-  );
+  ).catch((error) => {
+    if (error instanceof Bottleneck.BottleneckError) {
+      RealUserMonitoring.trackError(error, {
+        type: 'limiter error',
+        method,
+        endpoint,
+        currentLimit,
+      });
+    } else {
+      RealUserMonitoring.trackError(error, {
+        type: 'pdAxiosRequest error',
+        method,
+        endpoint,
+      });
+      throw error;
+    }
+  });
 };
 
 export const getLimiterStats = () => limiter.counts();
@@ -207,6 +254,16 @@ export const pdParallelFetch = async (
     axiosRequestOptions,
   );
 
+  if (!firstPageResponse?.status) {
+    const e = new Error(`Error fetching ${endpoint}: no response object`);
+    RealUserMonitoring.trackError(e, {
+      endpoint,
+      response: firstPageResponse,
+      params: requestParams,
+    });
+    throw e;
+  }
+
   if (!(firstPageResponse.status >= 200 && firstPageResponse.status < 300)) {
     const e = new Error(
       `Error fetching ${endpoint}: ${firstPageResponse.status}`
@@ -222,7 +279,19 @@ export const pdParallelFetch = async (
 
   const fetchedData = firstPage[endpointIdentifier(endpoint)];
 
+  if (!fetchedData) {
+    const e = new Error(`No data found for endpoint ${endpoint}`);
+    RealUserMonitoring.trackError(e, {
+      endpoint,
+      response: firstPage,
+      params: requestParams,
+    });
+    throw e;
+  }
+
   const promises = [];
+  const failed = [];
+
   if (firstPage.more) {
     for (
       let offset = requestParams.limit;
@@ -236,9 +305,23 @@ export const pdParallelFetch = async (
         undefined,
         axiosRequestOptions,
       )
-        .then(({
-          data,
-        }) => {
+        .then((response) => {
+          if (!response?.status || !(response.status >= 200 && response.status < 300) || !response.data) {
+            failed.push({
+              endpoint,
+              response,
+              params: { ...requestParams, offset },
+            });
+            RealUserMonitoring.trackError(new Error('Failed to fetch data'), {
+              endpoint,
+              response,
+              params: { ...requestParams, offset },
+            });
+            return;
+          }
+          const {
+            data,
+          } = response;
           fetchedData.push(...data[endpointIdentifier(endpoint)]);
           if (progressCallback) {
             progressCallback(firstPage.total, fetchedData.length);
@@ -247,6 +330,11 @@ export const pdParallelFetch = async (
         .catch((error) => {
           // eslint-disable-next-line no-console
           console.error(error);
+          RealUserMonitoring.trackError(new Error('Failed to fetch data'), {
+            endpoint,
+            error,
+            params: { ...requestParams, offset },
+          });
         });
       promises.push(promise);
     }

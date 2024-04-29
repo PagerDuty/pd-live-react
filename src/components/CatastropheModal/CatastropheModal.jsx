@@ -1,6 +1,7 @@
 import React, {
   useEffect,
   useState,
+  useRef,
 } from 'react';
 
 import {
@@ -43,15 +44,30 @@ const CatastropheOverlay = ({
   const stopMonitoring = () => dispatch(stopMonitoringConnected());
 
   const [seconds, setSeconds] = useState(countdownSeconds);
+  const timerIdRef = useRef(null);
 
   useEffect(() => {
     if (seconds > 0) {
-      const timerId = setTimeout(() => setSeconds(seconds - 1), 1000);
-      return () => clearTimeout(timerId);
+      timerIdRef.current = setTimeout(() => {
+        setSeconds(seconds - 1);
+      }, 1000);
+    } else {
+      window.location.reload(true);
     }
-    window.location.reload(true);
-    return undefined;
+    return () => {
+      if (timerIdRef.current) {
+        clearTimeout(timerIdRef.current);
+        timerIdRef.current = null;
+      }
+    };
   }, [seconds]);
+
+  const cancelTimer = () => {
+    if (timerIdRef.current) {
+      clearTimeout(timerIdRef.current);
+      timerIdRef.current = null;
+    }
+  };
 
   return (
     <Modal isOpen isCentered size="xl">
@@ -62,7 +78,11 @@ const CatastropheOverlay = ({
           <Text mb={4}>{t('An unexpected error has occurred:')}</Text>
           <Code mb={4}>{errorMessage}</Code>
           <Text>
-            {t('The application will restart in X seconds.', { seconds })}
+            {
+              timerIdRef.current
+                ? t('The application will restart in X seconds.', { seconds })
+                : t('Restart canceled')
+            }
           </Text>
           <Button
             onClick={() => {
@@ -76,6 +96,15 @@ const CatastropheOverlay = ({
             mx="auto"
           >
             {t('Reauthorize')}
+          </Button>
+          <Button
+            onClick={() => {
+              cancelTimer();
+            }}
+            my={4}
+            mx="auto"
+          >
+            {t('Don\'t Restart')}
           </Button>
         </ModalBody>
       </ModalContent>

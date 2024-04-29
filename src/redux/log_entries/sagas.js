@@ -82,9 +82,13 @@ export function* getLogEntries(action) {
             errors: [...pollingErrors, e].slice(-25),
           },
         });
+        // put COMPLETED action with empty log entries and update latestLogEntryDate
+        // so that we don't keep polling for older log entries
         yield put({
-          type: FETCH_LOG_ENTRIES_ERROR,
-          message: e.message,
+          type: FETCH_LOG_ENTRIES_COMPLETED,
+          logEntries: [],
+          recentLogEntries,
+          latestLogEntryDate: new Date(),
         });
         yield put({
           type: FETCH_INCIDENTS_REQUESTED,
