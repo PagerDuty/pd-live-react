@@ -63,7 +63,7 @@
   "scripts": {
     "start": "vite",
     "build": "npx genversion src/config/version.js --semi --es6 && vite build",
-    "sourcemaps": "datadog-ci sourcemaps upload build --service=pd-live-react --release-version=0.12.2-beta.0 --project-path=./ --minified-path-prefix=/pd-live-react/",
+    "sourcemaps": "datadog-ci sourcemaps upload build --service=pd-live-react --release-version=$(node -e 'console.log(require(__dirname + `/package.json`).version)') --project-path=./ --minified-path-prefix=/pd-live-react/",
     "genversion": "npx genversion src/config/version.js --semi --es6",
     "jest": "npx jest",
     "cypress:open": "npx cypress open --browser chrome --e2e",
