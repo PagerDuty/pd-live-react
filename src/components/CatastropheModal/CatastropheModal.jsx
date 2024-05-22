@@ -33,7 +33,7 @@ import {
 
 const CatastropheOverlay = ({
   errorMessage,
-  countdownSeconds = 10,
+  countdownSeconds = 30,
 }) => {
   const {
     t,
