@@ -1,5 +1,5 @@
 import React, {
-  useEffect, useRef,
+  useEffect, useMemo, useState,
 } from 'react';
 import {
   useSelector, useDispatch,
@@ -13,11 +13,18 @@ import {
 } from 'react-dnd-html5-backend';
 
 import {
+  ErrorBoundary,
+} from 'react-error-boundary';
+
+import RealUserMonitoring from 'src/config/monitoring';
+
+import {
   Box, Flex,
 } from '@chakra-ui/react';
 
 import moment from 'moment/min/moment-with-locales';
 
+import CatastropheModal from 'src/components/CatastropheModal/CatastropheModal';
 import AuthComponent from 'src/components/Auth/AuthComponent';
 import UnauthorizedModalComponent from 'src/components/UnauthorizedModal/UnauthorizedModalComponent';
 import DisclaimerModalComponent from 'src/components/DisclaimerModal/DisclaimerModalComponent';
@@ -40,11 +47,12 @@ import {
 } from 'src/redux/extensions/actions';
 import {
   getIncidentsAsync as getIncidentsAsyncConnected,
-  // refreshIncidentsAsync as refreshIncidentsAsyncConnected,
 } from 'src/redux/incidents/actions';
 import {
-  getLogEntriesAsync as getLogEntriesAsyncConnected,
-  cleanRecentLogEntriesAsync as cleanRecentLogEntriesAsyncConnected,
+  START_LOG_ENTRIES_POLLING,
+  STOP_LOG_ENTRIES_POLLING,
+  START_CLEAN_RECENT_LOG_ENTRIES_POLLING,
+  STOP_CLEAN_RECENT_LOG_ENTRIES_POLLING,
 } from 'src/redux/log_entries/actions';
 import {
   getPrioritiesAsync as getPrioritiesAsyncConnected,
@@ -56,63 +64,61 @@ import {
   getResponsePlaysAsync as getResponsePlaysAsyncConnected,
 } from 'src/redux/response_plays/actions';
 import {
-  checkConnectionStatus as checkConnectionStatusConnected,
-  updateQueueStats as updateQueueStatsConnected,
-  checkAbilities as checkAbilitiesConnected,
+  START_CONNECTION_STATUS_POLLING,
+  START_ABILITIES_POLLING,
+  STOP_ABILITIES_POLLING,
+  START_QUEUE_STATS_POLLING,
+  START_OAUTH_REFRESH_POLLING,
+  STOP_OAUTH_REFRESH_POLLING,
+  CATASTROPHE,
 } from 'src/redux/connection/actions';
 import {
   startMonitoring as startMonitoringConnected,
 } from 'src/redux/monitoring/actions';
 
 import {
-  getLimiterStats,
-} from 'src/util/pd-api-wrapper';
-
-import {
+  PD_USER_TOKEN,
   PD_OAUTH_CLIENT_ID,
   PD_OAUTH_CLIENT_SECRET,
-  PD_REQUIRED_ABILITY,
-  LOG_ENTRIES_POLLING_INTERVAL_SECONDS,
-  // TODO: Implement log entries clearing
-  // LOG_ENTRIES_CLEARING_INTERVAL_SECONDS,
-  DEBUG_DISABLE_POLLING,
 } from 'src/config/constants';
 
 import 'src/App.scss';
 import 'moment/min/locales.min';
 
 const App = () => {
-  // Verify if session token is present
-  const token = sessionStorage.getItem('pd_access_token');
-
   const dispatch = useDispatch();
   const startMonitoring = () => dispatch(startMonitoringConnected());
   const userAuthorize = () => dispatch(userAuthorizeConnected());
-  const checkAbilities = () => dispatch(checkAbilitiesConnected());
-  const checkConnectionStatus = () => dispatch(checkConnectionStatusConnected());
-  const updateQueueStats = (queueStats) => dispatch(updateQueueStatsConnected(queueStats));
   const getExtensionsAsync = () => dispatch(getExtensionsAsyncConnected());
   const getPrioritiesAsync = () => dispatch(getPrioritiesAsyncConnected());
   const getResponsePlaysAsync = () => dispatch(getResponsePlaysAsyncConnected());
-  const getLogEntriesAsync = (since) => dispatch(getLogEntriesAsyncConnected(since));
-  const cleanRecentLogEntriesAsync = () => dispatch(cleanRecentLogEntriesAsyncConnected());
   const getIncidentsAsync = () => dispatch(getIncidentsAsyncConnected());
 
+  const dispatchCatastrophe = (connectionStatusMessage) => dispatch({
+    type: CATASTROPHE,
+    connectionStatusMessage,
+  });
+
   const darkMode = useSelector((state) => state.settings.darkMode);
-  const abilities = useSelector((state) => state.connection.abilities);
-  const {
-    fetchingIncidents, lastFetchDate,
-  } = useSelector((state) => state.incidents);
+
   const {
     userAuthorized, userAcceptedDisclaimer, currentUserLocale,
   } = useSelector(
     (state) => state.users,
   );
+
   const {
-    fetchingData: fetchingLogEntries, latestLogEntryDate,
-  } = useSelector(
-    (state) => state.logEntries,
-  );
+    status: connectionStatus,
+    connectionStatusMessage,
+  } = useSelector((state) => state.connection);
+  const [catastrophe, setCatastrophe] = useState(false);
+  useEffect(() => {
+    if (connectionStatus === CATASTROPHE) {
+      setCatastrophe(true);
+    }
+  }, [connectionStatus]);
+
+  const token = useMemo(() => sessionStorage.getItem('pd_access_token'), [userAuthorized]);
 
   if (darkMode) {
     document.body.classList.add('dark-mode');
@@ -123,12 +129,10 @@ const App = () => {
     userAuthorize();
     if (token && userAuthorized) {
       startMonitoring();
-      checkAbilities();
       getPrioritiesAsync();
       getIncidentsAsync();
       getExtensionsAsync();
       getResponsePlaysAsync();
-      checkConnectionStatus();
     }
   }, [userAuthorized]);
 
@@ -137,86 +141,39 @@ const App = () => {
     moment.locale(currentUserLocale);
   }, [currentUserLocale]);
 
-  // use these refs in the polling interval to avoid stale values
-  // without having to add them to the dependency array
-  const latestLogEntryDateRef = useRef(latestLogEntryDate);
+  // Set up API polling
   useEffect(() => {
-    latestLogEntryDateRef.current = latestLogEntryDate;
-  }, [latestLogEntryDate]);
-  const fetchingIncidentsRef = useRef(fetchingIncidents);
-  useEffect(() => {
-    fetchingIncidentsRef.current = fetchingIncidents;
-  }, [fetchingIncidents]);
-  const fetchingLogEntriesRef = useRef(fetchingLogEntries);
-  useEffect(() => {
-    fetchingLogEntriesRef.current = fetchingLogEntries;
-  }, [fetchingLogEntries]);
+    if (token && userAuthorized && userAcceptedDisclaimer) {
+      dispatch({ type: START_LOG_ENTRIES_POLLING });
+      dispatch({ type: START_CLEAN_RECENT_LOG_ENTRIES_POLLING });
+      dispatch({ type: START_ABILITIES_POLLING });
+      dispatch({ type: START_OAUTH_REFRESH_POLLING });
+    } else {
+      dispatch({ type: STOP_LOG_ENTRIES_POLLING });
+      dispatch({ type: STOP_CLEAN_RECENT_LOG_ENTRIES_POLLING });
+      dispatch({ type: STOP_ABILITIES_POLLING });
+      dispatch({ type: STOP_OAUTH_REFRESH_POLLING });
+    }
+  }, [userAuthorized, userAcceptedDisclaimer]);
 
-  // Set up log entry polling
-  useEffect(
-    () => {
-      const pollingInterval = setInterval(() => {
-        checkConnectionStatus();
-        if (userAuthorized && abilities.includes(PD_REQUIRED_ABILITY)) {
-          if (fetchingLogEntriesRef.current) {
-            // eslint-disable-next-line no-console
-            console.warn('skipping log entries fetch because already fetching log entries');
-            return;
-          }
-
-          if (!fetchingIncidentsRef.current && !DEBUG_DISABLE_POLLING) {
-            // Determine lookback based on last fetch/refresh of incidents
-            // 2x polling interval is a good lookback if we don't have a last fetch date
-            let since = new Date(new Date() - 2000 * LOG_ENTRIES_POLLING_INTERVAL_SECONDS);
-            // If we have a last fetch date, use that
-            if (lastFetchDate) {
-              since = new Date(lastFetchDate - 1000);
-            }
-            // If we have a latest log entry date and it's newer than last fetch date, use that
-            if (latestLogEntryDateRef.current && latestLogEntryDateRef.current > since) {
-              since = new Date(latestLogEntryDateRef.current - 1000);
-            }
-            getLogEntriesAsync(since);
-          } else if (fetchingIncidentsRef.current) {
-            // eslint-disable-next-line no-console
-            console.warn('skipping log entries fetch because already fetching incidents');
-          }
-        }
-      }, LOG_ENTRIES_POLLING_INTERVAL_SECONDS * 1000);
-      return () => clearInterval(pollingInterval);
-    },
-    // Changes to any of these in the store resets log entries timer
-    [userAuthorized, fetchingIncidents, lastFetchDate],
-  );
-
-  // Setup log entry clearing
+  // Set up connection status polling
   useEffect(() => {
-    const clearingInterval = setInterval(
-      () => {
-        if (userAuthorized) {
-          cleanRecentLogEntriesAsync();
-        }
-      },
-      60 * 60 * 1000,
+    dispatch({ type: START_CONNECTION_STATUS_POLLING });
+    dispatch({ type: START_QUEUE_STATS_POLLING });
+  }, []);
+
+  if (catastrophe) {
+    return (
+      <CatastropheModal
+        errorMessage={connectionStatusMessage}
+      />
     );
-    return () => clearInterval(clearingInterval);
-  }, [userAuthorized]);
+  }
 
-  // Setup queue stats update for status beacon tooltip
-  useEffect(() => {
-    const queueStateInterval = setInterval(() => {
-      if (userAuthorized) {
-        updateQueueStats(getLimiterStats());
-      }
-    }, 2000);
-    return () => clearInterval(queueStateInterval);
-  }, [userAuthorized]);
-
-  const headerRef = useRef(null);
-  const mainRef = useRef(null);
-  const footerRef = useRef(null);
-
-  if (!token) {
+  if (
+    !PD_USER_TOKEN
+    && (typeof token !== 'string' || !token.startsWith('pd'))
+  ) {
     return (
       <div className="App">
         <AuthComponent clientId={PD_OAUTH_CLIENT_ID} clientSecret={PD_OAUTH_CLIENT_SECRET} />
@@ -244,29 +201,38 @@ const App = () => {
 
   return (
     <div className="App">
-      <Box position="fixed" w="100%" h="100%" overflow="hidden">
-        <Box as="header" top={0} w="100%" pb={1} ref={headerRef}>
-          <NavigationBarComponent />
+      <ErrorBoundary fallbackRender={
+          (details) => {
+            RealUserMonitoring.trackError(details.error);
+            dispatchCatastrophe(`UI Render error: ${details.error.message}`);
+            return null;
+          }
+        }
+      >
+        <Box position="fixed" w="100%" h="100%" overflow="hidden">
+          <Box as="header" top={0} w="100%" pb={1}>
+            <NavigationBarComponent />
+          </Box>
+          <Box as="main" id="main">
+            <IncidentTableComponent />
+            <SettingsModalComponent />
+            <LoadSavePresetsModal />
+            <DndProvider backend={HTML5Backend}>
+              <ColumnsModalComponent />
+            </DndProvider>
+            <ActionAlertsModalComponent />
+            <CustomSnoozeModalComponent />
+            <AddNoteModalComponent />
+            <ReassignModalComponent />
+            <AddResponderModalComponent />
+            <MergeModalComponent />
+            <IncidentAlertsModal />
+          </Box>
+          <Flex as="footer" position="fixed" bottom={0} w="100%" zIndex="1" pt={1}>
+            <IncidentActionsComponent />
+          </Flex>
         </Box>
-        <Box ref={mainRef} as="main" id="main">
-          <IncidentTableComponent headerRef={headerRef} mainRef={mainRef} footerRef={footerRef} />
-          <SettingsModalComponent />
-          <LoadSavePresetsModal />
-          <DndProvider backend={HTML5Backend}>
-            <ColumnsModalComponent />
-          </DndProvider>
-          <ActionAlertsModalComponent />
-          <CustomSnoozeModalComponent />
-          <AddNoteModalComponent />
-          <ReassignModalComponent />
-          <AddResponderModalComponent />
-          <MergeModalComponent />
-          <IncidentAlertsModal />
-        </Box>
-        <Flex as="footer" position="fixed" bottom={0} w="100%" zIndex="1" pt={1} ref={footerRef}>
-          <IncidentActionsComponent />
-        </Flex>
-      </Box>
+      </ErrorBoundary>
     </div>
   );
 };

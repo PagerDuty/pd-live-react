@@ -112,4 +112,14 @@ describe('PagerDuty Live', { failFast: { enabled: true } }, () => {
     cy.get('iframe[title="TestExtra"]');
     // would need to enable cross-domain iframe javascript access to test further
   });
+
+  it('Application correctly renders the catastrophe modal', () => {
+    cy
+      .window()
+      .its('store')
+      .invoke('dispatch', { type: 'CATASTROPHE' });
+
+    cy.get('header').contains('Catastrophic Error');
+    cy.get('p').contains('The application will restart');
+  });
 });

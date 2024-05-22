@@ -45,6 +45,7 @@ export function* getResponsePlays() {
     // Handle API auth failure
     if (e.response?.status === 401) {
       e.message = i18next.t('Unauthorized Access');
+      throw e;
     }
     if (e.response?.status === 301) {
       // user just doesn't have response plays
@@ -102,7 +103,7 @@ export function* runResponsePlay(action) {
         yield displayActionModal(actionAlertsModalType, actionAlertsModalMessage);
       }
     } else {
-      handleMultipleAPIErrorResponses(responses);
+      yield call(handleMultipleAPIErrorResponses, responses);
     }
   } catch (e) {
     handleSagaError(RUN_RESPONSE_PLAY_ERROR, e);

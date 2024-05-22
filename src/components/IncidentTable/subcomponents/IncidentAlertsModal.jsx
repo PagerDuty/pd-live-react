@@ -257,8 +257,10 @@ const IncidentAlertsModal = () => {
                         id="alerts-modal-checkbox-all"
                         isChecked={selectedAlerts.length === alertsSortedDescendingDate.length}
                         isIndeterminate={
-                          selectedAlerts.length > 0
-                          && selectedAlerts.length < alertsSortedDescendingDate.length
+                          (
+                            selectedAlerts.length > 0
+                            && selectedAlerts.length < alertsSortedDescendingDate.length
+                          ) ? 'true' : null
                         }
                         onChange={(e) => {
                           if (e.target.checked) {

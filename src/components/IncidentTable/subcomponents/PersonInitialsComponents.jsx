@@ -29,6 +29,7 @@ import {
 import {
   throttledPdAxiosRequest,
 } from 'src/util/pd-api-wrapper';
+import RealUserMonitoring from 'src/config/monitoring';
 
 const PersonInitialsComponent = ({
   displayedUsers,
@@ -67,15 +68,31 @@ const PersonInitialsComponent = ({
           color: user.color?.replace('-', '') || 'Loading...',
         });
         const r = await throttledPdAxiosRequest('GET', `users/${user.id}`);
-        const fetchedUser = r.data.user;
-        addUserToUsersMap(fetchedUser);
-        retval = {
-          summary: fetchedUser.summary,
-          id: user.id,
-          html_url: fetchedUser.html_url,
-          email: fetchedUser.email,
-          color: fetchedUser.color.replace('-', ''),
-        };
+        const fetchedUser = r?.data?.user;
+        if (fetchedUser) {
+          addUserToUsersMap(fetchedUser);
+          retval = {
+            summary: fetchedUser.summary,
+            id: user.id,
+            html_url: fetchedUser.html_url,
+            email: fetchedUser.email,
+            color: fetchedUser.color.replace('-', ''),
+          };
+        } else {
+          RealUserMonitoring.trackError(new Error('Error fetching user'),
+            {
+              user_id: user.id,
+              endpoint: `users/${user.id}`,
+              response: r,
+            });
+          retval = {
+            summary: 'Error fetching user',
+            id: user.id,
+            html_url: 'Error fetching user',
+            email: 'Error fetching user',
+            color: 'black',
+          };
+        }
       }
       if (CSS.supports && !CSS.supports('color', retval.color)) {
         retval.color = 'black';

@@ -21,7 +21,8 @@ import {
 import {
   FETCH_LOG_ENTRIES_REQUESTED,
   FETCH_LOG_ENTRIES_COMPLETED,
-  FETCH_LOG_ENTRIES_ERROR,
+  // FETCH_LOG_ENTRIES_ERROR,
+  UPDATE_LOG_ENTRIES_POLLING,
 } from './actions';
 
 import {
@@ -48,7 +49,7 @@ describe('Sagas: Log Entries', () => {
   it('fetches log entries', () => expectSaga(getLogEntriesAsync)
     .withReducer(logEntries)
     .provide([
-      [select(selectLogEntries), { logEntries: [], recentLogEntries: {} }],
+      [select(selectLogEntries), { logEntries: [], recentLogEntries: {}, pollingStatus: { errors: [] } }],
       [matchers.call.fn(pdParallelFetch), mockLogEntries],
     ])
     .dispatch({
@@ -73,7 +74,7 @@ describe('Sagas: Log Entries', () => {
   it('fetches incidents instead when log entries is too long', () => expectSaga(getLogEntriesAsync)
     .withReducer(logEntries)
     .provide([
-      [select(selectLogEntries), { logEntries: [], recentLogEntries: {} }],
+      [select(selectLogEntries), { logEntries: [], recentLogEntries: {}, pollingStatus: { errors: [] } }],
       [matchers.call.fn(pdParallelFetch), throwError(new Error('Too many records: 1001 > 1000'))],
     ])
     .dispatch({
@@ -86,8 +87,9 @@ describe('Sagas: Log Entries', () => {
         effects,
       } = result;
       expect(effects.call).toHaveLength(1);
-      expect(effects.put).toHaveLength(2);
-      expect(effects.put[0].payload.action.type).toEqual(FETCH_LOG_ENTRIES_ERROR);
-      expect(effects.put[1].payload.action.type).toEqual(FETCH_INCIDENTS_REQUESTED);
+      expect(effects.put).toHaveLength(3);
+      expect(effects.put[0].payload.action.type).toEqual(UPDATE_LOG_ENTRIES_POLLING);
+      expect(effects.put[1].payload.action.type).toEqual(FETCH_LOG_ENTRIES_COMPLETED);
+      expect(effects.put[2].payload.action.type).toEqual(FETCH_INCIDENTS_REQUESTED);
     }));
 });

@@ -1,6 +1,8 @@
 import {
-  all, take,
+  all, take, put,
 } from 'redux-saga/effects';
+
+import RealUserMonitoring from 'src/config/monitoring';
 
 import {
   REHYDRATE,
@@ -37,6 +39,8 @@ import {
   getLogEntriesAsync,
   // updateRecentLogEntriesAsync,
   cleanRecentLogEntriesAsync,
+  cleanRecentLogEntriesTaskWatcher,
+  pollLogEntriesTaskWatcher,
 } from './log_entries/sagas';
 
 import {
@@ -122,10 +126,19 @@ import {
 } from './settings/sagas';
 
 import {
+  CATASTROPHE,
+} from './connection/actions';
+
+import {
   updateConnectionStatus,
   checkConnectionStatus,
+  checkConnectionStatusTaskWatcher,
   checkAbilities,
+  checkAbilitiesTaskWatcher,
+  refreshOauth,
+  checkForTokenExpiryWatcher,
   updateQueueStats,
+  updateQueueStatsTaskWatcher,
 } from './connection/sagas';
 
 import {
@@ -134,120 +147,137 @@ import {
 
 export default function* rootSaga() {
   yield take(REHYDRATE); // Wait for rehydrate to prevent sagas from running with empty store
-  yield all([
-    // Query Settings
-    toggleDisplayQuerySettings(),
-    updateQuerySettingsSinceDate(),
-    updateQuerySettingsUntilDate(),
-    updateQuerySettingsIncidentStatus(),
-    updateQuerySettingsIncidentUrgency(),
-    updateQuerySettingsIncidentPriority(),
-    updateQuerySettingsTeams(),
-    updateQuerySettingsEscalationPolicies(),
-    updateQuerySettingsServices(),
-    updateQuerySettingsUsers(),
-    updateSearchQuery(),
-    validateIncidentQuery(),
-    confirmIncidentQuery(),
+  try {
+    yield all([
+      // Query Settings
+      toggleDisplayQuerySettings(),
+      updateQuerySettingsSinceDate(),
+      updateQuerySettingsUntilDate(),
+      updateQuerySettingsIncidentStatus(),
+      updateQuerySettingsIncidentUrgency(),
+      updateQuerySettingsIncidentPriority(),
+      updateQuerySettingsTeams(),
+      updateQuerySettingsEscalationPolicies(),
+      updateQuerySettingsServices(),
+      updateQuerySettingsUsers(),
+      updateSearchQuery(),
+      validateIncidentQuery(),
+      confirmIncidentQuery(),
 
-    // Incidents
-    getIncidentsAsync(),
-    getAlertsForIncidentsAsync(),
-    getNotesForIncidentsAsync(),
-    processLogEntries(),
-    updateIncidents(),
-    updateIncidentAlerts(),
-    updateIncidentNotes(),
-    filterIncidents(),
+      // Incidents
+      getIncidentsAsync(),
+      getAlertsForIncidentsAsync(),
+      getNotesForIncidentsAsync(),
+      processLogEntries(),
+      updateIncidents(),
+      updateIncidentAlerts(),
+      updateIncidentNotes(),
+      filterIncidents(),
 
-    // Log Entries
-    getLogEntriesAsync(),
-    cleanRecentLogEntriesAsync(),
+      // Log Entries
+      getLogEntriesAsync(),
+      cleanRecentLogEntriesAsync(),
+      cleanRecentLogEntriesTaskWatcher(),
+      pollLogEntriesTaskWatcher(),
 
-    // Incident Table
-    saveIncidentTable(),
-    updateIncidentTableColumns(),
-    updateIncidentTableState(),
-    selectIncidentTableRows(),
+      // Incident Table
+      saveIncidentTable(),
+      updateIncidentTableColumns(),
+      updateIncidentTableState(),
+      selectIncidentTableRows(),
 
-    // Incident Actions
-    doAction(),
-    acknowledgeAsync(),
-    escalateAsync(),
-    reassignAsync(),
-    toggleDisplayReassignModal(),
-    addResponderAsync(),
-    toggleDisplayAddResponderModal(),
-    snoozeAsync(),
-    toggleDisplayCustomSnoozeModal(),
-    toggleDisplayMergeModal(),
-    mergeAsync(),
-    resolveAsync(),
-    updatePriorityAsync(),
-    addNoteAsync(),
-    toggleDisplayAddNoteModal(),
-    runCustomIncidentActionAsync(),
-    syncWithExternalSystemAsync(),
-    moveAlertsAsync(),
+      // Incident Actions
+      doAction(),
+      acknowledgeAsync(),
+      escalateAsync(),
+      reassignAsync(),
+      toggleDisplayReassignModal(),
+      addResponderAsync(),
+      toggleDisplayAddResponderModal(),
+      snoozeAsync(),
+      toggleDisplayCustomSnoozeModal(),
+      toggleDisplayMergeModal(),
+      mergeAsync(),
+      resolveAsync(),
+      updatePriorityAsync(),
+      addNoteAsync(),
+      toggleDisplayAddNoteModal(),
+      runCustomIncidentActionAsync(),
+      syncWithExternalSystemAsync(),
+      moveAlertsAsync(),
 
-    // Action Alerts Modal
-    toggleActionAlertsModal(),
-    updateActionAlertsModal(),
+      // Action Alerts Modal
+      toggleActionAlertsModal(),
+      updateActionAlertsModal(),
 
-    // Users
-    userAuthorize(),
-    userUnauthorize(),
-    userAcceptDisclaimer(),
-    getUsersAsync(),
-    getCurrentUserAsync(),
-    updateUserLocale(),
-    addUserToUsersMap(),
+      // Users
+      userAuthorize(),
+      userUnauthorize(),
+      userAcceptDisclaimer(),
+      getUsersAsync(),
+      getCurrentUserAsync(),
+      updateUserLocale(),
+      addUserToUsersMap(),
 
-    // Services
-    getServicesAsync(),
+      // Services
+      getServicesAsync(),
 
-    // Teams
-    getTeamsAsync(),
+      // Teams
+      getTeamsAsync(),
 
-    // Priorities
-    getPrioritiesAsync(),
+      // Priorities
+      getPrioritiesAsync(),
 
-    // Escalation Policies
-    getEscalationPoliciesAsync(),
+      // Escalation Policies
+      getEscalationPoliciesAsync(),
 
-    // Extensions
-    getExtensionsAsync(),
-    mapServicesToExtensions(),
+      // Extensions
+      getExtensionsAsync(),
+      mapServicesToExtensions(),
 
-    // Response Plays
-    getResponsePlaysAsync(),
-    runResponsePlayAsync(),
+      // Response Plays
+      getResponsePlaysAsync(),
+      runResponsePlayAsync(),
 
-    // Settings
-    toggleSettingsModal(),
-    toggleLoadSavePresetsModal(),
-    toggleColumnsModal(),
-    setDefaultSinceDateTenor(),
-    setSearchAllCustomDetails(),
-    setFuzzySearch(),
-    setRespondersInEpFilter(),
-    setAlertCustomDetailColumns(),
-    setShowIncidentAlertsModalForIncidentId(),
-    setMaxRateLimit(),
-    setAutoAcceptIncidentsQuery(),
-    setAutoRefreshInterval(),
-    setDarkMode(),
-    setRelativeDates(),
-    clearLocalCache(),
+      // Settings
+      toggleSettingsModal(),
+      toggleLoadSavePresetsModal(),
+      toggleColumnsModal(),
+      setDefaultSinceDateTenor(),
+      setSearchAllCustomDetails(),
+      setFuzzySearch(),
+      setRespondersInEpFilter(),
+      setAlertCustomDetailColumns(),
+      setShowIncidentAlertsModalForIncidentId(),
+      setMaxRateLimit(),
+      setAutoAcceptIncidentsQuery(),
+      setAutoRefreshInterval(),
+      setDarkMode(),
+      setRelativeDates(),
+      clearLocalCache(),
 
-    // Connection
-    updateConnectionStatus(),
-    checkConnectionStatus(),
-    updateQueueStats(),
-    checkAbilities(),
+      // Connection
+      updateConnectionStatus(),
+      checkConnectionStatus(),
+      checkConnectionStatusTaskWatcher(),
+      updateQueueStats(),
+      updateQueueStatsTaskWatcher(),
+      checkAbilities(),
+      checkAbilitiesTaskWatcher(),
+      refreshOauth(),
+      checkForTokenExpiryWatcher(),
 
-    // Monitoring
-    startMonitoring(),
-    stopMonitoring(),
-  ]);
+      // Monitoring
+      startMonitoring(),
+      stopMonitoring(),
+    ]);
+  } catch (e) {
+    RealUserMonitoring.trackError(e);
+    // eslint-disable-next-line no-console
+    console.error('Error in rootSaga:', e);
+    yield put({
+      type: CATASTROPHE,
+      connectionStatusMessage: e.message,
+    });
+  }
 }

@@ -2,6 +2,16 @@ import {
   put,
 } from 'redux-saga/effects';
 
+import {
+  userUnauthorize,
+} from 'src/redux/users/actions';
+
+import {
+  stopMonitoring,
+} from 'src/redux/monitoring/actions';
+
+import RealUserMonitoring from 'src/config/monitoring';
+
 import i18next from 'src/i18n';
 
 import {
@@ -10,6 +20,7 @@ import {
 } from 'src/redux/action_alerts/actions';
 
 import {
+  // CATASTROPHE,
   UPDATE_CONNECTION_STATUS_REQUESTED,
 } from 'src/redux/connection/actions';
 
@@ -20,12 +31,25 @@ export const MISSING_ABILITY_ERROR = i18next.t(
 
 // Helper function to handle errors while processing saga
 export function* handleSagaError(action, exception) {
+  RealUserMonitoring.trackError(exception);
+  if (exception?.response?.status === 401) {
+    yield put(userUnauthorize());
+    yield put(stopMonitoring());
+    sessionStorage.removeItem('pd_access_token');
+    throw Error(i18next.t('Unauthorized. Please re-authorize.'));
+  }
   yield displayActionModal('error', exception.message);
   yield put({ type: action, message: exception.message });
 }
 
 // Helper functions to handle API errors in response
-export const handleSingleAPIErrorResponse = (response) => {
+export function* handleSingleAPIErrorResponse(response) {
+  if (response?.status === 401) {
+    yield put(userUnauthorize());
+    yield put(stopMonitoring());
+    sessionStorage.removeItem('pd_access_token');
+    throw Error(i18next.t('Unauthorized. Please re-authorize.'));
+  }
   if (response?.data?.error) {
     throw Error(
       response.data.error.message
@@ -34,21 +58,30 @@ export const handleSingleAPIErrorResponse = (response) => {
   } else {
     throw Error(i18next.t('Unknown error while using PD API'));
   }
-};
+}
 
-export const handleMultipleAPIErrorResponses = (responses) => {
-  const errors = responses
+export function* handleMultipleAPIErrorResponses(responses) {
+  if (responses.some((response) => response?.status === 401)) {
+    yield put(userUnauthorize());
+    yield put(stopMonitoring());
+    sessionStorage.removeItem('pd_access_token');
+    throw Error(i18next.t('Unauthorized. Please re-authorize.'));
+  }
+  const errorStrs = responses
+    .filter((response) => response?.status < 200 || response?.status >= 300)
     .filter((response) => response?.data?.error)
     .map(
       (response) => response.data.error.message
         + (response.data.error.errors ? `: ${response.data.error.errors.join(', ')}` : ''),
     );
+  // dedup errors
+  const errors = [...new Set(errorStrs)];
   if (errors.length) {
     throw Error(errors);
   } else {
     throw Error(i18next.t('Unknown error while using PD API'));
   }
-};
+}
 
 // Helper function to display modal with API result
 export function* displayActionModal(actionAlertsModalType, actionAlertsModalMessage) {

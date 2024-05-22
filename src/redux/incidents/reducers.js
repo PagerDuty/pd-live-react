@@ -2,6 +2,8 @@ import {
   produce,
 } from 'immer';
 
+import RealUserMonitoring from 'src/config/monitoring';
+
 import {
   UPDATE_INCIDENT_REDUCER_STATUS,
   UPDATE_INCIDENT_LAST_FETCH_DATE,
@@ -37,6 +39,12 @@ import {
 const uniqOnId = (arr) => {
   const map = new Map();
   arr.forEach((item) => {
+    if (!(item?.id)) {
+      RealUserMonitoring.trackError(new Error('incidents/reducers:uniqOnId: item does not have an id'), {
+        item,
+      });
+      return;
+    }
     map.set(item.id, item);
   });
   return [...map.values()];

@@ -6,7 +6,8 @@
   "dependencies": {
     "@chakra-ui/icons": "^2.1.1",
     "@chakra-ui/react": "^2.8.0",
-    "@datadog/browser-rum": "^4.47.0",
+    "@datadog/browser-rum": "^5.14.0",
+    "@datadog/datadog-ci": "^2.33.0",
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
     "@fortawesome/fontawesome-svg-core": "^6.4.2",
@@ -43,6 +44,7 @@
     "react-dnd": "^16.0.1",
     "react-dnd-html5-backend": "^16.0.1",
     "react-dom": "^18",
+    "react-error-boundary": "^4.0.13",
     "react-i18next": "^13.2.0",
     "react-icons": "^4.9.0",
     "react-minimal-pie-chart": "^8.4.0",
@@ -61,6 +63,7 @@
   "scripts": {
     "start": "vite",
     "build": "npx genversion src/config/version.js --semi --es6 && vite build",
+    "sourcemaps": "datadog-ci sourcemaps upload build --service=pd-live-react --release-version=$(node -e 'console.log(require(__dirname + `/package.json`).version)') --project-path=./ --minified-path-prefix=/pd-live-react/",
     "genversion": "npx genversion src/config/version.js --semi --es6",
     "jest": "npx jest",
     "cypress:open": "npx cypress open --browser chrome --e2e",

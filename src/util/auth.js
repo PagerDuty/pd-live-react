@@ -116,11 +116,7 @@ export const exchangeCodeForToken = async (
   };
 
   const data = await postData(requestTokenUrl, formData);
-
-  if (data.access_token) {
-    return data.access_token;
-  }
-  return null;
+  return data;
 };
 
 // eslint-disable-next-line no-unused-vars
