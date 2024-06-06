@@ -1,4 +1,6 @@
-import React from 'react';
+import React, {
+  useMemo,
+} from 'react';
 
 import {
   useSelector, useDispatch,
@@ -28,6 +30,7 @@ import DatePickerComponent from './subcomponents/DatePickerComponent';
 import StatusQueryComponent from './subcomponents/StatusQueryComponent';
 import UrgencyQueryComponent from './subcomponents/UrgencyQueryComponent';
 import PriorityQueryComponent from './subcomponents/PriorityQueryComponent';
+import ColumnFilterIndicatorComponent from './subcomponents/ColumnFilterIndicatorComponent';
 
 import './QuerySettingsComponent.scss';
 
@@ -52,6 +55,10 @@ const QuerySettingsComponent = () => {
   } = useSelector(
     (state) => state.querySettings,
   );
+  const {
+    filters,
+  } = useSelector((state) => state.incidentTable.incidentTableState);
+
   const dispatch = useDispatch();
   const updateQuerySettingsServices = (newServiceIds) => {
     dispatch(updateQuerySettingsServicesConnected(newServiceIds));
@@ -65,6 +72,13 @@ const QuerySettingsComponent = () => {
   const updateQuerySettingsTeams = (newTeamIds) => {
     dispatch(updateQuerySettingsTeamsConnected(newTeamIds));
   };
+
+  const filterCount = useMemo(() => {
+    if (filters instanceof Array) {
+      return filters.length;
+    }
+    return 0;
+  }, [filters]);
 
   return (
     <Box m={4}>
@@ -117,7 +131,11 @@ const QuerySettingsComponent = () => {
             isMulti
           />
         </BoxForInput>
-        {/* <GlobalSearchComponent /> */}
+        { filterCount > 0 && (
+          <BoxForInput label={`${t('Column Filters')}:`}>
+            <ColumnFilterIndicatorComponent />
+          </BoxForInput>
+        )}
       </Flex>
     </Box>
   );

@@ -16,6 +16,8 @@ import {
   UPDATE_INCIDENT_TABLE_STATE_COMPLETED,
   SELECT_INCIDENT_TABLE_ROWS_REQUESTED,
   SELECT_INCIDENT_TABLE_ROWS_COMPLETED,
+  CLEAR_INCIDENT_TABLE_FILTERS_REQUESTED,
+  CLEAR_INCIDENT_TABLE_FILTERS_COMPLETED,
 } from './actions';
 
 import selectIncidentTable from './selectors';
@@ -120,5 +122,15 @@ export function* selectIncidentTableRowsImpl(action) {
     allSelected,
     selectedCount,
     selectedRows,
+  });
+}
+
+export function* clearIncidentTableFilters() {
+  yield takeLatest(CLEAR_INCIDENT_TABLE_FILTERS_REQUESTED, clearIncidentTableFiltersImpl);
+}
+
+export function* clearIncidentTableFiltersImpl() {
+  yield put({
+    type: CLEAR_INCIDENT_TABLE_FILTERS_COMPLETED,
   });
 }

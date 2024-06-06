@@ -56,6 +56,7 @@ const incidents = produce(
       case FETCH_INCIDENTS_REQUESTED:
         draft.fetchingIncidents = true;
         draft.status = FETCH_INCIDENTS_REQUESTED;
+        draft.error = null;
         break;
 
       case FETCH_INCIDENTS_COMPLETED:
