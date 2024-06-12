@@ -34,6 +34,10 @@ import {
 import i18next from 'src/i18n';
 
 import {
+  anythingToString,
+} from 'src/util/helpers';
+
+import {
   HIGH, LOW,
 } from 'src/util/incidents';
 import {
@@ -775,6 +779,65 @@ export const defaultAlertsColumns = () => [
   }),
 ];
 
+export const computedColumnForSavedColumn = (savedColumn) => {
+  console.log('savedColumn', savedColumn);
+  const {
+    Header: header,
+    accessorPath,
+    expressionType,
+    expression,
+    width,
+  } = savedColumn;
+  if (!(header && accessorPath)) {
+    console.log('returning null 1');
+    return null;
+  }
+  const accessor = (incident) => {
+    console.log({ accessorPath, expressionType, expression });
+    try {
+      const valuesAtPath = JSONPath({
+        path: accessorPath,
+        json: incident,
+      });
+      if (!valuesAtPath) {
+        console.log('returning null for empty at path');
+        return null;
+      }
+      if (expressionType === 'regex') {
+        const stringValuesAtPath = valuesAtPath.map((v) => anythingToString(v));
+        const joinedValuesAtPath = stringValuesAtPath.join('\n');
+        const regex = new RegExp(expression, 'gm');
+        const matches = Array.from(joinedValuesAtPath.matchAll(regex), (match) => match[1]);
+        console.log('matches', matches);
+        return matches.join(', ') || null;
+      }
+      if (expressionType === 'regex-single') {
+        const stringValuesAtPath = valuesAtPath.map((v) => anythingToString(v));
+        const joinedValuesAtPath = stringValuesAtPath.join('\n');
+        const regex = new RegExp(expression, 'm');
+        const match = joinedValuesAtPath.match(regex);
+        console.log('match', match);
+        return match ? match[1] : null;
+      }
+      console.log('returning valuesAtPath[0]');
+      return valuesAtPath[0];
+    } catch (e) {
+      console.log('returning null for exception', e);
+      return null;
+    }
+  };
+  const column = incidentColumn({
+    id: `${header}-accessorPath`,
+    header,
+    columnType: 'computed',
+    accessor,
+    accessorPath,
+    minWidth: width || 100,
+  });
+  console.log('column', column);
+  return column;
+};
+
 export const customAlertColumnForSavedColumn = (savedColumn) => {
   const {
     Header: header, accessorPath, aggregator, width,
@@ -846,6 +909,9 @@ export const columnsForSavedColumns = (savedColumns) => {
       }
       if (column.columnType === 'alert') {
         return customAlertColumnForSavedColumn(column);
+      }
+      if (column.columnType === 'computed') {
+        return computedColumnForSavedColumn(column);
       }
       return null;
     })

@@ -41,7 +41,7 @@ import {
 import {
   defaultColumns,
   customAlertColumns,
-  columnsForSavedColumns,
+  // columnsForSavedColumns,
 } from 'src/config/column-generator';
 
 import {
@@ -106,19 +106,25 @@ const TableColumnsModalComponent = () => {
 
   const allAvailableColumns = useMemo(getAllAvailableColumns, [alertCustomDetailFields]);
 
-  const getSelectedColumns = () => columnsForSavedColumns(incidentTableColumns).map((column) => {
-    // Recreate original value used from react-select in order to populate dual list
-    const value = columnValue(column);
-    return {
-      id: column.id,
-      Header: column.Header,
-      columnType: column.columnType,
-      accessor: column.accessor,
-      accessorPath: column.accessorPath,
-      label: column.i18n ? column.i18n : column.Header,
-      value,
-    };
-  });
+  // const getSelectedColumns = () => columnsForSavedColumns(incidentTableColumns).map((column) => {
+  //   // Recreate original value used from react-select in order to populate dual list
+  //   const value = columnValue(column);
+  //   return {
+  //     id: column.id,
+  //     Header: column.Header,
+  //     columnType: column.columnType,
+  //     accessor: column.accessor,
+  //     accessorPath: column.accessorPath,
+  //     label: column.i18n ? column.i18n : column.Header,
+  //     value,
+  //   };
+  // });
+  const getSelectedColumns = () => incidentTableColumns.map((column) => (
+    {
+      ...column,
+      value: columnValue(column),
+    }
+  ));
   const [selectedColumns, setSelectedColumns] = useState(getSelectedColumns());
 
   const getUnselectedColumns = () => {
@@ -143,7 +149,7 @@ const TableColumnsModalComponent = () => {
       accessorPath,
       aggregator,
       value,
-      label: value,
+      // label: value,
       columnType: 'alert',
     };
     const newAlertCustomDetailFields = [...alertCustomDetailFields, newColumn];
