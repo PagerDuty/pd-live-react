@@ -31,7 +31,7 @@ jobs:
           path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
           key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
       - name: Install project dependencies (via cache)
-        run: yarn --prefer-offline
+        run: yarn --frozen-lockfile --prefer-offline --ignore-optional
 
   jest:
     needs: install
@@ -54,7 +54,7 @@ jobs:
           path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
           key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
       - name: Install project dependencies (via cache)
-        run: yarn --prefer-offline
+        run: yarn --frozen-lockfile --prefer-offline --ignore-optional
       - name: Run Jest Tests
         run: yarn jest
 
@@ -111,6 +111,7 @@ jobs:
           spec: cypress/e2e/${{ matrix.e2e }}
           parallel: false # Don't use Cypress in-built parallelization
           install: true
+          install-command: yarn --frozen-lockfile --prefer-offline --ignore-optional
           cache-key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
         env:
           # For recording and parallelization to work you must set your CYPRESS_RECORD_KEY
