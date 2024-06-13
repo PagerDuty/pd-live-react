@@ -12,6 +12,9 @@ export const UPDATE_INCIDENT_TABLE_STATE_COMPLETED = 'UPDATE_INCIDENT_TABLE_STAT
 export const SELECT_INCIDENT_TABLE_ROWS_REQUESTED = 'SELECT_INCIDENT_TABLE_ROWS_REQUESTED';
 export const SELECT_INCIDENT_TABLE_ROWS_COMPLETED = 'SELECT_INCIDENT_TABLE_ROWS_COMPLETED';
 
+export const CLEAR_INCIDENT_TABLE_FILTERS_REQUESTED = 'CLEAR_INCIDENT_TABLE_FILTERS_REQUESTED';
+export const CLEAR_INCIDENT_TABLE_FILTERS_COMPLETED = 'CLEAR_INCIDENT_TABLE_FILTERS_COMPLETED';
+
 // Define Actions
 
 export const saveIncidentTable = (updatedIncidentTableColumns) => ({
@@ -34,4 +37,8 @@ export const selectIncidentTableRows = (allSelected, selectedCount, selectedRows
   allSelected,
   selectedCount,
   selectedRows,
+});
+
+export const clearIncidentTableFilters = () => ({
+  type: CLEAR_INCIDENT_TABLE_FILTERS_REQUESTED,
 });

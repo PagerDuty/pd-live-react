@@ -25,6 +25,7 @@ function fixAcceptHeader404() {
 export default defineConfig(() => ({
   base: '/pd-live-react',
   server: {
+    host: '127.0.0.1',
     port: 3000,
   },
   build: {

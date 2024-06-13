@@ -169,9 +169,17 @@ export function* pollLogEntriesTask() {
       },
       incidents: {
         fetchingIncidents,
+        error: incidentsError,
       },
     } = yield select();
-    if (userAuthorized && userAcceptedDisclaimer && !fetchingIncidents && !DEBUG_DISABLE_POLLING) {
+
+    const tooManyIncidentsError = (
+      incidentsError
+      && typeof incidentsError === 'string'
+      && incidentsError.startsWith('Too many records')
+    );
+
+    if (userAuthorized && userAcceptedDisclaimer && !fetchingIncidents && !DEBUG_DISABLE_POLLING && !tooManyIncidentsError) {
       const lastPollStarted = new Date();
       yield put({
         type: UPDATE_LOG_ENTRIES_POLLING,
@@ -199,7 +207,7 @@ export function* pollLogEntriesTask() {
       yield delay((LOG_ENTRIES_POLLING_INTERVAL_SECONDS * 1000) - timeTaken);
     } else {
       // eslint-disable-next-line no-console
-      console.log('skipping poll', { userAuthorized, userAcceptedDisclaimer, fetchingIncidents, DEBUG_DISABLE_POLLING });
+      console.log('skipping poll', { userAuthorized, userAcceptedDisclaimer, fetchingIncidents, DEBUG_DISABLE_POLLING, tooManyIncidentsError });
       yield delay(LOG_ENTRIES_POLLING_INTERVAL_SECONDS * 1000);
     }
   }

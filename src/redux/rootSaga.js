@@ -48,6 +48,7 @@ import {
   updateIncidentTableColumns,
   updateIncidentTableState,
   selectIncidentTableRows,
+  clearIncidentTableFilters,
 } from './incident_table/sagas';
 
 import {
@@ -185,6 +186,7 @@ export default function* rootSaga() {
       updateIncidentTableColumns(),
       updateIncidentTableState(),
       selectIncidentTableRows(),
+      clearIncidentTableFilters(),
 
       // Incident Actions
       doAction(),
