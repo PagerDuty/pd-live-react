@@ -113,4 +113,12 @@ describe('Search Incidents', { failFast: { enabled: true } }, () => {
     cy.get('#service-filter-icon').realHover();
     cy.get('button[aria-label="Clear Filter"]').filter(':visible').click();
   });
+
+  it('Column filtering on Service column for `zzzzzz` returns no incidents and clear filters button', () => {
+    cy.get('#service-filter-icon').realHover();
+    cy.get('input[placeholder="Filter"]').filter(':visible').click().type('zzzzzz');
+    cy.get('.empty-incidents-badge').should('be.visible');
+    cy.get('#clear-filters-button').filter(':visible').click();
+    waitForIncidentTable();
+  });
 });

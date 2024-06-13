@@ -47,6 +47,7 @@ const ColumnFilterIndicatorComponent = () => {
         {filterCount}
       </Tag>
       <Button
+        id="clear-filters-button"
         size="xs"
         ml={1}
         colorScheme="red"
