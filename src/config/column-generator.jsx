@@ -644,7 +644,17 @@ export const defaultAlertsColumns = () => [
     id: 'severity',
     header: 'Severity',
     columnType: 'alert',
-    accessor: (incident) => incident.alerts?.[0]?.body?.cef_details?.severity || '',
+    accessor: (incident) => {
+      if (
+        incident.alerts
+        && incident.alerts instanceof Array
+        && incident.alerts.length > 0
+        && incident.alerts[0] instanceof Object
+      ) {
+        return incident.alerts[0].severity || '--';
+      }
+      return '--';
+    },
     minWidth: 100,
     renderer: ({
       value, cell,
