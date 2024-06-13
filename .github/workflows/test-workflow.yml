@@ -102,7 +102,7 @@ jobs:
           # Starts web server for E2E tests - replace with your own server invocation
           # https://docs.cypress.io/guides/continuous-integration/introduction#Boot-your-server
           start: yarn start
-          wait-on: 'http://localhost:3000' # Waits for above
+          wait-on: 'http://127.0.0.1:3000' # Waits for above
           browser: chrome
           # Records to Cypress Cloud
           # https://docs.cypress.io/guides/cloud/projects#Set-up-a-project-to-record
@@ -110,7 +110,8 @@ jobs:
           # Specify Cypress test spec files in each matrix job to deterministically run tests in parallel
           spec: cypress/e2e/${{ matrix.e2e }}
           parallel: false # Don't use Cypress in-built parallelization
-          install: false # Install Cypress only, don't install dependencies
+          install: true
+          install-command: yarn --frozen-lockfile --prefer-offline --ignore-optional
           cache-key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
         env:
           # For recording and parallelization to work you must set your CYPRESS_RECORD_KEY
