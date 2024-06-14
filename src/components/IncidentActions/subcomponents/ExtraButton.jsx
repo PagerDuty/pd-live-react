@@ -19,7 +19,7 @@ const isInt = (value) => {
 };
 
 const ExtraButton = ({
-  label, url, width, height,
+  label, url, width, height, tab,
 }) => {
   // State to control the open state of the popover
   const [isOpen, setIsOpen] = useState(false);
@@ -29,6 +29,22 @@ const ExtraButton = ({
 
   // Function to close the popover
   const closePopover = () => setIsOpen(false);
+
+  if (tab) {
+    return (
+      <Button
+        as="a"
+        id={`incident-action-extra-button-${url}`}
+        size="sm"
+        mr={2}
+        mb={2}
+        href={url}
+        target="_blank"
+      >
+        {label}
+      </Button>
+    );
+  }
 
   return (
     <Popover isOpen={isOpen} onClose={closePopover} closeOnBlur={false}>
