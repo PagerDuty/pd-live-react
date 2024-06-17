@@ -7,9 +7,7 @@ import {
   useTranslation,
 } from 'react-i18next';
 
-import {
-  ReactComponent as EmptyIncidents,
-} from 'src/assets/images/empty_incidents.svg';
+import EmptyIncidents from 'src/assets/images/empty_incidents.svg';
 
 const EmptyIncidentsComponent = ({
   message,

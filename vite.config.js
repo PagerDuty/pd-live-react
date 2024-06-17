@@ -50,7 +50,7 @@ export default defineConfig(() => ({
     }),
     EnvironmentPlugin('all', { loadEnvFiles: true }),
     // svgr options: https://react-svgr.com/docs/options/
-    svgr(),
+    svgr({ include: '**/*.svg' }),
     eslint(),
     fixAcceptHeader404(),
   ],
