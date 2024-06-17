@@ -46,6 +46,7 @@ import {
 import {
   selectIncidentTableRows as selectIncidentTableRowsConnected,
   updateIncidentTableState as updateIncidentTableStateConnected,
+  CLEAR_INCIDENT_TABLE_FILTERS_COMPLETED,
 } from 'src/redux/incident_table/actions';
 
 import EmptyIncidentsComponent from './subcomponents/EmptyIncidentsComponent';
@@ -120,7 +121,7 @@ const doCsvExport = (tableData) => {
 
 const IncidentTableComponent = () => {
   const {
-    incidentTableState, incidentTableColumns,
+    incidentTableState, incidentTableColumns, status: incidentTableStatus,
   } = useSelector((state) => state.incidentTable);
   const {
     status: incidentActionsStatus,
@@ -221,7 +222,8 @@ const IncidentTableComponent = () => {
   // Debouncing for table state
   const debouncedUpdateIncidentTableState = useDebouncedCallback((state, action) => {
     // Only update store with sorted and column resizing state
-    if (action.type === 'toggleSortBy' || action.type === 'columnDoneResizing') {
+    // and filter state
+    if (action.type === 'toggleSortBy' || action.type === 'columnDoneResizing' || action.type === 'setFilter') {
       updateIncidentTableState(state);
     }
   }, 100);
@@ -251,7 +253,7 @@ const IncidentTableComponent = () => {
       // Set initial state from store
       initialState: incidentTableState,
       // Handle updates to table
-      stateReducer: (newState, action) => debouncedUpdateIncidentTableState(newState, action),
+      stateReducer: debouncedUpdateIncidentTableState,
     },
     // Plugins
     useFilters,
@@ -327,18 +329,16 @@ const IncidentTableComponent = () => {
     },
   );
 
-  // save filters when the user changes them
-  useEffect(() => {
-    updateIncidentTableState({
-      ...incidentTableState,
-      filters: tableInstance.state.filters,
-    });
-  }, [tableInstance.state.filters]);
-
   // Update table filters when columns change
   useEffect(() => {
     tableInstance.setAllFilters(incidentTableState.filters);
   }, [columns]);
+
+  useEffect(() => {
+    if (incidentTableStatus === CLEAR_INCIDENT_TABLE_FILTERS_COMPLETED) {
+      tableInstance.setAllFilters(incidentTableState.filters);
+    }
+  }, [incidentTableStatus]);
 
   const {
     getTableProps,
@@ -406,7 +406,10 @@ const IncidentTableComponent = () => {
     // Therefore, clearing the checkbox in the UI before it is filtered out is the best we can do for now
     const isActionRequested = incidentActionsStatus === 'ACTION_REQUESTED';
     const isToggleAction = incidentActionsStatus.includes('TOGGLE');
-    const isRequestedOrCompleted = incidentActionsStatus.includes('REQUESTED') || incidentActionsStatus.includes('COMPLETED');
+    const isRequestedOrCompleted = (
+      incidentActionsStatus.includes('REQUESTED')
+      || incidentActionsStatus.includes('COMPLETED')
+    );
 
     if (isActionRequested || (!isToggleAction && isRequestedOrCompleted)) {
       toggleAllRowsSelected(false);
@@ -533,19 +536,26 @@ const IncidentTableComponent = () => {
             </MenuItem>
           </ContextMenu>
         </Box>
-        <Box {...getTableBodyProps()}>
-          <FixedSizeList
-            className="incident-table-fixed-list"
-            height={tableHeight - 45}
-            itemCount={rows.length}
-            itemSize={60}
-            itemKey={(index) => rows[index].id}
-            itemData={rows}
-            width={totalColumnsWidth + scrollBarSize}
-          >
-            {MyIncidentRow}
-          </FixedSizeList>
-        </Box>
+        { rows.length > 0 && (
+          <Box {...getTableBodyProps()}>
+            <FixedSizeList
+              className="incident-table-fixed-list"
+              height={tableHeight - 45}
+              itemCount={rows.length}
+              itemSize={60}
+              itemKey={(index) => rows[index].id}
+              itemData={rows}
+              width={totalColumnsWidth + scrollBarSize}
+            >
+              {MyIncidentRow}
+            </FixedSizeList>
+          </Box>
+        )}
+        { rows.length === 0 && (
+          <EmptyIncidentsComponent
+            message={t('No incidents match your search criteria.')}
+          />
+        )}
         <GetAllModal
           isOpen={displayGetAllModal}
           onClose={() => setDisplayGetAllModal(false)}

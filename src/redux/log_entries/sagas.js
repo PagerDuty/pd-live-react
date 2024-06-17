@@ -2,16 +2,27 @@
 /* eslint-disable max-len */
 
 import {
-  put, call, select, takeLatest, take,
+  put, call, select, takeLatest, take, delay, race,
 } from 'redux-saga/effects';
 
 import i18next from 'src/i18n';
+
+import {
+  handleSingleAPIErrorResponse,
+} from 'src/util/sagas';
+
+import {
+  LOG_ENTRIES_POLLING_INTERVAL_SECONDS,
+  LOG_ENTRIES_CLEARING_INTERVAL_SECONDS,
+  DEBUG_DISABLE_POLLING,
+} from 'src/config/constants';
 
 import {
   pd, pdParallelFetch,
 } from 'src/util/pd-api-wrapper';
 
 import {
+  CATASTROPHE,
   UPDATE_CONNECTION_STATUS_REQUESTED,
 } from 'src/redux/connection/actions';
 import {
@@ -25,6 +36,11 @@ import {
   CLEAN_RECENT_LOG_ENTRIES,
   CLEAN_RECENT_LOG_ENTRIES_COMPLETED,
   CLEAN_RECENT_LOG_ENTRIES_ERROR,
+  START_CLEAN_RECENT_LOG_ENTRIES_POLLING,
+  STOP_CLEAN_RECENT_LOG_ENTRIES_POLLING,
+  START_LOG_ENTRIES_POLLING,
+  UPDATE_LOG_ENTRIES_POLLING,
+  STOP_LOG_ENTRIES_POLLING,
 } from './actions';
 
 import selectLogEntries from './selectors';
@@ -36,13 +52,16 @@ export function* getLogEntriesAsync() {
 export function* getLogEntries(action) {
   const {
     recentLogEntries,
+    pollingStatus: {
+      errors: pollingErrors,
+    },
   } = yield select(selectLogEntries);
-
   try {
     //  Create params and call pd lib
     const {
       since,
     } = action;
+
     const params = {
       since: since.toISOString().replace(/\.[\d]{3}/, ''),
       'include[]': ['incidents', 'linked_incidents', 'external_references', 'channels'],
@@ -51,22 +70,32 @@ export function* getLogEntries(action) {
     try {
       logEntries = yield call(pdParallelFetch, 'log_entries', params, null, {
         priority: 5,
-        maxRecords: 1000,
+        maxRecords: 5000,
       });
     } catch (e) {
       if (e.message && e.message.startsWith('Too many records')) {
         // eslint-disable-next-line no-console
-        console.log(`getLogEntries: ${e.message} - fetching incidents instead`);
+        console.error(`getLogEntries: ${e.message} - fetching incidents instead`);
         yield put({
-          type: FETCH_LOG_ENTRIES_ERROR,
-          message: e.message,
+          type: UPDATE_LOG_ENTRIES_POLLING,
+          pollingStatus: {
+            errors: [...pollingErrors, e].slice(-25),
+          },
+        });
+        // put COMPLETED action with empty log entries and update latestLogEntryDate
+        // so that we don't keep polling for older log entries
+        yield put({
+          type: FETCH_LOG_ENTRIES_COMPLETED,
+          logEntries: [],
+          recentLogEntries,
+          latestLogEntryDate: new Date(),
         });
         yield put({
           type: FETCH_INCIDENTS_REQUESTED,
         });
         return;
       }
-      throw Error(i18next.t('Unable to fetch log entries') + e.message ? `: ${e.message}` : '');
+      throw e;
     }
 
     // Filter out log entries that are already in recent log entries map
@@ -106,20 +135,88 @@ export function* getLogEntries(action) {
       type: PROCESS_LOG_ENTRIES,
       logEntries,
     });
-
-    // Call to update recent log entries with this data.
-    // yield call(updateRecentLogEntries);
   } catch (e) {
-    // Handle API auth failure
-    if (e.status === 401) {
-      e.message = i18next.t('Unauthorized Access');
-    }
+    yield put({
+      type: UPDATE_LOG_ENTRIES_POLLING,
+      pollingStatus: {
+        errors: [...pollingErrors, e].slice(-25),
+      },
+    });
     yield put({ type: FETCH_LOG_ENTRIES_ERROR, message: e.message });
     yield put({
       type: UPDATE_CONNECTION_STATUS_REQUESTED,
       connectionStatus: 'neutral',
       connectionStatusMessage: e.message,
     });
+    // Handle API failure
+    if (e.response) {
+      yield call(handleSingleAPIErrorResponse, e.response);
+    } else {
+      throw e;
+    }
+  }
+}
+
+export function* pollLogEntriesTask() {
+  while (true) {
+    const {
+      logEntries: {
+        latestLogEntryDate,
+      },
+      users: {
+        userAuthorized,
+        userAcceptedDisclaimer,
+      },
+      incidents: {
+        fetchingIncidents,
+        error: incidentsError,
+      },
+    } = yield select();
+
+    const tooManyIncidentsError = (
+      incidentsError
+      && typeof incidentsError === 'string'
+      && incidentsError.startsWith('Too many records')
+    );
+
+    if (userAuthorized && userAcceptedDisclaimer && !fetchingIncidents && !DEBUG_DISABLE_POLLING && !tooManyIncidentsError) {
+      const lastPollStarted = new Date();
+      yield put({
+        type: UPDATE_LOG_ENTRIES_POLLING,
+        pollingStatus: {
+          lastPollStarted,
+        },
+      });
+      yield call(getLogEntries, { since: latestLogEntryDate });
+      const lastPollCompleted = new Date();
+      yield put({
+        type: UPDATE_LOG_ENTRIES_POLLING,
+        pollingStatus: {
+          lastPollCompleted,
+        },
+      });
+
+      let timeTaken = lastPollCompleted - lastPollStarted;
+      if (timeTaken > LOG_ENTRIES_POLLING_INTERVAL_SECONDS * 1000) {
+        // if the time taken to fetch log entries is greater than the polling interval,
+        // then we should start the next poll immediately
+        timeTaken = LOG_ENTRIES_POLLING_INTERVAL_SECONDS * 1000;
+      } else if (timeTaken < 0) {
+        timeTaken = 0;
+      }
+      yield delay((LOG_ENTRIES_POLLING_INTERVAL_SECONDS * 1000) - timeTaken);
+    } else {
+      // eslint-disable-next-line no-console
+      console.log('skipping poll', { userAuthorized, userAcceptedDisclaimer, fetchingIncidents, DEBUG_DISABLE_POLLING, tooManyIncidentsError });
+      yield delay(LOG_ENTRIES_POLLING_INTERVAL_SECONDS * 1000);
+    }
+  }
+}
+
+export function* pollLogEntriesTaskWatcher() {
+  while (true) {
+    yield take(START_LOG_ENTRIES_POLLING);
+    yield race([call(pollLogEntriesTask), take(STOP_LOG_ENTRIES_POLLING)]);
   }
 }
 
@@ -149,5 +246,19 @@ export function* cleanRecentLogEntries() {
     });
   } catch (e) {
     yield put({ type: CLEAN_RECENT_LOG_ENTRIES_ERROR, message: e.message });
+  }
+}
+
+export function* cleanRecentLogEntriesTask() {
+  while (true) {
+    yield call(cleanRecentLogEntries);
+    yield delay(LOG_ENTRIES_CLEARING_INTERVAL_SECONDS * 1000);
+  }
+}
+
+export function* cleanRecentLogEntriesTaskWatcher() {
+  while (true) {
+    yield take(START_CLEAN_RECENT_LOG_ENTRIES_POLLING);
+    yield race([call(cleanRecentLogEntriesTask), take(STOP_CLEAN_RECENT_LOG_ENTRIES_POLLING)]);
   }
 }

@@ -61,9 +61,7 @@ import {
   version as PD_APP_VERSION,
 } from 'src/config/version';
 
-import {
-  ReactComponent as Logo,
-} from 'src/assets/images/pd_logo_black.svg';
+import Logo from 'src/assets/images/pd_logo_black.svg';
 
 import GlobalSearchComponent from 'src/components/GlobalSearch/GlobalSearchComponent';
 import QuerySettingsComponent from 'src/components/QuerySettings/QuerySettingsComponent';

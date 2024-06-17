@@ -12,6 +12,8 @@ import {
   UPDATE_INCIDENT_TABLE_STATE_COMPLETED,
   SELECT_INCIDENT_TABLE_ROWS_REQUESTED,
   SELECT_INCIDENT_TABLE_ROWS_COMPLETED,
+  CLEAR_INCIDENT_TABLE_FILTERS_REQUESTED,
+  CLEAR_INCIDENT_TABLE_FILTERS_COMPLETED,
 } from './actions';
 
 const defaultColumns = [
@@ -68,6 +70,18 @@ const incidentTable = produce(
         draft.selectedCount = action.selectedCount;
         draft.selectedRows = action.selectedRows;
         draft.status = SELECT_INCIDENT_TABLE_ROWS_COMPLETED;
+        break;
+
+      case CLEAR_INCIDENT_TABLE_FILTERS_REQUESTED:
+        draft.status = CLEAR_INCIDENT_TABLE_FILTERS_REQUESTED;
+        break;
+
+      case CLEAR_INCIDENT_TABLE_FILTERS_COMPLETED:
+        draft.incidentTableState = {
+          ...draft.incidentTableState,
+          filters: [],
+        };
+        draft.status = CLEAR_INCIDENT_TABLE_FILTERS_COMPLETED;
         break;
 
       default:

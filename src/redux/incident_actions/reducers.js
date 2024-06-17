@@ -28,6 +28,7 @@ import {
   TOGGLE_DISPLAY_CUSTOM_SNOOZE_MODAL_REQUESTED,
   TOGGLE_DISPLAY_CUSTOM_SNOOZE_MODAL_COMPLETED,
   MERGE_REQUESTED,
+  MERGE_PROGRESS,
   MERGE_COMPLETED,
   MERGE_ERROR,
   TOGGLE_DISPLAY_MERGE_MODAL_REQUESTED,
@@ -168,14 +169,24 @@ const incidentActions = produce(
 
       case MERGE_REQUESTED:
         draft.status = MERGE_REQUESTED;
+        draft.mergeProgress = {
+          total: 1,
+          complete: 0,
+        };
+        break;
+
+      case MERGE_PROGRESS:
+        draft.mergeProgress = action.mergeProgress;
         break;
 
       case MERGE_COMPLETED:
         draft.mergedIncident = action.mergedIncident;
+        draft.mergeProgress = {};
         draft.status = MERGE_COMPLETED;
         break;
 
       case MERGE_ERROR:
+        draft.mergeProgress = {};
         draft.status = MERGE_ERROR;
         draft.error = action.message;
         break;
@@ -302,6 +313,7 @@ const incidentActions = produce(
     displayCustomSnoozeModal: false,
     displayAddNoteModal: false,
     displayMergeModal: false,
+    mergeProgress: {},
     status: '',
     fetchingData: false,
     error: null,

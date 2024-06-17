@@ -22,7 +22,7 @@ const unmockedFetch = global.fetch;
 describe('Authentication Helper Suite', () => {
   const clientId = PD_OAUTH_CLIENT_ID;
   const clientSecret = PD_OAUTH_CLIENT_SECRET;
-  const redirectURL = 'http://localhost:3000/';
+  const redirectURL = 'http://127.0.0.1:3000/';
   const code = 'SOME_REDIRECT_CODE';
   const mockAccessToken = faker.string.alphanumeric();
   let codeVerifier;
@@ -86,6 +86,6 @@ describe('Authentication Helper Suite', () => {
       codeVerifier,
       code,
     );
-    expect(token).toEqual(mockAccessToken);
+    expect(token.access_token).toEqual(mockAccessToken);
   });
 });

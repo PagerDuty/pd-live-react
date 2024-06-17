@@ -64,6 +64,7 @@ import {
   TOGGLE_DISPLAY_CUSTOM_SNOOZE_MODAL_REQUESTED,
   TOGGLE_DISPLAY_CUSTOM_SNOOZE_MODAL_COMPLETED,
   MERGE_REQUESTED,
+  MERGE_PROGRESS,
   MERGE_COMPLETED,
   MERGE_ERROR,
   TOGGLE_DISPLAY_MERGE_MODAL_REQUESTED,
@@ -90,7 +91,7 @@ import {
 } from './actions';
 
 import {
-  PROCESS_LOG_ENTRIES_COMPLETED, UPDATE_INCIDENTS,
+  PROCESS_LOG_ENTRIES_COMPLETED, UPDATE_INCIDENTS, getIncidentsAsync,
 } from '../incidents/actions';
 
 const chunkedPdAxiosRequestCalls = (
@@ -156,7 +157,7 @@ export function* acknowledge(action) {
     const errors = responses.filter((response) => response.status !== 200);
 
     if (errors.length > 0) {
-      handleMultipleAPIErrorResponses(errors);
+      yield call(handleMultipleAPIErrorResponses, errors);
     }
 
     if (acknowledgedIncidents.length > 0) {
@@ -209,7 +210,7 @@ export function* escalate(action) {
     const errors = responses.filter((response) => response.status !== 200);
 
     if (errors.length > 0) {
-      handleMultipleAPIErrorResponses(errors);
+      yield call(handleMultipleAPIErrorResponses, errors);
     }
 
     if (escalatedIncidents.length > 0) {
@@ -278,7 +279,7 @@ export function* reassign(action) {
     const errors = responses.filter((response) => response.status !== 200);
 
     if (errors.length > 0) {
-      handleMultipleAPIErrorResponses(errors);
+      yield call(handleMultipleAPIErrorResponses, errors);
     }
 
     if (reassignedIncidents.length > 0) {
@@ -371,7 +372,7 @@ export function* addResponder(action) {
         updatedIncidentResponderRequests: responses,
       });
     } else {
-      handleMultipleAPIErrorResponses(responses);
+      yield call(handleMultipleAPIErrorResponses, responses);
     }
   } catch (e) {
     yield call(handleSagaError, ADD_RESPONDER_ERROR, e);
@@ -451,7 +452,7 @@ export function* snooze(action) {
         snoozedIncidents: updatedIncidents,
       });
     } else {
-      handleMultipleAPIErrorResponses(responses);
+      yield call(handleMultipleAPIErrorResponses, responses);
     }
   } catch (e) {
     yield call(handleSagaError, SNOOZE_ERROR, e);
@@ -482,60 +483,88 @@ export function* mergeAsync() {
 export function* merge(action) {
   try {
     const {
+      displayMergeModal,
+      // mergeProgress,
+    } = yield select(selectIncidentActions);
+    const {
       targetIncident, incidents, displayModal, addToTitleText,
     } = action;
     const incidentsToBeMerged = [...incidents];
 
-    // Build request manually given PUT
-    const data = {
-      source_incidents: incidentsToBeMerged.map((incident) => ({
+    // split incidentsToBeMerged into chunks
+    const incidentChunks = chunkArray(incidentsToBeMerged, 25);
+    const incidentBodies = incidentChunks.map((chunk) => ({
+      source_incidents: chunk.map((incident) => ({
         id: incident.id,
         type: 'incident_reference',
       })),
-    };
+    }));
 
-    const response = yield call(
+    const numRequests = incidentBodies.length + (addToTitleText ? 1 : 0);
+    let complete = 0;
+    yield put({
+      type: MERGE_PROGRESS,
+      mergeProgress: {
+        total: numRequests,
+        complete,
+      },
+    });
+
+    const mergeRequests = incidentBodies.map((incidentBody) => call(
       throttledPdAxiosRequest,
       'PUT',
       `incidents/${targetIncident.id}/merge`,
       null,
-      data,
+      incidentBody,
       {
         priority: 1,
         expiration: 5 * 60 * 1000,
       },
-    );
+    ));
 
-    if (response.status >= 200 && response.status < 300) {
-      yield toggleDisplayMergeModalImpl();
-
-      const mergedIncident = response.data.incident;
-      const resolvedIncidents = incidentsToBeMerged.map((incident) => ({
-        id: incident.id,
-        status: RESOLVED,
-      }));
-      yield put({
-        type: UPDATE_INCIDENTS,
-        updatedIncidents: [...resolvedIncidents, mergedIncident],
-      });
-
-      if (displayModal) {
-        const actionAlertsModalType = 'success';
-        const actionAlertsModalMessage = `${i18next.t('Incident')}(s) ${incidentsToBeMerged
-          .map((i) => i.incident_number)
-          .join(', ')} ${i18next.t('and their alerts have been merged onto incident')}
-          ${targetIncident.incident_number}`;
-        yield displayActionModal(actionAlertsModalType, actionAlertsModalMessage);
+    // eslint-disable-next-line no-restricted-syntax
+    for (const mergeRequest of mergeRequests) {
+      const response = yield mergeRequest;
+      if (response.status !== 200) {
+        yield call(handleSingleAPIErrorResponse, response);
+        yield put({
+          type: MERGE_ERROR,
+          message: 'Error merging incidents',
+        });
+        yield getIncidentsAsync();
+        return;
       }
+      complete += 1;
       yield put({
-        type: MERGE_COMPLETED,
-        mergedIncident,
+        type: MERGE_PROGRESS,
+        mergeProgress: {
+          total: numRequests,
+          complete,
+        },
       });
-    } else {
-      handleSingleAPIErrorResponse(response);
     }
 
+    const mergedIncidentResp = yield getIncidentByIdRequest(targetIncident.id);
+    const mergedIncident = mergedIncidentResp.data.incident;
+    const resolvedIncidents = incidentsToBeMerged.map((incident) => ({
+      id: incident.id,
+      status: RESOLVED,
+    }));
+
+    yield put({
+      type: UPDATE_INCIDENTS,
+      updatedIncidents: [...resolvedIncidents, mergedIncident],
+    });
+
     if (addToTitleText) {
+      yield put({
+        type: MERGE_PROGRESS,
+        mergeProgress: {
+          total: numRequests,
+          complete,
+          updatingTitles: true,
+        },
+      });
       const titleUpdates = incidentsToBeMerged.map((incident) => call(
         throttledPdAxiosRequest,
         'PUT',
@@ -553,11 +582,10 @@ export function* merge(action) {
         },
       ));
       const titleResponses = yield all(titleUpdates);
+
       const successes = titleResponses.filter((r) => r.status >= 200 && r.status < 300);
       if (successes.length !== titleResponses.length) {
-        handleMultipleAPIErrorResponses(
-          titleResponses.filter((r) => !(r.status >= 200 && r.status < 300)),
-        );
+        yield call(handleMultipleAPIErrorResponses, titleResponses);
       }
       const updatedIncidents = successes.map((r) => r.data.incident);
       yield put({
@@ -565,6 +593,21 @@ export function* merge(action) {
         updatedIncidents,
       });
     }
+    if (displayModal) {
+      const actionAlertsModalType = 'success';
+      const actionAlertsModalMessage = `${i18next.t('Incident')}(s) ${incidentsToBeMerged
+        .map((i) => i.incident_number)
+        .join(', ')} ${i18next.t('and their alerts have been merged onto incident')}
+        ${targetIncident.incident_number}`;
+      yield displayActionModal(actionAlertsModalType, actionAlertsModalMessage);
+    }
+    if (displayMergeModal) {
+      yield toggleDisplayMergeModalImpl();
+    }
+    yield put({
+      type: MERGE_COMPLETED,
+      mergedIncident,
+    });
   } catch (e) {
     yield call(handleSagaError, MERGE_ERROR, e);
   }
@@ -614,7 +657,7 @@ export function* resolve(action) {
     const errors = responses.filter((response) => response.status !== 200);
 
     if (errors.length > 0) {
-      handleMultipleAPIErrorResponses(errors);
+      yield call(handleMultipleAPIErrorResponses, errors);
     }
 
     if (resolvedIncidents.length > 0) {
@@ -705,7 +748,7 @@ export function* updatePriority(action) {
         yield displayActionModal(actionAlertsModalType, actionAlertsModalMessage);
       }
     } else {
-      handleMultipleAPIErrorResponses(responses);
+      yield call(handleMultipleAPIErrorResponses, responses);
     }
   } catch (e) {
     yield call(handleSagaError, UPDATE_PRIORITY_ERROR, e);
@@ -755,7 +798,7 @@ export function* addNote(action) {
         updatedIncidentNotes: responses,
       });
     } else {
-      handleMultipleAPIErrorResponses(responses);
+      yield call(handleMultipleAPIErrorResponses, responses);
     }
   } catch (e) {
     yield call(handleSagaError, ADD_NOTE_ERROR, e);
@@ -823,7 +866,7 @@ export function* runCustomIncidentAction(action) {
         yield displayActionModal(actionAlertsModalType, actionAlertsModalMessage);
       }
     } else {
-      handleMultipleAPIErrorResponses(responses);
+      yield call(handleMultipleAPIErrorResponses, responses);
     }
   } catch (e) {
     yield call(handleSagaError, RUN_CUSTOM_INCIDENT_ACTION_ERROR, e);
@@ -925,7 +968,7 @@ export function* syncWithExternalSystem(action) {
         yield displayActionModal(actionAlertsModalType, actionAlertsModalMessage);
       }
     } else {
-      handleMultipleAPIErrorResponses(responses);
+      yield call(handleMultipleAPIErrorResponses, responses);
     }
   } catch (e) {
     yield call(handleSagaError, SYNC_WITH_EXTERNAL_SYSTEM_ERROR, e);

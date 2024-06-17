@@ -25,10 +25,12 @@ function fixAcceptHeader404() {
 export default defineConfig(() => ({
   base: '/pd-live-react',
   server: {
+    host: '127.0.0.1',
     port: 3000,
   },
   build: {
     outDir: 'build',
+    sourcemap: true,
   },
   resolve: {
     alias: {
@@ -48,7 +50,7 @@ export default defineConfig(() => ({
     }),
     EnvironmentPlugin('all', { loadEnvFiles: true }),
     // svgr options: https://react-svgr.com/docs/options/
-    svgr(),
+    svgr({ include: '**/*.svg' }),
     eslint(),
     fixAcceptHeader404(),
   ],

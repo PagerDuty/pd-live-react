@@ -40,14 +40,21 @@ export const DEBUG_UNTIL_DATE = debugParams.get('until') || null;
 export const EXTRA_BUTTONS = debugParams
   .getAll('button')
   .map((button) => {
-    const [label, url, width, height] = button.split(',');
+    const [label, url, widthOrTab, height] = button.split(',');
     if (!label || !url) {
       return null;
+    }
+    if (widthOrTab === 'tab') {
+      return {
+        label,
+        url,
+        tab: true,
+      };
     }
     return {
       label,
       url,
-      width,
+      width: widthOrTab,
       height,
     };
   })

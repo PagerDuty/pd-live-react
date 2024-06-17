@@ -20,7 +20,7 @@ module.exports = defineConfig({
       config.env.PD_USER_TOKEN = process.env.VITE_PD_USER_TOKEN;
       return config;
     },
-    baseUrl: 'http://localhost:3000/pd-live-react',
+    baseUrl: 'http://127.0.0.1:3000/pd-live-react',
     specPattern: 'cypress/e2e/**/*.spec.{js,ts,jsx,tsx}',
     testIsolation: true,
   },

@@ -47,14 +47,25 @@ const AuthComponent = (props) => {
 
   useEffect(() => {
     if (code && codeVerifier && !accessToken) {
+      // if there were button params on the first load, load the button params and put them back on the URL
+      const savedButtonsStr = sessionStorage.getItem('pd_buttons');
+      const savedButtons = savedButtonsStr ? JSON.parse(savedButtonsStr) : [];
+      const buttonParams = savedButtons ? `?button=${savedButtons.join('&button=')}` : '';
+
       exchangeCodeForToken(clientId, clientSecret, redirectURL, codeVerifier, code).then(
-        (token) => {
+        (data) => {
+          const {
+            access_token: newAccessToken,
+            refresh_token: newRefreshToken,
+            expires_in: expiresIn,
+          } = data;
+          if (!newAccessToken || !newRefreshToken || !expiresIn) {
+            window.location.assign(redirectURL + buttonParams);
+          }
           sessionStorage.removeItem('code_verifier');
-          sessionStorage.setItem('pd_access_token', token);
-          // if there were button params on the first load, load the button params and put them back on the URL
-          const savedButtonsStr = sessionStorage.getItem('pd_buttons');
-          const savedButtons = savedButtonsStr ? JSON.parse(savedButtonsStr) : [];
-          const buttonParams = savedButtons ? `?button=${savedButtons.join('&button=')}` : '';
+          sessionStorage.setItem('pd_access_token', newAccessToken);
+          sessionStorage.setItem('pd_refresh_token', newRefreshToken);
+          sessionStorage.setItem('pd_token_expires_at', new Date().getTime() + (expiresIn * 1000));
           window.location.assign(redirectURL + buttonParams);
         },
       );
