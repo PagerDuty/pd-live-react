@@ -110,7 +110,7 @@
     "@testing-library/react-hooks": "^8.0.1",
     "@testing-library/user-event": "^14.4.3",
     "@vitejs/plugin-react": "^4.2.1",
-    "@welldone-software/why-did-you-render": "^7.0.1",
+    "@welldone-software/why-did-you-render": "^8.0.3",
     "babel-jest": "^29.6.3",
     "cypress": "^13.5.1",
     "cypress-fail-fast": "^7.1.0",
