@@ -24,7 +24,7 @@ const generateMockAlert = () => {
   const link = faker.internet.url();
   const customDetails = {
     quote,
-    'some obsecure field': uuid,
+    'some obscure field': uuid,
     link,
     object_details: {
       key1: 'value1',

@@ -75,6 +75,13 @@ describe('IncidentTableComponent', () => {
             width: 100,
             columnType: 'alert',
           },
+          {
+            Header: 'some obscure field',
+            accessorPath: "details['some obscure field']",
+            aggregator: null,
+            width: 100,
+            columnType: 'alert',
+          },
         ],
       },
       incidentActions: {
@@ -125,5 +132,14 @@ describe('IncidentTableComponent', () => {
 
     // jsonValue should include a key with value 'value1'
     expect(JSON.stringify(jsonValue)).toContain('value1');
+  });
+
+  it('should render cell with UUID value for custom detail field', () => {
+    const incidentNumber = 1;
+    const customDetailField = 'some obscure field';
+    const uuid = screen.getAllByIncidentHeader(customDetailField)[incidentNumber].textContent;
+
+    // uuid should include a valid UUID
+    expect(validator.isUUID(uuid)).toBeTruthy();
   });
 });
