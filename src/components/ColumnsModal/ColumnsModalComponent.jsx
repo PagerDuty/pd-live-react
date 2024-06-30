@@ -34,6 +34,7 @@ import {
   Input,
   Text,
   useToast,
+  Select,
 } from '@chakra-ui/react';
 import {
   AddIcon,
@@ -123,6 +124,7 @@ const TableColumnsModalComponent = () => {
     {
       ...column,
       value: columnValue(column),
+      label: column.i18n ? column.i18n : column.Header,
     }
   ));
   const [selectedColumns, setSelectedColumns] = useState(getSelectedColumns());
@@ -156,6 +158,22 @@ const TableColumnsModalComponent = () => {
     setAlertCustomDetailColumns(newAlertCustomDetailFields);
   };
 
+  const addCustomComputedColumn = (value) => {
+    const [Header, accessorPath, aggregator, expression] = value.split(':');
+    const newColumn = {
+      Header,
+      accessorPath,
+      aggregator,
+      value,
+      // expressionType,
+      expression,
+      // label: value,
+      columnType: 'alert',
+    };
+    const newAlertCustomDetailFields = [...alertCustomDetailFields, newColumn];
+    setAlertCustomDetailColumns(newAlertCustomDetailFields);
+  };
+
   const removeCustomAlertColumn = (column) => {
     unselectColumn(column);
     const newAlertCustomDetailFields = alertCustomDetailFields.filter(
@@ -164,9 +182,13 @@ const TableColumnsModalComponent = () => {
     setAlertCustomDetailColumns(newAlertCustomDetailFields);
   };
 
+  const columnTypeInputRef = useRef(null);
   const headerInputRef = useRef(null);
   const accessorPathInputRef = useRef(null);
+  const regexInputRef = useRef(null);
   const addButtonRef = useRef(null);
+
+  const [columnType, setColumnType] = useState(null);
 
   const [inputIsValid, setInputIsValid] = useState(false);
   const validateInput = () => {
@@ -206,7 +228,7 @@ const TableColumnsModalComponent = () => {
 
   const [, drop] = useDrop(() => ({ accept: 'DraggableColumnsModalItem' }));
   return (
-    <Modal isOpen={displayColumnsModal} onClose={toggleColumnsModal} size="xl">
+    <Modal isOpen={displayColumnsModal} onClose={toggleColumnsModal} size="xxl">
       <ModalOverlay />
       <ModalContent>
         <ModalHeader>{t('Incident Table')}</ModalHeader>
@@ -270,6 +292,21 @@ const TableColumnsModalComponent = () => {
                   ))}
                 </Box>
                 <InputGroup>
+                  <Select
+                    id="column-type-select"
+                    ref={columnTypeInputRef}
+                    w="10%"
+                    onChange={() => {
+                      // console.error(columnTypeInputRef.current.value);
+                      setColumnType(columnTypeInputRef.current.value);
+                    }}
+                  >
+                    {['alert', 'computed'].map((type) => (
+                      <option key={type} value={type}>
+                        {t(type)}
+                      </option>
+                    ))}
+                  </Select>
                   <Input
                     ref={headerInputRef}
                     onChange={validateInput}
@@ -282,9 +319,18 @@ const TableColumnsModalComponent = () => {
                     ref={accessorPathInputRef}
                     onChange={validateInput}
                     m={1}
-                    w="60%"
+                    w="50%"
                     placeholder={t('JSON Path')}
                     size="sm"
+                  />
+                  <Input
+                    ref={regexInputRef}
+                    onChange={validateInput}
+                    m={1}
+                    w="50%"
+                    placeholder={t('Regex')}
+                    size="sm"
+                    isDisabled={columnType !== 'computed'}
                   />
                   <Button
                     ref={addButtonRef}
@@ -292,7 +338,12 @@ const TableColumnsModalComponent = () => {
                     onClick={() => {
                       const value = `${headerInputRef.current.value}:`
                         + `${accessorPathInputRef.current.value}`;
-                      addCustomAlertColumn(value);
+                      if (columnType === 'alert') {
+                        addCustomAlertColumn(value);
+                      } else {
+                        console.error('computed submitted');
+                        addCustomComputedColumn(value);
+                      }
                     }}
                     m={1}
                     variant="solid"
