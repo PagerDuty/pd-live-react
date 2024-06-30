@@ -100,6 +100,24 @@ describe('IncidentTableComponent', () => {
             expressionType: 'regex',
             expression: '(.*.example.com)',
           },
+          {
+            Header: 'no match regex in incident body',
+            accessorPath: 'first_trigger_log_entry.channel.details',
+            aggregator: null,
+            width: 100,
+            columnType: 'computed',
+            expressionType: 'regex',
+            expression: '(.*foobar)',
+          },
+          {
+            Header: 'no match regex in non-existant path',
+            accessorPath: 'first_trigger_log_entry.channel.foobar',
+            aggregator: null,
+            width: 100,
+            columnType: 'computed',
+            expressionType: 'regex',
+            expression: '(.*)',
+          },
         ],
       },
       incidentActions: {
@@ -177,5 +195,23 @@ describe('IncidentTableComponent', () => {
 
     // hosts should be the hostnames regex matched out of the incident details
     expect(hosts).toEqual('test1234.example.com, test5678.example.com');
+  });
+
+  it('should render computed cell with no regex match in incident details field', () => {
+    const incidentNumber = 1;
+    const customDetailField = 'no match regex in incident body';
+    const match = screen.getAllByIncidentHeader(customDetailField)[incidentNumber].textContent;
+
+    // hosts should be the hostnames regex matched out of the incident details
+    expect(match).toEqual('--');
+  });
+
+  it('should render computed cell with non-existant path', () => {
+    const incidentNumber = 1;
+    const customDetailField = 'no match regex in non-existant path';
+    const match = screen.getAllByIncidentHeader(customDetailField)[incidentNumber].textContent;
+
+    // hosts should be the hostnames regex matched out of the incident details
+    expect(match).toEqual('--');
   });
 });
