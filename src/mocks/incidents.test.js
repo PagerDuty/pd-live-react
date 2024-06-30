@@ -109,6 +109,7 @@ export const generateMockIncident = () => {
   const status = INCIDENT_STATES[Math.floor(Math.random() * INCIDENT_STATES.length)];
   const incidentKey = faker.string.alphanumeric(32);
   const incidentId = faker.string.alphanumeric(14);
+  const logEntryId = faker.string.alphanumeric(14);
   const escalationPolicyId = faker.string.alphanumeric(7);
   const serviceId = faker.string.alphanumeric(7);
   const createdAt = faker.date
@@ -133,6 +134,29 @@ export const generateMockIncident = () => {
     },
     alerts: generateMockAlerts(5),
     notes: generateMockNotes(5),
+    first_trigger_log_entry: {
+      // FIXME: This is only for a web_trigger, would not be present for alert triggered incident
+      id: logEntryId,
+      type: 'trigger_log_entry',
+      summary: 'Triggered through the website.',
+      created_at: createdAt,
+      agent: {},
+      channel: {
+        type: 'web_trigger',
+        summary: title,
+        subject: title,
+        details: 'Here is the description;\n\ntest1234.example.com\n\ntest5678.example.com',
+      },
+      service: { id: serviceId },
+      incident: {
+        id: incidentId,
+        type: 'incident_reference',
+        summary: title,
+      },
+      teams: [],
+      contexts: [],
+      event_details: { description: title },
+    },
   };
 };
 

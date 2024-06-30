@@ -82,6 +82,24 @@ describe('IncidentTableComponent', () => {
             width: 100,
             columnType: 'alert',
           },
+          {
+            Header: 'regex-single in incident body',
+            accessorPath: 'first_trigger_log_entry.channel.details',
+            aggregator: null,
+            width: 100,
+            columnType: 'computed',
+            expressionType: 'regex-single',
+            expression: '(.*.example.com)',
+          },
+          {
+            Header: 'regex in incident body',
+            accessorPath: 'first_trigger_log_entry.channel.details',
+            aggregator: null,
+            width: 100,
+            columnType: 'computed',
+            expressionType: 'regex',
+            expression: '(.*.example.com)',
+          },
         ],
       },
       incidentActions: {
@@ -141,5 +159,23 @@ describe('IncidentTableComponent', () => {
 
     // uuid should include a valid UUID
     expect(validator.isUUID(uuid)).toBeTruthy();
+  });
+
+  it('should render computed cell with regex-single expression value for hostname in incident details field', () => {
+    const incidentNumber = 1;
+    const customDetailField = 'regex-single in incident body';
+    const host = screen.getAllByIncidentHeader(customDetailField)[incidentNumber].textContent;
+
+    // host should be the hostname regex matched out of the incident details
+    expect(host).toEqual('test1234.example.com');
+  });
+
+  it('should render computed cell with regex expression value for hostname in incident details field', () => {
+    const incidentNumber = 1;
+    const customDetailField = 'regex in incident body';
+    const hosts = screen.getAllByIncidentHeader(customDetailField)[incidentNumber].textContent;
+
+    // hosts should be the hostnames regex matched out of the incident details
+    expect(hosts).toEqual('test1234.example.com, test5678.example.com');
   });
 });
