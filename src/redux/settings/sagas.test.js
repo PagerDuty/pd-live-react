@@ -19,6 +19,8 @@ import {
   SET_DEFAULT_SINCE_DATE_TENOR_COMPLETED,
   SET_ALERT_CUSTOM_DETAIL_COLUMNS_REQUESTED,
   SET_ALERT_CUSTOM_DETAIL_COLUMNS_COMPLETED,
+  SET_COMPUTED_COLUMNS_REQUESTED,
+  SET_COMPUTED_COLUMNS_COMPLETED,
   SET_MAX_RATE_LIMIT_REQUESTED,
   SET_MAX_RATE_LIMIT_COMPLETED,
   SET_AUTO_ACCEPT_INCIDENTS_QUERY_REQUESTED,
@@ -33,6 +35,7 @@ import {
 import {
   setDefaultSinceDateTenor,
   setAlertCustomDetailColumns,
+  setComputedColumns,
   setMaxRateLimit,
   setAutoAcceptIncidentsQuery,
   setAutoRefreshInterval,
@@ -71,6 +74,7 @@ describe('Sagas: Settings', () => {
             aggregator: null,
           },
         ],
+        computedFields: [],
         showIncidentAlertsModalForIncidentId: null,
         darkMode: false,
         searchAllCustomDetails: false,
@@ -111,6 +115,7 @@ describe('Sagas: Settings', () => {
         autoAcceptIncidentsQuery: true,
         autoRefreshInterval: 5,
         alertCustomDetailFields,
+        computedFields: [],
         showIncidentAlertsModalForIncidentId: null,
         darkMode: false,
         searchAllCustomDetails: false,
@@ -118,6 +123,58 @@ describe('Sagas: Settings', () => {
         respondersInEpFilter: false,
         relativeDates: false,
         status: SET_ALERT_CUSTOM_DETAIL_COLUMNS_COMPLETED,
+      })
+      .silentRun();
+  });
+  it('setComputedColumns', () => {
+    const computedFields = [
+      {
+        label: faker.git.branch(),
+        value: faker.git.branch(),
+        columnType: 'computed',
+        Header: 'Regex',
+        accessorPath: 'details.env',
+        aggregator: null,
+        expression: '.*',
+        expressionType: 'regex-single',
+      },
+    ];
+    return expectSaga(setComputedColumns)
+      .withReducer(settings)
+      .dispatch({
+        type: SET_COMPUTED_COLUMNS_REQUESTED,
+        computedFields,
+      })
+      .put({
+        type: SET_COMPUTED_COLUMNS_COMPLETED,
+        computedFields,
+      })
+      .hasFinalState({
+        displaySettingsModal: false,
+        displayLoadSavePresetsModal: false,
+        displayColumnsModal: false,
+        defaultSinceDateTenor: '1 Day',
+        maxRateLimit: 200,
+        autoAcceptIncidentsQuery: true,
+        autoRefreshInterval: 5,
+        alertCustomDetailFields: [
+          {
+            label: 'Environment:details.env',
+            value: 'Environment:details.env',
+            columnType: 'alert',
+            Header: 'Environment',
+            accessorPath: 'details.env',
+            aggregator: null,
+          },
+        ],
+        computedFields,
+        showIncidentAlertsModalForIncidentId: null,
+        darkMode: false,
+        searchAllCustomDetails: false,
+        fuzzySearch: false,
+        respondersInEpFilter: false,
+        relativeDates: false,
+        status: SET_COMPUTED_COLUMNS_COMPLETED,
       })
       .silentRun();
   });
@@ -154,6 +211,7 @@ describe('Sagas: Settings', () => {
             aggregator: null,
           },
         ],
+        computedFields: [],
         showIncidentAlertsModalForIncidentId: null,
         darkMode: false,
         searchAllCustomDetails: false,
@@ -194,6 +252,7 @@ describe('Sagas: Settings', () => {
             aggregator: null,
           },
         ],
+        computedFields: [],
         showIncidentAlertsModalForIncidentId: null,
         darkMode: false,
         searchAllCustomDetails: false,
@@ -237,6 +296,7 @@ describe('Sagas: Settings', () => {
             aggregator: null,
           },
         ],
+        computedFields: [],
         showIncidentAlertsModalForIncidentId: null,
         darkMode: false,
         searchAllCustomDetails: false,
@@ -277,6 +337,7 @@ describe('Sagas: Settings', () => {
             aggregator: null,
           },
         ],
+        computedFields: [],
         showIncidentAlertsModalForIncidentId: null,
         darkMode: true,
         searchAllCustomDetails: false,
@@ -317,6 +378,7 @@ describe('Sagas: Settings', () => {
             aggregator: null,
           },
         ],
+        computedFields: [],
         showIncidentAlertsModalForIncidentId: null,
         darkMode: false,
         searchAllCustomDetails: false,

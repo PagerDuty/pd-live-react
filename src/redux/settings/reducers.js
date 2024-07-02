@@ -19,6 +19,8 @@ import {
   SET_RESPONDERS_IN_EP_FILTER_COMPLETED,
   SET_ALERT_CUSTOM_DETAIL_COLUMNS_REQUESTED,
   SET_ALERT_CUSTOM_DETAIL_COLUMNS_COMPLETED,
+  SET_COMPUTED_COLUMNS_REQUESTED,
+  SET_COMPUTED_COLUMNS_COMPLETED,
   SET_SHOW_INCIDENT_ALERTS_MODAL_FOR_INCIDENT_ID_REQUESTED,
   SET_SHOW_INCIDENT_ALERTS_MODAL_FOR_INCIDENT_ID_COMPLETED,
   SET_MAX_RATE_LIMIT_REQUESTED,
@@ -81,6 +83,15 @@ const settings = produce(
       case SET_ALERT_CUSTOM_DETAIL_COLUMNS_COMPLETED:
         draft.alertCustomDetailFields = action.alertCustomDetailFields;
         draft.status = SET_ALERT_CUSTOM_DETAIL_COLUMNS_COMPLETED;
+        break;
+
+      case SET_COMPUTED_COLUMNS_REQUESTED:
+        draft.status = SET_COMPUTED_COLUMNS_REQUESTED;
+        break;
+
+      case SET_COMPUTED_COLUMNS_COMPLETED:
+        draft.computedFields = action.computedFields;
+        draft.status = SET_COMPUTED_COLUMNS_COMPLETED;
         break;
 
       case SET_SHOW_INCIDENT_ALERTS_MODAL_FOR_INCIDENT_ID_REQUESTED:
@@ -197,6 +208,7 @@ const settings = produce(
         aggregator: null,
       },
     ],
+    computedFields: [],
     showIncidentAlertsModalForIncidentId: null,
     darkMode: false,
     relativeDates: false,

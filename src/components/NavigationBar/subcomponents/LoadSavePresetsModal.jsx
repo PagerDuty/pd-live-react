@@ -33,6 +33,7 @@ import {
   setFuzzySearch as setFuzzySearchConnected,
   setRespondersInEpFilter as setRespondersInEpFilterConnected,
   setAlertCustomDetailColumns as setAlertCustomDetailColumnsConnected,
+  setComputedColumns as setComputedColumnsConnected,
   setDarkMode as setDarkModeConnected,
   setRelativeDates as setRelativeDatesConnected,
 } from 'src/redux/settings/actions';
@@ -69,6 +70,7 @@ const SettingsModalComponent = () => {
     fuzzySearch,
     respondersInEpFilter,
     alertCustomDetailFields,
+    computedFields,
     darkMode,
     relativeDates,
   } = useSelector((state) => state.settings);
@@ -103,6 +105,7 @@ const SettingsModalComponent = () => {
   const setFuzzySearch = (search) => dispatch(setFuzzySearchConnected(search));
   const setRespondersInEpFilter = (show) => dispatch(setRespondersInEpFilterConnected(show));
   const setAlertCustomDetailColumns = (columns) => dispatch(setAlertCustomDetailColumnsConnected(columns));
+  const setComputedColumns = (columns) => dispatch(setComputedColumnsConnected(columns));
   const setDarkMode = (mode) => dispatch(setDarkModeConnected(mode));
   const setRelativeDates = (relative) => dispatch(setRelativeDatesConnected(relative));
   const toggleDisplayQuerySettings = () => dispatch(toggleDisplayQuerySettingsConnected());
@@ -128,6 +131,7 @@ const SettingsModalComponent = () => {
       fuzzySearch: !!fuzzySearch,
       respondersInEpFilter,
       alertCustomDetailFields,
+      computedFields,
       darkMode,
       relativeDates,
     };
@@ -173,6 +177,7 @@ const SettingsModalComponent = () => {
     setFuzzySearch(!!presets.settings.fuzzySearch);
     setRespondersInEpFilter(presets.settings.respondersInEpFilter);
     setAlertCustomDetailColumns(presets.settings.alertCustomDetailFields);
+    setComputedColumns(presets.settings.computedFields);
     setDarkMode(presets.settings.darkMode);
     setColorMode(presets.settings.darkMode ? 'dark' : 'light');
     setRelativeDates(presets.settings.relativeDates);

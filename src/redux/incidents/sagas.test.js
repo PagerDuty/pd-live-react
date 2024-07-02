@@ -65,6 +65,7 @@ const initialSettings = {
       aggregator: null,
     },
   ],
+  computedFields: [],
   darkMode: false,
   relativeDates: false,
   status: '',

@@ -53,6 +53,7 @@ import {
 import {
   toggleColumnsModal as toggleColumnsModalConnected,
   setAlertCustomDetailColumns as setAlertCustomDetailColumnsConnected,
+  setComputedColumns as setComputedColumnsConnected,
 } from 'src/redux/settings/actions';
 
 import ColumnsModalItem from './subcomponents/ColumnsModalItem';
@@ -61,6 +62,7 @@ import DraggableColumnsModalItem from './subcomponents/DraggableColumnsModalItem
 const TableColumnsModalComponent = () => {
   const displayColumnsModal = useSelector((state) => state.settings.displayColumnsModal);
   const alertCustomDetailFields = useSelector((state) => state.settings.alertCustomDetailFields);
+  const computedFields = useSelector((state) => state.settings.computedFields);
   const incidentTableColumns = useSelector((state) => state.incidentTable.incidentTableColumns);
   const {
     incidentTableState,
@@ -70,6 +72,9 @@ const TableColumnsModalComponent = () => {
   const toggleColumnsModal = () => dispatch(toggleColumnsModalConnected());
   const setAlertCustomDetailColumns = (newAlertCustomDetailFields) => {
     dispatch(setAlertCustomDetailColumnsConnected(newAlertCustomDetailFields));
+  };
+  const setComputedColumns = (newComputedFields) => {
+    dispatch(setComputedColumnsConnected(newComputedFields));
   };
   const saveIncidentTable = (updatedIncidentTableColumns) => {
     dispatch(saveIncidentTableConnected(updatedIncidentTableColumns));
@@ -159,19 +164,19 @@ const TableColumnsModalComponent = () => {
   };
 
   const addCustomComputedColumn = (value) => {
-    const [Header, accessorPath, aggregator, expression] = value.split(':');
+    const [Header, accessorPath, expression] = value.split(':');
     const newColumn = {
       Header,
       accessorPath,
-      aggregator,
       value,
-      // expressionType,
+      expressionType: 'regex-single',
       expression,
       // label: value,
-      columnType: 'alert',
+      columnType: 'computed',
     };
-    const newAlertCustomDetailFields = [...alertCustomDetailFields, newColumn];
-    setAlertCustomDetailColumns(newAlertCustomDetailFields);
+    console.error('newColumn', newColumn);
+    const newComputedFields = [...computedFields, newColumn];
+    setComputedColumns(newComputedFields);
   };
 
   const removeCustomAlertColumn = (column) => {
@@ -180,6 +185,14 @@ const TableColumnsModalComponent = () => {
       (c) => c.value !== column.value,
     );
     setAlertCustomDetailColumns(newAlertCustomDetailFields);
+  };
+
+  const removeCustomComputedColumn = (column) => {
+    unselectColumn(column);
+    const newComputedFields = computedFields.filter(
+      (c) => c.value !== column.value,
+    );
+    setComputedColumns(newComputedFields);
   };
 
   const columnTypeInputRef = useRef(null);
@@ -290,6 +303,14 @@ const TableColumnsModalComponent = () => {
                       itemType="custom"
                     />
                   ))}
+                  {computedFields.map((column) => (
+                    <ColumnsModalItem
+                      key={columnValue(column)}
+                      column={column}
+                      onClick={() => removeCustomComputedColumn(column)}
+                      itemType="custom"
+                    />
+                  ))}
                 </Box>
                 <InputGroup>
                   <Select
@@ -336,12 +357,14 @@ const TableColumnsModalComponent = () => {
                     ref={addButtonRef}
                     isDisabled={!inputIsValid}
                     onClick={() => {
-                      const value = `${headerInputRef.current.value}:`
-                        + `${accessorPathInputRef.current.value}`;
                       if (columnType === 'alert') {
+                        const value = `${headerInputRef.current.value}:`
+                        + `${accessorPathInputRef.current.value}`;
                         addCustomAlertColumn(value);
                       } else {
-                        console.error('computed submitted');
+                        const value = `${headerInputRef.current.value}:`
+                        + `${accessorPathInputRef.current.value}:`
+                        + `${regexInputRef.current.value}`;
                         addCustomComputedColumn(value);
                       }
                     }}
