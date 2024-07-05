@@ -42,6 +42,7 @@ import {
 import {
   defaultColumns,
   customAlertColumns,
+  customComputedColumns,
   // columnsForSavedColumns,
 } from 'src/config/column-generator';
 
@@ -97,6 +98,11 @@ const TableColumnsModalComponent = () => {
       value = column.Header
         + (column.accessorPath ? `:${column.accessorPath}` : '')
         + (column.aggregator ? `:${column.aggregator}` : '');
+    } else if (column.columnType === 'computed') {
+      // Computed column based on expression
+      value = column.Header
+        + (column.accessorPath ? `:${column.accessorPath}` : '')
+        + (column.expression ? `:${column.expression}` : '');
     } else {
       // Incident column
       value = column.Header;
@@ -106,11 +112,11 @@ const TableColumnsModalComponent = () => {
 
   const getAllAvailableColumns = () => {
     // eslint-disable-next-line max-len
-    const v = [...defaultColumns(), ...customAlertColumns(alertCustomDetailFields)].sort((a, b) => columnValue(a).localeCompare(columnValue(b)));
+    const v = [...defaultColumns(), ...customAlertColumns(alertCustomDetailFields), ...customComputedColumns(computedFields)].sort((a, b) => columnValue(a).localeCompare(columnValue(b)));
     return v;
   };
 
-  const allAvailableColumns = useMemo(getAllAvailableColumns, [alertCustomDetailFields]);
+  const allAvailableColumns = useMemo(getAllAvailableColumns, [alertCustomDetailFields, computedFields]);
 
   // const getSelectedColumns = () => columnsForSavedColumns(incidentTableColumns).map((column) => {
   //   // Recreate original value used from react-select in order to populate dual list

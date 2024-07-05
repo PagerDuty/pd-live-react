@@ -872,6 +872,47 @@ export const customAlertColumnForSavedColumn = (savedColumn) => {
   return column;
 };
 
+export const customComputedColumnForSavedColumn = (savedColumn) => {
+  const {
+    Header: header, accessorPath, aggregator, width, expression, expressionType,
+  } = savedColumn;
+  if (!(header && accessorPath)) {
+    return null;
+  }
+  const accessor = (incident) => {
+    const path = accessorPath;
+    let result = null;
+    try {
+      result = JSONPath({
+        path,
+        json: incident,
+      });
+    } catch (e) {
+      result = null;
+    }
+    if (aggregator) {
+      return result;
+    }
+    return result[0];
+  };
+  const column = incidentColumn({
+    id: accessorPath,
+    header,
+    columnType: 'computed',
+    accessor,
+    accessorPath,
+    expression,
+    expressionType,
+    minWidth: 100,
+    renderer: renderPlainTextAlertCell,
+  });
+
+  if (width) {
+    column.width = width;
+  }
+  return column;
+};
+
 export const defaultColumns = () => [...defaultIncidentColumns(), ...defaultAlertsColumns()];
 
 export const customAlertColumns = (savedColumns) => {
@@ -882,6 +923,19 @@ export const customAlertColumns = (savedColumns) => {
       && !allColumns.find((c) => c.originalHeader === column.Header)
     ) {
       return customAlertColumnForSavedColumn(column);
+    }
+    return undefined;
+  });
+};
+
+export const customComputedColumns = (savedColumns) => {
+  const allColumns = defaultColumns();
+  return savedColumns.map((column) => {
+    if (
+      column.columnType === 'computed'
+      && !allColumns.find((c) => c.originalHeader === column.Header)
+    ) {
+      return customComputedColumnForSavedColumn(column);
     }
     return undefined;
   });
