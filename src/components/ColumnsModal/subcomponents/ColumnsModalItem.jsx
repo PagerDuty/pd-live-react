@@ -33,7 +33,6 @@ const ColumnsModalItem = ({
     // old default example column would give null here
     return null;
   }
-  const columnId = column.id || column.label || column.accessorPath;
 
   let ariaLabel = '';
   let iconComponent = null;
@@ -41,7 +40,7 @@ const ColumnsModalItem = ({
     case 'available':
       ariaLabel = 'Add column';
       iconComponent = (
-        <AddIcon id={`column-${columnId}-add-icon`} {...iconProps} aria-label={ariaLabel} />
+        <AddIcon id={`column-${column.value}-add-icon`} {...iconProps} aria-label={ariaLabel} />
       );
       break;
     case 'selected':
@@ -49,12 +48,12 @@ const ColumnsModalItem = ({
     default:
       ariaLabel = 'Remove column';
       iconComponent = (
-        <CloseIcon id={`column-${columnId}-remove-icon`} {...iconProps} aria-label={ariaLabel} />
+        <CloseIcon id={`column-${column.value}-remove-icon`} {...iconProps} aria-label={ariaLabel} />
       );
       break;
   }
   const tagProps = {
-    id: `column-${columnId}-tag`,
+    id: `column-${column.value}-tag`,
     m: 1,
     variant: itemType === 'available' ? 'subtle' : 'solid',
     colorScheme: itemType === 'available' ? 'gray' : 'blue',

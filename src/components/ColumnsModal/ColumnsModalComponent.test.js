@@ -54,6 +54,18 @@ describe('ColumnsModalComponent', () => {
             aggregator: null,
           },
         ],
+        computedFields: [
+          {
+            label: 'regex-single in incident body:first_trigger_log_entry.channel.details:(.*.example.com)',
+            value: 'regex-single in incident body:first_trigger_log_entry.channel.details:(.*.example.com)',
+            columnType: 'computed',
+            Header: 'regex-single in incident body',
+            accessorPath: 'first_trigger_log_entry.channel.details',
+            expressionType: 'regex-single',
+            expression: '(.*.example.com)',
+            aggregator: null,
+          },
+        ],
       },
       incidentTable: {
         incidentTableColumns: [
@@ -81,8 +93,8 @@ describe('ColumnsModalComponent', () => {
     expect(screen.getByRole('banner')).toBeInTheDocument();
     expect(screen.getByRole('banner')).toHaveTextContent('Incident Table');
     expect(screen.getByRole('heading', { name: 'Selected' })).toBeInTheDocument();
-    // 2 standard fields, 3 custom fields, 2 added custom fields
-    expect(screen.getAllByLabelText('Remove column')).toHaveLength(7);
+    // 2 standard fields, 3 custom fields, 2 added custom alert fields, 1 added computed
+    expect(screen.getAllByLabelText('Remove column')).toHaveLength(8);
     expect(screen.getByRole('heading', { name: 'Available' })).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: 'Custom' })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'OK' })).toBeInTheDocument();
@@ -102,7 +114,7 @@ describe('ColumnsModalComponent', () => {
     expect(within(selectedColumn).getByLabelText('Remove column')).toBeInTheDocument();
   });
 
-  it('should render an available custom column option with unique header name', () => {
+  it('should render an available custom alert column option with unique header name', () => {
     const customColumns = screen.getByText('Custom').parentElement.parentElement;
     const customColumn = within(customColumns).getByText(
       'AnotherCustomField:details.to.some.other.path',
@@ -138,4 +150,18 @@ describe('ColumnsModalComponent', () => {
   //   tabElement.simulate('click');
   //   expect(wrapper.find('[value="Summary:details.to.some.path"]').prop('disabled')).toEqual(true);
   // });
+
+  it('should render an available computed option with unique header name', () => {
+    const customColumns = screen.getByText('Custom').parentElement.parentElement;
+    const customColumn = within(customColumns).getByText(
+      'regex-single in incident body:first_trigger_log_entry.channel.details:(.*.example.com)',
+    );
+    expect(customColumn).toBeInTheDocument();
+    expect(within(customColumn).getByLabelText('Remove column')).toBeInTheDocument();
+
+    const availableColumns = screen.getByText('Available').parentElement.parentElement;
+    const availableColumn = within(availableColumns).getByText('regex-single in incident body');
+    expect(availableColumn).toBeInTheDocument();
+    expect(within(availableColumn).getByLabelText('Add column')).toBeInTheDocument();
+  });
 });
