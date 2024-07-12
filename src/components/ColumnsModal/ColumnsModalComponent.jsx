@@ -273,7 +273,8 @@ const TableColumnsModalComponent = () => {
               </CardHeader>
               <CardBody>
                 <Box id="custom-columns-card-body">
-                  alert:
+                  {t('alert')}
+                  :
                   {alertCustomDetailFields.map((column) => (
                     <ColumnsModalItem
                       key={column.value}
@@ -283,7 +284,8 @@ const TableColumnsModalComponent = () => {
                     />
                   ))}
                   <br />
-                  computed:
+                  {t('computed')}
+                  :
                   {computedFields.map((column) => (
                     <ColumnsModalItem
                       key={column.value}
