@@ -12,7 +12,7 @@ import {
   updateDarkMode,
   updateRelativeDates,
   manageIncidentTableColumns,
-  manageCustomAlertColumnDefinitions,
+  manageCustomColumnDefinitions,
   checkIncidentCellContentAllRows,
   checkActionAlertsModalContent,
 } from '../../support/util/common';
@@ -142,7 +142,7 @@ describe('Manage Settings', { failFast: { enabled: true } }, () => {
 
   it('Add valid custom alert column to incident table', () => {
     const customAlertColumnDefinitions = ['Quote:details.quote'];
-    manageCustomAlertColumnDefinitions(customAlertColumnDefinitions);
+    manageCustomColumnDefinitions(customAlertColumnDefinitions);
     customAlertColumnDefinitions.forEach((columnName) => {
       const header = columnName.split(':')[0];
       cy.get(`[data-column-name="${header}"]`).scrollIntoView().should('be.visible');
@@ -154,9 +154,22 @@ describe('Manage Settings', { failFast: { enabled: true } }, () => {
   });
 
   it('Add valid custom alert column with JSON path containing spaces to incident table', () => {
-    const customAlertColumnDefinitions = ["Fav Flavour:details.['favorite ice cream flavor']"];
-    manageCustomAlertColumnDefinitions(customAlertColumnDefinitions);
-    customAlertColumnDefinitions.forEach((columnName) => {
+    const customColumnDefinitions = ["Fav Flavour:details.['favorite ice cream flavor']"];
+    manageCustomColumnDefinitions(customColumnDefinitions);
+    customColumnDefinitions.forEach((columnName) => {
+      const header = columnName.split(':')[0];
+      cy.get(`[data-column-name="${header}"]`).scrollIntoView().should('be.visible');
+      cy.get(`[data-incident-header="${header}"][data-incident-row-cell-idx="0"]`).then(($el) => {
+        // eslint-disable-next-line no-unused-expressions
+        expect($el.text()).to.exist;
+      });
+    });
+  });
+
+  it('Add valid custom computed column to incident table', () => {
+    const customColumnDefinitions = ['CI:first_trigger_log_entry.channel.details:(.*.example.com)'];
+    manageCustomColumnDefinitions(customColumnDefinitions, 'computed');
+    customColumnDefinitions.forEach((columnName) => {
       const header = columnName.split(':')[0];
       cy.get(`[data-column-name="${header}"]`).scrollIntoView().should('be.visible');
       cy.get(`[data-incident-header="${header}"][data-incident-row-cell-idx="0"]`).then(($el) => {
