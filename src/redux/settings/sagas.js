@@ -252,8 +252,11 @@ export function* clearLocalCacheImpl() {
   yield put({
     type: 'RESET',
   });
-  yield persistor.purge();
+  yield persistor.pause();
+  yield persistor.flush().then(() => persistor.purge());
   yield persistor.persist();
+  localStorage.clear();
+  sessionStorage.clear();
   yield put({
     type: CLEAR_LOCAL_CACHE_COMPLETED,
   });
