@@ -35,7 +35,6 @@ describe('ColumnsModalComponent', () => {
             columnType: 'alert',
             Header: 'CustomField',
             accessorPath: 'details.to.some.path',
-            aggregator: null,
           },
           {
             label: 'AnotherCustomField:details.to.some.other.path',
@@ -43,7 +42,6 @@ describe('ColumnsModalComponent', () => {
             columnType: 'alert',
             Header: 'AnotherCustomField',
             accessorPath: 'details.to.some.other.path',
-            aggregator: null,
           },
           {
             label: "Fav Flavour:details.['favorite ice cream flavor']",
@@ -51,7 +49,6 @@ describe('ColumnsModalComponent', () => {
             columnType: 'alert',
             Header: 'Fav Flavour',
             accessorPath: "details.['favorite ice cream flavor']",
-            aggregator: null,
           },
         ],
         computedFields: [
@@ -63,7 +60,6 @@ describe('ColumnsModalComponent', () => {
             accessorPath: 'first_trigger_log_entry.channel.details',
             expressionType: 'regex-single',
             expression: '(.*.example.com)',
-            aggregator: null,
           },
         ],
       },

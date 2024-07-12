@@ -57,35 +57,30 @@ describe('IncidentTableComponent', () => {
           {
             Header: 'quote',
             accessorPath: 'details.quote',
-            aggregator: null,
             width: 100,
             columnType: 'alert',
           },
           {
             Header: 'link',
             accessorPath: 'details.link',
-            aggregator: null,
             width: 100,
             columnType: 'alert',
           },
           {
             Header: 'object_details',
             accessorPath: 'details.object_details',
-            aggregator: null,
             width: 100,
             columnType: 'alert',
           },
           {
             Header: 'some obscure field',
             accessorPath: "details['some obscure field']",
-            aggregator: null,
             width: 100,
             columnType: 'alert',
           },
           {
             Header: 'regex-single in incident body',
             accessorPath: 'first_trigger_log_entry.channel.details',
-            aggregator: null,
             width: 100,
             columnType: 'computed',
             expressionType: 'regex-single',
@@ -94,7 +89,6 @@ describe('IncidentTableComponent', () => {
           {
             Header: 'regex in incident body',
             accessorPath: 'first_trigger_log_entry.channel.details',
-            aggregator: null,
             width: 100,
             columnType: 'computed',
             expressionType: 'regex',
@@ -103,7 +97,6 @@ describe('IncidentTableComponent', () => {
           {
             Header: 'no match regex in incident body',
             accessorPath: 'first_trigger_log_entry.channel.details',
-            aggregator: null,
             width: 100,
             columnType: 'computed',
             expressionType: 'regex',
@@ -112,7 +105,6 @@ describe('IncidentTableComponent', () => {
           {
             Header: 'no match regex in non-existant path',
             accessorPath: 'first_trigger_log_entry.channel.foobar',
-            aggregator: null,
             width: 100,
             columnType: 'computed',
             expressionType: 'regex',

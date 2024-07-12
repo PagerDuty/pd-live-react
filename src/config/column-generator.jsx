@@ -843,7 +843,7 @@ export const computedColumnForSavedColumn = (savedColumn) => {
 
 export const customAlertColumnForSavedColumn = (savedColumn) => {
   const {
-    value, Header: header, accessorPath, aggregator, width,
+    value, Header: header, accessorPath, width,
   } = savedColumn;
   if (!(header && accessorPath)) {
     return null;
@@ -862,9 +862,6 @@ export const customAlertColumnForSavedColumn = (savedColumn) => {
       });
     } catch (e) {
       result = null;
-    }
-    if (aggregator) {
-      return result;
     }
     return result[0];
   };
@@ -887,7 +884,7 @@ export const customAlertColumnForSavedColumn = (savedColumn) => {
 
 export const customComputedColumnForSavedColumn = (savedColumn) => {
   const {
-    Header: header, accessorPath, aggregator, width, expression, expressionType,
+    Header: header, accessorPath, width, expression, expressionType,
   } = savedColumn;
   if (!(header && accessorPath)) {
     return null;
@@ -902,9 +899,6 @@ export const customComputedColumnForSavedColumn = (savedColumn) => {
       });
     } catch (e) {
       result = null;
-    }
-    if (aggregator) {
-      return result;
     }
     return result[0];
   };

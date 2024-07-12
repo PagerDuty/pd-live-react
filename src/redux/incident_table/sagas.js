@@ -61,7 +61,6 @@ export function* saveIncidentTableImpl(action) {
         value: tempCol.value,
         Header: tempCol.Header,
         accessorPath: tempCol.accessorPath,
-        aggregator: tempCol.aggregator,
         width: tempCol.width,
         columnType: tempCol.columnType,
         expressionType: tempCol.expressionType,

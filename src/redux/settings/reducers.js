@@ -205,7 +205,6 @@ const settings = produce(
         columnType: 'alert',
         Header: 'Environment',
         accessorPath: 'details.env',
-        aggregator: null,
       },
     ],
     computedFields: [],

@@ -122,12 +122,11 @@ const TableColumnsModalComponent = () => {
   };
 
   const addCustomAlertColumn = (value) => {
-    const [Header, accessorPath, aggregator] = value.split(':');
+    const [Header, accessorPath] = value.split(':');
     const newColumn = {
       id: value,
       Header,
       accessorPath,
-      aggregator,
       value,
       label: value,
       columnType: 'alert',
