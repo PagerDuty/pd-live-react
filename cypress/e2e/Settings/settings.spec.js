@@ -179,6 +179,22 @@ describe('Manage Settings', { failFast: { enabled: true } }, () => {
     });
   });
 
+  it('Add two valid custom computed column to incident table with different expressions', () => {
+    const customColumnDefinitions = [
+      'CI:first_trigger_log_entry.channel.details:(.*.example.com)',
+      'Category:first_trigger_log_entry.channel.details:Category(.*)'
+    ];
+    manageCustomColumnDefinitions(customColumnDefinitions, 'computed');
+    customColumnDefinitions.forEach((columnName) => {
+      const header = columnName.split(':')[0];
+      cy.get(`[data-column-name="${header}"]`).scrollIntoView().should('be.visible');
+      cy.get(`[data-incident-header="${header}"][data-incident-row-cell-idx="0"]`).then(($el) => {
+        // eslint-disable-next-line no-unused-expressions
+        expect($el.text()).to.exist;
+      });
+    });
+  });
+
   it('Update dark mode', () => {
     let currentDarkMode;
     cy.window()

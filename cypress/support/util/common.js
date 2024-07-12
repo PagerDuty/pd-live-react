@@ -266,10 +266,10 @@ export const manageCustomColumnDefinitions = (customColumnDefinitions, type = 'a
   customColumnDefinitions.forEach((customAlertColumnDefinition) => {
     const [header, accessorPath, expression] = customAlertColumnDefinition.split(':');
     cy.get('#column-type-select').select(type);
-    cy.get('input[placeholder="Header"]').type(header);
-    cy.get('input[placeholder="JSON Path"]').type(accessorPath);
+    cy.get('input[placeholder="Header"]').clear().type(header);
+    cy.get('input[placeholder="JSON Path"]').clear().type(accessorPath);
     if (type === 'computed') {
-      cy.get('input[placeholder="Regex"]').type(expression);
+      cy.get('input[placeholder="Regex"]').clear().type(expression);
     }
     cy.get('button[aria-label="Add custom column"]').click();
     // Need to escape special characters in accessorPath
