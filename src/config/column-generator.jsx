@@ -147,6 +147,7 @@ const dateValueSortType = (row1, row2, columnId, descending) => {
 };
 
 export const incidentColumn = ({
+  id,
   value,
   header,
   accessor,
@@ -208,6 +209,12 @@ export const incidentColumn = ({
     expression,
     expressionType,
   };
+
+  if (id) {
+    column.id = id;
+  } else if (typeof value === 'string') {
+    column.id = value;
+  }
 
   if (sortType) {
     column.sortType = sortType;
