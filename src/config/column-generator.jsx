@@ -155,6 +155,8 @@ export const incidentColumn = ({
   minWidth,
   sortType,
   columnType,
+  expression,
+  expressionType,
 }) => {
   const wrappedRenderer = ({
     cell, value: cellValue, row,
@@ -203,6 +205,8 @@ export const incidentColumn = ({
     minWidth,
     columnType: columnType || 'incident',
     Filter: ColumnFilterComponent,
+    expression,
+    expressionType,
   };
 
   if (sortType) {
