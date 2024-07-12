@@ -123,6 +123,9 @@ const TableColumnsModalComponent = () => {
 
   const addCustomAlertColumn = (value) => {
     const [Header, accessorPath] = value.split(':');
+    if (!Header || !accessorPath) {
+      return;
+    }
     const newColumn = {
       id: value,
       Header,
@@ -137,6 +140,9 @@ const TableColumnsModalComponent = () => {
 
   const addCustomComputedColumn = (value) => {
     const [Header, accessorPath, expression] = value.split(':');
+    if (!Header || !accessorPath || !expression) {
+      return;
+    }
     const newColumn = {
       id: value,
       Header,
@@ -173,7 +179,7 @@ const TableColumnsModalComponent = () => {
   const regexInputRef = useRef(null);
   const addButtonRef = useRef(null);
 
-  const [columnType, setColumnType] = useState(null);
+  const [columnType, setColumnType] = useState('alert');
 
   const [inputIsValid, setInputIsValid] = useState(false);
   const validateInput = () => {
