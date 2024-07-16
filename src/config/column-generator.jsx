@@ -156,8 +156,6 @@ export const incidentColumn = ({
   minWidth,
   sortType,
   columnType,
-  expression,
-  expressionType,
 }) => {
   const wrappedRenderer = ({
     cell, value: cellValue, row,
@@ -206,8 +204,6 @@ export const incidentColumn = ({
     minWidth,
     columnType: columnType || 'incident',
     Filter: ColumnFilterComponent,
-    expression,
-    expressionType,
   };
 
   if (id) {
@@ -796,7 +792,7 @@ export const defaultAlertsColumns = () => [
   }),
 ];
 
-export const computedColumnForSavedColumn = (savedColumn) => {
+export const customComputedColumnForSavedColumn = (savedColumn) => {
   const {
     value,
     Header: header,
@@ -889,47 +885,6 @@ export const customAlertColumnForSavedColumn = (savedColumn) => {
   return column;
 };
 
-export const customComputedColumnForSavedColumn = (savedColumn) => {
-  const {
-    Header: header, accessorPath, width, expression, expressionType,
-  } = savedColumn;
-  if (!(header && accessorPath)) {
-    return null;
-  }
-  const accessor = (incident) => {
-    const path = accessorPath;
-    let result = null;
-    try {
-      result = JSONPath({
-        path,
-        json: incident,
-      });
-    } catch (e) {
-      result = null;
-    }
-    return result[0];
-  };
-
-  const id = `${header}:${accessorPath}:${expression}`;
-  const column = incidentColumn({
-    id,
-    value: id,
-    header,
-    columnType: 'computed',
-    accessor,
-    accessorPath,
-    expression,
-    expressionType,
-    minWidth: 100,
-    renderer: renderPlainTextAlertCell,
-  });
-
-  if (width) {
-    column.width = width;
-  }
-  return column;
-};
-
 export const defaultColumns = () => [...defaultIncidentColumns(), ...defaultAlertsColumns()];
 
 export const customAlertColumns = (savedColumns) => {
@@ -973,7 +928,7 @@ export const columnsForSavedColumns = (savedColumns) => {
         return customAlertColumnForSavedColumn(column);
       }
       if (column.columnType === 'computed') {
-        return computedColumnForSavedColumn(column);
+        return customComputedColumnForSavedColumn(column);
       }
       return null;
     })
