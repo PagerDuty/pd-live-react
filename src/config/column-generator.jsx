@@ -152,6 +152,8 @@ export const incidentColumn = ({
   header,
   accessor,
   accessorPath,
+  expression,
+  expressionType,
   renderer = renderPlainTextCell,
   minWidth,
   sortType,
@@ -200,6 +202,8 @@ export const incidentColumn = ({
     i18n: i18next.t(header),
     accessor,
     accessorPath,
+    expression,
+    expressionType,
     Cell: wrappedRenderer,
     minWidth,
     columnType: columnType || 'incident',
@@ -839,6 +843,8 @@ export const customComputedColumnForSavedColumn = (savedColumn) => {
     columnType: 'computed',
     accessor,
     accessorPath,
+    expression,
+    expressionType,
     minWidth: width || 100,
   });
   return column;
