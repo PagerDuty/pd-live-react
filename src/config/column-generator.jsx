@@ -908,6 +908,9 @@ export const customAlertColumns = (savedColumns) => {
 
 export const customComputedColumns = (savedColumns) => {
   const allColumns = defaultColumns();
+  if (!savedColumns) {
+    return [];
+  }
   return savedColumns.map((column) => {
     if (
       column.columnType === 'computed'
@@ -921,6 +924,9 @@ export const customComputedColumns = (savedColumns) => {
 
 export const columnsForSavedColumns = (savedColumns) => {
   const allColumns = defaultColumns();
+  if (!savedColumns) {
+    return [];
+  }
   const columns = savedColumns
     .map((column) => {
       const foundColumn = allColumns.find((c) => c.originalHeader === column.Header);

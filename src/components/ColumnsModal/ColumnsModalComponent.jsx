@@ -62,8 +62,8 @@ import DraggableColumnsModalItem from './subcomponents/DraggableColumnsModalItem
 
 const TableColumnsModalComponent = () => {
   const displayColumnsModal = useSelector((state) => state.settings.displayColumnsModal);
-  const alertCustomDetailFields = useSelector((state) => state.settings.alertCustomDetailFields);
-  const computedFields = useSelector((state) => state.settings.computedFields);
+  const alertCustomDetailFields = useSelector((state) => state.settings.alertCustomDetailFields) || [];
+  const computedFields = useSelector((state) => state.settings.computedFields) || [];
   const incidentTableColumns = useSelector((state) => state.incidentTable.incidentTableColumns);
   const {
     incidentTableState,
