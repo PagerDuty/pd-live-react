@@ -121,8 +121,8 @@ const TableColumnsModalComponent = () => {
     setSelectedColumns((prev) => [...prev, column]);
   };
 
-  const addCustomAlertColumn = (value) => {
-    const [Header, accessorPath] = value.split(':');
+  const addCustomAlertColumn = (Header, accessorPath) => {
+    const value = `${Header}:${accessorPath}`;
     if (!Header || !accessorPath) {
       return;
     }
@@ -138,8 +138,8 @@ const TableColumnsModalComponent = () => {
     setAlertCustomDetailColumns(newAlertCustomDetailFields);
   };
 
-  const addCustomComputedColumn = (value) => {
-    const [Header, accessorPath, expression] = value.split(':');
+  const addCustomComputedColumn = (Header, accessorPath, expression) => {
+    const value = `${Header}:${accessorPath}:${expression.replace(/:/g, '\\:')}`;
     if (!Header || !accessorPath || !expression) {
       return;
     }
@@ -340,14 +340,16 @@ const TableColumnsModalComponent = () => {
                     isDisabled={!inputIsValid}
                     onClick={() => {
                       if (columnType === 'alert') {
-                        const value = `${headerInputRef.current.value}:`
-                        + `${accessorPathInputRef.current.value}`;
-                        addCustomAlertColumn(value);
+                        addCustomAlertColumn(
+                          headerInputRef.current.value,
+                          accessorPathInputRef.current.value,
+                        );
                       } else {
-                        const value = `${headerInputRef.current.value}:`
-                        + `${accessorPathInputRef.current.value}:`
-                        + `${regexInputRef.current.value}`;
-                        addCustomComputedColumn(value);
+                        addCustomComputedColumn(
+                          headerInputRef.current.value,
+                          accessorPathInputRef.current.value,
+                          regexInputRef.current.value,
+                        );
                       }
                     }}
                     m={1}

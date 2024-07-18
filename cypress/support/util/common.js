@@ -263,18 +263,24 @@ export const manageCustomColumnDefinitions = (customColumnDefinitions, type = 'a
     cy.wrap($el).click();
   });
 
-  customColumnDefinitions.forEach((customAlertColumnDefinition) => {
-    const [header, accessorPath, expression] = customAlertColumnDefinition.split(':');
+  customColumnDefinitions.forEach((customColumnDefinition) => {
+    const {
+      header, accessorPath, expression,
+    } = customColumnDefinition;
+    console.error(header, accessorPath, expression);
     cy.get('#column-type-select').select(type);
     cy.get('input[placeholder="Header"]').clear().type(header);
     cy.get('input[placeholder="JSON Path"]').clear().type(accessorPath);
     if (type === 'computed') {
-      cy.get('input[placeholder="Regex"]').clear().type(expression);
+      cy.get('input[placeholder="Regex"]').clear().type(expression, { parseSpecialCharSequences: false });
     }
     cy.get('button[aria-label="Add custom column"]').click();
     // Need to escape special characters in accessorPath
     // https://docs.cypress.io/faq/questions/using-cypress-faq#How-do-I-use-special-characters-with-cyget
-    cy.get(`#column-${Cypress.$.escapeSelector(customAlertColumnDefinition)}-add-icon`).click();
+    const columnId = Cypress.$.escapeSelector(
+      [header, accessorPath, expression.replace(/:/g, '\\:')].filter((value) => value !== '').join(':'),
+    );
+    cy.get(`#column-${columnId}-add-icon`).click();
   });
   cy.get('#save-columns-button').click();
   checkActionAlertsModalContent('Incident table columns saved');
