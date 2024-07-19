@@ -228,9 +228,9 @@ const TableColumnsModalComponent = () => {
           <VStack align="top">
             <Card size="sm" borderWidth="1px">
               <CardHeader>
-                <Heading size="sm">{t('Selected')}</Heading>
+                <Heading mb={0} size="sm">{t('Selected')}</Heading>
               </CardHeader>
-              <CardBody>
+              <CardBody py={0}>
                 <Box id="selected-columns-card-body" ref={drop}>
                   {selectedColumns.map((column) => (
                     <DraggableColumnsModalItem
@@ -245,17 +245,17 @@ const TableColumnsModalComponent = () => {
                 </Box>
               </CardBody>
               <CardFooter>
-                <Text m="auto" fontSize="sm" color="gray.500" as="i">
+                <Text p={0} mx="auto" my={0} fontSize="sm" color="gray.500" as="i">
                   {t('Drag and drop to reorder')}
                 </Text>
               </CardFooter>
             </Card>
-            <Card size="sm">
+            <Card size="sm" borderWidth="1px">
               <CardHeader>
-                <Heading size="sm">{t('Available')}</Heading>
+                <Heading mb={0} size="sm">{t('Available')}</Heading>
               </CardHeader>
-              <CardBody>
-                <Box id="available-columns-card-body">
+              <CardBody py={0}>
+                <Box mb={2} id="available-columns-card-body">
                   {unselectedColumns.map((column) => (
                     <ColumnsModalItem
                       key={column.value}
@@ -267,39 +267,50 @@ const TableColumnsModalComponent = () => {
                 </Box>
               </CardBody>
             </Card>
-            <Card size="sm">
+            <Card size="sm" borderWidth="1px">
               <CardHeader>
-                <Heading size="sm">{t('Custom')}</Heading>
+                <Heading mb={0} size="sm">{t('Custom')}</Heading>
               </CardHeader>
-              <CardBody>
+              <CardBody py={0}>
                 <Box id="custom-columns-card-body">
-                  {t('alert')}
-                  :
-                  {alertCustomDetailFields.map((column) => (
-                    <ColumnsModalItem
-                      key={column.value}
-                      column={column}
-                      onClick={() => removeCustomAlertColumn(column)}
-                      itemType="custom"
-                    />
-                  ))}
-                  <br />
-                  {t('computed')}
-                  :
-                  {computedFields.map((column) => (
-                    <ColumnsModalItem
-                      key={column.value}
-                      column={column}
-                      onClick={() => removeCustomComputedColumn(column)}
-                      itemType="custom"
-                    />
-                  ))}
+                  <Card size="xs" mb={1}>
+                    <CardHeader pb={0}>
+                      <Heading size="xs">{t('alert')}</Heading>
+                    </CardHeader>
+                    <CardBody>
+                      {alertCustomDetailFields.map((column) => (
+                        <ColumnsModalItem
+                          key={column.value}
+                          column={column}
+                          onClick={() => removeCustomAlertColumn(column)}
+                          itemType="custom"
+                        />
+                      ))}
+                    </CardBody>
+                  </Card>
+                  <Card size="xs" mb={1}>
+                    <CardHeader pb={0}>
+                      <Heading mb={0} size="xs">{t('computed')}</Heading>
+                    </CardHeader>
+                    <CardBody>
+                      {computedFields.map((column) => (
+                        <ColumnsModalItem
+                          key={column.value}
+                          column={column}
+                          onClick={() => removeCustomComputedColumn(column)}
+                          itemType="custom"
+                          columnType="computed"
+                        />
+                      ))}
+                    </CardBody>
+                  </Card>
                 </Box>
-                <InputGroup>
+                <InputGroup mb={2}>
                   <Select
                     id="column-type-select"
                     ref={columnTypeInputRef}
-                    w="10%"
+                    minWidth="8em"
+                    width="auto"
                     onChange={() => {
                       setColumnType(columnTypeInputRef.current.value);
                     }}
@@ -353,6 +364,7 @@ const TableColumnsModalComponent = () => {
                       }
                     }}
                     m={1}
+                    px={6}
                     variant="solid"
                     colorScheme="blue"
                     aria-label={t('Add custom column')}
