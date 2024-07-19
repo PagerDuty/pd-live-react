@@ -72,7 +72,6 @@ const ColumnsModalItem = ({
   let tagText = columnLabel(column);
   if (itemType === 'custom') {
     if (columnType === 'alert') {
-      tagProps.colorScheme = 'red';
       tagProps.px = 2;
       tagText = (
         <Text as="span">
@@ -87,7 +86,6 @@ const ColumnsModalItem = ({
         </Text>
       );
     } else {
-      tagProps.colorScheme = 'purple';
       tagProps.px = 2;
       tagText = (
         <Text as="span">
