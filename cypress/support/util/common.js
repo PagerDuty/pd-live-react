@@ -267,7 +267,6 @@ export const manageCustomColumnDefinitions = (customColumnDefinitions, type = 'a
     const {
       header, accessorPath, expression,
     } = customColumnDefinition;
-    console.error(header, accessorPath, expression);
     cy.get('#column-type-select').select(type);
     cy.get('input[placeholder="Header"]').clear().type(header);
     cy.get('input[placeholder="JSON Path"]').clear().type(accessorPath);

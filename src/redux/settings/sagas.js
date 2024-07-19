@@ -173,7 +173,6 @@ export function* setComputedColumns() {
 }
 
 export function* setComputedColumnsImpl(action) {
-  console.error('setComputedColumnsImpl', action);
   const {
     computedFields,
   } = action;
