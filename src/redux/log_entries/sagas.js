@@ -64,7 +64,7 @@ export function* getLogEntries(action) {
 
     const params = {
       since: since.toISOString().replace(/\.[\d]{3}/, ''),
-      'include[]': ['incidents', 'linked_incidents', 'external_references', 'channels'],
+      'include[]': ['incidents', 'linked_incidents', 'external_references', 'channels', 'first_trigger_log_entries'],
     };
     let logEntries;
     try {

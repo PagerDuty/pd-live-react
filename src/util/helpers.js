@@ -106,3 +106,32 @@ export const chunkArray = (array, size) => {
   }
   return chunkedArr;
 };
+
+export const anythingToString = (value) => {
+  // Check for null and undefined
+  if (value === null) return 'null';
+  if (value === undefined) return 'undefined';
+
+  // Handle different types
+  switch (typeof value) {
+    case 'boolean':
+    case 'number':
+    case 'bigint':
+    case 'symbol':
+    case 'string':
+      return value.toString();
+
+    case 'function':
+      return value.toString(); // Functions are turned into their source code
+
+    case 'object':
+      try {
+        return JSON.stringify(value); // Convert objects and arrays to JSON
+      } catch (error) {
+        return value.toString(); // Fallback for circular references or non-serializable objects
+      }
+
+    default:
+      return String(value); // Fallback for any other type
+  }
+};

@@ -34,6 +34,10 @@ import {
 import i18next from 'src/i18n';
 
 import {
+  anythingToString,
+} from 'src/util/helpers';
+
+import {
   HIGH, LOW,
 } from 'src/util/incidents';
 import {
@@ -144,35 +148,38 @@ const dateValueSortType = (row1, row2, columnId, descending) => {
 
 export const incidentColumn = ({
   id,
+  value,
   header,
   accessor,
   accessorPath,
+  expression,
+  expressionType,
   renderer = renderPlainTextCell,
   minWidth,
   sortType,
   columnType,
 }) => {
   const wrappedRenderer = ({
-    cell, value, row,
+    cell, value: cellValue, row,
   }) => {
-    let valueStr;
-    switch (typeof value) {
+    let cellValueStr;
+    switch (typeof cellValue) {
       case 'string':
-        valueStr = value;
+        cellValueStr = cellValue;
         break;
       case 'undefined':
-        valueStr = '';
+        cellValueStr = '';
         break;
       case 'object':
-        valueStr = value ? JSON.stringify(value) : '';
+        cellValueStr = cellValue ? JSON.stringify(cellValue) : '';
         break;
       default:
-        valueStr = `${value}`;
+        cellValueStr = `${cellValue}`;
     }
     try {
       return renderer({
         cell,
-        value: valueStr,
+        value: cellValueStr,
         row,
       });
     } catch (e) {
@@ -189,11 +196,14 @@ export const incidentColumn = ({
   };
 
   const column = {
+    value,
     originalHeader: header,
     Header: i18next.t(header),
     i18n: i18next.t(header),
     accessor,
     accessorPath,
+    expression,
+    expressionType,
     Cell: wrappedRenderer,
     minWidth,
     columnType: columnType || 'incident',
@@ -202,8 +212,8 @@ export const incidentColumn = ({
 
   if (id) {
     column.id = id;
-  } else if (typeof accessor === 'string') {
-    column.id = accessor;
+  } else if (typeof value === 'string') {
+    column.id = value;
   }
 
   if (sortType) {
@@ -215,6 +225,7 @@ export const incidentColumn = ({
 
 export const defaultIncidentColumns = () => [
   incidentColumn({
+    value: 'incident_number',
     header: '#',
     accessor: 'incident_number',
     minWidth: 80,
@@ -226,6 +237,7 @@ export const defaultIncidentColumns = () => [
     }),
   }),
   incidentColumn({
+    value: 'title',
     header: 'Title',
     accessor: 'title',
     minWidth: 200,
@@ -237,12 +249,13 @@ export const defaultIncidentColumns = () => [
     }),
   }),
   incidentColumn({
-    id: 'description',
+    value: 'description',
     header: 'Description',
     accessor: 'description',
     minWidth: 200,
   }),
   incidentColumn({
+    value: 'created_at',
     header: 'Created At',
     accessor: 'created_at',
     minWidth: 200,
@@ -254,7 +267,7 @@ export const defaultIncidentColumns = () => [
     sortType: dateValueSortType,
   }),
   incidentColumn({
-    id: 'age',
+    value: 'age',
     header: 'Age',
     accessor: 'created_at',
     minWidth: 200,
@@ -268,6 +281,7 @@ export const defaultIncidentColumns = () => [
     sortType: dateValueSortType,
   }),
   incidentColumn({
+    value: 'updated_at',
     header: 'Updated At',
     accessor: 'updated_at',
     minWidth: 200,
@@ -279,6 +293,7 @@ export const defaultIncidentColumns = () => [
     sortType: dateValueSortType,
   }),
   incidentColumn({
+    value: 'status',
     header: 'Status',
     accessor: 'status',
     minWidth: 90,
@@ -287,12 +302,13 @@ export const defaultIncidentColumns = () => [
     }) => <StatusComponent status={value} />,
   }),
   incidentColumn({
+    value: 'incident_key',
     header: 'Incident Key',
     accessor: 'incident_key',
     minWidth: 300,
   }),
   incidentColumn({
-    id: 'service',
+    value: 'service',
     header: 'Service',
     accessor: 'service.summary',
     minWidth: 150,
@@ -304,7 +320,7 @@ export const defaultIncidentColumns = () => [
     }),
   }),
   incidentColumn({
-    id: 'assignees',
+    value: 'assignees',
     header: 'Assignees',
     accessor: (incident) => incident.assignments.map((assignment) => assignment.assignee.summary).join(', '),
     minWidth: 160,
@@ -319,6 +335,7 @@ export const defaultIncidentColumns = () => [
     ),
   }),
   incidentColumn({
+    value: 'last_status_change_at',
     header: 'Last Status Change At',
     accessor: 'last_status_change_at',
     minWidth: 200,
@@ -330,7 +347,7 @@ export const defaultIncidentColumns = () => [
     sortType: dateValueSortType,
   }),
   incidentColumn({
-    id: 'num_alerts',
+    value: 'num_alerts',
     header: 'Num Alerts',
     accessor: 'alert_counts.all',
     minWidth: 130,
@@ -345,7 +362,7 @@ export const defaultIncidentColumns = () => [
     ),
   }),
   incidentColumn({
-    id: 'escalation_policy',
+    value: 'escalation_policy',
     header: 'Escalation Policy',
     accessor: 'escalation_policy.summary',
     minWidth: 150,
@@ -357,7 +374,7 @@ export const defaultIncidentColumns = () => [
     }),
   }),
   incidentColumn({
-    id: 'teams',
+    value: 'teams',
     header: 'Teams',
     accessor: (incident) => (incident.teams ? incident.teams.map((team) => team.summary).join(', ') : ''),
     minWidth: 200,
@@ -379,7 +396,7 @@ export const defaultIncidentColumns = () => [
     },
   }),
   incidentColumn({
-    id: 'acknowledgements',
+    value: 'acknowledgements',
     header: 'Acknowledgements',
     accessor: (incident) => incident.acknowledgements.map((acknowledger) => acknowledger.summary).join(', '),
     minWidth: 160,
@@ -394,6 +411,7 @@ export const defaultIncidentColumns = () => [
     ),
   }),
   incidentColumn({
+    value: 'last_status_change_by',
     header: 'Last Status Change By',
     accessor: 'last_status_change_by.summary',
     minWidth: 150,
@@ -405,7 +423,7 @@ export const defaultIncidentColumns = () => [
     }),
   }),
   incidentColumn({
-    id: 'priority',
+    value: 'priority',
     header: 'Priority',
     accessor: (incident) => incident.priority?.summary || '',
     minWidth: 90,
@@ -436,6 +454,7 @@ export const defaultIncidentColumns = () => [
     },
   }),
   incidentColumn({
+    value: 'urgency',
     header: 'Urgency',
     accessor: 'urgency',
     minWidth: 120,
@@ -467,11 +486,13 @@ export const defaultIncidentColumns = () => [
     },
   }),
   incidentColumn({
+    value: 'id',
     header: 'Incident ID',
     accessor: 'id',
     minWidth: 160,
   }),
   incidentColumn({
+    value: 'summary',
     header: 'Summary',
     accessor: 'summary',
     minWidth: 300,
@@ -483,7 +504,7 @@ export const defaultIncidentColumns = () => [
     }),
   }),
   incidentColumn({
-    id: 'latest_note',
+    value: 'latest_note',
     header: 'Latest Note',
     accessor: (incident) => {
       if (incident.notes && incident.notes.length > 0) {
@@ -499,7 +520,7 @@ export const defaultIncidentColumns = () => [
     }) => <LatestNoteComponent incident={original} />,
   }),
   incidentColumn({
-    id: 'latest_note_at',
+    value: 'latest_note_at',
     header: 'Latest Note At',
     accessor: (incident) => {
       if (incident.notes && incident.notes.length > 0) {
@@ -516,7 +537,7 @@ export const defaultIncidentColumns = () => [
     sortType: dateValueSortType,
   }),
   incidentColumn({
-    id: 'external_references',
+    value: 'external_references',
     header: 'External References',
     accessor: (incident) => (incident.external_references
       ? incident.external_references.map((ext) => ext.external_id).join(', ')
@@ -540,7 +561,7 @@ export const defaultIncidentColumns = () => [
     },
   }),
   incidentColumn({
-    id: 'responders',
+    value: 'responders',
     header: 'Responders',
     accessor: (incident) => incident.incidents_responders.map((responder) => responder.user.summary).join(', '),
     minWidth: 160,
@@ -555,7 +576,7 @@ export const defaultIncidentColumns = () => [
     ),
   }),
   incidentColumn({
-    id: 'latest_log_entry_at',
+    value: 'latest_log_entry_at',
     header: 'Latest Log Entry At',
     accessor: (incident) => incident.latest_log_entry?.created_at || incident.updated_at || incident.created_at,
     minWidth: 200,
@@ -567,7 +588,7 @@ export const defaultIncidentColumns = () => [
     sortType: dateValueSortType,
   }),
   incidentColumn({
-    id: 'latest_log_entry_type',
+    value: 'latest_log_entry_type',
     header: 'Latest Log Entry Type',
     accessor: (incident) => {
       if (incident.latest_log_entry) {
@@ -582,7 +603,7 @@ export const defaultIncidentColumns = () => [
     minWidth: 120,
   }),
   incidentColumn({
-    id: 'latest_alert_at',
+    value: 'latest_alert_at',
     header: 'Latest Alert At',
     accessor: (incident) => {
       if (incident.alerts && incident.alerts instanceof Array && incident.alerts.length > 0) {
@@ -604,7 +625,7 @@ export const defaultIncidentColumns = () => [
 
 export const defaultAlertsColumns = () => [
   incidentColumn({
-    id: 'links',
+    value: 'links',
     header: 'Links',
     columnType: 'alert',
     accessor: (incident) => {
@@ -641,7 +662,7 @@ export const defaultAlertsColumns = () => [
     ),
   }),
   incidentColumn({
-    id: 'severity',
+    value: 'severity',
     header: 'Severity',
     columnType: 'alert',
     accessor: (incident) => {
@@ -714,7 +735,7 @@ export const defaultAlertsColumns = () => [
     },
   }),
   incidentColumn({
-    id: 'source_component',
+    value: 'source_component',
     header: 'Component',
     columnType: 'alert',
     accessor: (incident) => incident.alerts?.[0]?.body?.cef_details?.source_component || '',
@@ -722,7 +743,7 @@ export const defaultAlertsColumns = () => [
     renderer: renderPlainTextAlertCell,
   }),
   incidentColumn({
-    id: 'source_origin',
+    value: 'source_origin',
     header: 'Source',
     columnType: 'alert',
     accessor: (incident) => incident.alerts?.[0]?.body?.cef_details?.source_origin || '',
@@ -730,7 +751,7 @@ export const defaultAlertsColumns = () => [
     renderer: renderPlainTextAlertCell,
   }),
   incidentColumn({
-    id: 'event_class',
+    value: 'event_class',
     header: 'Class',
     columnType: 'alert',
     accessor: (incident) => incident.alerts?.[0]?.body?.cef_details?.event_class || '',
@@ -738,7 +759,7 @@ export const defaultAlertsColumns = () => [
     renderer: renderPlainTextAlertCell,
   }),
   incidentColumn({
-    id: 'service_group',
+    value: 'service_group',
     header: 'Group',
     columnType: 'alert',
     accessor: (incident) => incident.alerts?.[0]?.body?.cef_details?.service_group || '',
@@ -746,7 +767,7 @@ export const defaultAlertsColumns = () => [
     renderer: renderPlainTextAlertCell,
   }),
   incidentColumn({
-    id: 'client',
+    value: 'client',
     header: 'Client',
     columnType: 'alert',
     accessor: (incident) => incident.alerts?.[0]?.body?.cef_details?.client || '',
@@ -766,7 +787,7 @@ export const defaultAlertsColumns = () => [
     },
   }),
   incidentColumn({
-    id: 'creation_time',
+    value: 'creation_time',
     header: 'Timestamp',
     columnType: 'alert',
     accessor: (incident) => incident.alerts?.[0]?.body?.cef_details?.creation_time || '',
@@ -775,9 +796,63 @@ export const defaultAlertsColumns = () => [
   }),
 ];
 
+export const customComputedColumnForSavedColumn = (savedColumn) => {
+  const {
+    value,
+    Header: header,
+    accessorPath,
+    expressionType,
+    expression,
+    width,
+  } = savedColumn;
+  if (!(header && accessorPath)) {
+    return null;
+  }
+  const accessor = (incident) => {
+    try {
+      const valuesAtPath = JSONPath({
+        path: accessorPath,
+        json: incident,
+      });
+      if (!valuesAtPath) {
+        return null;
+      }
+      if (expressionType === 'regex') {
+        const stringValuesAtPath = valuesAtPath.map((v) => anythingToString(v));
+        const joinedValuesAtPath = stringValuesAtPath.join('\n');
+        const regex = new RegExp(expression, 'gm');
+        const matches = Array.from(joinedValuesAtPath.matchAll(regex), (match) => match[1]);
+        return matches.join(', ') || null;
+      }
+      if (expressionType === 'regex-single') {
+        const stringValuesAtPath = valuesAtPath.map((v) => anythingToString(v));
+        const joinedValuesAtPath = stringValuesAtPath.join('\n');
+        const regex = new RegExp(expression, 'm');
+        const match = joinedValuesAtPath.match(regex);
+        return match ? match[1] : null;
+      }
+      return valuesAtPath[0];
+    } catch (e) {
+      return null;
+    }
+  };
+
+  const column = incidentColumn({
+    value,
+    header,
+    columnType: 'computed',
+    accessor,
+    accessorPath,
+    expression,
+    expressionType,
+    minWidth: width || 100,
+  });
+  return column;
+};
+
 export const customAlertColumnForSavedColumn = (savedColumn) => {
   const {
-    Header: header, accessorPath, aggregator, width,
+    value, Header: header, accessorPath, width,
   } = savedColumn;
   if (!(header && accessorPath)) {
     return null;
@@ -797,13 +872,11 @@ export const customAlertColumnForSavedColumn = (savedColumn) => {
     } catch (e) {
       result = null;
     }
-    if (aggregator) {
-      return result;
-    }
     return result[0];
   };
+
   const column = incidentColumn({
-    id: accessorPath,
+    value,
     header,
     columnType: 'alert',
     accessor,
@@ -833,8 +906,27 @@ export const customAlertColumns = (savedColumns) => {
   });
 };
 
+export const customComputedColumns = (savedColumns) => {
+  const allColumns = defaultColumns();
+  if (!savedColumns) {
+    return [];
+  }
+  return savedColumns.map((column) => {
+    if (
+      column.columnType === 'computed'
+      && !allColumns.find((c) => c.originalHeader === column.Header)
+    ) {
+      return customComputedColumnForSavedColumn(column);
+    }
+    return undefined;
+  });
+};
+
 export const columnsForSavedColumns = (savedColumns) => {
   const allColumns = defaultColumns();
+  if (!savedColumns) {
+    return [];
+  }
   const columns = savedColumns
     .map((column) => {
       const foundColumn = allColumns.find((c) => c.originalHeader === column.Header);
@@ -846,6 +938,9 @@ export const columnsForSavedColumns = (savedColumns) => {
       }
       if (column.columnType === 'alert') {
         return customAlertColumnForSavedColumn(column);
+      }
+      if (column.columnType === 'computed') {
+        return customComputedColumnForSavedColumn(column);
       }
       return null;
     })

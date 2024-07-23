@@ -3,11 +3,16 @@ import React from 'react';
 
 import {
   Tag,
+  Text,
 } from '@chakra-ui/react';
 
 import {
   AddIcon, CloseIcon,
 } from '@chakra-ui/icons';
+
+import {
+  useTranslation,
+} from 'react-i18next';
 
 const columnLabel = (column) => {
   if (!column) {
@@ -20,8 +25,12 @@ const columnLabel = (column) => {
 };
 
 const ColumnsModalItem = ({
-  column, onClick, itemType,
+  column, onClick, itemType, columnType = 'alert',
 }) => {
+  const {
+    t,
+  } = useTranslation();
+
   const iconProps = {
     onClick,
     cursor: 'pointer',
@@ -33,7 +42,6 @@ const ColumnsModalItem = ({
     // old default example column would give null here
     return null;
   }
-  const columnId = column.id || column.label || column.accessorPath;
 
   let ariaLabel = '';
   let iconComponent = null;
@@ -41,7 +49,7 @@ const ColumnsModalItem = ({
     case 'available':
       ariaLabel = 'Add column';
       iconComponent = (
-        <AddIcon id={`column-${columnId}-add-icon`} {...iconProps} aria-label={ariaLabel} />
+        <AddIcon id={`column-${column.value}-add-icon`} {...iconProps} aria-label={ariaLabel} />
       );
       break;
     case 'selected':
@@ -49,19 +57,56 @@ const ColumnsModalItem = ({
     default:
       ariaLabel = 'Remove column';
       iconComponent = (
-        <CloseIcon id={`column-${columnId}-remove-icon`} {...iconProps} aria-label={ariaLabel} />
+        <CloseIcon id={`column-${column.value}-remove-icon`} {...iconProps} aria-label={ariaLabel} />
       );
       break;
   }
   const tagProps = {
-    id: `column-${columnId}-tag`,
+    id: `column-${column.value}-tag`,
     m: 1,
+    p: 1,
     variant: itemType === 'available' ? 'subtle' : 'solid',
     colorScheme: itemType === 'available' ? 'gray' : 'blue',
   };
+
+  let tagText = columnLabel(column);
+  if (itemType === 'custom') {
+    if (columnType === 'alert') {
+      tagProps.px = 2;
+      tagText = (
+        <Text as="span">
+          <b>{t('Header')}</b>
+          :&nbsp;
+          {column.Header}
+          <br />
+          <b>{t('JSON Path')}</b>
+          :&nbsp;
+          {column.accessorPath}
+          <br />
+        </Text>
+      );
+    } else {
+      tagProps.px = 2;
+      tagText = (
+        <Text as="span">
+          <b>{t('Header')}</b>
+          :&nbsp;
+          {column.Header}
+          <br />
+          <b>{t('JSON Path')}</b>
+          :&nbsp;
+          {column.accessorPath}
+          <br />
+          <b>{t('Regex')}</b>
+          :&nbsp;
+          {column.expression}
+        </Text>
+      );
+    }
+  }
   return (
     <Tag {...tagProps}>
-      {columnLabel(column)}
+      {tagText}
       {iconComponent}
     </Tag>
   );

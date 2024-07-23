@@ -62,9 +62,9 @@ const initialSettings = {
       columnType: 'alert',
       Header: 'Environment',
       accessorPath: 'details.env',
-      aggregator: null,
     },
   ],
+  computedFields: [],
   darkMode: false,
   relativeDates: false,
   status: '',
@@ -153,7 +153,7 @@ describe('Sagas: Incidents', () => {
 
   it('filterIncidents: Search by Alert Custom Detail Field', () => {
     const mockIncident = mockIncidents[0];
-    const customField = 'some obsecure field';
+    const customField = 'some obscure field';
     const customFieldValue = mockIncident.alerts[0].body.details[customField];
     const expectedIncidentResult = [mockIncident];
     return expectSaga(filterIncidents)

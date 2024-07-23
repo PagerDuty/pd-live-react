@@ -57,23 +57,58 @@ describe('IncidentTableComponent', () => {
           {
             Header: 'quote',
             accessorPath: 'details.quote',
-            aggregator: null,
             width: 100,
             columnType: 'alert',
           },
           {
             Header: 'link',
             accessorPath: 'details.link',
-            aggregator: null,
             width: 100,
             columnType: 'alert',
           },
           {
             Header: 'object_details',
             accessorPath: 'details.object_details',
-            aggregator: null,
             width: 100,
             columnType: 'alert',
+          },
+          {
+            Header: 'some obscure field',
+            accessorPath: "details['some obscure field']",
+            width: 100,
+            columnType: 'alert',
+          },
+          {
+            Header: 'regex-single in incident body',
+            accessorPath: 'first_trigger_log_entry.channel.details',
+            width: 100,
+            columnType: 'computed',
+            expressionType: 'regex-single',
+            expression: '(.*.example.com)',
+          },
+          {
+            Header: 'regex in incident body',
+            accessorPath: 'first_trigger_log_entry.channel.details',
+            width: 100,
+            columnType: 'computed',
+            expressionType: 'regex',
+            expression: '(.*.example.com)',
+          },
+          {
+            Header: 'no match regex in incident body',
+            accessorPath: 'first_trigger_log_entry.channel.details',
+            width: 100,
+            columnType: 'computed',
+            expressionType: 'regex',
+            expression: '(.*foobar)',
+          },
+          {
+            Header: 'no match regex in non-existant path',
+            accessorPath: 'first_trigger_log_entry.channel.foobar',
+            width: 100,
+            columnType: 'computed',
+            expressionType: 'regex',
+            expression: '(.*)',
           },
         ],
       },
@@ -125,5 +160,50 @@ describe('IncidentTableComponent', () => {
 
     // jsonValue should include a key with value 'value1'
     expect(JSON.stringify(jsonValue)).toContain('value1');
+  });
+
+  it('should render cell with UUID value for custom detail field', () => {
+    const incidentNumber = 1;
+    const customDetailField = 'some obscure field';
+    const uuid = screen.getAllByIncidentHeader(customDetailField)[incidentNumber].textContent;
+
+    // uuid should include a valid UUID
+    expect(validator.isUUID(uuid)).toBeTruthy();
+  });
+
+  it('should render computed cell with regex-single expression value for hostname in incident details field', () => {
+    const incidentNumber = 1;
+    const customDetailField = 'regex-single in incident body';
+    const host = screen.getAllByIncidentHeader(customDetailField)[incidentNumber].textContent;
+
+    // host should be the hostname regex matched out of the incident details
+    expect(host).toEqual('test1234.example.com');
+  });
+
+  it('should render computed cell with regex expression value for hostname in incident details field', () => {
+    const incidentNumber = 1;
+    const customDetailField = 'regex in incident body';
+    const hosts = screen.getAllByIncidentHeader(customDetailField)[incidentNumber].textContent;
+
+    // hosts should be the hostnames regex matched out of the incident details
+    expect(hosts).toEqual('test1234.example.com, test5678.example.com');
+  });
+
+  it('should render computed cell with no regex match in incident details field', () => {
+    const incidentNumber = 1;
+    const customDetailField = 'no match regex in incident body';
+    const match = screen.getAllByIncidentHeader(customDetailField)[incidentNumber].textContent;
+
+    // hosts should be the hostnames regex matched out of the incident details
+    expect(match).toEqual('--');
+  });
+
+  it('should render computed cell with non-existant path', () => {
+    const incidentNumber = 1;
+    const customDetailField = 'no match regex in non-existant path';
+    const match = screen.getAllByIncidentHeader(customDetailField)[incidentNumber].textContent;
+
+    // hosts should be the hostnames regex matched out of the incident details
+    expect(match).toEqual('--');
   });
 });
