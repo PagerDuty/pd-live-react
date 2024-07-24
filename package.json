@@ -106,7 +106,7 @@
     "@faker-js/faker": "^8.0.2",
     "@testing-library/dom": "^9.3.4",
     "@testing-library/jest-dom": "^6.1.4",
-    "@testing-library/react": "^14.1.2",
+    "@testing-library/react": "^15.0.7",
     "@testing-library/react-hooks": "^8.0.1",
     "@testing-library/user-event": "^14.4.3",
     "@vitejs/plugin-react": "^4.2.1",
