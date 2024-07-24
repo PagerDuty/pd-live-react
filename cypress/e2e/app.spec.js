@@ -119,7 +119,7 @@ describe('PagerDuty Live', { failFast: { enabled: true } }, () => {
       .its('store')
       .invoke('dispatch', { type: 'CATASTROPHE' });
 
-    cy.get('header').contains('Catastrophic Error');
+    cy.get('header').contains('Unexpected Error');
     cy.get('p').contains('The application will restart');
   });
 });
