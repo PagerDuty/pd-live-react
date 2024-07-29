@@ -49,7 +49,10 @@ describe('Sagas: Log Entries', () => {
   it('fetches log entries', () => expectSaga(getLogEntriesAsync)
     .withReducer(logEntries)
     .provide([
-      [select(selectLogEntries), { logEntries: [], recentLogEntries: {}, pollingStatus: { errors: [] } }],
+      [
+        select(selectLogEntries),
+        { logEntries: [], recentLogEntries: {}, pollingStatus: { errors: [] } },
+      ],
       [matchers.call.fn(pdParallelFetch), mockLogEntries],
     ])
     .dispatch({
@@ -74,7 +77,10 @@ describe('Sagas: Log Entries', () => {
   it('fetches incidents instead when log entries is too long', () => expectSaga(getLogEntriesAsync)
     .withReducer(logEntries)
     .provide([
-      [select(selectLogEntries), { logEntries: [], recentLogEntries: {}, pollingStatus: { errors: [] } }],
+      [
+        select(selectLogEntries),
+        { logEntries: [], recentLogEntries: {}, pollingStatus: { errors: [] } },
+      ],
       [matchers.call.fn(pdParallelFetch), throwError(new Error('Too many records: 1001 > 1000'))],
     ])
     .dispatch({

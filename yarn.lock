@@ -2758,10 +2758,10 @@
     "@datadog/browser-core" "5.14.0"
     "@datadog/browser-rum-core" "5.14.0"
 
-"@datadog/datadog-ci@^2.37.0":
-  version "2.37.0"
-  resolved "https://registry.yarnpkg.com/@datadog/datadog-ci/-/datadog-ci-2.37.0.tgz#8454730a0604e5a22920a655aed37e48277dd8fc"
-  integrity sha512-FkaWw1m7R3wd847ZUOVpB5bk9YWPfonGfGbCR19Ay9HnNddw5t7DqUbXq4WqWNhZnIYVHivFB2XyZWTAwOervw==
+"@datadog/datadog-ci@^2.40.1":
+  version "2.40.1"
+  resolved "https://registry.yarnpkg.com/@datadog/datadog-ci/-/datadog-ci-2.40.1.tgz#3c4941679e170f759785a39d737c66942716489e"
+  integrity sha512-9UbM7dGS7mjvbX6XscBjgI95zasrZECU0Kz00/CO4UoGtrjjV9XD0GmkPT4h19p4EsBISF+6Nu+AvBMXuUne3A==
   dependencies:
     "@aws-sdk/client-cloudwatch-logs" "^3.537.0"
     "@aws-sdk/client-iam" "^3.535.0"
@@ -2806,7 +2806,7 @@
     tiny-async-pool "^2.1.0"
     typanion "^3.14.0"
     uuid "^9.0.0"
-    ws "7.4.6"
+    ws "^7.5.10"
     xml2js "0.5.0"
     yamux-js "0.1.2"
 
@@ -5883,9 +5883,9 @@ camelize@^1.0.0:
   integrity sha512-dU+Tx2fsypxTgtLoE36npi3UqcjSSMNYfkqgmoEhtZrraP5VWq0K7FkWVTYa8eMPtnU/G2txVsfdCJTn9uzpuQ==
 
 caniuse-lite@^1.0.30001587:
-  version "1.0.30001587"
-  resolved "https://registry.yarnpkg.com/caniuse-lite/-/caniuse-lite-1.0.30001587.tgz#a0bce920155fa56a1885a69c74e1163fc34b4881"
-  integrity sha512-HMFNotUmLXn71BQxg8cijvqxnIAofforZOwGsxyXJ0qugTdspUF4sPSJ2vhgprHCB996tIDzEq1ubumPDV8ULA==
+  version "1.0.30001643"
+  resolved "https://registry.npmjs.org/caniuse-lite/-/caniuse-lite-1.0.30001643.tgz"
+  integrity sha512-ERgWGNleEilSrHM6iUz/zJNSQTP8Mr21wDWpdgvRwcTXGAq6jMtOUPP4dqFPTdKqZ2wKTdtB+uucZ3MRpAUSmg==
 
 caseless@~0.12.0:
   version "0.12.0"
@@ -12789,10 +12789,10 @@ write-file-atomic@^4.0.2:
     imurmurhash "^0.1.4"
     signal-exit "^3.0.7"
 
-ws@7.4.6:
-  version "7.4.6"
-  resolved "https://registry.yarnpkg.com/ws/-/ws-7.4.6.tgz#5654ca8ecdeee47c33a9a4bf6d28e2be2980377c"
-  integrity sha512-YmhHDO4MzaDLB+M9ym/mDA5z0naX8j7SIlT8f8z+I0VtzsRbekxEutHSme7NPS2qE8StCYQNUnfWdXta/Yu85A==
+ws@^7.5.10:
+  version "7.5.10"
+  resolved "https://registry.yarnpkg.com/ws/-/ws-7.5.10.tgz#58b5c20dc281633f6c19113f39b349bd8bd558d9"
+  integrity sha512-+dbF1tHwZpXcbOJdVOkzLDxZP1ailvSxM6ZweXTegylPny803bFhA+vqBYw4s31NSAk4S2Qz+AKXK9a4wkdjcQ==
 
 ws@^8.11.0:
   version "8.13.0"

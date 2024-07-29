@@ -34,17 +34,16 @@ module.exports = {
     'react-refresh',
   ],
   rules: {
-    'max-len': [WARN, { code: 120, ignorePattern: '^import\\W.*', ignoreTrailingComments: true }],
+    'max-len': [WARN, { code: 180, ignorePattern: '^import\\W.*', ignoreTrailingComments: true }],
     'object-curly-newline': [
       WARN,
       { ObjectPattern: { multiline: true, minProperties: 1 }, ImportDeclaration: 'always' },
     ],
     'react/prop-types': OFF, // To be done in another refactor
-    // 'react/jsx-filename-extension': [ERROR, { extensions: ['.js', '.jsx'] }],
+    'react/jsx-filename-extension': [ERROR, { extensions: ['.js', '.jsx'] }],
     'no-param-reassign': [ERROR, { props: true, ignorePropertyModificationsFor: ['draft'] }],
     'no-use-before-define': [ERROR, { functions: false }],
     'no-plusplus': [ERROR, { allowForLoopAfterthoughts: true }],
-    'react-refresh/only-export-components': OFF, // To be done in another refactor
     'react-hooks/exhaustive-deps': OFF, // To be done in another refactor
     'react-hooks/rules-of-hooks': OFF, // To be done in another refactor
   },

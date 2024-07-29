@@ -51,10 +51,10 @@ import {
 const MergeModalComponent = () => {
   const incidents = useSelector((state) => state.incidents.incidents);
   const {
-    displayMergeModal,
-    mergeProgress,
-    status,
-  } = useSelector((state) => state.incidentActions);
+    displayMergeModal, mergeProgress, status,
+  } = useSelector(
+    (state) => state.incidentActions,
+  );
   const {
     selectedRows,
   } = useSelector((state) => state.incidentTable);
@@ -266,7 +266,9 @@ const MergeModalComponent = () => {
                   my={0}
                   mr={1}
                 >
-                  <CircularProgressLabel display={mergeProgress.updatingTitles ? 'none' : 'inherit'}>
+                  <CircularProgressLabel
+                    display={mergeProgress.updatingTitles ? 'none' : 'inherit'}
+                  >
                     {`${mergeProgressPercent}%`}
                   </CircularProgressLabel>
                 </CircularProgress>
@@ -284,11 +286,7 @@ const MergeModalComponent = () => {
             >
               {t('Merge')}
             </Button>
-            <Button
-              isDisabled={isMerging}
-              variant="ghost"
-              onClick={handleClose}
-            >
+            <Button isDisabled={isMerging} variant="ghost" onClick={handleClose}>
               {t('Cancel')}
             </Button>
           </Box>

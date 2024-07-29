@@ -2,8 +2,7 @@
 import React from 'react';
 
 import {
-  Tag,
-  Text,
+  Tag, Text,
 } from '@chakra-ui/react';
 
 import {
@@ -57,7 +56,11 @@ const ColumnsModalItem = ({
     default:
       ariaLabel = 'Remove column';
       iconComponent = (
-        <CloseIcon id={`column-${column.value}-remove-icon`} {...iconProps} aria-label={ariaLabel} />
+        <CloseIcon
+          id={`column-${column.value}-remove-icon`}
+          {...iconProps}
+          aria-label={ariaLabel}
+        />
       );
       break;
   }

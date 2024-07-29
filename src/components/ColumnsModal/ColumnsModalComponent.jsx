@@ -92,18 +92,23 @@ const TableColumnsModalComponent = () => {
 
   const getAllAvailableColumns = () => {
     // eslint-disable-next-line max-len
-    const v = [...defaultColumns(), ...customAlertColumns(alertCustomDetailFields), ...customComputedColumns(computedFields)].sort((a, b) => a.value.localeCompare(b.value));
+    const v = [
+      ...defaultColumns(),
+      ...customAlertColumns(alertCustomDetailFields),
+      ...customComputedColumns(computedFields),
+    ].sort((a, b) => a.value.localeCompare(b.value));
     return v;
   };
 
-  const allAvailableColumns = useMemo(getAllAvailableColumns, [alertCustomDetailFields, computedFields]);
+  const allAvailableColumns = useMemo(getAllAvailableColumns, [
+    alertCustomDetailFields,
+    computedFields,
+  ]);
 
-  const getSelectedColumns = () => incidentTableColumns.map((column) => (
-    {
-      ...column,
-      label: column.i18n ? column.i18n : column.Header,
-    }
-  ));
+  const getSelectedColumns = () => incidentTableColumns.map((column) => ({
+    ...column,
+    label: column.i18n ? column.i18n : column.Header,
+  }));
   const [selectedColumns, setSelectedColumns] = useState(getSelectedColumns());
 
   const getUnselectedColumns = () => {
@@ -167,9 +172,7 @@ const TableColumnsModalComponent = () => {
 
   const removeCustomComputedColumn = (column) => {
     unselectColumn(column);
-    const newComputedFields = computedFields.filter(
-      (c) => c.value !== column.value,
-    );
+    const newComputedFields = computedFields.filter((c) => c.value !== column.value);
     setComputedColumns(newComputedFields);
   };
 
@@ -228,7 +231,9 @@ const TableColumnsModalComponent = () => {
           <VStack align="top">
             <Card size="sm" borderWidth="1px">
               <CardHeader>
-                <Heading mb={0} size="sm">{t('Selected')}</Heading>
+                <Heading mb={0} size="sm">
+                  {t('Selected')}
+                </Heading>
               </CardHeader>
               <CardBody py={0}>
                 <Box id="selected-columns-card-body" ref={drop}>
@@ -252,7 +257,9 @@ const TableColumnsModalComponent = () => {
             </Card>
             <Card size="sm" borderWidth="1px">
               <CardHeader>
-                <Heading mb={0} size="sm">{t('Available')}</Heading>
+                <Heading mb={0} size="sm">
+                  {t('Available')}
+                </Heading>
               </CardHeader>
               <CardBody py={0}>
                 <Box mb={2} id="available-columns-card-body">
@@ -269,7 +276,9 @@ const TableColumnsModalComponent = () => {
             </Card>
             <Card size="sm" borderWidth="1px">
               <CardHeader>
-                <Heading mb={0} size="sm">{t('Custom')}</Heading>
+                <Heading mb={0} size="sm">
+                  {t('Custom')}
+                </Heading>
               </CardHeader>
               <CardBody py={0}>
                 <Box id="custom-columns-card-body">
@@ -290,7 +299,9 @@ const TableColumnsModalComponent = () => {
                   </Card>
                   <Card size="xs" mb={1}>
                     <CardHeader pb={0}>
-                      <Heading mb={0} size="xs">{t('computed')}</Heading>
+                      <Heading mb={0} size="xs">
+                        {t('computed')}
+                      </Heading>
                     </CardHeader>
                     <CardBody>
                       {computedFields.map((column) => (

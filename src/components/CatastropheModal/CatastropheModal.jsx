@@ -1,7 +1,5 @@
 import React, {
-  useEffect,
-  useState,
-  useRef,
+  useEffect, useState, useRef,
 } from 'react';
 
 import {
@@ -32,8 +30,7 @@ import {
 } from 'src/redux/monitoring/actions';
 
 const CatastropheOverlay = ({
-  errorMessage,
-  countdownSeconds = 30,
+  errorMessage, countdownSeconds = 30,
 }) => {
   const {
     t,
@@ -78,11 +75,9 @@ const CatastropheOverlay = ({
           <Text mb={4}>{t('An unexpected error has occurred:')}</Text>
           <Code mb={4}>{errorMessage}</Code>
           <Text>
-            {
-              timerIdRef.current
-                ? t('The application will restart in X seconds.', { seconds })
-                : t('Restart canceled')
-            }
+            {timerIdRef.current
+              ? t('The application will restart in X seconds.', { seconds })
+              : t('Restart canceled')}
           </Text>
           <Button
             onClick={() => {
@@ -104,7 +99,7 @@ const CatastropheOverlay = ({
             my={4}
             mx="auto"
           >
-            {t('Don\'t Restart')}
+            {t("Don't Restart")}
           </Button>
         </ModalBody>
       </ModalContent>

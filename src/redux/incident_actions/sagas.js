@@ -91,7 +91,9 @@ import {
 } from './actions';
 
 import {
-  PROCESS_LOG_ENTRIES_COMPLETED, UPDATE_INCIDENTS, getIncidentsAsync,
+  PROCESS_LOG_ENTRIES_COMPLETED,
+  UPDATE_INCIDENTS,
+  getIncidentsAsync,
 } from '../incidents/actions';
 
 const chunkedPdAxiosRequestCalls = (

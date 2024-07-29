@@ -798,12 +798,7 @@ export const defaultAlertsColumns = () => [
 
 export const customComputedColumnForSavedColumn = (savedColumn) => {
   const {
-    value,
-    Header: header,
-    accessorPath,
-    expressionType,
-    expression,
-    width,
+    value, Header: header, accessorPath, expressionType, expression, width,
   } = savedColumn;
   if (!(header && accessorPath)) {
     return null;

@@ -52,19 +52,17 @@ const IncidentActionsComponent = () => (
       <AddNoteButton />
       <RunActionMenu />
       {EXTRA_BUTTONS
-          && EXTRA_BUTTONS.map(({
-            label, url, width, height, tab,
-          }) => (
-            <>
-              {tab
-                ? (
-                  <ExtraButton key={url} label={label} url={url} tab />
-                )
-                : (
-                  <ExtraButton key={url} label={label} url={url} width={width} height={height} />
-                )}
-            </>
-          ))}
+        && EXTRA_BUTTONS.map(({
+          label, url, width, height, tab,
+        }) => (
+          <>
+            {tab ? (
+              <ExtraButton key={url} label={label} url={url} tab />
+            ) : (
+              <ExtraButton key={url} label={label} url={url} width={width} height={height} />
+            )}
+          </>
+        ))}
     </Box>
   </Flex>
 );

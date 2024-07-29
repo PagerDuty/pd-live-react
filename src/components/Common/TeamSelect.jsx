@@ -77,13 +77,9 @@ const TeamSelect = ({
 
   const requestOptionsPage = useCallback(async (inputValue, offset) => {
     try {
-      const r = await throttledPdAxiosRequest(
-        'GET',
-        'teams',
-        { query: inputValue, offset },
-        null,
-        { throwErrors: true },
-      );
+      const r = await throttledPdAxiosRequest('GET', 'teams', { query: inputValue, offset }, null, {
+        throwErrors: true,
+      });
       setMore(r.data.more);
       const r2 = r.data.teams.map((team) => ({ label: team.name, value: team.id }));
       return r2;

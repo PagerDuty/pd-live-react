@@ -53,8 +53,10 @@ describe('ColumnsModalComponent', () => {
         ],
         computedFields: [
           {
-            label: 'regex-single in incident body:first_trigger_log_entry.channel.details:(.*.example.com)',
-            value: 'regex-single in incident body:first_trigger_log_entry.channel.details:(.*.example.com)',
+            label:
+              'regex-single in incident body:first_trigger_log_entry.channel.details:(.*.example.com)',
+            value:
+              'regex-single in incident body:first_trigger_log_entry.channel.details:(.*.example.com)',
             columnType: 'computed',
             Header: 'regex-single in incident body',
             accessorPath: 'first_trigger_log_entry.channel.details',
@@ -100,8 +102,10 @@ describe('ColumnsModalComponent', () => {
 
   it('should render an enabled custom column option with unique header name', () => {
     // Find the Custom header, and find the CustomField DnD box near it
-    const customColumns = screen.getByRole('heading', { name: 'alert' }).parentElement.parentElement;
-    const customColumn = within(customColumns).getAllByText('Header', { exact: false })[0].parentElement.parentElement;
+    const customColumns = screen.getByRole('heading', { name: 'alert' }).parentElement
+      .parentElement;
+    const customColumn = within(customColumns).getAllByText('Header', { exact: false })[0]
+      .parentElement.parentElement;
     expect(customColumn).toBeInTheDocument();
     expect(customColumn).toHaveTextContent('CustomField');
     expect(customColumn).toHaveTextContent('details.to.some.path');
@@ -115,8 +119,10 @@ describe('ColumnsModalComponent', () => {
   });
 
   it('should render an available custom alert column option with unique header name', () => {
-    const customColumns = screen.getByRole('heading', { name: 'alert' }).parentElement.parentElement;
-    const customColumn = within(customColumns).getAllByText('Header', { exact: false })[1].parentElement.parentElement;
+    const customColumns = screen.getByRole('heading', { name: 'alert' }).parentElement
+      .parentElement;
+    const customColumn = within(customColumns).getAllByText('Header', { exact: false })[1]
+      .parentElement.parentElement;
     expect(customColumn).toBeInTheDocument();
     expect(customColumn).toHaveTextContent('AnotherCustomField');
     expect(customColumn).toHaveTextContent('details.to.some.other.path');
@@ -129,8 +135,10 @@ describe('ColumnsModalComponent', () => {
   });
 
   it('should render an enabled custom column option with JSON path containing spaces', () => {
-    const customColumns = screen.getByRole('heading', { name: 'alert' }).parentElement.parentElement;
-    const customColumn = within(customColumns).getAllByText('Header', { exact: false })[2].parentElement.parentElement;
+    const customColumns = screen.getByRole('heading', { name: 'alert' }).parentElement
+      .parentElement;
+    const customColumn = within(customColumns).getAllByText('Header', { exact: false })[2]
+      .parentElement.parentElement;
     expect(customColumn).toBeInTheDocument();
     expect(customColumn).toHaveTextContent('Fav Flavour');
     expect(customColumn).toHaveTextContent("details.['favorite ice cream flavor']");
@@ -152,8 +160,10 @@ describe('ColumnsModalComponent', () => {
   // });
 
   it('should render an available computed option with unique header name', () => {
-    const customColumns = screen.getByRole('heading', { name: 'computed' }).parentElement.parentElement;
-    const customColumn = within(customColumns).getByText('Header', { exact: false }).parentElement.parentElement;
+    const customColumns = screen.getByRole('heading', { name: 'computed' }).parentElement
+      .parentElement;
+    const customColumn = within(customColumns).getByText('Header', { exact: false }).parentElement
+      .parentElement;
     expect(customColumn).toBeInTheDocument();
     expect(customColumn).toHaveTextContent('regex-single in incident body');
     expect(customColumn).toHaveTextContent('first_trigger_log_entry.channel.details');

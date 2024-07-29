@@ -95,13 +95,9 @@ const UserSelect = ({
 
   const requestOptionsPage = useCallback(async (inputValue, offset) => {
     try {
-      const r = await throttledPdAxiosRequest(
-        'GET',
-        'users',
-        { query: inputValue, offset },
-        null,
-        { throwErrors: true },
-      );
+      const r = await throttledPdAxiosRequest('GET', 'users', { query: inputValue, offset }, null, {
+        throwErrors: true,
+      });
       setMore(r.data.more);
       const r2 = r.data.users.map((user) => {
         if (!usersMap[user.id]) {
