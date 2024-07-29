@@ -73,7 +73,7 @@ const CatastropheOverlay = ({
     <Modal isOpen isCentered size="xl">
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>{t('Catastrophic Error')}</ModalHeader>
+        <ModalHeader>{t('Unexpected Error')}</ModalHeader>
         <ModalBody>
           <Text mb={4}>{t('An unexpected error has occurred:')}</Text>
           <Code mb={4}>{errorMessage}</Code>
