@@ -39,10 +39,13 @@ import {
 const uniqOnId = (arr) => {
   const map = new Map();
   arr.forEach((item) => {
-    if (!(item?.id)) {
-      RealUserMonitoring.trackError(new Error('incidents/reducers:uniqOnId: item does not have an id'), {
-        item,
-      });
+    if (!item?.id) {
+      RealUserMonitoring.trackError(
+        new Error('incidents/reducers:uniqOnId: item does not have an id'),
+        {
+          item,
+        },
+      );
       return;
     }
     map.set(item.id, item);
@@ -72,7 +75,7 @@ const incidents = produce(
         break;
 
       case FETCH_ALERTS_FOR_INCIDENTS_REQUESTED:
-        if (!(action.isRefetch)) {
+        if (!action.isRefetch) {
           draft.incidentAlerts = {
             ...draft.incidentAlerts,
             // dict with keys as the strings of incident ids array and values as { status: 'fetching' }

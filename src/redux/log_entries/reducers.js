@@ -111,7 +111,7 @@ const logEntries = produce(
     }
   },
   {
-    latestLogEntryDate: new Date(new Date() - (2 * LOG_ENTRIES_POLLING_INTERVAL_SECONDS * 1000)),
+    latestLogEntryDate: new Date(new Date() - 2 * LOG_ENTRIES_POLLING_INTERVAL_SECONDS * 1000),
     logEntries: [],
     recentLogEntries: {},
     addList: [],

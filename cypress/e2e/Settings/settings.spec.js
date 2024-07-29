@@ -147,80 +147,111 @@ describe('Manage Settings', { failFast: { enabled: true } }, () => {
     manageCustomColumnDefinitions(customColumnDefinitions);
     customColumnDefinitions.forEach((column) => {
       cy.get(`[data-column-name="${column.header}"]`).scrollIntoView().should('be.visible');
-      cy.get(`[data-incident-header="${column.header}"][data-incident-row-cell-idx="0"]`).then(($el) => {
-        // eslint-disable-next-line no-unused-expressions
-        expect($el.text()).to.exist;
-        // Quote exists in the alert body, so it should not be empty
-        expect($el.text()).to.not.equal('--');
-        expect($el.text().length).to.be.greaterThan(20);
-      });
+      cy.get(`[data-incident-header="${column.header}"][data-incident-row-cell-idx="0"]`).then(
+        ($el) => {
+          // eslint-disable-next-line no-unused-expressions
+          expect($el.text()).to.exist;
+          // Quote exists in the alert body, so it should not be empty
+          expect($el.text()).to.not.equal('--');
+          expect($el.text().length).to.be.greaterThan(20);
+        },
+      );
     });
   });
 
   it('Add valid custom alert column with JSON path containing spaces to incident table', () => {
     const customColumnDefinitions = [
-      { header: 'Fav Flavour', accessorPath: "details.['favorite ice cream flavor']", expression: '' },
+      {
+        header: 'Fav Flavour',
+        accessorPath: "details.['favorite ice cream flavor']",
+        expression: '',
+      },
     ];
     manageCustomColumnDefinitions(customColumnDefinitions);
     customColumnDefinitions.forEach((column) => {
       cy.get(`[data-column-name="${column.header}"]`).scrollIntoView().should('be.visible');
-      cy.get(`[data-incident-header="${column.header}"][data-incident-row-cell-idx="0"]`).then(($el) => {
-        // eslint-disable-next-line no-unused-expressions
-        expect($el.text()).to.exist;
-        // Fav Flavour doesn't exist in the alert body, so it should be empty
-        expect($el.text()).to.equal('--');
-      });
+      cy.get(`[data-incident-header="${column.header}"][data-incident-row-cell-idx="0"]`).then(
+        ($el) => {
+          // eslint-disable-next-line no-unused-expressions
+          expect($el.text()).to.exist;
+          // Fav Flavour doesn't exist in the alert body, so it should be empty
+          expect($el.text()).to.equal('--');
+        },
+      );
     });
   });
 
   it('Add valid custom computed column to incident table', () => {
     const customColumnDefinitions = [
-      { header: 'CI', accessorPath: 'first_trigger_log_entry.channel.details', expression: '(.*.example.com)' },
+      {
+        header: 'CI',
+        accessorPath: 'first_trigger_log_entry.channel.details',
+        expression: '(.*.example.com)',
+      },
     ];
     manageCustomColumnDefinitions(customColumnDefinitions, 'computed');
     customColumnDefinitions.forEach((column) => {
       cy.get(`[data-column-name="${column.header}"]`).scrollIntoView().should('be.visible');
-      cy.get(`[data-incident-header="${column.header}"][data-incident-row-cell-idx="0"]`).then(($el) => {
-        // eslint-disable-next-line no-unused-expressions
-        expect($el.text()).to.exist;
-        // CI doesn't exist in the alert body, so it should be empty
-        expect($el.text()).to.equal('--');
-      });
+      cy.get(`[data-incident-header="${column.header}"][data-incident-row-cell-idx="0"]`).then(
+        ($el) => {
+          // eslint-disable-next-line no-unused-expressions
+          expect($el.text()).to.exist;
+          // CI doesn't exist in the alert body, so it should be empty
+          expect($el.text()).to.equal('--');
+        },
+      );
     });
   });
 
   it('Add two valid custom computed column to incident table with different expressions', () => {
     const customColumnDefinitions = [
-      { header: 'CI', accessorPath: 'first_trigger_log_entry.channel.details', expression: '(.*.example.com)' },
-      { header: 'Category', accessorPath: 'first_trigger_log_entry.channel.details', expression: 'Category(.*)' },
+      {
+        header: 'CI',
+        accessorPath: 'first_trigger_log_entry.channel.details',
+        expression: '(.*.example.com)',
+      },
+      {
+        header: 'Category',
+        accessorPath: 'first_trigger_log_entry.channel.details',
+        expression: 'Category(.*)',
+      },
     ];
     manageCustomColumnDefinitions(customColumnDefinitions, 'computed');
     customColumnDefinitions.forEach((column) => {
       cy.get(`[data-column-name="${column.header}"]`).scrollIntoView().should('be.visible');
-      cy.get(`[data-incident-header="${column.header}"][data-incident-row-cell-idx="0"]`).then(($el) => {
-        // eslint-disable-next-line no-unused-expressions
-        expect($el.text()).to.exist;
-        // CI or Category don't exist in the alert body, so it should be empty
-        expect($el.text()).to.equal('--');
-      });
+      cy.get(`[data-incident-header="${column.header}"][data-incident-row-cell-idx="0"]`).then(
+        ($el) => {
+          // eslint-disable-next-line no-unused-expressions
+          expect($el.text()).to.exist;
+          // CI or Category don't exist in the alert body, so it should be empty
+          expect($el.text()).to.equal('--');
+        },
+      );
     });
   });
 
   it('Add valid quote custom computed column to incident table', () => {
     const customColumnDefinitions = [
-      { header: 'QuoteRegex', accessorPath: 'first_trigger_log_entry.channel.details', expression: '{"quote":"(.*)"}' },
+      {
+        header: 'QuoteRegex',
+        accessorPath: 'first_trigger_log_entry.channel.details',
+        expression: '{"quote":"(.*)"}',
+      },
     ];
     manageCustomColumnDefinitions(customColumnDefinitions, 'computed');
     customColumnDefinitions.forEach((column) => {
       cy.get(`[data-column-name="${column.header}"]`).scrollIntoView().should('be.visible');
-      cy.get(`[data-incident-header="${column.header}"][data-incident-row-cell-idx="0"]`).then(($el) => {
-        // eslint-disable-next-line no-unused-expressions
-        expect($el.text()).to.exist;
-        // Quote does exist in the alert body, so it should not be empty and also shouldn't contain the custom details JSON with quote key, just the quote value
-        expect($el.text()).to.not.equal('--');
-        expect($el.text()).to.not.contain('"quote"');
-        expect($el.text().length).to.be.greaterThan(20);
-      });
+      cy.get(`[data-incident-header="${column.header}"][data-incident-row-cell-idx="0"]`).then(
+        ($el) => {
+          // eslint-disable-next-line no-unused-expressions
+          expect($el.text()).to.exist;
+          // Quote does exist in the alert body, so it should not be empty and also shouldn't
+          // contain the custom details JSON with quote key, just the quote value
+          expect($el.text()).to.not.equal('--');
+          expect($el.text()).to.not.contain('"quote"');
+          expect($el.text().length).to.be.greaterThan(20);
+        },
+      );
     });
   });
 

@@ -22,8 +22,7 @@ import {
 } from 'src/util/pd-api-wrapper';
 
 import {
-  CATASTROPHE,
-  UPDATE_CONNECTION_STATUS_REQUESTED,
+  CATASTROPHE, UPDATE_CONNECTION_STATUS_REQUESTED,
 } from 'src/redux/connection/actions';
 import {
   FETCH_INCIDENTS_REQUESTED, PROCESS_LOG_ENTRIES,
@@ -64,7 +63,13 @@ export function* getLogEntries(action) {
 
     const params = {
       since: since.toISOString().replace(/\.[\d]{3}/, ''),
-      'include[]': ['incidents', 'linked_incidents', 'external_references', 'channels', 'first_trigger_log_entries'],
+      'include[]': [
+        'incidents',
+        'linked_incidents',
+        'external_references',
+        'channels',
+        'first_trigger_log_entries',
+      ],
     };
     let logEntries;
     try {
@@ -164,22 +169,24 @@ export function* pollLogEntriesTask() {
         latestLogEntryDate,
       },
       users: {
-        userAuthorized,
-        userAcceptedDisclaimer,
+        userAuthorized, userAcceptedDisclaimer,
       },
       incidents: {
-        fetchingIncidents,
-        error: incidentsError,
+        fetchingIncidents, error: incidentsError,
       },
     } = yield select();
 
-    const tooManyIncidentsError = (
-      incidentsError
+    const tooManyIncidentsError = incidentsError
       && typeof incidentsError === 'string'
-      && incidentsError.startsWith('Too many records')
-    );
+      && incidentsError.startsWith('Too many records');
 
-    if (userAuthorized && userAcceptedDisclaimer && !fetchingIncidents && !DEBUG_DISABLE_POLLING && !tooManyIncidentsError) {
+    if (
+      userAuthorized
+      && userAcceptedDisclaimer
+      && !fetchingIncidents
+      && !DEBUG_DISABLE_POLLING
+      && !tooManyIncidentsError
+    ) {
       const lastPollStarted = new Date();
       yield put({
         type: UPDATE_LOG_ENTRIES_POLLING,
@@ -204,10 +211,16 @@ export function* pollLogEntriesTask() {
       } else if (timeTaken < 0) {
         timeTaken = 0;
       }
-      yield delay((LOG_ENTRIES_POLLING_INTERVAL_SECONDS * 1000) - timeTaken);
+      yield delay(LOG_ENTRIES_POLLING_INTERVAL_SECONDS * 1000 - timeTaken);
     } else {
       // eslint-disable-next-line no-console
-      console.log('skipping poll', { userAuthorized, userAcceptedDisclaimer, fetchingIncidents, DEBUG_DISABLE_POLLING, tooManyIncidentsError });
+      console.log('skipping poll', {
+        userAuthorized,
+        userAcceptedDisclaimer,
+        fetchingIncidents,
+        DEBUG_DISABLE_POLLING,
+        tooManyIncidentsError,
+      });
       yield delay(LOG_ENTRIES_POLLING_INTERVAL_SECONDS * 1000);
     }
   }

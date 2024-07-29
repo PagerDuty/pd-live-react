@@ -5,8 +5,7 @@ import {
 import i18next from 'src/i18n';
 
 import {
-  getLimiterStats,
-  throttledPdAxiosRequest,
+  getLimiterStats, throttledPdAxiosRequest,
 } from 'src/util/pd-api-wrapper';
 
 import {
@@ -117,8 +116,7 @@ export function* checkConnectionStatusImpl() {
       status: extensionsStatus,
     },
     connection: {
-      abilities,
-      connectionStatusMessage,
+      abilities, connectionStatusMessage,
     },
   } = yield select();
   let validConnection = false;
@@ -265,13 +263,13 @@ export function* checkForTokenExpiry() {
     const tokenExpiresAtStr = sessionStorage.getItem('pd_token_expires_at');
     const refreshToken = sessionStorage.getItem('pd_refresh_token');
     if (
-      (typeof refreshToken === 'string')
-      && (refreshToken.startsWith('pd'))
-      && (typeof tokenExpiresAtStr === 'string')
-      && (/^-?\d+$/.test(tokenExpiresAtStr))
+      typeof refreshToken === 'string'
+      && refreshToken.startsWith('pd')
+      && typeof tokenExpiresAtStr === 'string'
+      && /^-?\d+$/.test(tokenExpiresAtStr)
     ) {
       const tokenExpiresAt = new Date(parseInt(tokenExpiresAtStr, 10));
-      if (tokenExpiresAt && (Date.now() + 60_000 > tokenExpiresAt)) {
+      if (tokenExpiresAt && Date.now() + 60_000 > tokenExpiresAt) {
         yield put({ type: OAUTH_REFRESH_REQUESTED });
       }
     }

@@ -73,9 +73,7 @@ const DetailedStatusOverlay = ({
       lastPollCompleted,
       errors: pollingErrors,
     },
-  } = useSelector(
-    (state) => state.logEntries,
-  );
+  } = useSelector((state) => state.logEntries);
   const {
     currentUser,
   } = useSelector((state) => state.users);
@@ -292,21 +290,27 @@ const DetailedStatusOverlay = ({
               :
             </Text>
             <Text fontSize="xs">
-              {lastPollStarted ? moment(lastPollStarted.toISOString()).format(DATE_FORMAT) : t('n/a')}
+              {lastPollStarted
+                ? moment(lastPollStarted.toISOString()).format(DATE_FORMAT)
+                : t('n/a')}
             </Text>
             <Text fontSize="xs" mb={0}>
               {t('Last Completed')}
               :
             </Text>
             <Text fontSize="xs">
-              {lastPollCompleted ? moment(lastPollCompleted.toISOString()).format(DATE_FORMAT) : t('n/a')}
+              {lastPollCompleted
+                ? moment(lastPollCompleted.toISOString()).format(DATE_FORMAT)
+                : t('n/a')}
             </Text>
             <Text fontSize="xs" mb={0}>
               {t('Latest Log Entry')}
               :
             </Text>
             <Text fontSize="xs">
-              {latestLogEntryDate ? moment(latestLogEntryDate.toISOString()).format(DATE_FORMAT) : t('n/a')}
+              {latestLogEntryDate
+                ? moment(latestLogEntryDate.toISOString()).format(DATE_FORMAT)
+                : t('n/a')}
             </Text>
             {pollingErrors.length > 0 && (
               <Text fontSize="xs" color="red.500">

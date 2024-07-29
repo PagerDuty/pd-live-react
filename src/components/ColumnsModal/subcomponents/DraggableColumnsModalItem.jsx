@@ -89,7 +89,11 @@ const DraggableColumnsModalItem = ({
     default:
       ariaLabel = 'Remove column';
       iconComponent = (
-        <CloseIcon id={`column-${column.value}-remove-icon`} {...iconProps} aria-label={ariaLabel} />
+        <CloseIcon
+          id={`column-${column.value}-remove-icon`}
+          {...iconProps}
+          aria-label={ariaLabel}
+        />
       );
       break;
   }
