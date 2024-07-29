@@ -79,12 +79,11 @@ const PersonInitialsComponent = ({
             color: fetchedUser.color.replace('-', ''),
           };
         } else {
-          RealUserMonitoring.trackError(new Error('Error fetching user'),
-            {
-              user_id: user.id,
-              endpoint: `users/${user.id}`,
-              response: r,
-            });
+          RealUserMonitoring.trackError(new Error('Error fetching user'), {
+            user_id: user.id,
+            endpoint: `users/${user.id}`,
+            response: r,
+          });
           retval = {
             summary: 'Error fetching user',
             id: user.id,

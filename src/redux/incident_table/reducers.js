@@ -17,14 +17,14 @@ import {
 } from './actions';
 
 const defaultColumns = [
-  { Header: '#', width: 60, columnType: 'incident' },
-  { Header: 'Status', width: 100, columnType: 'incident' },
-  { Header: 'Priority', width: 90, columnType: 'incident' },
-  { Header: 'Title', width: 400, columnType: 'incident' },
-  { Header: 'Assignees', width: 160, columnType: 'incident' },
-  { Header: 'Created At', width: 180, columnType: 'incident' },
-  { Header: 'Service', width: 300, columnType: 'incident' },
-  { Header: 'Latest Note', width: 200, columnType: 'incident' },
+  { value: 'incident_number', Header: '#', width: 60, columnType: 'incident' },
+  { value: 'status', Header: 'Status', width: 100, columnType: 'incident' },
+  { value: 'priority', Header: 'Priority', width: 90, columnType: 'incident' },
+  { value: 'title', Header: 'Title', width: 400, columnType: 'incident' },
+  { value: 'assignees', Header: 'Assignees', width: 160, columnType: 'incident' },
+  { value: 'created_at', Header: 'Created At', width: 180, columnType: 'incident' },
+  { value: 'service', Header: 'Service', width: 300, columnType: 'incident' },
+  { value: 'latest_note', Header: 'Latest Note', width: 200, columnType: 'incident' },
 ];
 
 const incidentTable = produce(

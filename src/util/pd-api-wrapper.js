@@ -48,7 +48,13 @@ export const getPdAccessTokenObject = () => {
 
 export const pd = api(getPdAccessTokenObject());
 
-export const pdAxiosRequest = async (method, endpoint, params = {}, data = {}, throwErrors = false) => axios({
+export const pdAxiosRequest = async (
+  method,
+  endpoint,
+  params = {},
+  data = {},
+  throwErrors = false,
+) => axios({
   method,
   url: `https://api.pagerduty.com/${endpoint}`,
   headers: {
@@ -175,39 +181,39 @@ export const throttledPdAxiosRequest = (
     priority: 5,
   },
 ) => {
-  const qid = `${method}-${endpoint}-${Date.now()}-${Math.random()
-    .toString(36)
-    .substring(2, 7)}`;
+  const qid = `${method}-${endpoint}-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`;
 
   const throwErrors = options?.throwErrors || false;
 
-  return limiter.schedule(
-    {
-      expiration: options?.expiration || 30 * 1000,
-      priority: options.priority || 5,
-      id: qid,
-    },
-    async () => {
-      const r = await pdAxiosRequest(method, endpoint, params, data, throwErrors);
-      return r;
-    },
-  ).catch((error) => {
-    if (error instanceof Bottleneck.BottleneckError) {
-      RealUserMonitoring.trackError(error, {
-        type: 'limiter error',
-        method,
-        endpoint,
-        currentLimit,
-      });
-    } else {
-      RealUserMonitoring.trackError(error, {
-        type: 'pdAxiosRequest error',
-        method,
-        endpoint,
-      });
-      throw error;
-    }
-  });
+  return limiter
+    .schedule(
+      {
+        expiration: options?.expiration || 30 * 1000,
+        priority: options.priority || 5,
+        id: qid,
+      },
+      async () => {
+        const r = await pdAxiosRequest(method, endpoint, params, data, throwErrors);
+        return r;
+      },
+    )
+    .catch((error) => {
+      if (error instanceof Bottleneck.BottleneckError) {
+        RealUserMonitoring.trackError(error, {
+          type: 'limiter error',
+          method,
+          endpoint,
+          currentLimit,
+        });
+      } else {
+        RealUserMonitoring.trackError(error, {
+          type: 'pdAxiosRequest error',
+          method,
+          endpoint,
+        });
+        throw error;
+      }
+    });
 };
 
 export const getLimiterStats = () => limiter.counts();
@@ -306,7 +312,11 @@ export const pdParallelFetch = async (
         axiosRequestOptions,
       )
         .then((response) => {
-          if (!response?.status || !(response.status >= 200 && response.status < 300) || !response.data) {
+          if (
+            !response?.status
+            || !(response.status >= 200 && response.status < 300)
+            || !response.data
+          ) {
             failed.push({
               endpoint,
               response,

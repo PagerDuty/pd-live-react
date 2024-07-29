@@ -208,9 +208,10 @@ export function* getAlertsForIncidents(action) {
       return acc;
     }, {});
     alertsChunk.forEach((alert) => {
-      if (!(alert?.incident?.id) || !(alertsChunkByIncidentId[alert.incident.id] instanceof Array)) {
+      if (!alert?.incident?.id || !(alertsChunkByIncidentId[alert.incident.id] instanceof Array)) {
         RealUserMonitoring.trackError(
-          new Error('alert is missing incident id or alertsChunkByIncidentId is not an array'), alert,
+          new Error('alert is missing incident id or alertsChunkByIncidentId is not an array'),
+          alert,
         );
         return;
       }
@@ -263,9 +264,10 @@ export function* getNotesForIncidents(action) {
       return acc;
     }, {});
     notesChunk.forEach((note) => {
-      if (!(note?.incident?.id) || !(notesChunkByIncidentId[note.incident.id] instanceof Array)) {
+      if (!note?.incident?.id || !(notesChunkByIncidentId[note.incident.id] instanceof Array)) {
         RealUserMonitoring.trackError(
-          new Error('note is missing incident id or notesChunkByIncidentId is not an array'), note,
+          new Error('note is missing incident id or notesChunkByIncidentId is not an array'),
+          note,
         );
         return;
       }

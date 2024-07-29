@@ -3,8 +3,7 @@ import React, {
 } from 'react';
 
 import {
-  useSelector,
-  useDispatch,
+  useSelector, useDispatch,
 } from 'react-redux';
 
 import {
@@ -12,9 +11,7 @@ import {
 } from 'react-i18next';
 
 import {
-  Flex,
-  Button,
-  Tag,
+  Flex, Button, Tag,
 } from '@chakra-ui/react';
 
 import {
@@ -43,9 +40,7 @@ const ColumnFilterIndicatorComponent = () => {
 
   return (
     <Flex>
-      <Tag colorScheme="blue">
-        {filterCount}
-      </Tag>
+      <Tag colorScheme="blue">{filterCount}</Tag>
       <Button
         id="clear-filters-button"
         size="xs"

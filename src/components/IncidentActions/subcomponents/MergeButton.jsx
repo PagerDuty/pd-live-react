@@ -37,9 +37,7 @@ const MergeButton = () => {
     selectedRows,
   } = useSelector((state) => state.incidentTable);
   const dispatch = useDispatch();
-  const updateActionAlertsModal = (actionAlertsModalType, actionAlertsModalMessage) => (
-    dispatch(updateActionAlertsModalConnected(actionAlertsModalType, actionAlertsModalMessage))
-  );
+  const updateActionAlertsModal = (actionAlertsModalType, actionAlertsModalMessage) => dispatch(updateActionAlertsModalConnected(actionAlertsModalType, actionAlertsModalMessage));
   const toggleDisplayActionAlertsModal = () => dispatch(toggleDisplayActionAlertsModalConnected());
   const toggleDisplayMergeModal = () => dispatch(toggleDisplayMergeModalConnected());
   const displayActionModal = (actionAlertsModalType, actionAlertsModalMessage) => {

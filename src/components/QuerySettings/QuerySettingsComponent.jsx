@@ -131,7 +131,7 @@ const QuerySettingsComponent = () => {
             isMulti
           />
         </BoxForInput>
-        { filterCount > 0 && (
+        {filterCount > 0 && (
           <BoxForInput label={`${t('Column Filters')}:`}>
             <ColumnFilterIndicatorComponent />
           </BoxForInput>

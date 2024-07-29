@@ -33,6 +33,8 @@ import {
   SET_RESPONDERS_IN_EP_FILTER_COMPLETED,
   SET_ALERT_CUSTOM_DETAIL_COLUMNS_REQUESTED,
   SET_ALERT_CUSTOM_DETAIL_COLUMNS_COMPLETED,
+  SET_COMPUTED_COLUMNS_REQUESTED,
+  SET_COMPUTED_COLUMNS_COMPLETED,
   SET_MAX_RATE_LIMIT_REQUESTED,
   SET_MAX_RATE_LIMIT_COMPLETED,
   SET_AUTO_ACCEPT_INCIDENTS_QUERY_REQUESTED,
@@ -166,6 +168,20 @@ export function* setAlertCustomDetailColumnsImpl(action) {
   });
 }
 
+export function* setComputedColumns() {
+  yield takeLatest(SET_COMPUTED_COLUMNS_REQUESTED, setComputedColumnsImpl);
+}
+
+export function* setComputedColumnsImpl(action) {
+  const {
+    computedFields,
+  } = action;
+  yield put({
+    type: SET_COMPUTED_COLUMNS_COMPLETED,
+    computedFields,
+  });
+}
+
 export function* setShowIncidentAlertsModalForIncidentId() {
   yield takeLatest(
     SET_SHOW_INCIDENT_ALERTS_MODAL_FOR_INCIDENT_ID_REQUESTED,
@@ -235,8 +251,11 @@ export function* clearLocalCacheImpl() {
   yield put({
     type: 'RESET',
   });
-  yield persistor.purge();
+  yield persistor.pause();
+  yield persistor.flush().then(() => persistor.purge());
   yield persistor.persist();
+  localStorage.clear();
+  sessionStorage.clear();
   yield put({
     type: CLEAR_LOCAL_CACHE_COMPLETED,
   });

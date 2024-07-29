@@ -114,12 +114,9 @@ describe('PagerDuty Live', { failFast: { enabled: true } }, () => {
   });
 
   it('Application correctly renders the catastrophe modal', () => {
-    cy
-      .window()
-      .its('store')
-      .invoke('dispatch', { type: 'CATASTROPHE' });
+    cy.window().its('store').invoke('dispatch', { type: 'CATASTROPHE' });
 
-    cy.get('header').contains('Catastrophic Error');
+    cy.get('header').contains('Unexpected Error');
     cy.get('p').contains('The application will restart');
   });
 });

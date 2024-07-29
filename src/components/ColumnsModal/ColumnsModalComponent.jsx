@@ -34,6 +34,7 @@ import {
   Input,
   Text,
   useToast,
+  Select,
 } from '@chakra-ui/react';
 import {
   AddIcon,
@@ -41,7 +42,8 @@ import {
 import {
   defaultColumns,
   customAlertColumns,
-  columnsForSavedColumns,
+  customComputedColumns,
+  // columnsForSavedColumns,
 } from 'src/config/column-generator';
 
 import {
@@ -52,6 +54,7 @@ import {
 import {
   toggleColumnsModal as toggleColumnsModalConnected,
   setAlertCustomDetailColumns as setAlertCustomDetailColumnsConnected,
+  setComputedColumns as setComputedColumnsConnected,
 } from 'src/redux/settings/actions';
 
 import ColumnsModalItem from './subcomponents/ColumnsModalItem';
@@ -59,7 +62,8 @@ import DraggableColumnsModalItem from './subcomponents/DraggableColumnsModalItem
 
 const TableColumnsModalComponent = () => {
   const displayColumnsModal = useSelector((state) => state.settings.displayColumnsModal);
-  const alertCustomDetailFields = useSelector((state) => state.settings.alertCustomDetailFields);
+  const alertCustomDetailFields = useSelector((state) => state.settings.alertCustomDetailFields) || [];
+  const computedFields = useSelector((state) => state.settings.computedFields) || [];
   const incidentTableColumns = useSelector((state) => state.incidentTable.incidentTableColumns);
   const {
     incidentTableState,
@@ -69,6 +73,9 @@ const TableColumnsModalComponent = () => {
   const toggleColumnsModal = () => dispatch(toggleColumnsModalConnected());
   const setAlertCustomDetailColumns = (newAlertCustomDetailFields) => {
     dispatch(setAlertCustomDetailColumnsConnected(newAlertCustomDetailFields));
+  };
+  const setComputedColumns = (newComputedFields) => {
+    dispatch(setComputedColumnsConnected(newComputedFields));
   };
   const saveIncidentTable = (updatedIncidentTableColumns) => {
     dispatch(saveIncidentTableConnected(updatedIncidentTableColumns));
@@ -83,71 +90,76 @@ const TableColumnsModalComponent = () => {
 
   const toast = useToast();
 
-  const columnValue = (column) => {
-    if (!column) return '';
-    let value;
-    if (column.columnType === 'alert') {
-      // Alert column based on aggregator
-      value = column.Header
-        + (column.accessorPath ? `:${column.accessorPath}` : '')
-        + (column.aggregator ? `:${column.aggregator}` : '');
-    } else {
-      // Incident column
-      value = column.Header;
-    }
-    return value;
-  };
-
   const getAllAvailableColumns = () => {
     // eslint-disable-next-line max-len
-    const v = [...defaultColumns(), ...customAlertColumns(alertCustomDetailFields)].sort((a, b) => columnValue(a).localeCompare(columnValue(b)));
+    const v = [
+      ...defaultColumns(),
+      ...customAlertColumns(alertCustomDetailFields),
+      ...customComputedColumns(computedFields),
+    ].sort((a, b) => a.value.localeCompare(b.value));
     return v;
   };
 
-  const allAvailableColumns = useMemo(getAllAvailableColumns, [alertCustomDetailFields]);
+  const allAvailableColumns = useMemo(getAllAvailableColumns, [
+    alertCustomDetailFields,
+    computedFields,
+  ]);
 
-  const getSelectedColumns = () => columnsForSavedColumns(incidentTableColumns).map((column) => {
-    // Recreate original value used from react-select in order to populate dual list
-    const value = columnValue(column);
-    return {
-      id: column.id,
-      Header: column.Header,
-      columnType: column.columnType,
-      accessor: column.accessor,
-      accessorPath: column.accessorPath,
-      label: column.i18n ? column.i18n : column.Header,
-      value,
-    };
-  });
+  const getSelectedColumns = () => incidentTableColumns.map((column) => ({
+    ...column,
+    label: column.i18n ? column.i18n : column.Header,
+  }));
   const [selectedColumns, setSelectedColumns] = useState(getSelectedColumns());
 
   const getUnselectedColumns = () => {
     const unselected = allAvailableColumns.filter(
-      (c) => !selectedColumns.find((s) => s.value === columnValue(c)),
+      (c) => !selectedColumns.find((s) => s.value === c.value),
     );
     return unselected;
   };
   const unselectedColumns = useMemo(getUnselectedColumns, [allAvailableColumns, selectedColumns]);
 
   const unselectColumn = (column) => {
-    setSelectedColumns((prev) => prev.filter((c) => columnValue(c) !== columnValue(column)));
+    setSelectedColumns((prev) => prev.filter((c) => c.value !== column.value));
   };
   const selectColumn = (column) => {
     setSelectedColumns((prev) => [...prev, column]);
   };
 
-  const addCustomAlertColumn = (value) => {
-    const [Header, accessorPath, aggregator] = value.split(':');
+  const addCustomAlertColumn = (Header, accessorPath) => {
+    const value = `${Header}:${accessorPath}`;
+    if (!Header || !accessorPath) {
+      return;
+    }
     const newColumn = {
+      id: value,
       Header,
       accessorPath,
-      aggregator,
       value,
       label: value,
       columnType: 'alert',
     };
     const newAlertCustomDetailFields = [...alertCustomDetailFields, newColumn];
     setAlertCustomDetailColumns(newAlertCustomDetailFields);
+  };
+
+  const addCustomComputedColumn = (Header, accessorPath, expression) => {
+    const value = `${Header}:${accessorPath}:${expression.replace(/:/g, '\\:')}`;
+    if (!Header || !accessorPath || !expression) {
+      return;
+    }
+    const newColumn = {
+      id: value,
+      Header,
+      accessorPath,
+      value,
+      expressionType: 'regex-single',
+      expression,
+      label: value,
+      columnType: 'computed',
+    };
+    const newComputedFields = [...computedFields, newColumn];
+    setComputedColumns(newComputedFields);
   };
 
   const removeCustomAlertColumn = (column) => {
@@ -158,9 +170,19 @@ const TableColumnsModalComponent = () => {
     setAlertCustomDetailColumns(newAlertCustomDetailFields);
   };
 
+  const removeCustomComputedColumn = (column) => {
+    unselectColumn(column);
+    const newComputedFields = computedFields.filter((c) => c.value !== column.value);
+    setComputedColumns(newComputedFields);
+  };
+
+  const columnTypeInputRef = useRef(null);
   const headerInputRef = useRef(null);
   const accessorPathInputRef = useRef(null);
+  const regexInputRef = useRef(null);
   const addButtonRef = useRef(null);
+
+  const [columnType, setColumnType] = useState('alert');
 
   const [inputIsValid, setInputIsValid] = useState(false);
   const validateInput = () => {
@@ -176,7 +198,7 @@ const TableColumnsModalComponent = () => {
 
   const findColumnInSelectedColumns = useCallback(
     (value) => {
-      const column = selectedColumns.find((c) => columnValue(c) === value);
+      const column = selectedColumns.find((c) => c.value === value);
       return {
         column,
         index: selectedColumns.indexOf(column),
@@ -200,7 +222,7 @@ const TableColumnsModalComponent = () => {
 
   const [, drop] = useDrop(() => ({ accept: 'DraggableColumnsModalItem' }));
   return (
-    <Modal isOpen={displayColumnsModal} onClose={toggleColumnsModal} size="xl">
+    <Modal isOpen={displayColumnsModal} onClose={toggleColumnsModal} size="xxl">
       <ModalOverlay />
       <ModalContent>
         <ModalHeader>{t('Incident Table')}</ModalHeader>
@@ -209,13 +231,15 @@ const TableColumnsModalComponent = () => {
           <VStack align="top">
             <Card size="sm" borderWidth="1px">
               <CardHeader>
-                <Heading size="sm">{t('Selected')}</Heading>
+                <Heading mb={0} size="sm">
+                  {t('Selected')}
+                </Heading>
               </CardHeader>
-              <CardBody>
+              <CardBody py={0}>
                 <Box id="selected-columns-card-body" ref={drop}>
                   {selectedColumns.map((column) => (
                     <DraggableColumnsModalItem
-                      key={columnValue(column)}
+                      key={column.value}
                       column={column}
                       onClick={() => unselectColumn(column)}
                       itemType="selected"
@@ -226,20 +250,22 @@ const TableColumnsModalComponent = () => {
                 </Box>
               </CardBody>
               <CardFooter>
-                <Text m="auto" fontSize="sm" color="gray.500" as="i">
+                <Text p={0} mx="auto" my={0} fontSize="sm" color="gray.500" as="i">
                   {t('Drag and drop to reorder')}
                 </Text>
               </CardFooter>
             </Card>
-            <Card size="sm">
+            <Card size="sm" borderWidth="1px">
               <CardHeader>
-                <Heading size="sm">{t('Available')}</Heading>
+                <Heading mb={0} size="sm">
+                  {t('Available')}
+                </Heading>
               </CardHeader>
-              <CardBody>
-                <Box id="available-columns-card-body">
+              <CardBody py={0}>
+                <Box mb={2} id="available-columns-card-body">
                   {unselectedColumns.map((column) => (
                     <ColumnsModalItem
-                      key={columnValue(column)}
+                      key={column.value}
                       column={column}
                       onClick={() => selectColumn(column)}
                       itemType="available"
@@ -248,22 +274,64 @@ const TableColumnsModalComponent = () => {
                 </Box>
               </CardBody>
             </Card>
-            <Card size="sm">
+            <Card size="sm" borderWidth="1px">
               <CardHeader>
-                <Heading size="sm">{t('Custom')}</Heading>
+                <Heading mb={0} size="sm">
+                  {t('Custom')}
+                </Heading>
               </CardHeader>
-              <CardBody>
+              <CardBody py={0}>
                 <Box id="custom-columns-card-body">
-                  {alertCustomDetailFields.map((column) => (
-                    <ColumnsModalItem
-                      key={columnValue(column)}
-                      column={column}
-                      onClick={() => removeCustomAlertColumn(column)}
-                      itemType="custom"
-                    />
-                  ))}
+                  <Card size="xs" mb={1}>
+                    <CardHeader pb={0}>
+                      <Heading size="xs">{t('alert')}</Heading>
+                    </CardHeader>
+                    <CardBody>
+                      {alertCustomDetailFields.map((column) => (
+                        <ColumnsModalItem
+                          key={column.value}
+                          column={column}
+                          onClick={() => removeCustomAlertColumn(column)}
+                          itemType="custom"
+                        />
+                      ))}
+                    </CardBody>
+                  </Card>
+                  <Card size="xs" mb={1}>
+                    <CardHeader pb={0}>
+                      <Heading mb={0} size="xs">
+                        {t('computed')}
+                      </Heading>
+                    </CardHeader>
+                    <CardBody>
+                      {computedFields.map((column) => (
+                        <ColumnsModalItem
+                          key={column.value}
+                          column={column}
+                          onClick={() => removeCustomComputedColumn(column)}
+                          itemType="custom"
+                          columnType="computed"
+                        />
+                      ))}
+                    </CardBody>
+                  </Card>
                 </Box>
-                <InputGroup>
+                <InputGroup mb={2}>
+                  <Select
+                    id="column-type-select"
+                    ref={columnTypeInputRef}
+                    minWidth="8em"
+                    width="auto"
+                    onChange={() => {
+                      setColumnType(columnTypeInputRef.current.value);
+                    }}
+                  >
+                    {['alert', 'computed'].map((type) => (
+                      <option key={type} value={type}>
+                        {t(type)}
+                      </option>
+                    ))}
+                  </Select>
                   <Input
                     ref={headerInputRef}
                     onChange={validateInput}
@@ -276,19 +344,38 @@ const TableColumnsModalComponent = () => {
                     ref={accessorPathInputRef}
                     onChange={validateInput}
                     m={1}
-                    w="60%"
+                    w="50%"
                     placeholder={t('JSON Path')}
                     size="sm"
+                  />
+                  <Input
+                    ref={regexInputRef}
+                    onChange={validateInput}
+                    m={1}
+                    w="50%"
+                    placeholder={t('Regex')}
+                    size="sm"
+                    isDisabled={columnType !== 'computed'}
                   />
                   <Button
                     ref={addButtonRef}
                     isDisabled={!inputIsValid}
                     onClick={() => {
-                      const value = `${headerInputRef.current.value}:`
-                        + `${accessorPathInputRef.current.value}`;
-                      addCustomAlertColumn(value);
+                      if (columnType === 'alert') {
+                        addCustomAlertColumn(
+                          headerInputRef.current.value,
+                          accessorPathInputRef.current.value,
+                        );
+                      } else {
+                        addCustomComputedColumn(
+                          headerInputRef.current.value,
+                          accessorPathInputRef.current.value,
+                          regexInputRef.current.value,
+                        );
+                      }
                     }}
                     m={1}
+                    px={6}
                     variant="solid"
                     colorScheme="blue"
                     aria-label={t('Add custom column')}
@@ -309,7 +396,7 @@ const TableColumnsModalComponent = () => {
             mr={3}
             onClick={() => {
               // remove any filters on columns that are no longer selected
-              const selectedColumnIds = selectedColumns.map((c) => c.id);
+              const selectedColumnIds = selectedColumns.map((c) => c.value);
               const filters = incidentTableState.filters.filter((f) => selectedColumnIds.includes(f.id));
               updateIncidentTableState({ ...incidentTableState, filters });
 

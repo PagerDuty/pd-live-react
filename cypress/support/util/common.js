@@ -255,7 +255,7 @@ export const manageIncidentTableColumns = (desiredState = 'add', columns = []) =
   checkActionAlertsModalContent('Incident table columns saved');
 };
 
-export const manageCustomAlertColumnDefinitions = (customAlertColumnDefinitions) => {
+export const manageCustomColumnDefinitions = (customColumnDefinitions, type = 'alert') => {
   cy.get('.settings-panel-dropdown').click();
   cy.get('.dropdown-item').contains('Columns').click();
 
@@ -263,14 +263,27 @@ export const manageCustomAlertColumnDefinitions = (customAlertColumnDefinitions)
     cy.wrap($el).click();
   });
 
-  customAlertColumnDefinitions.forEach((customAlertColumnDefinition) => {
-    const [header, accessorPath] = customAlertColumnDefinition.split(':');
-    cy.get('input[placeholder="Header"]').type(header);
-    cy.get('input[placeholder="JSON Path"]').type(accessorPath);
+  customColumnDefinitions.forEach((customColumnDefinition) => {
+    const {
+      header, accessorPath, expression,
+    } = customColumnDefinition;
+    cy.get('#column-type-select').select(type);
+    cy.get('input[placeholder="Header"]').clear().type(header);
+    cy.get('input[placeholder="JSON Path"]').clear().type(accessorPath);
+    if (type === 'computed') {
+      cy.get('input[placeholder="Regex"]')
+        .clear()
+        .type(expression, { parseSpecialCharSequences: false });
+    }
     cy.get('button[aria-label="Add custom column"]').click();
     // Need to escape special characters in accessorPath
     // https://docs.cypress.io/faq/questions/using-cypress-faq#How-do-I-use-special-characters-with-cyget
-    cy.get(`#column-${Cypress.$.escapeSelector(accessorPath)}-add-icon`).click();
+    const columnId = Cypress.$.escapeSelector(
+      [header, accessorPath, expression.replace(/:/g, '\\:')]
+        .filter((value) => value !== '')
+        .join(':'),
+    );
+    cy.get(`#column-${columnId}-add-icon`).click();
   });
   cy.get('#save-columns-button').click();
   checkActionAlertsModalContent('Incident table columns saved');

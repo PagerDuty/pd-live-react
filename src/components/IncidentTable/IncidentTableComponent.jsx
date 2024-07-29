@@ -121,7 +121,9 @@ const doCsvExport = (tableData) => {
 
 const IncidentTableComponent = () => {
   const {
-    incidentTableState, incidentTableColumns, status: incidentTableStatus,
+    incidentTableState,
+    incidentTableColumns,
+    status: incidentTableStatus,
   } = useSelector((state) => state.incidentTable);
   const {
     status: incidentActionsStatus,
@@ -223,7 +225,11 @@ const IncidentTableComponent = () => {
   const debouncedUpdateIncidentTableState = useDebouncedCallback((state, action) => {
     // Only update store with sorted and column resizing state
     // and filter state
-    if (action.type === 'toggleSortBy' || action.type === 'columnDoneResizing' || action.type === 'setFilter') {
+    if (
+      action.type === 'toggleSortBy'
+      || action.type === 'columnDoneResizing'
+      || action.type === 'setFilter'
+    ) {
       updateIncidentTableState(state);
     }
   }, 100);
@@ -406,10 +412,7 @@ const IncidentTableComponent = () => {
     // Therefore, clearing the checkbox in the UI before it is filtered out is the best we can do for now
     const isActionRequested = incidentActionsStatus === 'ACTION_REQUESTED';
     const isToggleAction = incidentActionsStatus.includes('TOGGLE');
-    const isRequestedOrCompleted = (
-      incidentActionsStatus.includes('REQUESTED')
-      || incidentActionsStatus.includes('COMPLETED')
-    );
+    const isRequestedOrCompleted = incidentActionsStatus.includes('REQUESTED') || incidentActionsStatus.includes('COMPLETED');
 
     if (isActionRequested || (!isToggleAction && isRequestedOrCompleted)) {
       toggleAllRowsSelected(false);
@@ -536,7 +539,7 @@ const IncidentTableComponent = () => {
             </MenuItem>
           </ContextMenu>
         </Box>
-        { rows.length > 0 && (
+        {rows.length > 0 && (
           <Box {...getTableBodyProps()}>
             <FixedSizeList
               className="incident-table-fixed-list"
@@ -551,10 +554,8 @@ const IncidentTableComponent = () => {
             </FixedSizeList>
           </Box>
         )}
-        { rows.length === 0 && (
-          <EmptyIncidentsComponent
-            message={t('No incidents match your search criteria.')}
-          />
+        {rows.length === 0 && (
+          <EmptyIncidentsComponent message={t('No incidents match your search criteria.')} />
         )}
         <GetAllModal
           isOpen={displayGetAllModal}

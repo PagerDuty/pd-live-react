@@ -77,9 +77,7 @@ import {
 } from 'src/redux/monitoring/actions';
 
 import {
-  PD_USER_TOKEN,
-  PD_OAUTH_CLIENT_ID,
-  PD_OAUTH_CLIENT_SECRET,
+  PD_USER_TOKEN, PD_OAUTH_CLIENT_ID, PD_OAUTH_CLIENT_SECRET,
 } from 'src/config/constants';
 
 import 'src/App.scss';
@@ -108,9 +106,10 @@ const App = () => {
   );
 
   const {
-    status: connectionStatus,
-    connectionStatusMessage,
-  } = useSelector((state) => state.connection);
+    status: connectionStatus, connectionStatusMessage,
+  } = useSelector(
+    (state) => state.connection,
+  );
   const [catastrophe, setCatastrophe] = useState(false);
   useEffect(() => {
     if (connectionStatus === CATASTROPHE) {
@@ -163,17 +162,10 @@ const App = () => {
   }, []);
 
   if (catastrophe) {
-    return (
-      <CatastropheModal
-        errorMessage={connectionStatusMessage}
-      />
-    );
+    return <CatastropheModal errorMessage={connectionStatusMessage} />;
   }
 
-  if (
-    !PD_USER_TOKEN
-    && (typeof token !== 'string' || !token.startsWith('pd'))
-  ) {
+  if (!PD_USER_TOKEN && (typeof token !== 'string' || !token.startsWith('pd'))) {
     return (
       <div className="App">
         <AuthComponent clientId={PD_OAUTH_CLIENT_ID} clientSecret={PD_OAUTH_CLIENT_SECRET} />
@@ -201,13 +193,12 @@ const App = () => {
 
   return (
     <div className="App">
-      <ErrorBoundary fallbackRender={
-          (details) => {
-            RealUserMonitoring.trackError(details.error);
-            dispatchCatastrophe(`UI Render error: ${details.error.message}`);
-            return null;
-          }
-        }
+      <ErrorBoundary
+        fallbackRender={(details) => {
+          RealUserMonitoring.trackError(details.error);
+          dispatchCatastrophe(`UI Render error: ${details.error.message}`);
+          return null;
+        }}
       >
         <Box position="fixed" w="100%" h="100%" overflow="hidden">
           <Box as="header" top={0} w="100%" pb={1}>
