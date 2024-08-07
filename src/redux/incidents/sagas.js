@@ -107,7 +107,7 @@ export function* getIncidentsImpl() {
       until,
       include: ['first_trigger_log_entries', 'external_references'],
       limit: INCIDENTS_PAGINATION_LIMIT,
-      sort_by: 'created_at:desc',
+      sort_by: 'incident_number:desc',
     };
 
     if (incidentStatus) baseParams.statuses = incidentStatus;
