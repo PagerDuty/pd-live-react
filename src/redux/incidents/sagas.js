@@ -107,7 +107,7 @@ export function* getIncidentsImpl() {
       until,
       include: ['first_trigger_log_entries', 'external_references'],
       limit: INCIDENTS_PAGINATION_LIMIT,
-      sort_by: 'created_at:desc',
+      sort_by: 'incident_number:desc',
     };
 
     if (incidentStatus) baseParams.statuses = incidentStatus;
@@ -129,6 +129,17 @@ export function* getIncidentsImpl() {
       connectionStatusMessage: 'Unable to fetch incidents',
     });
   }
+  // The incident list API may return duplicate incidents under some circumstances, so as a precaution we'll dedupe the list by incident.id
+  // Also log a RUM error if we find any duplicates
+  const duplicateIncidents = incidents.filter((incident, index, self) => self.findIndex((t) => t.id === incident.id) !== index);
+  const numDuplicateIncidents = duplicateIncidents.length;
+  if (numDuplicateIncidents > 0) {
+    // eslint-disable-next-line no-console
+    console.error('Duplicate incidents found', numDuplicateIncidents);
+    RealUserMonitoring.trackError(new Error('Duplicate incidents found'), numDuplicateIncidents);
+    incidents = incidents.filter((incident, index, self) => self.findIndex((t) => t.id === incident.id) === index);
+  }
+
   return incidents;
 }
 
