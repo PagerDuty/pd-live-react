@@ -24,6 +24,7 @@ import {
 
 import moment from 'moment/min/moment-with-locales';
 
+import DeprecationAlertComponent from 'src/components/DeprecationAlert/DeprecationAlert';
 import CatastropheModal from 'src/components/CatastropheModal/CatastropheModal';
 import AuthComponent from 'src/components/Auth/AuthComponent';
 import UnauthorizedModalComponent from 'src/components/UnauthorizedModal/UnauthorizedModalComponent';
@@ -77,7 +78,7 @@ import {
 } from 'src/redux/monitoring/actions';
 
 import {
-  PD_USER_TOKEN, PD_OAUTH_CLIENT_ID, PD_OAUTH_CLIENT_SECRET,
+  PD_USER_TOKEN, PD_OAUTH_CLIENT_ID,
 } from 'src/config/constants';
 
 import 'src/App.scss';
@@ -168,7 +169,7 @@ const App = () => {
   if (!PD_USER_TOKEN && (typeof token !== 'string' || !token.startsWith('pd'))) {
     return (
       <div className="App">
-        <AuthComponent clientId={PD_OAUTH_CLIENT_ID} clientSecret={PD_OAUTH_CLIENT_SECRET} />
+        <AuthComponent clientId={PD_OAUTH_CLIENT_ID} />
       </div>
     );
   }
@@ -202,6 +203,7 @@ const App = () => {
       >
         <Box position="fixed" w="100%" h="100%" overflow="hidden">
           <Box as="header" top={0} w="100%" pb={1}>
+            <DeprecationAlertComponent />
             <NavigationBarComponent />
           </Box>
           <Box as="main" id="main">

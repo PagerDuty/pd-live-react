@@ -19,7 +19,6 @@ import {
 
 import {
   PD_OAUTH_CLIENT_ID,
-  PD_OAUTH_CLIENT_SECRET,
   PD_REQUIRED_ABILITY,
   DEBUG_DISABLE_POLLING,
 } from 'src/config/constants';
@@ -238,7 +237,6 @@ export function* refreshOauthImpl() {
   const formData = {
     grant_type: 'refresh_token',
     client_id: PD_OAUTH_CLIENT_ID,
-    client_secret: PD_OAUTH_CLIENT_SECRET,
     refresh_token: refreshToken,
   };
 
