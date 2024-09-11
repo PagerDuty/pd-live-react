@@ -29,7 +29,6 @@ jobs:
       VITE_PD_ENV: ${{ secrets.PD_ENV }}
       VITE_PD_SUBDOMAIN_ALLOW_LIST: '*'
       VITE_PD_OAUTH_CLIENT_ID: ${{ secrets.PD_OAUTH_CLIENT_ID }}
-      VITE_PD_OAUTH_CLIENT_SECRET: ${{ secrets.PD_OAUTH_CLIENT_SECRET }}
       VITE_PD_REQUIRED_ABILITY: 'teams'
       VITE_DD_APPLICATION_ID: ${{ secrets.DD_APPLICATION_ID }}
       VITE_DD_CLIENT_TOKEN: ${{ secrets.DD_CLIENT_TOKEN }}

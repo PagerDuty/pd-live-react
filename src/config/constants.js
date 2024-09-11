@@ -7,7 +7,6 @@ export const PD_ENV = import.meta.env.VITE_PD_ENV || 'localhost-dev';
 
 // Authentication
 export const PD_OAUTH_CLIENT_ID = import.meta.env.VITE_PD_OAUTH_CLIENT_ID || null;
-export const PD_OAUTH_CLIENT_SECRET = import.meta.env.VITE_PD_OAUTH_CLIENT_SECRET || null;
 export const PD_SUBDOMAIN_ALLOW_LIST = import.meta.env.VITE_PD_SUBDOMAIN_ALLOW_LIST || '*';
 export const PD_USER_TOKEN = import.meta.env.VITE_PD_USER_TOKEN || null;
 export const PD_REQUIRED_ABILITY = import.meta.env.VITE_PD_REQUIRED_ABILITY || null;

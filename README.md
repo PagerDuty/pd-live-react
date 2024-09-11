@@ -45,7 +45,6 @@ The following _optional_ parameters can be used in a `.env` file to override Pag
 | ----------- | ----------- |
 | `VITE_PD_ENV` | PagerDuty Live Environment Tag; defaults to `localhost-dev` if not set |
 | `VITE_PD_OAUTH_CLIENT_ID` | PagerDuty OAuth App client ID (created upon registering app) |
-| `VITE_PD_OAUTH_CLIENT_SECRET` | PagerDuty OAuth App client secret (created upon registering app) |
 | `VITE_PD_USER_TOKEN` | PagerDuty [Personal API Token](https://support.pagerduty.com/docs/generating-api-keys#generating-a-personal-rest-api-key); this will override OAuth login workflow if set and should be used for integration tests|
 | `VITE_PD_SUBDOMAIN_ALLOW_LIST` | Comma separated list of allowed subdomains (e.g. `acme-prod,acme-dev`) |
 | `VITE_PD_REQUIRED_ABILITY` | PagerDuty account-level [ability](https://developer.pagerduty.com/api-reference/b3A6Mjc0ODEwMg-list-abilities) required to use application |

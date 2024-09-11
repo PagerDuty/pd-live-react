@@ -77,7 +77,7 @@ import {
 } from 'src/redux/monitoring/actions';
 
 import {
-  PD_USER_TOKEN, PD_OAUTH_CLIENT_ID, PD_OAUTH_CLIENT_SECRET,
+  PD_USER_TOKEN, PD_OAUTH_CLIENT_ID,
 } from 'src/config/constants';
 
 import 'src/App.scss';
@@ -168,7 +168,7 @@ const App = () => {
   if (!PD_USER_TOKEN && (typeof token !== 'string' || !token.startsWith('pd'))) {
     return (
       <div className="App">
-        <AuthComponent clientId={PD_OAUTH_CLIENT_ID} clientSecret={PD_OAUTH_CLIENT_SECRET} />
+        <AuthComponent clientId={PD_OAUTH_CLIENT_ID} />
       </div>
     );
   }
