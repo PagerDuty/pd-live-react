@@ -14,7 +14,6 @@ const {
 jest.mock('src/config/constants', () => ({
   VITE_PD_ENV: 'localhost-dev',
   PD_OAUTH_CLIENT_ID: null,
-  PD_OAUTH_CLIENT_SECRET: null,
   PD_SUBDOMAIN_ALLOW_LIST: null,
   PD_USER_TOKEN: null,
   PD_REQUIRED_ABILITY: null,

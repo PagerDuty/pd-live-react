@@ -70,14 +70,13 @@ export const createCodeVerifier = () => {
   return base64Unicode(generatedCode.buffer);
 };
 
-export const getAuthURL = async (clientId, clientSecret, redirectURL, codeVerifier) => {
+export const getAuthURL = async (clientId, redirectURL, codeVerifier) => {
   const challengeBuffer = await digestVerifier(codeVerifier);
   // base64 encode the challenge
   const challenge = base64Unicode(challengeBuffer);
   // build authUrl
   const authUrl = 'https://identity.pagerduty.com/oauth/authorize?'
     + `client_id=${clientId}&`
-    + `client_secret=${clientSecret}&`
     + `redirect_uri=${redirectURL}&`
     + 'response_type=code&'
     + `code_challenge=${encodeURI(challenge)}&`
@@ -85,13 +84,7 @@ export const getAuthURL = async (clientId, clientSecret, redirectURL, codeVerifi
   return authUrl;
 };
 
-export const exchangeCodeForToken = async (
-  clientId,
-  clientSecret,
-  redirectURL,
-  codeVerifier,
-  code,
-) => {
+export const exchangeCodeForToken = async (clientId, redirectURL, codeVerifier, code) => {
   const postData = async (url, data) => {
     const formData = new URLSearchParams(data); // Convert data to URL-encoded form data
     const response = await fetch(url, {
@@ -111,7 +104,6 @@ export const exchangeCodeForToken = async (
     code,
     redirect_uri: redirectURL,
     client_id: clientId,
-    client_secret: clientSecret,
     code_verifier: codeVerifier,
   };
 
@@ -120,11 +112,8 @@ export const exchangeCodeForToken = async (
 };
 
 // eslint-disable-next-line no-unused-vars
-export const revokeToken = async (token, clientId, clientSecret) => {
-  const revokeUrl = 'https://identity.pagerduty.com/oauth/revoke?'
-    + `token=${token}`
-    + `&client_id=${clientId}`
-    + `&client_secret=${clientSecret}`;
+export const revokeToken = async (token, clientId) => {
+  const revokeUrl = `https://identity.pagerduty.com/oauth/revoke?token=${token}&client_id=${clientId}`;
   await fetch(revokeUrl, {
     method: 'POST',
     headers: {

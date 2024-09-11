@@ -6,7 +6,7 @@ import {
 } from '@faker-js/faker';
 
 import {
-  PD_OAUTH_CLIENT_ID, PD_OAUTH_CLIENT_SECRET,
+  PD_OAUTH_CLIENT_ID,
 } from 'src/config/constants';
 
 import {
@@ -21,7 +21,6 @@ const unmockedFetch = global.fetch;
 
 describe('Authentication Helper Suite', () => {
   const clientId = PD_OAUTH_CLIENT_ID;
-  const clientSecret = PD_OAUTH_CLIENT_SECRET;
   const redirectURL = 'http://127.0.0.1:3000/';
   const code = 'SOME_REDIRECT_CODE';
   const mockAccessToken = faker.string.alphanumeric();
@@ -71,21 +70,15 @@ describe('Authentication Helper Suite', () => {
 
   it('Get valid auth URL', async () => {
     const codeChallenge = encodeURI(base64Unicode(hash));
-    authURL = await getAuthURL(clientId, clientSecret, redirectURL, codeVerifier);
+    authURL = await getAuthURL(clientId, redirectURL, codeVerifier);
     expect(authURL).toEqual(
       // eslint-disable-next-line max-len
-      `https://identity.pagerduty.com/oauth/authorize?client_id=${clientId}&client_secret=${clientSecret}&redirect_uri=${redirectURL}&response_type=code&code_challenge=${codeChallenge}&code_challenge_method=S256`,
+      `https://identity.pagerduty.com/oauth/authorize?client_id=${clientId}&redirect_uri=${redirectURL}&response_type=code&code_challenge=${codeChallenge}&code_challenge_method=S256`,
     );
   });
 
   it('Retrieve auth token from code', async () => {
-    const token = await exchangeCodeForToken(
-      clientId,
-      clientSecret,
-      redirectURL,
-      codeVerifier,
-      code,
-    );
+    const token = await exchangeCodeForToken(clientId, redirectURL, codeVerifier, code);
     expect(token.access_token).toEqual(mockAccessToken);
   });
 });

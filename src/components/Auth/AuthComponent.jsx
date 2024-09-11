@@ -37,7 +37,7 @@ const AuthComponent = (props) => {
     redirectURL,
   } = props;
   const {
-    clientId, clientSecret,
+    clientId,
   } = props;
 
   if (!redirectURL) {
@@ -52,7 +52,7 @@ const AuthComponent = (props) => {
       const savedButtons = savedButtonsStr ? JSON.parse(savedButtonsStr) : [];
       const buttonParams = savedButtons ? `?button=${savedButtons.join('&button=')}` : '';
 
-      exchangeCodeForToken(clientId, clientSecret, redirectURL, codeVerifier, code).then((data) => {
+      exchangeCodeForToken(clientId, redirectURL, codeVerifier, code).then((data) => {
         const {
           access_token: newAccessToken,
           refresh_token: newRefreshToken,
@@ -77,7 +77,7 @@ const AuthComponent = (props) => {
       } else {
         sessionStorage.removeItem('pd_buttons');
       }
-      getAuthURL(clientId, clientSecret, redirectURL, codeVerifier).then((url) => {
+      getAuthURL(clientId, redirectURL, codeVerifier).then((url) => {
         const subdomainParams = subdomain ? `&subdomain=${subdomain}&service_region=${region}` : '';
         setAuthURL(`${url}${subdomainParams}`);
       });

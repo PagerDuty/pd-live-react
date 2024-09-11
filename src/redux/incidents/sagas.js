@@ -131,13 +131,17 @@ export function* getIncidentsImpl() {
   }
   // The incident list API may return duplicate incidents under some circumstances, so as a precaution we'll dedupe the list by incident.id
   // Also log a RUM error if we find any duplicates
-  const duplicateIncidents = incidents.filter((incident, index, self) => self.findIndex((t) => t.id === incident.id) !== index);
+  const duplicateIncidents = incidents.filter(
+    (incident, index, self) => self.findIndex((t) => t.id === incident.id) !== index,
+  );
   const numDuplicateIncidents = duplicateIncidents.length;
   if (numDuplicateIncidents > 0) {
     // eslint-disable-next-line no-console
     console.error('Duplicate incidents found', numDuplicateIncidents);
     RealUserMonitoring.trackError(new Error('Duplicate incidents found'), numDuplicateIncidents);
-    incidents = incidents.filter((incident, index, self) => self.findIndex((t) => t.id === incident.id) === index);
+    incidents = incidents.filter(
+      (incident, index, self) => self.findIndex((t) => t.id === incident.id) === index,
+    );
   }
 
   return incidents;

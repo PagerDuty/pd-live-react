@@ -32,7 +32,7 @@ import {
 } from '@chakra-ui/icons';
 
 import {
-  PD_OAUTH_CLIENT_ID, PD_OAUTH_CLIENT_SECRET,
+  PD_OAUTH_CLIENT_ID,
 } from 'src/config/constants';
 
 import {
@@ -203,7 +203,7 @@ const NavigationBarComponent = () => {
                 onClick={() => {
                   const token = sessionStorage.getItem('pd_access_token');
                   if (token) {
-                    revokeToken(token, PD_OAUTH_CLIENT_ID, PD_OAUTH_CLIENT_SECRET);
+                    revokeToken(token, PD_OAUTH_CLIENT_ID);
                   }
                   userAcceptDisclaimer();
                   userUnauthorize();
