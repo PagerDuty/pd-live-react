@@ -24,6 +24,7 @@ import {
 
 import moment from 'moment/min/moment-with-locales';
 
+import DeprecationAlertComponent from 'src/components/DeprecationAlert/DeprecationAlert';
 import CatastropheModal from 'src/components/CatastropheModal/CatastropheModal';
 import AuthComponent from 'src/components/Auth/AuthComponent';
 import UnauthorizedModalComponent from 'src/components/UnauthorizedModal/UnauthorizedModalComponent';
@@ -202,6 +203,7 @@ const App = () => {
       >
         <Box position="fixed" w="100%" h="100%" overflow="hidden">
           <Box as="header" top={0} w="100%" pb={1}>
+            <DeprecationAlertComponent />
             <NavigationBarComponent />
           </Box>
           <Box as="main" id="main">

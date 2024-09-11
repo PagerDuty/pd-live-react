@@ -4,6 +4,10 @@ This repository hosts the source code for PagerDuty Live, an open-source, single
 
 **Live URL: https://pagerduty.github.io/pd-live-react/**
 
+## :heavy_exclamation_mark: Deprecation
+
+**This project has been replaced by [Operations Console](https://support.pagerduty.com/main/docs/operations-console), which is supported product from PagerDuty. Please plan to migrate to Operations Console instead.**
+
 ## :warning: Disclaimer
 
 **This project is not officially supported by PagerDuty and therefore no issues can be reported to or resolved by PagerDuty Support.
