@@ -1,7 +1,7 @@
 import React from 'react';
 import {
   Badge,
-} from 'react-bootstrap';
+} from '@chakra-ui/react';
 
 import {
   useTranslation,
@@ -20,7 +20,7 @@ const EmptyIncidentsComponent = ({
     <div className="empty-incidents">
       <EmptyIncidents />
       <h1 className="empty-incidents-badge">
-        <Badge bg="none">{badgeMessage}</Badge>
+        <Badge>{badgeMessage}</Badge>
       </h1>
     </div>
   );

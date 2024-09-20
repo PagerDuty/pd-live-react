@@ -6,8 +6,17 @@ import {
 } from 'react-redux';
 
 import {
-  Modal, Form, Button,
-} from 'react-bootstrap';
+  Button,
+  FormControl,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalFooter,
+  ModalBody,
+  ModalCloseButton,
+  Textarea,
+} from '@chakra-ui/react';
 
 import {
   useTranslation,
@@ -41,36 +50,37 @@ const AddNoteModalComponent = ({
 
   return (
     <div className="add-note-modal-ctr">
-      <Modal show={displayAddNoteModal} onHide={toggleDisplayAddNoteModal}>
-        <Modal.Header closeButton>
-          <Modal.Title>{t('Add Note')}</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <Form>
-            <Form.Control
-              id="add-note-textarea"
-              as="textarea"
-              placeholder={t('Add Note to incident(s) here')}
-              minLength={1}
-              onChange={(e) => {
-                setNote(e.target.value);
-              }}
-            />
-          </Form>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button
-            id="add-note-button"
-            variant="primary"
-            onClick={() => addNote(selectedRows, note)}
-            disabled={note === ''}
-          >
-            {t('Add Note')}
-          </Button>
-          <Button variant="light" onClick={toggleDisplayAddNoteModal}>
-            {t('Cancel')}
-          </Button>
-        </Modal.Footer>
+      <Modal isOpen={displayAddNoteModal} onClose={() => { toggleDisplayAddNoteModal(); }}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>{t('Add Note')}</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <FormControl>
+              <Textarea
+                id="add-note-textarea"
+                placeholder={t('Add Note to incident(s) here')}
+                minLength={1}
+                onChange={(e) => {
+                  setNote(e.target.value);
+                }}
+              />
+            </FormControl>
+          </ModalBody>
+          <ModalFooter>
+            <Button
+              id="add-note-button"
+              colorScheme="blue"
+              onClick={() => addNote(selectedRows, note)}
+              disabled={note === ''}
+            >
+              {t('Add Note')}
+            </Button>
+            <Button variant="light" onClick={toggleDisplayAddNoteModal}>
+              {t('Cancel')}
+            </Button>
+          </ModalFooter>
+        </ModalContent>
       </Modal>
     </div>
   );

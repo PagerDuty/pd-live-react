@@ -1,7 +1,7 @@
 import React from 'react';
 import {
-  Container, Row, Spinner,
-} from 'react-bootstrap';
+  Container, Spinner,
+} from '@chakra-ui/react';
 import {
   useTranslation,
 } from 'react-i18next';
@@ -11,14 +11,12 @@ const QueryActiveComponent = () => {
     t,
   } = useTranslation();
   return (
-    <Container className="query-active-ctr" fluid>
+    <Container className="query-active-ctr" centerContent>
       <br />
-      <Row className="justify-content-md-center">
-        <Spinner className="" animation="border" role="status" variant="success" />
-        <h5 className="querying-incidents">
-          <b>{t('Querying PagerDuty API')}</b>
-        </h5>
-      </Row>
+      <Spinner />
+      <h5 className="querying-incidents">
+        <b>{t('Querying PagerDuty API')}</b>
+      </h5>
     </Container>
   );
 };
