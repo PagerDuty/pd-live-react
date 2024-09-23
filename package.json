@@ -6,8 +6,8 @@
   "dependencies": {
     "@chakra-ui/icons": "^2.1.1",
     "@chakra-ui/react": "^2.8.0",
-    "@datadog/browser-rum": "^5.14.0",
-    "@datadog/datadog-ci": "^2.40.1",
+    "@datadog/browser-rum": "^5.27.0",
+    "@datadog/datadog-ci": "^2.43.0",
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.13.0",
     "@fortawesome/fontawesome-svg-core": "^6.4.2",
