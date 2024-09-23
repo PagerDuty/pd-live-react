@@ -19,10 +19,7 @@ import {
 } from 'pretty-print-error';
 
 import {
-  Badge,
-} from 'react-bootstrap';
-import {
-  Box, Link, Skeleton, Tooltip,
+  Box, Link, Skeleton, Tooltip, Badge,
 } from '@chakra-ui/react';
 import {
   ChevronDownIcon, ChevronUpIcon, NotAllowedIcon,
@@ -467,7 +464,7 @@ export const defaultIncidentColumns = () => [
       let elem;
       if (urgency === HIGH) {
         elem = (
-          <Badge className="urgency-badge" bg="primary" text="light">
+          <Badge className="urgency-badge" colorScheme="blue">
             <ChevronUpIcon />
             {' '}
             {i18next.t('High')}
@@ -475,7 +472,7 @@ export const defaultIncidentColumns = () => [
         );
       } else if (urgency === LOW) {
         elem = (
-          <Badge className="urgency-badge" bg="secondary" text="dark">
+          <Badge className="urgency-badge" colorScheme="gray">
             <ChevronDownIcon />
             {' '}
             {i18next.t('Low')}
@@ -684,33 +681,28 @@ export const defaultAlertsColumns = () => [
         return renderPlainTextAlertCell({ value, cell });
       }
       const i18nValue = i18next.t(value);
-      let variant;
-      let text = 'dark';
+      let colorScheme;
       switch (value) {
         case 'critical':
-          variant = 'dark';
-          text = 'light';
+          colorScheme = 'red';
           break;
         case 'error':
-          variant = 'danger';
-          text = 'light';
+          colorScheme = 'orange';
           break;
         case 'warning':
-          variant = 'warning';
+          colorScheme = 'yellow';
           break;
         case 'info':
-          variant = 'info';
+          colorScheme = 'green';
           break;
         case '--':
-          variant = null;
-          text = null;
+          colorScheme = null;
           break;
         default:
-          variant = 'secondary';
-          text = 'dark';
+          colorScheme = 'gray';
       }
       return (
-        <Badge className="severity-badge" bg={variant} text={text}>
+        <Badge className="severity-badge" colorScheme={colorScheme}>
           {i18nValue}
         </Badge>
       );
