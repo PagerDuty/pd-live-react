@@ -3,6 +3,7 @@
 import {
   api,
 } from '@pagerduty/pdjs';
+import cssesc from 'cssesc';
 
 export const pd = api({ token: Cypress.env('PD_USER_TOKEN') });
 
@@ -278,8 +279,8 @@ export const manageCustomColumnDefinitions = (customColumnDefinitions, type = 'a
     cy.get('button[aria-label="Add custom column"]').click();
     // Need to escape special characters in accessorPath
     // https://docs.cypress.io/faq/questions/using-cypress-faq#How-do-I-use-special-characters-with-cyget
-    const columnId = Cypress.$.escapeSelector(
-      [header, accessorPath, expression.replace(/:/g, '\\:')]
+    const columnId = cssesc(
+      [header, accessorPath, expression]
         .filter((value) => value !== '')
         .join(':'),
     );
