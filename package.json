@@ -38,7 +38,7 @@
     "moment": "^2.30.1",
     "pretty-print-error": "^1.1.1",
     "react": "^18",
-    "react-bootstrap": "^2.10.2",
+    "react-bootstrap": "^2.10.5",
     "react-contextmenu": "^2.14.0",
     "react-datepicker": "^4.21.0",
     "react-dnd": "^16.0.1",
