@@ -266,12 +266,13 @@ describe('Manage Open Incidents', { failFast: { enabled: true } }, () => {
     );
   });
 
-  it('Run response play on singular incident', () => {
-    const responsePlayName = 'Major Incident Response';
-    selectIncident(0);
-    runResponsePlay(responsePlayName);
-    checkActionAlertsModalContent(`Ran "${responsePlayName}" response play for incident(s)`);
-  });
+  // Response Plays are EOL
+  // it('Run response play on singular incident', () => {
+  //   const responsePlayName = 'Major Incident Response';
+  //   selectIncident(0);
+  //   runResponsePlay(responsePlayName);
+  //   checkActionAlertsModalContent(`Ran "${responsePlayName}" response play for incident(s)`);
+  // });
 });
 
 describe('Manage Alerts', { failFast: { enabled: true } }, () => {
