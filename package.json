@@ -1,7 +1,7 @@
 {
   "name": "pd-live-react",
   "homepage": "https://pagerduty.github.io/pd-live-react",
-  "version": "0.14.1-beta.0",
+  "version": "0.14.2-beta.0",
   "private": true,
   "dependencies": {
     "@chakra-ui/icons": "^2.1.1",
